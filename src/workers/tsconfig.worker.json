@@ -1,0 +1,7 @@
+{
+    "extends": "../../tsconfig.json",
+    "include": ["./**/*.ts", "../../mp4box.d.ts"],
+    "compilerOptions": {
+        "lib": ["WebWorker", "WebWorker.ImportScripts"]
+    }
+}

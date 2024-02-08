@@ -1,0 +1,23 @@
+{
+    "extends": "@vue/tsconfig/tsconfig.dom.json",
+    "include": [
+        "*.d.ts",
+        "./types/**/*.d.ts",
+        "src/**/*",
+        "src/**/*.vue",
+        "tsconfig.worker.json"
+, "types/captureStream.d.ts"    ],
+    "exclude": ["src/**/__tests__/*"],
+    "compilerOptions": {
+        "composite": true,
+
+        "verbatimModuleSyntax": true,
+        "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+        "lib": ["DOM", "ESNext"],
+
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./src/*"]
+        }
+    }
+}
