@@ -12,6 +12,20 @@ const router = createRouter({
             path: '/editor',
             name: 'editor',
             component: () => import('../views/Editor.vue')
+        },
+        {
+            path: '/dev',
+            name: 'dev',
+            children: [
+                {
+                    path: '/',
+                    component: () => import('../views/dev/dev.vue')
+                },
+                {
+                    path: 'CodeEditor',
+                    component: () => import('../views/dev/CodeEditor.vue')
+                }
+            ]
         }
     ]
 });

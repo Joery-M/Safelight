@@ -8,6 +8,5 @@ export default class AVTimelineItem extends TimelineItem {
         super();
     }
 
-    public RenderVideoFrame() {
-    }
+    public RenderVideoFrame() {}
 }

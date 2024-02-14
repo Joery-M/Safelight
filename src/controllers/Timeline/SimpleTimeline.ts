@@ -3,6 +3,7 @@ import type SimpleProject from '../Project/SimpleProject';
 import BaseTimeline, { type TimelineType } from '../base/Timeline';
 import { v4 as uuidv4 } from 'uuid';
 import type BaseTimelineItem from '../base/TimelineItem';
+import AVTimelineItem from '../TimelineItem/AVTimelineItem';
 
 export default class SimpleTimeline extends BaseTimeline {
     public name = 'Untitled';
@@ -34,4 +35,6 @@ export default class SimpleTimeline extends BaseTimeline {
 
         return ti;
     }
+
+    updateDuration() {}
 }

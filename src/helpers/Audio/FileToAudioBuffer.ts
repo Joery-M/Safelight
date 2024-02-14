@@ -11,7 +11,8 @@ export function FileToAudioBuffer(file: File) {
                 track.connect(audioCtx.destination);
                 track.start(0);
                 resolve(track);
-            });
+            })
+            .catch(reject);
     });
 }
 
@@ -28,6 +29,7 @@ export function FileToAudioBufferSection(file: File, begin: number, end: number)
                 track.connect(audioCtx.destination);
                 track.start(0, audioCtx.sampleRate * begin, audioCtx.sampleRate * end);
                 resolve(track);
-            });
+            })
+            .catch(reject);
     });
 }

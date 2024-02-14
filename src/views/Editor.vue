@@ -43,8 +43,6 @@ const dropZone = useDropZone(document.body, {
 
 const { project, activeTimeline, $dispose } = useProject();
 
-const video = ref<HTMLVideoElement>();
-
 fileDialog.onChange((fileList) => {
     if (!fileList) return;
 
@@ -70,4 +68,3 @@ async function loadFile(file: File) {
 
 onBeforeRouteLeave($dispose);
 </script>
-../helpers/Video/GenerateMediaThumbnail

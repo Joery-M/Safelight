@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    Monaco: typeof import('./src/components/Editor/CodeEditor/Monaco.vue')['default']
     Monitor: typeof import('./src/components/Editor/Monitor.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

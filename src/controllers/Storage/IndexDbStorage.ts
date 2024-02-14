@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import BaseProject from '../base/Project';
 import type { SaveResults, StorageControllerType } from '../base/Storage';
 import BaseStorageController from '../base/Storage';

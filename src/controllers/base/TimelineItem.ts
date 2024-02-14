@@ -18,6 +18,12 @@ export default abstract class BaseTimelineItem {
         this.media.push(media);
     }
 
+    public onMove(newStart: Timecode) {
+        this.start = newStart;
+
+        if (this.parentTimeline.isSimpleTimeline()) this.parentTimeline.updateDuration();
+    }
+
     isAudioVideo = (): this is AVTimelineItem => this.type == 'AudioVideo';
 }
 

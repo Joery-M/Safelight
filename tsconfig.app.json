@@ -5,8 +5,9 @@
         "./types/**/*.d.ts",
         "src/**/*",
         "src/**/*.vue",
-        "tsconfig.worker.json"
-, "types/captureStream.d.ts"    ],
+        "tsconfig.worker.json",
+        "types/captureStream.d.ts"
+    ],
     "exclude": ["src/**/__tests__/*"],
     "compilerOptions": {
         "composite": true,
@@ -18,6 +19,7 @@
         "baseUrl": ".",
         "paths": {
             "@/*": ["./src/*"]
-        }
+        },
+        "resolveJsonModule": true
     }
 }

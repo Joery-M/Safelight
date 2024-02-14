@@ -7,6 +7,7 @@ export {}
 declare global {
   const AVTimelineItem: typeof import('./src/controllers/TimelineItem/AVTimelineItem')['default']
   const EffectScope: typeof import('vue')['EffectScope']
+  const EsbuildScriptCompiler: typeof import('./src/controllers/Compiler/EsbuildScriptCompiler')['default']
   const IndexDbStorage: typeof import('./src/controllers/Storage/IndexDbStorage')['default']
   const Media: typeof import('./src/controllers/Media/Media')['default']
   const Project: typeof import('./src/controllers/base/Project')['default']
@@ -270,6 +271,7 @@ declare global {
   const useSpeechRecognition: typeof import('@vueuse/core')['useSpeechRecognition']
   const useSpeechSynthesis: typeof import('@vueuse/core')['useSpeechSynthesis']
   const useStepper: typeof import('@vueuse/core')['useStepper']
+  const useStorage: typeof import('@vueuse/core')['useStorage']
   const useStorageAsync: typeof import('@vueuse/core')['useStorageAsync']
   const useStyleTag: typeof import('@vueuse/core')['useStyleTag']
   const useSum: typeof import('@vueuse/math')['useSum']
@@ -337,6 +339,7 @@ declare module 'vue' {
   interface ComponentCustomProperties {
     readonly AVTimelineItem: UnwrapRef<typeof import('./src/controllers/TimelineItem/AVTimelineItem')['default']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly EsbuildScriptCompiler: UnwrapRef<typeof import('./src/controllers/Compiler/EsbuildScriptCompiler')['default']>
     readonly IndexDbStorage: UnwrapRef<typeof import('./src/controllers/Storage/IndexDbStorage')['default']>
     readonly Media: UnwrapRef<typeof import('./src/controllers/Media/Media')['default']>
     readonly Project: UnwrapRef<typeof import('./src/controllers/base/Project')['default']>
@@ -600,6 +603,7 @@ declare module 'vue' {
     readonly useSpeechRecognition: UnwrapRef<typeof import('@vueuse/core')['useSpeechRecognition']>
     readonly useSpeechSynthesis: UnwrapRef<typeof import('@vueuse/core')['useSpeechSynthesis']>
     readonly useStepper: UnwrapRef<typeof import('@vueuse/core')['useStepper']>
+    readonly useStorage: UnwrapRef<typeof import('@vueuse/core')['useStorage']>
     readonly useStorageAsync: UnwrapRef<typeof import('@vueuse/core')['useStorageAsync']>
     readonly useStyleTag: UnwrapRef<typeof import('@vueuse/core')['useStyleTag']>
     readonly useSum: UnwrapRef<typeof import('@vueuse/math')['useSum']>
@@ -660,6 +664,7 @@ declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
     readonly AVTimelineItem: UnwrapRef<typeof import('./src/controllers/TimelineItem/AVTimelineItem')['default']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly EsbuildScriptCompiler: UnwrapRef<typeof import('./src/controllers/Compiler/EsbuildScriptCompiler')['default']>
     readonly IndexDbStorage: UnwrapRef<typeof import('./src/controllers/Storage/IndexDbStorage')['default']>
     readonly Media: UnwrapRef<typeof import('./src/controllers/Media/Media')['default']>
     readonly Project: UnwrapRef<typeof import('./src/controllers/base/Project')['default']>
@@ -923,6 +928,7 @@ declare module '@vue/runtime-core' {
     readonly useSpeechRecognition: UnwrapRef<typeof import('@vueuse/core')['useSpeechRecognition']>
     readonly useSpeechSynthesis: UnwrapRef<typeof import('@vueuse/core')['useSpeechSynthesis']>
     readonly useStepper: UnwrapRef<typeof import('@vueuse/core')['useStepper']>
+    readonly useStorage: UnwrapRef<typeof import('@vueuse/core')['useStorage']>
     readonly useStorageAsync: UnwrapRef<typeof import('@vueuse/core')['useStorageAsync']>
     readonly useStyleTag: UnwrapRef<typeof import('@vueuse/core')['useStyleTag']>
     readonly useSum: UnwrapRef<typeof import('@vueuse/math')['useSum']>

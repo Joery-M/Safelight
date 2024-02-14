@@ -7,9 +7,8 @@
         {
             "path": "./tsconfig.app.json"
         },
-
         {
-            "path": "./src/workers/tsconfig.worker.json"
+            "path": "./src/workers/tsconfig.json"
         }
     ]
 }
