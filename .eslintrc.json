@@ -18,7 +18,7 @@
         "plugin:vue/recommended",
         "prettier"
     ],
-    "plugins": ["prettier", "@typescript-eslint/eslint-plugin"],
+    "plugins": ["prettier", "@typescript-eslint/eslint-plugin", "eslint-plugin-tailwindcss"],
     "ignorePatterns": ["dist"],
     "rules": {
         "no-unused-vars": "off",

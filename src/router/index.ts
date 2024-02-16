@@ -18,12 +18,16 @@ const router = createRouter({
             name: 'dev',
             children: [
                 {
-                    path: '/',
+                    path: '',
                     component: () => import('../views/dev/dev.vue')
                 },
                 {
                     path: 'CodeEditor',
                     component: () => import('../views/dev/CodeEditor.vue')
+                },
+                {
+                    path: 'ui',
+                    component: () => import('../views/dev/UI.vue')
                 }
             ]
         }

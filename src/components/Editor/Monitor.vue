@@ -1,8 +1,8 @@
 <template>
-    <div ref="monitorContainer" class="flex flex-justify-center">
+    <div ref="monitorContainer" class="flex-justify-center flex">
         <Renderer
             ref="renderer"
-            :autoResize="false"
+            :auto-resize="false"
             :antialias="antialias ?? true"
             :width="canvasSize.width"
             :height="canvasSize.height"

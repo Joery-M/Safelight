@@ -21,12 +21,12 @@ watch(timeline.items, () => {
 
 <style lang="scss" scoped>
 .timeline {
-    @apply w-full flex flex-vertical flex-col;
+    @apply flex w-full flex-col;
 
     tr {
         height: 2rem;
 
-        @apply odd:bg-base-200/60 even:bg-base-200/30 w-full;
+        @apply w-full odd:bg-base-200/60 even:bg-base-200/30;
     }
 }
 
@@ -38,7 +38,7 @@ watch(timeline.items, () => {
 .container {
     height: 600px;
 
-    @apply flex flex-justify-center flex-col;
+    @apply flex flex-col justify-center;
 
     div:not(.divider) {
         display: flex;

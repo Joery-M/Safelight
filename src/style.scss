@@ -1,11 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 .btn {
     --un-border-opacity: 0 !important;
 }
 
 body {
-    @apply bg-base;
-    margin: 0;
-    width: 100vw;
-    height: 100vh;
-    overflow-x: hidden;
+    @apply m-0 h-screen w-screen overflow-hidden text-white bg-base-900;
+}
+
+#app {
+    @apply w-full h-full
 }

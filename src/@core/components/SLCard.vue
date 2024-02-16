@@ -2,21 +2,23 @@
     <div
         :class="{
             card: true,
-            ['shadow-' + (shadowSize ?? 'xl')]: true,
-            'card-compact': compact
+            'card-compact': compact,
+            noMaxWidth
         }"
     >
         <figure v-if="img && !imgBottom">
             <img :src="img" />
         </figure>
         <div class="card-body">
-            <h2 v-if="$slots.title || title" class="card-title">
+            <h2 v-if="slots.title || title" class="card-title">
                 <template v-if="title">
                     {{ title }}
                 </template>
                 <slot v-else name="title" />
             </h2>
-            <slot />
+            <div class="card-content">
+                <slot />
+            </div>
             <slot
                 name="actions"
                 :class="{
@@ -37,6 +39,7 @@ defineProps<{
     img?: string;
     imgBottom?: boolean;
     imgRounded?: boolean;
+    noMaxWidth?: boolean;
     buttonAlign?:
         | 'normal'
         | 'start'
@@ -47,8 +50,32 @@ defineProps<{
         | 'evenly'
         | 'stretch'
         | (string & {});
-    shadowSize?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'inner' | (string & {});
     compact?: boolean;
     title?: string;
 }>();
+
+const slots = defineSlots<{
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    default: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    title: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    actions: any;
+}>();
 </script>
+
+<style lang="scss" scoped>
+.card {
+    @apply m-2 rounded-2xl bg-neutral-800 p-4;
+
+    > .card-body {
+        > .card-title {
+            @apply mb-4 text-lg;
+        }
+    }
+
+    &:not(.noMaxWidth) {
+        @apply max-w-screen-md;
+    }
+}
+</style>

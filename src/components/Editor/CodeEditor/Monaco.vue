@@ -1,66 +1,36 @@
+<!-- eslint-disable vue/no-v-model-argument -->
 <template>
-    <div ref="container" style="width: 800px; height: 600px; border: 1px solid grey"></div>
+    <!-- <MonacoEditor
+        v-model:value="vModel"
+        :language="language"
+        :theme="theme"
+        :width="width"
+        :height="height"
+    /> -->
+    <p>oops {{ vModel }}</p>
 </template>
 
 <script setup lang="ts">
-import * as monaco from 'monaco-editor';
+// import MonacoEditor from 'monaco-editor-vue3';
+
 const vModel = defineModel({
     default: '',
     required: false,
-    type: String,
-    set(v) {
-        if (dontUpdate.value) {
-            return v;
-        }
-        const currEditor = monaco.editor.getEditors().find((e) => e.getId() == editor?.getId());
-
-        dontUpdate.value = true;
-        if (currEditor) currEditor.setValue(v);
-        dontUpdate.value = false;
-        return v;
-    },
-    get(v) {
-        if (dontUpdate.value) {
-            return v;
-        }
-        const currEditor = monaco.editor.getEditors().find((e) => e.getId() == editor?.getId());
-
-        dontUpdate.value = true;
-        if (currEditor) return currEditor.getValue();
-        dontUpdate.value = false;
-        return v;
-    }
+    type: String
 });
 
-// const modelThrottled = useThrottle(vModel, 100);
-
-const dontUpdate = ref(false);
-const container = ref<HTMLDivElement>();
-let editor: monaco.editor.IStandaloneCodeEditor;
-
-onMounted(() => {
-    if (!container.value) return;
-
-    editor = monaco.editor.create(container.value, {
-        value: vModel.value,
-        lineNumbers: 'on',
+withDefaults(
+    defineProps<{
+        language?: string;
+        width?: number | string;
+        height?: number | string;
+        theme?: string;
+    }>(),
+    {
+        language: 'typescript',
+        height: 600,
+        width: 800,
         theme: 'vs-dark'
-    });
-
-    editor.onDidChangeModelContent((e) => {
-        if (dontUpdate.value) {
-            return;
-        }
-        const currEditor = monaco.editor.getEditors().find((e) => e.getId() == editor.getId());
-
-        dontUpdate.value = true;
-        if (currEditor) vModel.value = currEditor.getValue();
-        dontUpdate.value = false;
-    });
-});
-
-defineProps<{
-    width?: number | string;
-    height?: number | string;
-}>();
+    }
+);
 </script>

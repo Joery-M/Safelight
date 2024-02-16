@@ -1,13 +1,13 @@
 <template>
     <SLCard
-        class="absolute left-0 w-full h-full top-0 pointer-events-none grid grid-place-items-center bg-primary/20 transition-500"
+        class="grid-place-items-center bg-primary/20 transition-500 pointer-events-none absolute left-0 top-0 grid h-full w-full"
         :style="{
             opacity: dropZone.isOverDropZone.value ? 1 : 0
         }"
     >
         <h1 class="font-sans">Just drop it gently</h1>
     </SLCard>
-    <Monitor v-if="project.activeTimeline" :timeline="activeTimeline" class="w-full min-h-100" />
+    <Monitor v-if="project.activeTimeline" :timeline="activeTimeline" class="min-h-100 w-full" />
     <SLButton @click="fileDialog.open">Load file</SLButton>
     <table>
         <tr v-for="media in project.media" :key="media.id">
