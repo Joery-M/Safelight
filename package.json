@@ -5,6 +5,7 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
+        "prebuild": "license-report --output=json > ./public/licenses.json",
         "build": "yarn type-check && yarn build-only",
         "preview": "vite preview",
         "build-only": "vite build",
@@ -15,6 +16,7 @@
         "@janvorisek/drie": "^1.0.0-alpha-1.48",
         "@phosphor-icons/vue": "^2.1.6",
         "@vueuse/core": "^10.7.2",
+        "@vueuse/gesture": "^2.0.0-beta.1",
         "@vueuse/math": "^10.7.2",
         "esbuild-wasm": "^0.20.0",
         "hash-wasm": "^4.11.0",
@@ -29,10 +31,7 @@
         "uuid": "^9.0.1",
         "vue": "^3.4.19",
         "vue-draggable-resizable": "^3.0.0",
-        "vue-multipane": "^0.9.5",
-        "vue-router": "^4.2.5",
-        "vue-virtual-scroller": "^2.0.0-beta.8",
-        "vue3-split-panel": "0.2.0"
+        "vue-router": "^4.2.5"
     },
     "devDependencies": {
         "@babel/types": "^7.23.9",
@@ -55,6 +54,7 @@
         "eslint-plugin-prettier": "^5.1.3",
         "eslint-plugin-tailwindcss": "^3.14.2",
         "eslint-plugin-vue": "^9.21.1",
+        "license-report": "^6.5.0",
         "lightningcss": "^1.23.0",
         "npm-run-all2": "^6.1.2",
         "postcss": "^8.4.35",

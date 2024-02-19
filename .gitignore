@@ -29,4 +29,7 @@ coverage
 
 *.tsbuildinfo
 /stats.html
+/auto-imports.d.ts
+/components.d.ts
 /typed-router.d.ts
+/public/licenses.json

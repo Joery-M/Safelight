@@ -2,14 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-.btn {
-    --un-border-opacity: 0 !important;
-}
-
 body {
-    @apply m-0 h-screen w-screen overflow-hidden text-white bg-base-900;
+    @apply m-0 h-screen w-screen text-white bg-base-900;
 }
 
 #app {
     @apply w-full h-full
+}
+
+h1 {
+    @apply text-3xl mb-4;
+}
+
+h2 {
+    @apply text-2xl mb-4;
+}
+
+h3 {
+    @apply text-xl;
+}
+
+h4 {
+    @apply text-lg;
+}
+
+h5 {
+    @apply text-sm;
+}
+
+h6 {
+    @apply text-xs;
+}
+
+
+input {
+    @apply text-black
 }

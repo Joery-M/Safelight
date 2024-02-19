@@ -2,8 +2,9 @@
     <button
         :class="{
             ['btn-' + (size ?? 'md')]: true,
+            ['btn-type-' + type]: type,
             'btn-active': active,
-            'btn-circle': circle || (loading && !slots.default && !square),
+            'btn-circle': circle || (loading && !$slots.default && !square),
             'btn-outline': outline,
             'btn-square': square,
             'btn-wide': wide
@@ -14,13 +15,22 @@
         @dblclick="(p) => $emit('dblclick', p)"
         @auxclick="(p) => $emit('auxclick', p)"
     >
-        <PhCircleNotch v-if="loading" class="inline-block size-5 animate-spin" />
+        <div v-if="loading || $slots.icon" class="btn-icon relative inline-block size-5">
+            <Transition>
+                <div v-if="loading">
+                    <PhCircleNotch class="animate-spin" />
+                </div>
+                <div v-else-if="$slots.icon">
+                    <component :is="$slots.icon" />
+                </div>
+            </Transition>
+        </div>
         <span
             :class="{
-                'ml-2': loading && slots.default
+                'ml-2': (loading || $slots.icon) && $slots.default
             }"
         >
-            <component :is="slots.default" />
+            <component :is="$slots.default" />
         </span>
     </button>
 </template>
@@ -28,9 +38,11 @@
 <script setup lang="ts">
 import { PhCircleNotch } from '@phosphor-icons/vue';
 
-const slots = defineSlots<{
+defineSlots<{
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     default(): any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    icon(): any;
 }>();
 
 defineProps<{
@@ -43,6 +55,7 @@ defineProps<{
     square?: boolean;
     circle?: boolean;
     loading?: boolean;
+    type?: 'success' | 'fail' | 'warning';
 }>();
 
 defineEmits<{
@@ -54,10 +67,11 @@ defineEmits<{
 
 <style lang="scss" scoped>
 .btn {
-    @apply m-1 inline-flex items-center
-            justify-center rounded-md border-none
+    @apply m-1 inline-flex items-center justify-center
+            overflow-y-hidden rounded-md border-none
             text-white transition-all active:transition-none;
 
+    /* Sizes */
     &.btn-sm {
         @apply px-2.5 py-1;
     }
@@ -70,38 +84,64 @@ defineEmits<{
     &.btn-xl {
         @apply px-4 py-4;
     }
-
     &.btn-wide {
-        width: 100%;
+        width: calc(100% - 0.5rem);
     }
     &.btn-square {
         @apply aspect-square;
     }
+    &.btn-circle {
+        @apply aspect-square rounded-full;
+    }
+
+    /* States */
 
     &:not(.btn-outline) {
-        @apply bg-neutral-700 hover:bg-base-600 active:bg-base-300 active:text-base-950;
+        @apply bg-neutral-700 hover:bg-base-600 active:bg-base-400 active:text-base-950;
     }
     &.btn-outline {
         @apply border border-solid border-neutral-700
                bg-transparent hover:border-neutral-400 hover:bg-transparent
                active:border-neutral-500 active:bg-transparent active:text-neutral-400;
     }
-
-    &.btn-circle {
-        @apply aspect-square rounded-full;
-    }
-
     &.btn-active {
         @apply bg-base-300 text-base-950;
     }
-
     &:disabled {
         @apply bg-neutral-700 text-neutral-500 hover:bg-neutral-700 active:text-neutral-500;
     }
+
+    &.btn-type-success:not(:disabled) {
+        @apply bg-green-700 hover:bg-green-600 active:bg-green-400;
+    }
+    &.btn-type-fail:not(:disabled) {
+        @apply bg-red-700 hover:bg-red-600 active:bg-red-400;
+    }
+    &.btn-type-warning:not(:disabled) {
+        @apply bg-amber-700 hover:bg-amber-600 active:bg-amber-400;
+    }
+
+    .btn-icon > div {
+        position: absolute;
+    }
+}
+
+.v-enter-active,
+.v-leave-active {
+    @apply transition-transform duration-500;
+    transform: translateY(0);
+}
+
+.v-enter-from {
+    @apply translate-y-10;
+}
+.v-leave-to {
+    @apply -translate-y-10;
 }
 </style>
 
 <style>
+.btn > .btn-icon > div > svg,
 .btn > span > svg {
     @apply size-5;
 }

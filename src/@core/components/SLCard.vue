@@ -70,7 +70,7 @@ const slots = defineSlots<{
 
     > .card-body {
         > .card-title {
-            @apply mb-4 text-lg;
+            @apply mb-4;
         }
     }
 

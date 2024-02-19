@@ -33,6 +33,8 @@
                 "extendDefaults": true
             }
         ],
+        "@typescript-eslint/no-explicit-any": "off",
+        "vue/no-v-for-template-key": "off",
         "no-undef": "off"
     }
 }
