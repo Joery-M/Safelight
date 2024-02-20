@@ -8,6 +8,9 @@
                     height: (highestLayer + 1) * rowHeight + 'px'
                 }"
             />
+            <template v-for="row in highestLayer" :key="row">
+                <div class="timeline-row"></div>
+            </template>
             <template v-for="(item, itemI) in items" :key="itemI">
                 <div
                     v-if="item.start < scrollOffsetX + end && item.end > scrollOffsetX"
@@ -32,14 +35,10 @@
 const props = withDefaults(
     defineProps<{
         cursor?: number;
-        start?: number;
-        end?: number;
         endPadding?: number;
     }>(),
     {
         cursor: undefined,
-        start: 0,
-        end: 120, // Assuming 1 = 1 second
         endPadding: 10
     }
 );
@@ -50,28 +49,17 @@ const lastEnd = ref(120);
 let scrollOffsetX = ref(0);
 let scrollOffsetY = ref(0);
 const items = defineModel<TimelineComponentItem[]>({ default: [] });
+const start = defineModel<number>('start', { default: 0 });
+const end = defineModel<number>('end', { default: 120 });
 
-const viewRange = ref<[number, number]>([props.start, props.end]);
+const viewRange = ref<[number, number]>([0, end.value]);
 const timelineContainer = ref<HTMLDivElement>();
 const containerSizeRange = ref<[number, number]>([0, 100]);
 
-watch(props, () => {
-    viewRange.value = [
-        parseFloat(props.start.toString()) ?? 0,
-        parseFloat(props.end.toString()) ?? 0
-    ];
+watch([end, items], () => {
+    viewRange.value = [0, parseFloat(end.value.toString()) ?? 0];
 
     if (items.value && items.value.length > 0) {
-        const last = items.value.sort((a, b) => b.end - a.end)[0];
-        lastEnd.value = last.end;
-    }
-});
-
-watchImmediate(items, () => {
-    if (items.value && items.value.length > 0) {
-        const highest = items.value.sort((a, b) => b.layer - a.layer)[0];
-        highestLayer.value = highest.layer;
-
         const last = items.value.sort((a, b) => b.end - a.end)[0];
         lastEnd.value = last.end;
     }
@@ -87,6 +75,25 @@ onMounted(() => {
     const scrolling = useScroll(timelineContainer);
     scrollOffsetX = useProjectionInverse(scrolling.x);
     scrollOffsetY = scrolling.y;
+
+    watch(start, () => {
+        scrolling.x.value = useProjection(start).value;
+    });
+
+    watch(scrolling.x, () => {
+        start.value = useProjectionInverse(scrolling.x.value).value;
+    });
+
+    watchImmediate(items, () => {
+        console.log(items.value);
+        if (items.value.length > 0) {
+            const highest = items.value.sort((a, b) => b.layer - a.layer)[0];
+            highestLayer.value = highest.layer;
+
+            const last = items.value.sort((a, b) => b.end - a.end)[0];
+            lastEnd.value = last.end;
+        }
+    });
 });
 
 const useProjectionInverse = createProjection(containerSizeRange, viewRange);
@@ -108,7 +115,11 @@ export interface TimelineComponentItem {
     @apply relative left-0 top-0 h-full w-full scroll-px-32 overflow-auto;
 
     #container-scroll-boundary {
-        @apply absolute bottom-0;
+        @apply pointer-events-none absolute bottom-0;
+    }
+
+    .timeline-row {
+        @apply pointer-events-none absolute h-4;
     }
 }
 
@@ -126,34 +137,9 @@ export interface TimelineComponentItem {
     width: var(--width);
 }
 
-.timeline-item.num-0 {
-    background-color: rgb(random($limit: 255), random($limit: 255), random($limit: 255));
-}
-.timeline-item.num-1 {
-    background-color: rgb(random($limit: 255), random($limit: 255), random($limit: 255));
-}
-.timeline-item.num-2 {
-    background-color: rgb(random($limit: 255), random($limit: 255), random($limit: 255));
-}
-.timeline-item.num-3 {
-    background-color: rgb(random($limit: 255), random($limit: 255), random($limit: 255));
-}
-.timeline-item.num-4 {
-    background-color: rgb(random($limit: 255), random($limit: 255), random($limit: 255));
-}
-.timeline-item.num-5 {
-    background-color: rgb(random($limit: 255), random($limit: 255), random($limit: 255));
-}
-.timeline-item.num-6 {
-    background-color: rgb(random($limit: 255), random($limit: 255), random($limit: 255));
-}
-.timeline-item.num-7 {
-    background-color: rgb(random($limit: 255), random($limit: 255), random($limit: 255));
-}
-.timeline-item.num-8 {
-    background-color: rgb(random($limit: 255), random($limit: 255), random($limit: 255));
-}
-.timeline-item.num-9 {
-    background-color: rgb(random($limit: 255), random($limit: 255), random($limit: 255));
+@for $i from 0 through 9 {
+    .timeline-item.num-#{$i} {
+        background-color: hsl(random($limit: 360), 80%, 50%);
+    }
 }
 </style>

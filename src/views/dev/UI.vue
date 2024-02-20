@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-model-argument -->
 <template>
     <SLCard title="Buttons">
         <SLButton size="sm"> Small </SLButton>
@@ -42,12 +43,12 @@
 
     <SLCard title="Timeline">
         <p>View range:</p>
-        <input v-model="timeline1ViewStart" type="number" /> -
-        <input v-model="timeline1ViewEnd" type="number" />
+        <input v-model="timeline1ViewStart" type="number" min="0" /> -
+        <input v-model="timeline1ViewEnd" type="number" min="0" />
         <SLTimeline
             v-model="timeline1Items"
-            :start="timeline1ViewStart"
-            :end="timeline1ViewEnd"
+            v-model:start="timeline1ViewStart"
+            v-model:end="timeline1ViewEnd"
             class="h-64"
         />
     </SLCard>
@@ -92,13 +93,31 @@ const timeline1Items = ref<TimelineComponentItem[]>([]);
 
 onMounted(() => {
     for (let i = 0; i < 10; i++) {
-        const start = Math.random() * 80;
-        timeline1Items.value.push({
-            title: (i + 1).toString(),
-            layer: Math.floor(Math.random() * 5),
-            start,
-            end: start + Math.random() * 10 + 10
-        });
+        let tries = 0;
+
+        while (tries < 100) {
+            tries++;
+
+            const start = Math.random() * 80;
+            const end = start + Math.random() * 10 + 10;
+            let spotTaken = timeline1Items.value.some((item) => {
+                if (
+                    (item.end < start && item.start > start) ||
+                    (item.start < end && item.end > end)
+                ) {
+                    return true;
+                }
+            });
+            if (spotTaken) continue;
+
+            timeline1Items.value.push({
+                title: (i + 1).toString(),
+                layer: Math.floor(Math.random() * 5),
+                start,
+                end
+            });
+            break;
+        }
     }
 });
 </script>

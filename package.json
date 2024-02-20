@@ -5,8 +5,9 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "prebuild": "license-report --output=json > ./public/licenses.json",
-        "build": "yarn type-check && yarn build-only",
+        "generate-disclaimer": "pnpm-licenses generate-disclaimer -o ./public/disclaimer.txt",
+        "generate-license": "pnpm-licenses list -o ./public/licenses.json",
+        "build": "pnpm generate-disclaimer && pnpm generate-license && pnpm type-check && pnpm build-only",
         "preview": "vite preview",
         "build-only": "vite build",
         "type-check": "vue-tsc --noEmit",
@@ -15,6 +16,7 @@
     "dependencies": {
         "@janvorisek/drie": "^1.0.0-alpha-1.48",
         "@phosphor-icons/vue": "^2.1.6",
+        "@quantco/pnpm-licenses": "^1.0.3",
         "@vueuse/core": "^10.7.2",
         "@vueuse/gesture": "^2.0.0-beta.1",
         "@vueuse/math": "^10.7.2",
@@ -54,7 +56,6 @@
         "eslint-plugin-prettier": "^5.1.3",
         "eslint-plugin-tailwindcss": "^3.14.2",
         "eslint-plugin-vue": "^9.21.1",
-        "license-report": "^6.5.0",
         "lightningcss": "^1.23.0",
         "npm-run-all2": "^6.1.2",
         "postcss": "^8.4.35",
