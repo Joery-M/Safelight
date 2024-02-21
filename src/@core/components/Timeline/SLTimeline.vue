@@ -1,6 +1,30 @@
 <template>
     <div class="timeline">
-        <div ref="timelineContainer" v-bind="$attrs" class="timeline-container">
+        <div
+            ref="timelineContainer"
+            v-bind="$attrs"
+            class="timeline-container"
+            @pointerdown="dragStart"
+            @pointermove="dragging"
+            @pointerup="dragEnd()"
+            @click.self="selectedItems = []"
+        >
+            <div
+                v-show="selectionDrag"
+                id="selection-box"
+                :style="{
+                    left: Math.min(selectionBox.x1, selectionBox.x2) + 'px',
+                    top: Math.min(selectionBox.y1, selectionBox.y2) + 'px',
+                    width:
+                        Math.max(selectionBox.x1, selectionBox.x2) -
+                        Math.min(selectionBox.x1, selectionBox.x2) +
+                        'px',
+                    height:
+                        Math.max(selectionBox.y1, selectionBox.y2) -
+                        Math.min(selectionBox.y1, selectionBox.y2) +
+                        'px'
+                }"
+            />
             <div
                 id="container-scroll-boundary"
                 :style="{
@@ -15,14 +39,18 @@
                 <div
                     v-if="item.start < scrollOffsetX + end && item.end > scrollOffsetX"
                     class="timeline-item"
-                    :class="{ ['num-' + itemI]: true }"
+                    :class="{
+                        ['num-' + itemI]: true,
+                        selected: useArrayIncludes(selectedItems, item).value
+                    }"
                     :style="{
-                        '--x': useProjection(item.start).value + 'px',
-                        '--y': rowHeight * item.layer + 'px',
+                        left: useProjection(item.start).value + 'px',
+                        bottom: rowHeight * item.layer + 'px',
                         height: rowHeight + 'px',
-                        '--width':
+                        width:
                             useProjection(item.end).value - useProjection(item.start).value + 'px'
                     }"
+                    @click="toggleSelect(item)"
                 >
                     <p>{{ item.title }}</p>
                 </div>
@@ -32,7 +60,7 @@
 </template>
 
 <script lang="ts" setup>
-const props = withDefaults(
+withDefaults(
     defineProps<{
         cursor?: number;
         endPadding?: number;
@@ -51,6 +79,15 @@ let scrollOffsetY = ref(0);
 const items = defineModel<TimelineComponentItem[]>({ default: [] });
 const start = defineModel<number>('start', { default: 0 });
 const end = defineModel<number>('end', { default: 120 });
+const selectedItems = ref<TimelineComponentItem[]>([]);
+
+const selectionDrag = ref(false);
+const selectionBox = reactive({
+    x1: 0,
+    y1: 0,
+    x2: 0,
+    y2: 0
+});
 
 const viewRange = ref<[number, number]>([0, end.value]);
 const timelineContainer = ref<HTMLDivElement>();
@@ -64,6 +101,8 @@ watch([end, items], () => {
         lastEnd.value = last.end;
     }
 });
+
+const containerBoundingBox = useElementBounding(timelineContainer);
 
 onMounted(() => {
     const containerSize = useElementSize(timelineContainer);
@@ -104,7 +143,47 @@ export interface TimelineComponentItem {
     end: number;
     title: string;
     layer: number;
+    isGhost: boolean;
 }
+
+function fitAll() {
+    console.log('Fit all');
+}
+
+function toggleSelect(item: TimelineComponentItem) {
+    if (selectedItems.value.includes(item)) {
+        const index = selectedItems.value.indexOf(item);
+        selectedItems.value.splice(index, 1);
+    } else {
+        selectedItems.value.push(item);
+    }
+}
+
+function dragStart(ev: PointerEvent) {
+    selectionBox.x1 = ev.clientX - containerBoundingBox.x.value;
+    selectionBox.y1 = ev.clientY - containerBoundingBox.y.value;
+    selectionBox.x2 = ev.clientX - containerBoundingBox.x.value;
+    selectionBox.y2 = ev.clientY - containerBoundingBox.y.value;
+    selectionDrag.value = true;
+}
+
+function dragging(ev: PointerEvent) {
+    if (selectionDrag.value) {
+        selectionBox.x2 = ev.x - containerBoundingBox.x.value;
+        selectionBox.y2 = ev.y - containerBoundingBox.y.value;
+
+        // Get all items that are in the range
+        items.value.forEach((item) => {});
+    }
+}
+
+function dragEnd() {
+    selectionDrag.value = false;
+}
+
+defineExpose({
+    resizeToFitAll: fitAll
+});
 </script>
 
 <style lang="scss" scoped>
@@ -131,15 +210,37 @@ export interface TimelineComponentItem {
 }
 
 .timeline-item {
-    @apply absolute;
-    left: var(--x);
-    bottom: var(--y);
-    width: var(--width);
-}
+    @apply bg-accent-900 border-accent-700 absolute select-none border-0
+        transition-all duration-75 hover:z-10 hover:border-2;
 
-@for $i from 0 through 9 {
-    .timeline-item.num-#{$i} {
-        background-color: hsl(random($limit: 360), 80%, 50%);
+    transition-property: border;
+
+    &.selected {
+        @apply border-accent-500 border-2;
     }
 }
+
+#selection-box {
+    @apply absolute select-none border-2 fill-base-700 opacity-100;
+}
+
+// This is only for test colors, this can and will be removed in the future
+// @for $i from 0 through 100 {
+//     .timeline-item.num-#{$i} {
+//         $color: hsl(
+//             random(
+//                 $limit: 360
+//             ),
+//             80%,
+//             50%
+//         );
+//         @if lightness($color) > 50 {
+//             color: black;
+//         }
+//         @if lightness($color) <= 50 {
+//             color: white;
+//         }
+//         background-color: $color;
+//     }
+// }
 </style>

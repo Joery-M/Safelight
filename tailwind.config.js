@@ -20,7 +20,19 @@ export default {
                     950: '#030200'
                 },
                 secondary: '#FFA400',
-                accent: '#543EE6',
+                accent: {
+                    50: '#EEF1FF',
+                    100: '#E0E5FF',
+                    200: '#C6CEFF',
+                    300: '#A4ACFD',
+                    400: '#8082F9',
+                    500: '#6961F3',
+                    600: '#543EE6',
+                    700: '#4D36CC',
+                    800: '#3F2FA4',
+                    900: '#362D82',
+                    950: '#221A4C'
+                },
                 base: {
                     DEFAULT: '#1E1E1E',
                     50: '#FFFFFF',

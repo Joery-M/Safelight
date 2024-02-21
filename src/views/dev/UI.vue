@@ -92,7 +92,7 @@ const timeline1ViewEnd = ref(120);
 const timeline1Items = ref<TimelineComponentItem[]>([]);
 
 onMounted(() => {
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 20; i++) {
         let tries = 0;
 
         while (tries < 100) {
@@ -100,10 +100,12 @@ onMounted(() => {
 
             const start = Math.random() * 80;
             const end = start + Math.random() * 10 + 10;
+            const layer = Math.floor(Math.random() * 5);
             let spotTaken = timeline1Items.value.some((item) => {
                 if (
-                    (item.end < start && item.start > start) ||
-                    (item.start < end && item.end > end)
+                    item.layer == layer &&
+                    Math.max(item.end, end) - Math.min(item.start, start) <
+                        item.end - item.start + (end - start)
                 ) {
                     return true;
                 }
@@ -112,9 +114,11 @@ onMounted(() => {
 
             timeline1Items.value.push({
                 title: (i + 1).toString(),
-                layer: Math.floor(Math.random() * 5),
+                layer,
                 start,
-                end
+                end,
+                isGhost: false,
+                isSelected: false
             });
             break;
         }
