@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/no-v-model-argument -->
 <template>
-    <SLButton to="/dev/" style="margin: 0.5rem">Back</SLButton>
+    <SLButton to="/dev/" style="margin: 0.5rem"><PhArrowLeft /></SLButton>
     <SLCard title="Buttons">
         <SLButton size="sm"> Small </SLButton>
         <SLButton size="md"> Medium </SLButton>
@@ -65,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import { PhCheck, PhDownload, PhFileVue, PhPlus, PhX } from '@phosphor-icons/vue';
+import { PhCheck, PhDownload, PhFileVue, PhPlus, PhX, PhArrowLeft } from '@phosphor-icons/vue';
 import { type TimelineComponentItem } from '../../@core/components/Timeline/SLTimeline.vue';
 
 const showDownloadLoading = ref(false);

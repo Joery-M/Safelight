@@ -41,7 +41,8 @@ const dropZone = useDropZone(document.body, {
     }
 });
 
-const { project, activeTimeline, $dispose } = useProject();
+const projectStore = useProject();
+const { project, activeTimeline } = projectStore;
 
 fileDialog.onChange((fileList) => {
     if (!fileList) return;
@@ -66,5 +67,8 @@ async function loadFile(file: File) {
     });
 }
 
-onBeforeRouteLeave($dispose);
+onBeforeUnmount(() => {
+    // reset store, which currently tries to call 'this', trying to reference the store
+    projectStore.$reset.call(projectStore);
+});
 </script>

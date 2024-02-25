@@ -24,7 +24,7 @@
         @dblclick="(p) => $emit('dblclick', p)"
         @auxclick="(p) => $emit('auxclick', p)"
     >
-        <div v-if="loading || $slots.icon" class="btn-icon relative inline-block size-5">
+        <div v-if="loading || $slots.icon" class="btn-icon relative inline-block size-6">
             <Transition>
                 <div v-if="loading">
                     <PhCircleNotch class="animate-spin" />
@@ -78,7 +78,7 @@ defineEmits<{
 <style lang="scss" scoped>
 .btn {
     @apply m-1 inline-flex items-center justify-center
-            overflow-y-hidden rounded-md border-none
+            overflow-y-hidden rounded-md border-none align-middle
             text-white transition-all active:transition-none;
 
     /* Sizes */
@@ -153,6 +153,6 @@ defineEmits<{
 <style>
 .btn > .btn-icon > div > svg,
 .btn > span > svg {
-    @apply size-5;
+    @apply size-6;
 }
 </style>

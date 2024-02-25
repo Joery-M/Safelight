@@ -1,7 +1,9 @@
 <template>
-    <!-- eslint-disable vue/no-v-model-argument -->
+    <SLButton to="/dev/">
+        <PhArrowLeft />
+    </SLButton>
     <div>
-        <button
+        <SLButton
             @click="
                 tabs.push({
                     title: uuidv4() + '.ts',
@@ -9,27 +11,37 @@
                 })
             "
         >
-            +
-        </button>
+            <PhPlus />
+        </SLButton>
     </div>
 
     <br />
 
     <div v-for="(tab, index) in tabs" :key="index">
         <input v-model="tab.title" type="text" />
-        <Monaco v-model="tab.content"></Monaco>
+        <SLButton v-if="index > 0" @click="tabs.splice(index, 1)">
+            <PhTrash />
+        </SLButton>
+        <Monaco v-if="showEditors" v-model="tab.content" height="300"></Monaco>
+        <br />
     </div>
 
-    <br />
-
     <div>
-        <button @click="compile">Compile</button> <br />
-        <Monaco v-model="result"></Monaco>
+        <SLButton @click="compile">
+            <template #icon>
+                <PhWall></PhWall>
+            </template>
+            Compile
+        </SLButton>
+        <Monaco v-if="showEditors" v-model="result"></Monaco>
     </div>
 </template>
 
 <script setup lang="ts">
+import { PhArrowLeft, PhPlus, PhTrash, PhWall } from '@phosphor-icons/vue';
 import { v4 as uuidv4 } from 'uuid';
+
+const showEditors = ref(false);
 
 const tabs = ref<{ title: string; content: string }[]>([
     {
@@ -49,4 +61,8 @@ async function compile() {
         result.value = error as string;
     }
 }
+
+onMounted(() => {
+    showEditors.value = true;
+});
 </script>

@@ -2,7 +2,6 @@ import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 
 import { createRouter, createWebHistory, setupDataFetchingGuard } from 'vue-router/auto';
-import { GesturePlugin } from '@vueuse/gesture';
 import App from './App.vue';
 import './style.scss';
 
@@ -17,8 +16,9 @@ setupDataFetchingGuard(router);
 
 const app = createApp(App);
 
-app.use(createPinia());
+export const pinia = createPinia();
+
+app.use(pinia);
 app.use(router);
-app.use(GesturePlugin);
 
 app.mount('#app');

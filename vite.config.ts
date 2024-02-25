@@ -19,7 +19,7 @@ export default defineConfig({
             }
         }),
         vue(),
-        Components({ dirs: ['src/components', 'src/@core'] }),
+        Components({ dirs: ['src/components', 'src/@core', '@phosphor-icons/vue'] }),
         AutoImport({
             imports: ['vue', 'vue-router', '@vueuse/core', '@vueuse/math', 'pinia'],
             dirs: ['./src/stores', './src/controllers/**'],

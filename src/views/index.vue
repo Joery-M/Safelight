@@ -1,5 +1,5 @@
 <template>
-    <SLButton size="sm">test</SLButton>
+    <SLButton size="sm" to="/dev">test</SLButton>
     <SLButton to="/editor">To Editor</SLButton>
 </template>
 <script setup lang="ts"></script>

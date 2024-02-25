@@ -16,7 +16,6 @@
                     :style="{
                         left:
                             Math.min(selectionBox.x1, selectionBox.x2) +
-                            useProjection(scrollOffsetX).value +
                             containerBoundingBox.x.value +
                             'px',
                         top:
