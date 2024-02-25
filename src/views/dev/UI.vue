@@ -1,5 +1,6 @@
 <!-- eslint-disable vue/no-v-model-argument -->
 <template>
+    <SLButton to="/dev/" style="margin: 0.5rem">Back</SLButton>
     <SLCard title="Buttons">
         <SLButton size="sm"> Small </SLButton>
         <SLButton size="md"> Medium </SLButton>
@@ -100,7 +101,7 @@ onMounted(() => {
 
             const start = Math.random() * 80;
             const end = start + Math.random() * 10 + 10;
-            const layer = Math.floor(Math.random() * 5);
+            const layer = Math.floor(Math.random() * 20);
             let spotTaken = timeline1Items.value.some((item) => {
                 if (
                     item.layer == layer &&
@@ -117,8 +118,7 @@ onMounted(() => {
                 layer,
                 start,
                 end,
-                isGhost: false,
-                isSelected: false
+                isGhost: false
             });
             break;
         }

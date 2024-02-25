@@ -11,7 +11,16 @@
         }"
         class="btn"
         :disabled="disabled"
-        @click="(p) => $emit('click', p)"
+        v-bind="$attrs"
+        @click="
+            (p) => {
+                if (to) {
+                    $router.push(to);
+                } else {
+                    $emit('click', p);
+                }
+            }
+        "
         @dblclick="(p) => $emit('dblclick', p)"
         @auxclick="(p) => $emit('auxclick', p)"
     >
@@ -55,6 +64,7 @@ defineProps<{
     square?: boolean;
     circle?: boolean;
     loading?: boolean;
+    to?: string;
     type?: 'success' | 'fail' | 'warning';
 }>();
 

@@ -1,6 +1,6 @@
 <template>
-    <RouterLink to="/dev/CodeEditor"> Code Editor </RouterLink>
-    <RouterLink to="/dev/UI"> UI </RouterLink>
+    <SLButton to="/dev/CodeEditor"> Code Editor </SLButton>
+    <SLButton to="/dev/UI"> UI </SLButton>
 </template>
 
 <route lang="json">
