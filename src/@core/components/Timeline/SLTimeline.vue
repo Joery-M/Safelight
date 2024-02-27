@@ -1,96 +1,169 @@
 <template>
-    <div class="timeline">
+    <div
+        class="timeline"
+        :style="{
+            '--marginLeft': marginLeft + 'px'
+        }"
+    >
+        <div class="timeline-layers">
+            <template v-for="row in highestLayer + 1 + extraTopRows" :key="row">
+                <div
+                    v-if="isRowVisible(row - 1)"
+                    class="timeline-layer-controls"
+                    :class="{
+                        odd: row % 2 == 1
+                    }"
+                    :style="{
+                        width: '100%',
+                        top: rowVerticalOffset(row - 1) - scrollOffsetY + 'px',
+                        height: rowHeight + 'px'
+                    }"
+                >
+                    <template v-if="row <= highestLayer + 1">
+                        {{ row - 1 }}
+                    </template>
+                </div>
+            </template>
+        </div>
+        <div class="timeline-background">
+            <template v-for="row in highestLayer + 1 + extraTopRows" :key="row">
+                <div
+                    v-if="isRowVisible(row - 1)"
+                    class="timeline-row"
+                    :class="{
+                        odd: row % 2 == 1
+                    }"
+                    :style="{
+                        left: marginLeft + 'px',
+                        top: rowVerticalOffset(row - 1) - scrollOffsetY + 'px',
+                        height: rowHeight + 'px'
+                    }"
+                />
+            </template>
+        </div>
         <div
             ref="timelineContainer"
             v-bind="$attrs"
             class="timeline-container"
             @pointerdown="dragStart"
             @pointermove="dragging"
-            @pointerup="dragEnd()"
+            @pointerup="dragEnd"
             @pointerup.self="if (selectionDragStarted && !selectionDrag) selectedItems = [];"
         >
-            <Teleport to="body">
-                <div
-                    v-show="selectionDrag"
-                    id="selection-box"
-                    :style="{
-                        left:
-                            Math.min(selectionBox.x1, selectionBox.x2) +
-                            containerBoundingBox.x.value +
-                            'px',
-                        top:
-                            Math.min(selectionBox.y1, selectionBox.y2) +
-                            containerBoundingBox.y.value +
-                            'px',
-                        width:
-                            Math.max(selectionBox.x1, selectionBox.x2) -
-                            Math.min(selectionBox.x1, selectionBox.x2) +
-                            'px',
-                        height:
-                            Math.max(selectionBox.y1, selectionBox.y2) -
-                            useMin(
-                                Math.min(selectionBox.y1, selectionBox.y2),
-                                containerBoundingBox.height
-                            ).value +
-                            'px'
-                    }"
-                />
-            </Teleport>
             <div
                 id="container-scroll-boundary"
                 :style="{
                     width: useProjection(lastEnd).value + 'px',
-                    height: (highestLayer + 1) * rowHeight + 'px'
+                    height: (highestLayer + 1 + extraTopRows) * rowHeight + 'px',
+                    top: 0
                 }"
             />
-            <template v-for="row in highestLayer" :key="row">
-                <div class="timeline-row"></div>
-            </template>
-            <!-- eslint-disable-next-line vue/no-useless-template-attributes -->
             <template v-for="(item, itemI) in items" :key="itemI">
                 <div
-                    v-if="item.start < scrollOffsetX + end && item.end > scrollOffsetX"
+                    v-if="isItemVisible(item.start, item.end, item.layer)"
                     ref="itemElements"
                     class="timeline-item"
                     :class="{
-                        ['num-' + itemI]: true,
                         selected: useArrayIncludes(selectedItems, item).value
                     }"
                     :style="{
                         left: useProjection(item.start).value + 'px',
-                        top:
-                            containerBoundingBox.height.value - rowHeight * (item.layer + 1) + 'px',
+                        top: rowVerticalOffset(item.layer) + 'px',
                         height: rowHeight + 'px',
                         width:
                             useProjection(item.end).value - useProjection(item.start).value + 'px'
                     }"
                     @click="toggleSelect(item)"
                 >
-                    <p>{{ item.title }} {{ item.layer }}</p>
+                    <p>{{ item.title }} {{ item.layer }} {{ Math.round(item.start) }}</p>
                 </div>
             </template>
         </div>
+        <Teleport to="body">
+            <div
+                v-if="selectionDrag"
+                id="selection-box"
+                :style="{
+                    left:
+                        Math.min(selectionBox.x1, selectionBox.x2) +
+                        containerBoundingBox.x.value +
+                        'px',
+                    top:
+                        Math.min(selectionBox.y1, selectionBox.y2) +
+                        containerBoundingBox.y.value +
+                        'px',
+                    width:
+                        Math.max(selectionBox.x1, selectionBox.x2) -
+                        Math.min(selectionBox.x1, selectionBox.x2) +
+                        'px',
+                    height:
+                        Math.max(selectionBox.y1, selectionBox.y2) -
+                        useMin(
+                            Math.min(selectionBox.y1, selectionBox.y2),
+                            containerBoundingBox.height
+                        ).value +
+                        'px'
+                }"
+            />
+        </Teleport>
     </div>
 </template>
 
 <script lang="ts" setup>
-withDefaults(
+const { rowHeight, extraTopRows } = withDefaults(
     defineProps<{
         cursor?: number;
-        endPadding?: number;
+        rowHeight?: number;
+        extraTopRows?: number;
     }>(),
     {
         cursor: undefined,
-        endPadding: 10
+        rowHeight: 32,
+        extraTopRows: 1
     }
 );
 
-const rowHeight = ref(32);
-const highestLayer = ref(0);
-const lastEnd = ref(120);
 let scrollOffsetX = ref(0);
 let scrollOffsetY = ref(0);
+const highestLayer = ref(0);
 const availableRowsWithoutOverflow = ref(0);
+const lastEnd = ref(120);
+const marginLeft = ref(64);
+
+function isItemVisible(start: number, end: number, layer: number) {
+    const isUnderTopOfView =
+        layer - 1 < highestLayer.value + extraTopRows - scrollOffsetY.value / rowHeight;
+    const isAboveBottomOfView =
+        layer >
+        highestLayer.value +
+            extraTopRows -
+            scrollOffsetY.value / rowHeight -
+            availableRowsWithoutOverflow.value;
+    const isHorizontallyInRange =
+        start < scrollOffsetX.value + viewEnd.value && end > scrollOffsetX.value;
+
+    return isUnderTopOfView && isAboveBottomOfView && isHorizontallyInRange;
+}
+
+function isRowVisible(row: number) {
+    const isUnderTopOfView =
+        row - 1 < highestLayer.value + extraTopRows - scrollOffsetY.value / rowHeight;
+    const isAboveBottomOfView =
+        row >
+        highestLayer.value +
+            extraTopRows -
+            scrollOffsetY.value / rowHeight -
+            availableRowsWithoutOverflow.value;
+
+    return isUnderTopOfView && isAboveBottomOfView;
+}
+
+function rowVerticalOffset(row: number) {
+    return (
+        containerBoundingBox.height.value -
+        rowHeight * (row - (highestLayer.value + extraTopRows - availableRowsWithoutOverflow.value))
+    );
+}
 
 const items = defineModel<TimelineComponentItem[]>({
     default: [],
@@ -104,9 +177,11 @@ const items = defineModel<TimelineComponentItem[]>({
         }));
     }
 });
-const start = defineModel<number>('start', { default: 0 });
-const end = defineModel<number>('end', { default: 120 });
+const viewStart = defineModel<number>('start', { default: 0 });
+const viewEnd = defineModel<number>('end', { default: 120 });
 const selectedItems = ref<TimelineComponentItem[]>([]);
+const preSelectedItems = ref<TimelineComponentItem[]>([]);
+const itemElements = ref<HTMLDivElement[]>([]);
 
 const selectionDrag = ref(false);
 const selectionDragStarted = ref(false);
@@ -117,13 +192,13 @@ const selectionBox = reactive({
     y2: 0
 });
 
-const viewRange = ref<[number, number]>([0, end.value]);
+const viewRange = ref<[number, number]>([0, viewEnd.value]);
 const timelineContainer = ref<HTMLDivElement>();
 const containerSizeRange = ref<[number, number]>([0, 100]);
 const containerBoundingBox = useElementBounding(timelineContainer);
 
-watch([end, items], () => {
-    viewRange.value = [0, parseFloat(end.value.toString()) ?? 0];
+watch([viewEnd, items], () => {
+    viewRange.value = [0, parseFloat(viewEnd.value.toString()) ?? 0];
 
     if (items.value && items.value.length > 0) {
         const last = items.value.sort((a, b) => b.end - a.end)[0];
@@ -132,7 +207,7 @@ watch([end, items], () => {
 });
 
 watchImmediate([containerBoundingBox.height, rowHeight], () => {
-    availableRowsWithoutOverflow.value = containerBoundingBox.height.value / rowHeight.value;
+    availableRowsWithoutOverflow.value = containerBoundingBox.height.value / rowHeight;
 });
 
 onMounted(() => {
@@ -146,23 +221,33 @@ onMounted(() => {
     scrollOffsetX = useProjectionInverse(scrolling.x);
     scrollOffsetY = scrolling.y;
 
-    watch(start, () => {
-        scrolling.x.value = useProjection(start).value;
+    watch(viewStart, () => {
+        scrolling.x.value = useProjection(viewStart).value;
     });
 
     watch(scrolling.x, () => {
-        start.value = useProjectionInverse(scrolling.x.value).value;
+        viewStart.value = useProjectionInverse(scrolling.x.value).value;
     });
 
-    watchImmediate(items, () => {
-        if (items.value.length > 0) {
-            const highest = items.value.sort((a, b) => b.layer - a.layer)[0];
-            highestLayer.value = highest.layer;
-
-            const last = items.value.sort((a, b) => b.end - a.end)[0];
-            lastEnd.value = last.end;
+    watch(scrolling.y, () => {
+        if (selectionDrag.value) {
+            dragging();
         }
     });
+
+    watch(
+        items,
+        () => {
+            if (items.value.length > 0) {
+                const highest = [...items.value].sort((a, b) => b.layer - a.layer)[0];
+                highestLayer.value = highest.layer;
+
+                const last = items.value.sort((a, b) => b.end - a.end)[0];
+                lastEnd.value = last.end;
+            }
+        },
+        { immediate: true, deep: true }
+    );
 });
 
 const useProjectionInverse = createProjection(containerSizeRange, viewRange);
@@ -177,6 +262,11 @@ export interface TimelineComponentItem {
 }
 
 function fitAll() {
+    const newStart = items.value.sort((a, b) => a.start - b.start)[0].start;
+    viewEnd.value = items.value.sort((a, b) => b.end - a.end)[0].end - newStart;
+    nextTick(() => {
+        viewStart.value = newStart;
+    });
     console.log('Fit all');
 }
 
@@ -197,15 +287,17 @@ function dragStart(ev: PointerEvent) {
     selectionDragStarted.value = true;
 }
 
-function dragging(ev: PointerEvent) {
-    window.getSelection()?.removeAllRanges();
-
+function dragging(ev?: PointerEvent) {
     if (selectionDragStarted.value) {
+        window.getSelection()?.removeAllRanges();
         selectionDrag.value = true;
 
-        selectionBox.x2 = ev.x - containerBoundingBox.x.value;
-        selectionBox.y2 = ev.y - containerBoundingBox.y.value;
+        if (ev) {
+            selectionBox.x2 = ev.x - containerBoundingBox.x.value;
+            selectionBox.y2 = ev.y - containerBoundingBox.y.value;
+        }
 
+        // calculate the range in timeline space, then loop over all and check what is in said range
         const x1 =
             useProjectionInverse(Math.min(selectionBox.x1, selectionBox.x2)).value +
             scrollOffsetX.value;
@@ -216,22 +308,31 @@ function dragging(ev: PointerEvent) {
         const y2 = Math.max(selectionBox.y2, selectionBox.y1);
 
         // Get all items that are in the range
-        selectedItems.value = items.value.filter((item) => {
-            const itemY = containerBoundingBox.height.value - (item.layer + 1) * rowHeight.value;
+        preSelectedItems.value = items.value.filter((item) => {
+            const itemY =
+                (highestLayer.value + extraTopRows) * rowHeight -
+                scrollOffsetY.value -
+                item.layer * rowHeight;
 
             const isInHorizontalRange = item.start > x2 || item.end < x1;
-            const isInVerticalRange = itemY > y2 || itemY + rowHeight.value < y1;
+            const isInVerticalRange = itemY > y2 || itemY + rowHeight < y1;
 
             return !(isInHorizontalRange || isInVerticalRange);
         });
     }
 }
 
-function dragEnd() {
+function dragEnd(ev: PointerEvent) {
+    if (ev.shiftKey) {
+        selectedItems.value.push(...preSelectedItems.value);
+    } else {
+        selectedItems.value = preSelectedItems.value;
+    }
     nextTick(() => {
         selectionDragStarted.value = false;
         selectionDrag.value = false;
     });
+    preSelectedItems.value = [];
 }
 
 defineExpose({
@@ -241,24 +342,40 @@ defineExpose({
 
 <style lang="scss" scoped>
 .timeline {
-    @apply relative;
+    @apply relative flex overflow-clip;
+
+    * {
+        overscroll-behavior: none;
+    }
+}
+
+.timeline-layers {
+    @apply relative left-0 top-0 h-full overflow-clip overscroll-none;
+    overscroll-behavior-block: contain;
+    overscroll-behavior: none;
+    width: var(--marginLeft);
+
+    .timeline-layer-controls {
+        @apply absolute select-none bg-accent-900 bg-opacity-40;
+
+        &.odd {
+            @apply bg-opacity-20;
+        }
+    }
 }
 .timeline-container {
-    @apply relative left-0 top-0 h-full w-full scroll-px-32 overflow-auto;
+    @apply relative left-0 top-0 h-full w-10 grow overflow-auto;
 
     #container-scroll-boundary {
         @apply pointer-events-none absolute bottom-0;
     }
-
-    .timeline-row {
-        @apply pointer-events-none absolute h-4;
-    }
 }
 
-.timeline-scroll-container {
-    @apply relative h-4 overflow-auto;
-    > div {
-        @apply absolute left-0 top-0 h-4;
+.timeline-row {
+    @apply pointer-events-none absolute w-full bg-base-900 opacity-20;
+
+    &.odd {
+        @apply opacity-100;
     }
 }
 
@@ -274,26 +391,6 @@ defineExpose({
 }
 
 #selection-box {
-    @apply fixed z-20 select-none border-2 fill-base-700 opacity-100;
+    @apply fixed z-20 select-none border-2 bg-base-700 opacity-20;
 }
-
-// This is only for test colors, this can and will be removed in the future
-// @for $i from 0 through 100 {
-//     .timeline-item.num-#{$i} {
-//         $color: hsl(
-//             random(
-//                 $limit: 360
-//             ),
-//             80%,
-//             50%
-//         );
-//         @if lightness($color) > 50 {
-//             color: black;
-//         }
-//         @if lightness($color) <= 50 {
-//             color: white;
-//         }
-//         background-color: $color;
-//     }
-// }
 </style>

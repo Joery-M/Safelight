@@ -22,7 +22,9 @@
         <SLButton v-if="index > 0" @click="tabs.splice(index, 1)">
             <PhTrash />
         </SLButton>
-        <Monaco v-if="showEditors" v-model="tab.content" height="300"></Monaco>
+        <Lazy>
+            <Monaco v-if="showEditors" v-model="tab.content" height="300"></Monaco>
+        </Lazy>
         <br />
     </div>
 
@@ -33,7 +35,9 @@
             </template>
             Compile
         </SLButton>
-        <Monaco v-if="showEditors" v-model="result"></Monaco>
+        <Lazy>
+            <Monaco v-if="showEditors" v-model="result"></Monaco>
+        </Lazy>
     </div>
 </template>
 

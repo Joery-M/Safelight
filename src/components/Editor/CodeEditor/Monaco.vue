@@ -10,26 +10,8 @@
 </template>
 
 <script setup lang="ts">
-import * as monaco from 'monaco-editor';
-import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
-import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
-import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
-import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
-import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
+import { editor, languages } from 'monaco-editor';
 import OneMonokai from './themes/OneMonokai-Monaco.json';
-
-// monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
-//     lib: ['ESNext', 'Decorators', 'ES2015'],
-//     allowSyntheticDefaultImports: true
-// });
-
-monaco.languages.typescript.typescriptDefaults.addExtraLib(
-    `
-    declare class test {
-        hi: string
-    }
-    `
-);
 
 const vModel = defineModel<string>({
     default: '',
@@ -52,39 +34,54 @@ withDefaults(
     }
 );
 self.MonacoEnvironment = {
-    getWorker(_, label) {
+    async getWorker(_, label) {
         switch (label) {
             case 'json':
-                return new jsonWorker();
+                return new (
+                    await import('monaco-editor/esm/vs/language/json/json.worker?worker')
+                ).default();
             case 'css':
             case 'scss':
             case 'less':
-                return new cssWorker();
+                return new (
+                    await import('monaco-editor/esm/vs/language/css/css.worker?worker')
+                ).default();
             case 'html':
             case 'handlebars':
             case 'razor':
-                return new htmlWorker();
+                return new (
+                    await import('monaco-editor/esm/vs/language/html/html.worker?worker')
+                ).default();
             case 'javascript':
             case 'typescript':
-                return new tsWorker();
+                return new (
+                    await import('monaco-editor/esm/vs/language/typescript/ts.worker?worker')
+                ).default();
             default:
-                return new editorWorker();
+                return new (
+                    await import('monaco-editor/esm/vs/editor/editor.worker?worker')
+                ).default();
         }
     }
 };
 
-const editor = shallowRef<monaco.editor.IStandaloneCodeEditor>();
+const currentEditor = shallowRef<editor.IStandaloneCodeEditor>();
 
 onMounted(() => {
     if (!monacoContainer.value) return;
-    if (editor.value) editor.value.dispose();
+    if (currentEditor.value) currentEditor.value.dispose();
 
-    monaco.editor.defineTheme(
-        'darkplus',
-        OneMonokai as unknown as monaco.editor.IStandaloneThemeData
+    languages.typescript.typescriptDefaults.addExtraLib(
+        `
+        declare class test {
+            hi: string
+        }
+    `
     );
 
-    editor.value = monaco.editor.create(monacoContainer.value, {
+    editor.defineTheme('darkplus', OneMonokai as unknown as editor.IStandaloneThemeData);
+
+    currentEditor.value = editor.create(monacoContainer.value, {
         value: vModel.value,
         language: 'typescript',
         automaticLayout: true,
@@ -92,8 +89,8 @@ onMounted(() => {
         'semanticHighlighting.enabled': true
     });
 
-    editor.value.onDidChangeModelContent(() => {
-        const value = editor.value!.getValue();
+    currentEditor.value.onDidChangeModelContent(() => {
+        const value = currentEditor.value!.getValue();
         if (value !== vModel.value) {
             vModel.value = value;
         }
@@ -101,12 +98,12 @@ onMounted(() => {
 });
 
 watch(vModel, (newValue) => {
-    if (editor.value && editor.value.getValue() !== newValue) {
-        editor.value.setValue(newValue!);
+    if (currentEditor.value && currentEditor.value.getValue() !== newValue) {
+        currentEditor.value.setValue(newValue!);
     }
 });
 
 onBeforeUnmount(() => {
-    editor.value?.dispose();
+    currentEditor.value?.dispose();
 });
 </script>

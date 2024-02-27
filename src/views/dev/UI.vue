@@ -46,7 +46,9 @@
         <p>View range:</p>
         <input v-model="timeline1ViewStart" type="number" min="0" /> -
         <input v-model="timeline1ViewEnd" type="number" min="0" />
+        <SLButton @click="timeline1.resizeToFitAll()">Fit</SLButton>
         <SLTimeline
+            ref="timeline1"
             v-model="timeline1Items"
             v-model:start="timeline1ViewStart"
             v-model:end="timeline1ViewEnd"
@@ -65,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import { PhCheck, PhDownload, PhFileVue, PhPlus, PhX, PhArrowLeft } from '@phosphor-icons/vue';
+import { PhArrowLeft, PhCheck, PhDownload, PhFileVue, PhPlus, PhX } from '@phosphor-icons/vue';
 import { type TimelineComponentItem } from '../../@core/components/Timeline/SLTimeline.vue';
 
 const showDownloadLoading = ref(false);
@@ -88,6 +90,7 @@ function ClickDownload() {
     }, 1000);
 }
 
+const timeline1 = ref();
 const timeline1ViewStart = ref(0);
 const timeline1ViewEnd = ref(120);
 const timeline1Items = ref<TimelineComponentItem[]>([]);
@@ -99,7 +102,7 @@ onMounted(() => {
         while (tries < 100) {
             tries++;
 
-            const start = Math.random() * 80;
+            const start = Math.random() * 90;
             const end = start + Math.random() * 10 + 10;
             const layer = Math.floor(Math.random() * 20);
             let spotTaken = timeline1Items.value.some((item) => {

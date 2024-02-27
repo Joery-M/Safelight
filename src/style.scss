@@ -4,6 +4,8 @@
 
 body {
     @apply m-0 h-screen w-screen text-white bg-base-900;
+    overscroll-behavior-block: contain;
+    overscroll-behavior: none;
 }
 
 #app {
