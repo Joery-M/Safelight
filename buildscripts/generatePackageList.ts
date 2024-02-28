@@ -5,7 +5,8 @@ const bannedKeys = ['unsavedDependencies', 'path'];
 
 const output = spawn('pnpm', ['list', '--depth', '2', '--json', '--long'], {
     cwd: process.cwd(),
-    stdio: ['inherit', 'pipe', 'inherit']
+    stdio: ['inherit', 'pipe', 'inherit'],
+    shell: true
 });
 
 // Everything is spat out in one go

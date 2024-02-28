@@ -8,11 +8,14 @@
         "generate-disclaimer": "pnpm-licenses generate-disclaimer -o ./public/disclaimer.txt",
         "generate-license": "pnpm-licenses list -o ./public/licenses.json",
         "generate-package-list": "tsx ./buildscripts/generatePackageList.ts",
-        "build": "pnpm \"/^(generate-.*|type-check)/\" && pnpm build-only",
+        "generate-all": "pnpm \"/^(generate-(?!all).*)/\"",
+        "build": "pnpm \"/^(generate-(?!all).*|type-check)/\" && pnpm build-only",
         "preview": "vite preview",
         "build-only": "vite build",
         "type-check": "vue-tsc --noEmit",
-        "lint": "eslint . ./src/**/*[.ts,.vue] --fix"
+        "lint": "eslint . ./src/**/*[.ts,.vue] --fix",
+        "postinstall": "pnpm generate-all",
+        "postuninstall": "pnpm generate-all"
     },
     "dependencies": {
         "@janvorisek/drie": "1.0.0-alpha-1.48",

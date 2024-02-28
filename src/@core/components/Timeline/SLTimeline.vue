@@ -58,13 +58,14 @@
                     top: 0
                 }"
             />
-            <template v-for="(item, itemI) in items" :key="itemI">
+            <template v-for="item in items" :key="item">
                 <div
                     v-if="isItemVisible(item.start, item.end, item.layer)"
                     ref="itemElements"
                     class="timeline-item"
                     :class="{
-                        selected: useArrayIncludes(selectedItems, item).value
+                        selected: useArrayIncludes(selectedItems, item).value,
+                        preselected: useArrayIncludes(preSelectedItems, item).value,
                     }"
                     :style="{
                         left: useProjection(item.start).value + 'px',
@@ -206,7 +207,7 @@ watch([viewEnd, items], () => {
     }
 });
 
-watchImmediate([containerBoundingBox.height, rowHeight], () => {
+watchImmediate([containerBoundingBox.height, toRef(rowHeight)], () => {
     availableRowsWithoutOverflow.value = containerBoundingBox.height.value / rowHeight;
 });
 
@@ -323,7 +324,7 @@ function dragging(ev?: PointerEvent) {
 }
 
 function dragEnd(ev: PointerEvent) {
-    if (ev.shiftKey) {
+    if (ev.ctrlKey) {
         selectedItems.value.push(...preSelectedItems.value);
     } else {
         selectedItems.value = preSelectedItems.value;
@@ -380,17 +381,23 @@ defineExpose({
 }
 
 .timeline-item {
-    @apply absolute select-none border-0 border-accent-700 bg-accent-900
-        transition-all duration-75 hover:z-10 hover:border-2;
+    @apply absolute select-none bg-accent-900
+        transition-all duration-100 hover:z-10;
 
-    transition-property: border;
+    transition-property: border, background;
 
+    &:hover {
+        @apply bg-accent-800;
+    }
     &.selected {
-        @apply border-2 border-accent-500;
+        @apply bg-accent-600 hover:bg-accent-500;
+    }
+    &.preselected {
+        @apply bg-accent-600 ;
     }
 }
 
 #selection-box {
-    @apply fixed z-20 select-none border-2 bg-base-700 opacity-20;
+    @apply fixed z-20 select-none border-2 bg-base-700 opacity-20 pointer-events-none;
 }
 </style>
