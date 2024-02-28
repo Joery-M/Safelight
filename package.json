@@ -5,8 +5,8 @@
     "type": "module",
     "scripts": {
         "dev": "pnpm generate-all && rm -f auto-imports.d.ts components.d.ts && vite",
-        "generate-disclaimer": "pnpm-licenses generate-disclaimer -o ./public/disclaimer.txt",
-        "generate-license": "pnpm-licenses list -o ./public/licenses.json",
+        "generate-disclaimer": "pnpm-licenses generate-disclaimer -o ./src/generated/disclaimer.txt",
+        "generate-license": "pnpm-licenses list -o ./src/generated/licenses.json",
         "generate-package-list": "tsx ./buildscripts/generatePackageList.ts",
         "generate-all": "pnpm \"/^(generate-(?!all).*)/\"",
         "build": "pnpm \"/^(generate-(?!all).*|type-check)/\" && pnpm build-only",

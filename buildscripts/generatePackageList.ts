@@ -12,7 +12,7 @@ const output = spawn('pnpm', ['list', '--depth', '2', '--json', '--long'], {
 // Everything is spat out in one go
 output.stdout.once('data', (msg) => {
     const filteredFile = removePath(JSON.parse(msg.toString())[0]);
-    writeFile('./public/packages.json', JSON.stringify(filteredFile, undefined, 4));
+    writeFile('./src/generated/packages.json', JSON.stringify(filteredFile, undefined, 4));
 });
 
 // Recursively remove all fields that have the key "path", since this is a local path
