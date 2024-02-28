@@ -10,8 +10,9 @@
 </template>
 
 <script setup lang="ts">
-import { editor, languages } from 'monaco-editor';
+const monaco = await import('monaco-editor');
 import OneMonokai from './themes/OneMonokai-Monaco.json';
+import type { editor } from 'monaco-editor';
 
 const vModel = defineModel<string>({
     default: '',
@@ -71,7 +72,7 @@ onMounted(() => {
     if (!monacoContainer.value) return;
     if (currentEditor.value) currentEditor.value.dispose();
 
-    languages.typescript.typescriptDefaults.addExtraLib(
+    monaco.languages.typescript.typescriptDefaults.addExtraLib(
         `
         declare class test {
             hi: string
@@ -79,9 +80,9 @@ onMounted(() => {
     `
     );
 
-    editor.defineTheme('darkplus', OneMonokai as unknown as editor.IStandaloneThemeData);
+    monaco.editor.defineTheme('darkplus', OneMonokai as unknown as editor.IStandaloneThemeData);
 
-    currentEditor.value = editor.create(monacoContainer.value, {
+    currentEditor.value = monaco.editor.create(monacoContainer.value, {
         value: vModel.value,
         language: 'typescript',
         automaticLayout: true,

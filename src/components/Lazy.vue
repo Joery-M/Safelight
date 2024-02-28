@@ -5,7 +5,7 @@ nextTick(() => {
 });
 </script>
 <template>
-    <div>
+    <Suspense>
         <slot v-if="shouldRender" />
-    </div>
+    </Suspense>
 </template>
