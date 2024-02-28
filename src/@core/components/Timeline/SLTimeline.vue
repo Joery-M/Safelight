@@ -236,6 +236,7 @@ onMounted(() => {
         }
     });
 
+    let hasSetScroll = false
     watch(
         items,
         () => {
@@ -245,6 +246,14 @@ onMounted(() => {
 
                 const last = items.value.sort((a, b) => b.end - a.end)[0];
                 lastEnd.value = last.end;
+
+                if(!hasSetScroll && timelineContainer.value) {
+                    setTimeout(()=>{
+                        scrolling.y.value = (highestLayer.value + 1) * rowHeight
+                    }, 1)
+                    timelineContainer.value?.scrollTop
+                    hasSetScroll = true
+                }
             }
         },
         { immediate: true, deep: true }
