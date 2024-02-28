@@ -1,11 +1,13 @@
 <!-- eslint-disable vue/no-v-model-argument -->
 <template>
-    <SLButton to="/dev/" style="margin: 0.5rem"><PhArrowLeft /></SLButton>
+    <SLButton to="/dev/" style="margin: 0.5rem" alt="To dev pages overview"
+        ><PhArrowLeft
+    /></SLButton>
     <SLCard title="Buttons">
-        <SLButton size="sm"> Small </SLButton>
-        <SLButton size="md"> Medium </SLButton>
-        <SLButton size="lg"> Large </SLButton>
-        <SLButton size="xl"> Extra Large </SLButton>
+        <SLButton size="sm" alt="Small Button"> Small </SLButton>
+        <SLButton size="md" alt="Medium Button"> Medium </SLButton>
+        <SLButton size="lg" alt="Large Button"> Large </SLButton>
+        <SLButton size="xl" alt="Extra Large Button"> Extra Large </SLButton>
 
         <h2>Wide</h2>
         <SLButton wide>Wide</SLButton>
@@ -52,8 +54,26 @@
             v-model="timeline1Items"
             v-model:start="timeline1ViewStart"
             v-model:end="timeline1ViewEnd"
-            class="h-64"
-        />
+            v-model:selectedItems="timeline1Selection"
+            class="h-96"
+            @item-click="
+                (item) => {
+                    if (!timeline1Selection?.includes(item)) timeline1Selection?.push(item);
+                }
+            "
+        >
+            <template #layerControls="{ index }">
+                <SLButton size="sm" style="height: 28px; width: 28px; margin: 0" circle>
+                    <PhEye size="12" />
+                </SLButton>
+                {{ index }}
+            </template>
+        </SLTimeline>
+        <div>
+            <p v-for="selected in timeline1Selection" :key="selected.id">
+                {{ selected.id }}
+            </p>
+        </div>
     </SLCard>
 
     <SLCard title="Lists">
@@ -67,7 +87,16 @@
 </template>
 
 <script setup lang="ts">
-import { PhArrowLeft, PhCheck, PhDownload, PhFileVue, PhPlus, PhX } from '@phosphor-icons/vue';
+import {
+    PhArrowLeft,
+    PhCheck,
+    PhDownload,
+    PhEye,
+    PhFileVue,
+    PhPlus,
+    PhX
+} from '@phosphor-icons/vue';
+import { v4 as uuidv4 } from 'uuid';
 import { type TimelineComponentItem } from '../../@core/components/Timeline/SLTimeline.vue';
 
 const showDownloadLoading = ref(false);
@@ -91,6 +120,7 @@ function ClickDownload() {
 }
 
 const timeline1 = ref();
+const timeline1Selection = ref<TimelineComponentItem[]>();
 const timeline1ViewStart = ref(0);
 const timeline1ViewEnd = ref(120);
 const timeline1Items = ref<TimelineComponentItem[]>([]);
@@ -117,6 +147,7 @@ onMounted(() => {
             if (spotTaken) continue;
 
             timeline1Items.value.push({
+                id: uuidv4(),
                 title: (i + 1).toString(),
                 layer,
                 start,

@@ -7,9 +7,9 @@
         }"
     >
         <figure v-if="img && !imgBottom">
-            <img :src="img" />
+            <img role="figure" :src="img" :alt="imgAlt" />
         </figure>
-        <div class="card-body">
+        <div class="card-body" role="contentinfo">
             <h2 v-if="slots.title || title" class="card-title">
                 <template v-if="title">
                     {{ title }}
@@ -37,6 +37,7 @@
 <script setup lang="ts">
 defineProps<{
     img?: string;
+    imgAlt?: string;
     imgBottom?: boolean;
     imgRounded?: boolean;
     noMaxWidth?: boolean;

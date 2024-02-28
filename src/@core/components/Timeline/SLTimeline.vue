@@ -20,7 +20,7 @@
                     }"
                 >
                     <template v-if="row <= highestLayer + 1">
-                        {{ row - 1 }}
+                        <slot :index="row - 1" name="layerControls"></slot>
                     </template>
                 </div>
             </template>
@@ -45,7 +45,7 @@
             ref="timelineContainer"
             v-bind="$attrs"
             class="timeline-container"
-            @pointerdown="dragStart"
+            @pointerdown.self="dragStart"
             @pointermove="dragging"
             @pointerup="dragEnd"
             @pointerup.self="if (selectionDragStarted && !selectionDrag) selectedItems = [];"
@@ -58,7 +58,7 @@
                     top: 0
                 }"
             />
-            <template v-for="item in items" :key="item">
+            <template v-for="item in items" :key="item.id">
                 <div
                     v-if="isItemVisible(item.start, item.end, item.layer)"
                     ref="itemElements"
@@ -74,7 +74,8 @@
                         width:
                             useProjection(item.end).value - useProjection(item.start).value + 'px'
                     }"
-                    @click="selectedItems.push(item)"
+                    @click="$emit('itemClick', item)"
+                    @pointerdown="itemDragStart"
                 >
                     <p>{{ item.title }} {{ item.layer }} {{ Math.round(item.start) }}</p>
                 </div>
@@ -180,8 +181,9 @@ const items = defineModel<TimelineComponentItem[]>({
 });
 const viewStart = defineModel<number>('start', { default: 0 });
 const viewEnd = defineModel<number>('end', { default: 120 });
-const selectedItems = ref<TimelineComponentItem[]>([]);
+const selectedItems = defineModel<TimelineComponentItem[]>('selectedItems', { default: [] });
 const preSelectedItems = ref<TimelineComponentItem[]>([]);
+// const ghostItems = ref<TimelineComponentItem[]>([]);
 const itemElements = ref<HTMLDivElement[]>([]);
 
 const selectionDrag = ref(false);
@@ -263,14 +265,6 @@ onMounted(() => {
 const useProjectionInverse = createProjection(containerSizeRange, viewRange);
 const useProjection = createProjection(viewRange, containerSizeRange);
 
-export interface TimelineComponentItem {
-    start: number;
-    end: number;
-    title: string;
-    layer: number;
-    isGhost: boolean;
-}
-
 function fitAll() {
     const newStart = items.value.sort((a, b) => a.start - b.start)[0].start;
     viewEnd.value = items.value.sort((a, b) => b.end - a.end)[0].end - newStart;
@@ -279,14 +273,14 @@ function fitAll() {
     });
 }
 
-function toggleSelect(item: TimelineComponentItem) {
-    if (selectedItems.value.includes(item)) {
-        const index = selectedItems.value.indexOf(item);
-        selectedItems.value.splice(index, 1);
-    } else {
-        selectedItems.value.push(item);
-    }
-}
+// function toggleSelect(item: TimelineComponentItem) {
+//     if (selectedItems.value.includes(item)) {
+//         const index = selectedItems.value.indexOf(item);
+//         selectedItems.value.splice(index, 1);
+//     } else {
+//         selectedItems.value.push(item);
+//     }
+// }
 
 function dragStart(ev: PointerEvent) {
     selectionBox.x1 = ev.clientX - containerBoundingBox.x.value;
@@ -345,9 +339,26 @@ function dragEnd(ev: PointerEvent) {
     preSelectedItems.value = [];
 }
 
+function itemDragStart(ev: PointerEvent) {
+    console.log(ev.x, ev.y);
+}
+
 defineExpose({
     resizeToFitAll: fitAll
 });
+
+defineEmits<{
+    itemClick: [item: TimelineComponentItem];
+}>();
+
+export interface TimelineComponentItem {
+    id: string;
+    start: number;
+    end: number;
+    title: string;
+    layer: number;
+    isGhost: boolean;
+}
 </script>
 
 <style lang="scss" scoped>
@@ -366,10 +377,10 @@ defineExpose({
     width: var(--marginLeft);
 
     .timeline-layer-controls {
-        @apply absolute select-none bg-accent-900 bg-opacity-40;
+        @apply absolute select-none border-r-2 border-base-700 bg-base-800 bg-opacity-20;
 
         &.odd {
-            @apply bg-opacity-20;
+            @apply bg-opacity-40;
         }
     }
 }

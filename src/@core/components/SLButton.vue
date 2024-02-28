@@ -1,5 +1,7 @@
 <template>
     <button
+        role="button"
+        :aria-label="alt"
         :class="{
             ['btn-' + (size ?? 'md')]: true,
             ['btn-type-' + type]: type,
@@ -65,6 +67,7 @@ defineProps<{
     circle?: boolean;
     loading?: boolean;
     to?: string;
+    alt?: string;
     type?: 'success' | 'fail' | 'warning';
 }>();
 
