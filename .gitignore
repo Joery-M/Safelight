@@ -28,9 +28,17 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+# Generated dev files
 /stats.html
 /auto-imports.d.ts
 /components.d.ts
 /typed-router.d.ts
+
+# Generated public items
 /public/licenses.json
 /public/disclaimer.txt
+/public/packages.json
+
+# Temporary vite configs
+/vite.config.ts.timestamp-*.mjs

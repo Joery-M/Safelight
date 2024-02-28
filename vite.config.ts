@@ -35,10 +35,7 @@ export default defineConfig({
     },
     build: {
         rollupOptions: {
-            plugins: [visualizer()],
-            output: {
-                manualChunks: { three: ['three', '@janvorisek/drie'] }
-            }
+            plugins: [visualizer()]
         }
     }
 });
