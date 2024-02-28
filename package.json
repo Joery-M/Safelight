@@ -4,7 +4,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "dev": "rm -f auto-imports.d.ts components.d.ts && vite",
+        "dev": "pnpm generate-all && rm -f auto-imports.d.ts components.d.ts && vite",
         "generate-disclaimer": "pnpm-licenses generate-disclaimer -o ./public/disclaimer.txt",
         "generate-license": "pnpm-licenses list -o ./public/licenses.json",
         "generate-package-list": "tsx ./buildscripts/generatePackageList.ts",
@@ -13,9 +13,7 @@
         "preview": "vite preview",
         "build-only": "vite build",
         "type-check": "vue-tsc --noEmit",
-        "lint": "eslint . ./src/**/*[.ts,.vue] --fix",
-        "postinstall": "pnpm generate-all",
-        "postuninstall": "pnpm generate-all"
+        "lint": "eslint . ./src/**/*[.ts,.vue] --fix"
     },
     "dependencies": {
         "@janvorisek/drie": "1.0.0-alpha-1.48",
@@ -82,3 +80,4 @@
         "vue-tsc": "^1.8.27"
     }
 }
+

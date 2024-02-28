@@ -65,7 +65,7 @@
                     class="timeline-item"
                     :class="{
                         selected: useArrayIncludes(selectedItems, item).value,
-                        preselected: useArrayIncludes(preSelectedItems, item).value,
+                        preselected: useArrayIncludes(preSelectedItems, item).value
                     }"
                     :style="{
                         left: useProjection(item.start).value + 'px',
@@ -74,7 +74,7 @@
                         width:
                             useProjection(item.end).value - useProjection(item.start).value + 'px'
                     }"
-                    @click="toggleSelect(item)"
+                    @click="selectedItems.push(item)"
                 >
                     <p>{{ item.title }} {{ item.layer }} {{ Math.round(item.start) }}</p>
                 </div>
@@ -236,7 +236,7 @@ onMounted(() => {
         }
     });
 
-    let hasSetScroll = false
+    let hasSetScroll = false;
     watch(
         items,
         () => {
@@ -247,12 +247,12 @@ onMounted(() => {
                 const last = items.value.sort((a, b) => b.end - a.end)[0];
                 lastEnd.value = last.end;
 
-                if(!hasSetScroll && timelineContainer.value) {
-                    setTimeout(()=>{
-                        scrolling.y.value = (highestLayer.value + 1) * rowHeight
-                    }, 1)
-                    timelineContainer.value?.scrollTop
-                    hasSetScroll = true
+                if (!hasSetScroll && timelineContainer.value) {
+                    setTimeout(() => {
+                        scrolling.y.value = (highestLayer.value + 1) * rowHeight;
+                    }, 1);
+                    timelineContainer.value?.scrollTop;
+                    hasSetScroll = true;
                 }
             }
         },
@@ -277,7 +277,6 @@ function fitAll() {
     nextTick(() => {
         viewStart.value = newStart;
     });
-    console.log('Fit all');
 }
 
 function toggleSelect(item: TimelineComponentItem) {
@@ -333,7 +332,8 @@ function dragging(ev?: PointerEvent) {
 }
 
 function dragEnd(ev: PointerEvent) {
-    if (ev.ctrlKey) {
+    // Either to make it intuitive for dragging and just clicking an elem
+    if (ev.shiftKey || ev.ctrlKey) {
         selectedItems.value.push(...preSelectedItems.value);
     } else {
         selectedItems.value = preSelectedItems.value;
@@ -401,12 +401,12 @@ defineExpose({
     &.selected {
         @apply bg-accent-600 hover:bg-accent-500;
     }
-    &.preselected {
-        @apply bg-accent-600 ;
+    &.preselected:not(.selected) {
+        @apply bg-accent-800;
     }
 }
 
 #selection-box {
-    @apply fixed z-20 select-none border-2 bg-base-700 opacity-20 pointer-events-none;
+    @apply pointer-events-none fixed z-20 select-none border-2 bg-base-700 opacity-20;
 }
 </style>
