@@ -7,7 +7,11 @@
     >
         <h1 class="font-sans">Just drop it gently</h1>
     </SLCard>
-    <Monitor v-if="project.activeTimeline" :timeline="activeTimeline" class="min-h-100 w-full" />
+    <Monitor
+        v-if="project.activeTimeline"
+        :timeline="project.activeTimeline"
+        class="min-h-100 w-full"
+    />
     <SLButton @click="fileDialog.open">Load file</SLButton>
     <table>
         <tr v-for="media in project.media" :key="media.id">
@@ -42,8 +46,7 @@ const dropZone = useDropZone(document.body, {
     }
 });
 
-const projectStore = useProject();
-const { project, activeTimeline, getMediaFromID } = projectStore;
+const project = useProject();
 
 fileDialog.onChange((fileList) => {
     if (!fileList) return;
@@ -59,28 +62,28 @@ async function loadFile(file: File) {
     let media = project.createMedia(file);
 
     // Just to use the proxy from pinia
-    media = project.media.find((m) => m.id == media.id)!;
+    media = project.getMediaFromID(media.id)!;
 
-    await generateMediaThumbnail(file).then((blob) => {
-        const m = getMediaFromID(media.id);
+    /*     await generateMediaThumbnail(file).then((blob) => {
+        const m = project.getMediaFromID(media.id);
         if (m) m.previewImage = blob;
-    });
+    }); */
 
-    await getVideoInfo(file).then((info) => {
+    /* await getVideoInfo(file).then((info) => {
         if (!info) return;
-        const m = getMediaFromID(media.id);
+        const m = project.getMediaFromID(media.id);
         if (m) {
             m.fileInfo = info;
             m.duration = parseFloat(info.format.duration) * 1000;
         }
-    });
+    }); */
 
-    activeTimeline.createTimelineItem(media);
+    project.activeTimeline.createTimelineItem(media.id);
 }
 
 onBeforeUnmount(() => {
     // reset store, which currently tries to call 'this', trying to reference the store
-    projectStore.$reset.call(projectStore);
+    project.$dispose();
 });
 </script>
 

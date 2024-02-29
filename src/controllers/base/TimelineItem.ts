@@ -3,20 +3,30 @@ import Media from '../Media/Media';
 import Timecode from '@/helpers/Timecode';
 import type AVTimelineItem from '../TimelineItem/AVTimelineItem';
 import type BaseTimeline from './Timeline';
+import type { UnwrapNestedRefs } from 'vue';
 
 export default abstract class BaseTimelineItem {
     public id = uuidv4();
-    public media = reactive<Media[]>([]);
+    public media = ref<Media>();
     public layer = 0;
     public abstract type: TimelineItemType;
     public abstract parentTimeline: BaseTimeline;
 
     public start = new Timecode(0);
-    public end = new Timecode(0);
+    public end = ref(new Timecode(0));
 
-    public async load(media: Media) {
-        this.media.push(media);
-        this.end = new Timecode(media.duration);
+    public async load(mediaId: string) {
+        useProject().getMediaFromID(mediaId)
+        this.media.value = media;
+        if (!media.duration.value) {
+            console.log(media.duration);
+            watchOnce(media.duration, () => {
+                this.end.value = new Timecode(media.duration.value);
+            });
+        } else {
+            console.log(media.duration.value);
+            this.end.value = new Timecode(media.duration.value);
+        }
     }
 
     public onMove(newStart: Timecode) {

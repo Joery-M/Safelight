@@ -13,7 +13,7 @@ export default class SimpleProject extends BaseProject {
     constructor() {
         super();
 
-        const tl = new SimpleTimeline(this);
+        const tl = new SimpleTimeline();
 
         this.timelines = [tl];
         this.activeTimeline = 0;
