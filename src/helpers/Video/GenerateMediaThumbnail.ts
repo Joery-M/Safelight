@@ -1,10 +1,9 @@
 import MimeMatcher from 'mime-matcher';
 
-export function generateMediaThumbnail(file: File, maxWidth = 427, maxHeight = 240) {
+export function generateMediaThumbnail(file: File, percent = 0.1, maxWidth = 427, maxHeight = 240) {
     return new Promise<string>((resolve) => {
         const isVideo = new MimeMatcher('video/*').match(file.type);
         const isImage = new MimeMatcher('image/*').match(file.type);
-        console.log(file.type);
 
         if (isImage) {
             // Generate image
@@ -58,7 +57,7 @@ export function generateMediaThumbnail(file: File, maxWidth = 427, maxHeight = 2
             video.muted = true;
 
             video.onloadeddata = () => {
-                video.currentTime = Math.min(video.duration, 10) * Math.random();
+                video.currentTime = video.duration * percent;
 
                 const canvas = document.createElement('canvas');
 

@@ -1,51 +1,42 @@
 <template>
-    <table class="timeline">
-        <tr v-for="videoLayer in highestLayer + 1" :key="videoLayer"></tr>
-    </table>
+    <SLTimeline
+        v-model="tlComponentItems"
+        v-model:start="timelineViewStart"
+        v-model:end="timelineViewEnd"
+    />
 </template>
 
 <script lang="ts" setup>
+import type { TimelineComponentItem } from '@/@core/components/Timeline/SLTimeline.vue';
+import type BaseTimelineItem from '@/controllers/base/TimelineItem';
+
 const project = useProject();
-const timeline = project.activeTimeline;
+const timeline = storeToRefs(project).activeTimeline;
 
-const highestLayer = ref(1);
+const timelineViewStart = ref(0);
+const timelineViewEnd = ref(10 * 1000);
 
-watch(timeline.items, () => {
-    timeline.items.forEach((item) => {
-        if (item.layer > highestLayer.value) {
-            highestLayer.value = item.layer;
-        }
-    });
-});
+// NEEDS IMPROVEMENT
+// This is a very naïve way of
+const tlComponentItems = useArrayMap<BaseTimelineItem, TimelineComponentItem>(
+    timeline.value.items,
+    (elem) => {
+        console.log({
+            start: elem.start.time,
+            end: elem.end.time,
+            id: elem.id,
+            isGhost: false,
+            layer: elem.layer,
+            title: elem.media.map((m) => m.name).join(' - ')
+        });
+        return {
+            start: elem.start.time,
+            end: elem.end.time,
+            id: elem.id,
+            isGhost: false,
+            layer: elem.layer,
+            title: elem.media.map((m) => m.name).join(' - ')
+        };
+    }
+);
 </script>
-
-<style lang="scss" scoped>
-.timeline {
-    @apply flex w-full flex-col;
-
-    tr {
-        height: 2rem;
-
-        @apply w-full odd:bg-base-200/60 even:bg-base-200/30;
-    }
-}
-
-.divider {
-    margin: 0;
-    height: unset;
-}
-
-.container {
-    height: 600px;
-
-    @apply flex flex-col justify-center;
-
-    div:not(.divider) {
-        display: flex;
-
-        &:first-child {
-            justify-content: flex-end;
-        }
-    }
-}
-</style>

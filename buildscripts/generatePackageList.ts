@@ -1,5 +1,10 @@
 import { spawn } from 'child_process';
-import { writeFile } from 'fs/promises';
+import { existsSync } from 'fs';
+import { mkdir, writeFile } from 'fs/promises';
+
+if (!existsSync('./src/generated')) {
+    mkdir('./src/generated');
+}
 
 const bannedKeys = ['unsavedDependencies', 'path'];
 
@@ -10,9 +15,9 @@ const output = spawn('pnpm', ['list', '--depth', '2', '--json', '--long'], {
 });
 
 // Everything is spat out in one go
-output.stdout.once('data', (msg) => {
+output.stdout.once('data', async (msg) => {
     const filteredFile = removePath(JSON.parse(msg.toString())[0]);
-    writeFile('./src/generated/packages.json', JSON.stringify(filteredFile, undefined, 4));
+    await writeFile('./src/generated/packages.json', JSON.stringify(filteredFile, undefined, 4));
 });
 
 // Recursively remove all fields that have the key "path", since this is a local path

@@ -6,7 +6,7 @@
         }"
     >
         <div class="timeline-layers">
-            <template v-for="row in highestLayer + 1 + extraTopRows" :key="row">
+            <template v-for="row in visibleLayers" :key="row">
                 <div
                     v-if="isRowVisible(row - 1)"
                     class="timeline-layer-controls"
@@ -26,7 +26,7 @@
             </template>
         </div>
         <div class="timeline-background">
-            <template v-for="row in highestLayer + 1 + extraTopRows" :key="row">
+            <template v-for="row in visibleLayers" :key="row">
                 <div
                     v-if="isRowVisible(row - 1)"
                     class="timeline-row"
@@ -45,6 +45,7 @@
             ref="timelineContainer"
             v-bind="$attrs"
             class="timeline-container"
+            style="scrollbar-width: thin"
             @pointerdown.self="dragStart"
             @pointermove="dragging"
             @pointerup="dragEnd"
@@ -54,7 +55,7 @@
                 id="container-scroll-boundary"
                 :style="{
                     width: useProjection(lastEnd).value + 'px',
-                    height: (highestLayer + 1 + extraTopRows) * rowHeight + 'px',
+                    height: visibleLayers * rowHeight + 'px',
                     top: 0
                 }"
             />
@@ -129,16 +130,16 @@ let scrollOffsetX = ref(0);
 let scrollOffsetY = ref(0);
 const highestLayer = ref(0);
 const availableRowsWithoutOverflow = ref(0);
+const visibleLayers = useMax(availableRowsWithoutOverflow, highestLayer.value + 1 + extraTopRows);
 const lastEnd = ref(120);
 const marginLeft = ref(64);
 
 function isItemVisible(start: number, end: number, layer: number) {
-    const isUnderTopOfView =
-        layer - 1 < highestLayer.value + extraTopRows - scrollOffsetY.value / rowHeight;
+    const isUnderTopOfView = layer - 1 < visibleLayers.value - 1 - scrollOffsetY.value / rowHeight;
     const isAboveBottomOfView =
         layer >
-        highestLayer.value +
-            extraTopRows -
+        visibleLayers.value -
+            1 -
             scrollOffsetY.value / rowHeight -
             availableRowsWithoutOverflow.value;
     const isHorizontallyInRange =
@@ -148,12 +149,11 @@ function isItemVisible(start: number, end: number, layer: number) {
 }
 
 function isRowVisible(row: number) {
-    const isUnderTopOfView =
-        row - 1 < highestLayer.value + extraTopRows - scrollOffsetY.value / rowHeight;
+    const isUnderTopOfView = row - 1 < visibleLayers.value - 1 - scrollOffsetY.value / rowHeight;
     const isAboveBottomOfView =
         row >
-        highestLayer.value +
-            extraTopRows -
+        visibleLayers.value -
+            1 -
             scrollOffsetY.value / rowHeight -
             availableRowsWithoutOverflow.value;
 
@@ -163,7 +163,7 @@ function isRowVisible(row: number) {
 function rowVerticalOffset(row: number) {
     return (
         containerBoundingBox.height.value -
-        rowHeight * (row - (highestLayer.value + extraTopRows - availableRowsWithoutOverflow.value))
+        rowHeight * (row - (visibleLayers.value - 1 - availableRowsWithoutOverflow.value))
     );
 }
 
@@ -212,6 +212,7 @@ watch([viewEnd, items], () => {
 watchImmediate([containerBoundingBox.height, toRef(rowHeight)], () => {
     availableRowsWithoutOverflow.value = containerBoundingBox.height.value / rowHeight;
 });
+const scrolling = useScroll(timelineContainer);
 
 onMounted(() => {
     const containerSize = useElementSize(timelineContainer);
@@ -220,7 +221,6 @@ onMounted(() => {
         containerSizeRange.value = [0, containerSize.width.value];
     });
 
-    const scrolling = useScroll(timelineContainer);
     scrollOffsetX = useProjectionInverse(scrolling.x);
     scrollOffsetY = scrolling.y;
 
@@ -393,10 +393,10 @@ export interface TimelineComponentItem {
 }
 
 .timeline-row {
-    @apply pointer-events-none absolute w-full bg-base-900 opacity-20;
+    @apply pointer-events-none absolute w-full bg-base-800 bg-opacity-20;
 
     &.odd {
-        @apply opacity-100;
+        @apply bg-opacity-40;
     }
 }
 

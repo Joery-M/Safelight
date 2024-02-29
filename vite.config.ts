@@ -37,5 +37,11 @@ export default defineConfig({
         rollupOptions: {
             plugins: [visualizer()]
         }
+    },
+    server: {
+        headers: {
+            'Cross-Origin-Embedder-Policy': 'require-corp',
+            'Cross-Origin-Opener-Policy': 'same-origin'
+        }
     }
 });

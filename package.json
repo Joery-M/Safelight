@@ -25,6 +25,7 @@
         "@vueuse/math": "^10.9.0",
         "change-case": "^5.4.3",
         "esbuild-wasm": "^0.20.1",
+        "ffprobe-wasm": "^0.3.1",
         "hash-wasm": "^4.11.0",
         "luxon": "^3.4.4",
         "mime-matcher": "^1.0.5",
@@ -80,4 +81,3 @@
         "vue-tsc": "^1.8.27"
     }
 }
-

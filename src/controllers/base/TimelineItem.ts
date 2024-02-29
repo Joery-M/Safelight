@@ -16,6 +16,7 @@ export default abstract class BaseTimelineItem {
 
     public async load(media: Media) {
         this.media.push(media);
+        this.end = new Timecode(media.duration);
     }
 
     public onMove(newStart: Timecode) {

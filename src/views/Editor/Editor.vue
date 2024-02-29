@@ -19,12 +19,13 @@
             </td>
         </tr>
     </table>
-    <Timeline />
+    <Timeline class="h-96 w-full" />
 </template>
 
 <script setup lang="ts">
 import MimeMatcher from 'mime-matcher';
-import { generateMediaThumbnail } from '../helpers/Video/GenerateMediaThumbnail';
+import { generateMediaThumbnail } from '@/helpers/Video/GenerateMediaThumbnail';
+import { getVideoInfo } from '@/helpers/Video/GetVideoInfo';
 
 const fileDialog = useFileDialog({
     accept: 'image/*,video/*'
@@ -42,7 +43,7 @@ const dropZone = useDropZone(document.body, {
 });
 
 const projectStore = useProject();
-const { project, activeTimeline } = projectStore;
+const { project, activeTimeline, getMediaFromID } = projectStore;
 
 fileDialog.onChange((fileList) => {
     if (!fileList) return;
@@ -56,15 +57,25 @@ fileDialog.onChange((fileList) => {
 
 async function loadFile(file: File) {
     let media = project.createMedia(file);
-    activeTimeline.createTimelineItem(media);
 
     // Just to use the proxy from pinia
     media = project.media.find((m) => m.id == media.id)!;
 
-    generateMediaThumbnail(file).then((blob) => {
-        const m = project.media.find((m) => m.id == media.id);
+    await generateMediaThumbnail(file).then((blob) => {
+        const m = getMediaFromID(media.id);
         if (m) m.previewImage = blob;
     });
+
+    await getVideoInfo(file).then((info) => {
+        if (!info) return;
+        const m = getMediaFromID(media.id);
+        if (m) {
+            m.fileInfo = info;
+            m.duration = parseFloat(info.format.duration) * 1000;
+        }
+    });
+
+    activeTimeline.createTimelineItem(media);
 }
 
 onBeforeUnmount(() => {
@@ -72,3 +83,7 @@ onBeforeUnmount(() => {
     projectStore.$reset.call(projectStore);
 });
 </script>
+
+<route lang="json">
+{ "path": "/editor", "name": "Editor" }
+</route>

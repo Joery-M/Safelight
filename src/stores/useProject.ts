@@ -11,5 +11,10 @@ export const useProject = defineStore('Project', {
         activeTimeline(state) {
             return state.project.timelines[state.project.activeTimeline];
         }
+    },
+    actions: {
+        getMediaFromID(id: string) {
+            return this.project.media.find((m) => m.id == id);
+        }
     }
 });

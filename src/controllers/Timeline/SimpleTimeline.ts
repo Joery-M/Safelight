@@ -11,7 +11,7 @@ export default class SimpleTimeline extends BaseTimeline {
     public type: TimelineType = 'Simple';
     public parentProject: SimpleProject;
 
-    public items: BaseTimelineItem[] = [];
+    public items: BaseTimelineItem[] = reactive([]);
 
     public duration = 0;
     public width = 1920;
@@ -31,6 +31,7 @@ export default class SimpleTimeline extends BaseTimeline {
         const ti = new AVTimelineItem(this);
 
         ti.load(media);
+        ti.layer = this.items.length;
         this.items.push(ti);
 
         return ti;
