@@ -3,29 +3,30 @@
         <PhArrowLeft />
     </SLButton>
     <SLCard id="card" title="Thanks to these amazing open-source project">
-        <div
-            v-for="(dep, title, i) in { ...packages.dependencies, ...packages.devDependencies }"
-            v-if="!showDisclaimer"
-            :key="title"
-        >
-            <h4>{{ title }}</h4>
-            <h5 v-if="dep.author">{{ dep.author.name }}</h5>
-            <div>
-                <a
-                    v-if="dep.homepage"
-                    :href="dep.homepage ?? dep.repository.replace('git+', '')"
-                    target="_blank"
-                >
-                    <PhLink style="display: inline" size="20" />
-                </a>
-                <a v-if="dep.repository" :href="dep.repository.replace('git+', '')" target="_blank">
-                    <PhGitBranch style="display: inline" size="20" />
-                </a>
-                <p>
-                    <PhScroll style="display: inline" size="20" />
-                </p>
+        <template v-if="!showDisclaimer">
+            <div
+                v-for="(dep, title) in { ...packages.dependencies, ...packages.devDependencies }"
+                :key="title"
+            >
+                <h4>{{ title }}</h4>
+                <h5 v-if="dep.author">{{ dep.author.name }}</h5>
+                <div>
+                    <a v-if="dep.homepage" :href="dep.homepage" target="_blank">
+                        <PhLink style="display: inline" size="20" />
+                    </a>
+                    <a
+                        v-if="dep.repository"
+                        :href="dep.repository.replace('git+', '')"
+                        target="_blank"
+                    >
+                        <PhGitBranch style="display: inline" size="20" />
+                    </a>
+                    <p>
+                        <PhScroll style="display: inline" size="20" />
+                    </p>
+                </div>
             </div>
-        </div>
+        </template>
         <div v-else id="disclaimer">
             <p v-if="disclaimer.data" class="whitespace-break-spaces">
                 {{ disclaimer.data.value }}
@@ -43,7 +44,7 @@
 
 <script setup lang="ts">
 import packages from '@/generated/packages.json';
-import { PhGitBranch, PhLink, PhScroll, PhArrowLeft } from '@phosphor-icons/vue';
+import { PhArrowLeft, PhGitBranch, PhLink, PhScroll } from '@phosphor-icons/vue';
 
 const showDisclaimer = ref(false);
 

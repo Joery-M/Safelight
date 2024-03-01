@@ -1,6 +1,5 @@
 import Media from '@/controllers/Media/Media';
 import SimpleTimeline from '@/controllers/Timeline/SimpleTimeline';
-import { useReactiveClass } from '@/helpers/Reactivity/Classes/useReactiveClass';
 import Timecode from '@/helpers/Timecode';
 import type { UnwrapNestedRefs } from 'vue';
 
