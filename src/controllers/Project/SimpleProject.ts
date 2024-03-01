@@ -6,8 +6,8 @@ export default class SimpleProject extends BaseProject {
     public name = 'Untitled';
     public type: ProjectType = 'Simple';
 
-    public media: Media[] = reactive<Media[]>([]);
-    public timelines = reactive<SimpleTimeline[]>([]);
+    public media: Media[] = [];
+    public timelines: SimpleTimeline[] = [];
     public activeTimeline: number;
 
     constructor() {

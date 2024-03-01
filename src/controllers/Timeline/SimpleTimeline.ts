@@ -1,4 +1,3 @@
-import type Media from '../Media/Media';
 import BaseTimeline, { type TimelineType } from '../base/Timeline';
 import { v4 as uuidv4 } from 'uuid';
 import type BaseTimelineItem from '../base/TimelineItem';

@@ -1,12 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
-import { FFprobeWorker, type FileInfo } from 'ffprobe-wasm';
-import { set } from '@vueuse/core';
+import { type FileInfo } from 'ffprobe-wasm';
 import { getVideoInfo } from '@/helpers/Video/GetVideoInfo';
 import { generateMediaThumbnail } from '@/helpers/Video/GenerateMediaThumbnail';
 
 export default class Media {
     public id = uuidv4();
-    public name = 'Untitled Media';
+    public name = ref('Untitled Media');
     public previewImage = ref('');
     public loaded = false;
 
@@ -18,7 +17,7 @@ export default class Media {
     public fileInfo = ref<FileInfo>();
 
     constructor(public source: File) {
-        this.name = source.name;
+        this.name.value = source.name;
 
         setInterval(() => {
             this.duration.value += 100;
