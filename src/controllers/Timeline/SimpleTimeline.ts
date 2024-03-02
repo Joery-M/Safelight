@@ -24,9 +24,10 @@ export default class SimpleTimeline extends BaseTimeline {
     }
 
     createTimelineItem(mediaId: string) {
+        console.log(mediaId);
         const ti = new AVTimelineItem(this);
 
-        ti.load(mediaId);
+        ti.LoadMedia(mediaId);
         ti.layer = this.items.length;
         this.items.push(ti);
 

@@ -39,6 +39,7 @@
         "unplugin-auto-import": "^0.17.5",
         "uuid": "^9.0.1",
         "vue": "^3.4.20",
+        "vue-demi": "^0.14.7",
         "vue-draggable-resizable": "^3.0.0",
         "vue-router": "^4.3.0"
     },

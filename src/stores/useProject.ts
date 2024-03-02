@@ -8,14 +8,14 @@ export const useProject = defineStore('Project', () => {
     const media = ref<Media[]>([]);
     const timelines = ref<SimpleTimeline[]>([new SimpleTimeline()]);
     const activeTimelineIndex = ref(0);
-    const cursor = ref(new Timecode(0));
-    const timelineViewStart = ref(new Timecode(0));
-    const timelineViewEnd = ref(new Timecode(0));
+    const cursor = Timecode.from(0);
+    const timelineViewStart = Timecode.from(0);
+    const timelineViewEnd = Timecode.from(0);
 
     const activeTimeline = computed(() => timelines.value[activeTimelineIndex.value]);
 
     function getMediaFromID(id: string) {
-        return media.value.find((m) => m.id == id);
+        return useArrayFind(media, (m) => m.id == id);
     }
 
     function createMedia(file: File) {

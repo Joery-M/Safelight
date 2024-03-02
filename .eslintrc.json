@@ -35,6 +35,7 @@
         ],
         "@typescript-eslint/no-explicit-any": "off",
         "vue/no-v-for-template-key": "off",
+        "vue/no-v-model-argument": "off",
         "no-undef": "off"
     }
 }

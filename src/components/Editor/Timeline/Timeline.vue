@@ -31,21 +31,13 @@ watchArray(
 const tlComponentItems = useArrayMap<UnwrapNestedRefs<BaseTimelineItem>, TimelineComponentItem>(
     items,
     (elem) => {
-        console.log({
-            start: elem.start.time,
-            end: elem.end.time,
-            id: elem.id,
-            isGhost: false,
-            layer: elem.layer,
-            title: elem.media?.name
-        });
         return {
-            start: elem.start.time,
-            end: elem.end.time,
+            start: elem.start,
+            end: elem.end,
             id: elem.id,
             isGhost: false,
             layer: elem.layer,
-            title: elem.media?.name ?? 'Untitled'
+            title: elem.isAudioVideo() ? elem.media.value?.name ?? 'Untitled' : 'Untitled'
         };
     }
 );

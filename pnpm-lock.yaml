@@ -74,6 +74,9 @@ dependencies:
   vue:
     specifier: ^3.4.20
     version: 3.4.20(typescript@5.3.3)
+  vue-demi:
+    specifier: ^0.14.7
+    version: 0.14.7(vue@3.4.20)
   vue-draggable-resizable:
     specifier: ^3.0.0
     version: 3.0.0(vue@3.4.20)

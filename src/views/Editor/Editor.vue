@@ -28,8 +28,6 @@
 
 <script setup lang="ts">
 import MimeMatcher from 'mime-matcher';
-import { generateMediaThumbnail } from '@/helpers/Video/GenerateMediaThumbnail';
-import { getVideoInfo } from '@/helpers/Video/GetVideoInfo';
 
 const fileDialog = useFileDialog({
     accept: 'image/*,video/*'
@@ -62,7 +60,7 @@ async function loadFile(file: File) {
     let media = project.createMedia(file);
 
     // Just to use the proxy from pinia
-    media = project.getMediaFromID(media.id)!;
+    media = project.getMediaFromID(media.value!.id);
 
     /*     await generateMediaThumbnail(file).then((blob) => {
         const m = project.getMediaFromID(media.id);
@@ -78,7 +76,7 @@ async function loadFile(file: File) {
         }
     }); */
 
-    project.activeTimeline.createTimelineItem(media.id);
+    project.activeTimeline.createTimelineItem(media.value!.id);
 }
 
 onBeforeUnmount(() => {
