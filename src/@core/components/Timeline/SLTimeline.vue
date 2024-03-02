@@ -6,7 +6,7 @@
         }"
     >
         <div class="timeline-layers">
-            <template v-for="row in visibleLayers" :key="row">
+            <template v-for="row in highestLayer + extraTopRows + 1" :key="row">
                 <div
                     v-if="isRowVisible(row - 1)"
                     class="timeline-layer-controls"
@@ -26,7 +26,7 @@
             </template>
         </div>
         <div class="timeline-background">
-            <template v-for="row in visibleLayers" :key="row">
+            <template v-for="row in highestLayer + extraTopRows + 1" :key="row">
                 <div
                     v-if="isRowVisible(row - 1)"
                     class="timeline-row"
@@ -55,7 +55,7 @@
                 id="container-scroll-boundary"
                 :style="{
                     width: useProjection(lastEnd).value + 'px',
-                    height: visibleLayers * rowHeight + 'px',
+                    height: (highestLayer + extraTopRows) * rowHeight + 'px',
                     top: 0
                 }"
             />
@@ -78,7 +78,7 @@
                     @click="$emit('itemClick', item)"
                     @pointerdown="itemDragStart"
                 >
-                    <p>{{ item.title }} {{ item.layer }} {{ Math.round(item.start) }}</p>
+                    <p>{{ item.title }} {{ item.layer }}</p>
                 </div>
             </template>
         </div>
@@ -135,13 +135,10 @@ const lastEnd = ref(120);
 const marginLeft = ref(64);
 
 function isItemVisible(start: number, end: number, layer: number) {
-    const isUnderTopOfView = layer - 1 < visibleLayers.value - 1 - scrollOffsetY.value / rowHeight;
+    const isUnderTopOfView = layer - 1 < highestLayer.value - scrollOffsetY.value / rowHeight;
     const isAboveBottomOfView =
-        layer >
-        visibleLayers.value -
-            1 -
-            scrollOffsetY.value / rowHeight -
-            availableRowsWithoutOverflow.value;
+        layer > highestLayer.value - scrollOffsetY.value / rowHeight - visibleLayers.value;
+
     const isHorizontallyInRange =
         start < scrollOffsetX.value + viewEnd.value && end > scrollOffsetX.value;
 
@@ -149,13 +146,9 @@ function isItemVisible(start: number, end: number, layer: number) {
 }
 
 function isRowVisible(row: number) {
-    const isUnderTopOfView = row - 1 < visibleLayers.value - 1 - scrollOffsetY.value / rowHeight;
+    const isUnderTopOfView = row - 1 < highestLayer.value - scrollOffsetY.value / rowHeight;
     const isAboveBottomOfView =
-        row >
-        visibleLayers.value -
-            1 -
-            scrollOffsetY.value / rowHeight -
-            availableRowsWithoutOverflow.value;
+        row > highestLayer.value - scrollOffsetY.value / rowHeight - visibleLayers.value;
 
     return isUnderTopOfView && isAboveBottomOfView;
 }
@@ -163,7 +156,7 @@ function isRowVisible(row: number) {
 function rowVerticalOffset(row: number) {
     return (
         containerBoundingBox.height.value -
-        rowHeight * (row - (visibleLayers.value - 1 - availableRowsWithoutOverflow.value))
+        rowHeight * (row - (highestLayer.value - visibleLayers.value))
     );
 }
 
