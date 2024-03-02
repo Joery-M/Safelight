@@ -1,7 +1,6 @@
 import Media from '@/controllers/Media/Media';
 import SimpleTimeline from '@/controllers/Timeline/SimpleTimeline';
 import Timecode from '@/helpers/Timecode';
-import type { UnwrapNestedRefs } from 'vue';
 
 export const useProject = defineStore('Project', () => {
     const name = ref('Untitled');
@@ -18,14 +17,6 @@ export const useProject = defineStore('Project', () => {
         return useArrayFind(media, (m) => m.id == id);
     }
 
-    function createMedia(file: File) {
-        const newMedia = new Media(file);
-
-        media.value.push(newMedia as unknown as UnwrapNestedRefs<Media>);
-
-        return getMediaFromID(newMedia.id)!;
-    }
-
     return {
         name,
         media,
@@ -34,7 +25,6 @@ export const useProject = defineStore('Project', () => {
         timelineViewStart,
         timelineViewEnd,
         activeTimeline,
-        getMediaFromID,
-        createMedia
+        getMediaFromID
     };
 });

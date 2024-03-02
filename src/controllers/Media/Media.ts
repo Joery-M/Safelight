@@ -1,13 +1,10 @@
-import { v4 as uuidv4 } from 'uuid';
 import { type FileInfo } from 'ffprobe-wasm';
-import { getVideoInfo } from '@/helpers/Video/GetVideoInfo';
-import { generateMediaThumbnail } from '@/helpers/Video/GenerateMediaThumbnail';
 
 export default class Media {
-    public id = uuidv4();
+    public id = ref<string>();
     public name = ref('Untitled Media');
-    public previewImage = ref('');
-    public loaded = false;
+    public previewImage = ref<string>();
+    public loaded = ref(false);
 
     /**
      * @description The duration of this media item. By default it is set to 5 seconds, which will apply to images
@@ -16,22 +13,23 @@ export default class Media {
     public duration = ref(5000);
     public fileInfo = ref<FileInfo>();
 
-    constructor(public source: File) {
-        this.name.value = source.name;
+    constructor(public mediaId: string) {
+        db.media.get({ id: mediaId }).then((med) => {
+            if (med) {
+                this.name.value = med.name;
 
-        setInterval(() => {
-            this.duration.value += 100;
-        }, 1000);
+                if (med.fileInfo)
+                    this.duration.value = parseFloat(med.fileInfo.format.duration) * 1000;
+                if (med.previewImage)
+                    this.previewImage.value = URL.createObjectURL(med.previewImage);
 
-        getVideoInfo(source).then((info) => {
-            if (info) {
-                this.duration.value = parseFloat(info.format.duration) * 1000;
-                this.fileInfo.value = info;
+                this.id.value = med.id;
+                this.loaded.value = true;
+
+                setInterval(() => {
+                    this.duration.value += 100;
+                }, 1000);
             }
-        });
-
-        generateMediaThumbnail(source).then((img) => {
-            this.previewImage.value = img;
         });
     }
 }

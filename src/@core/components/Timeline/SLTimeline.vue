@@ -370,7 +370,7 @@ export interface TimelineComponentItem {
     width: var(--marginLeft);
 
     .timeline-layer-controls {
-        @apply absolute select-none border-r-2 border-base-700 bg-base-800 bg-opacity-20;
+        @apply absolute select-none border-r-2 border-surface-700 bg-surface-800 bg-opacity-20;
 
         &.odd {
             @apply bg-opacity-40;
@@ -386,7 +386,7 @@ export interface TimelineComponentItem {
 }
 
 .timeline-row {
-    @apply pointer-events-none absolute w-full bg-base-800 bg-opacity-20;
+    @apply pointer-events-none absolute w-full bg-surface-800 bg-opacity-20;
 
     &.odd {
         @apply bg-opacity-40;
@@ -411,6 +411,6 @@ export interface TimelineComponentItem {
 }
 
 #selection-box {
-    @apply pointer-events-none fixed z-20 select-none border-2 bg-base-700 opacity-20;
+    @apply pointer-events-none fixed z-20 select-none border-2 bg-surface-700 opacity-20;
 }
 </style>

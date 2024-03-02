@@ -18,12 +18,4 @@ export default class SimpleProject extends BaseProject {
         this.timelines = [tl];
         this.activeTimeline = 0;
     }
-
-    createMedia(file: File) {
-        const newMedia = new Media(file);
-
-        this.media.push(newMedia);
-
-        return newMedia;
-    }
 }

@@ -21,7 +21,14 @@
 
 <script setup lang="ts">
 import { Vector3, type Vector3Like } from 'three';
-import { Renderer } from '@janvorisek/drie';
+import {
+    Renderer,
+    MeshBasicMaterial,
+    Mesh,
+    Scene,
+    OrthographicCamera,
+    BoxGeometry
+} from '@janvorisek/drie';
 import BaseTimeline from '@/controllers/base/Timeline';
 
 const monitorContainer = ref<HTMLDivElement>();

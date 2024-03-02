@@ -110,7 +110,7 @@ defineEmits<{
     /* States */
 
     &:not(.btn-outline) {
-        @apply bg-neutral-700 hover:bg-base-600 active:bg-base-400 active:text-base-950;
+        @apply bg-neutral-700 hover:bg-surface-600 active:bg-surface-400 active:text-surface-950;
     }
     &.btn-outline {
         @apply border border-solid border-neutral-700
@@ -118,7 +118,7 @@ defineEmits<{
                active:border-neutral-500 active:bg-transparent active:text-neutral-400;
     }
     &.btn-active {
-        @apply bg-base-300 text-base-950;
+        @apply bg-surface-300 text-surface-950;
     }
     &:disabled {
         @apply bg-neutral-700 text-neutral-500 hover:bg-neutral-700 active:text-neutral-500;

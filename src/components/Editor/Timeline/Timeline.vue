@@ -37,7 +37,7 @@ const tlComponentItems = useArrayMap<UnwrapNestedRefs<BaseTimelineItem>, Timelin
             id: elem.id,
             isGhost: false,
             layer: elem.layer,
-            title: elem.isAudioVideo() ? elem.media.value?.name ?? 'Untitled' : 'Untitled'
+            title: elem.isAudioVideo() ? elem.media.value?.name.value ?? 'Untitled' : 'Untitled'
         };
     }
 );

@@ -1,24 +1,18 @@
 <template>
-    <div
-        :class="{
-            card: true,
-            'card-compact': compact,
-            noMaxWidth
-        }"
-    >
-        <figure v-if="img && !imgBottom">
+    <Card :title="title">
+        <template #title>
+            <template v-if="title">
+                {{ title }}
+            </template>
+            <slot v-else name="title" />
+        </template>
+        <template v-if="img" #header>
             <img role="figure" :src="img" :alt="imgAlt" />
-        </figure>
-        <div class="card-body" role="contentinfo">
-            <h2 v-if="slots.title || title" class="card-title">
-                <template v-if="title">
-                    {{ title }}
-                </template>
-                <slot v-else name="title" />
-            </h2>
-            <div class="card-content">
-                <slot />
-            </div>
+        </template>
+        <template #content>
+            <slot />
+        </template>
+        <template v-if="$slots.actions" #footer>
             <slot
                 name="actions"
                 :class="{
@@ -27,19 +21,16 @@
                 }"
             >
             </slot>
-        </div>
-        <figure v-if="img && imgBottom">
-            <img :src="img" />
-        </figure>
-    </div>
+        </template>
+    </Card>
 </template>
 
 <script setup lang="ts">
+import Card from 'primevue/card';
+
 defineProps<{
     img?: string;
     imgAlt?: string;
-    imgBottom?: boolean;
-    imgRounded?: boolean;
     noMaxWidth?: boolean;
     buttonAlign?:
         | 'normal'
@@ -51,32 +42,6 @@ defineProps<{
         | 'evenly'
         | 'stretch'
         | (string & {});
-    compact?: boolean;
     title?: string;
 }>();
-
-const slots = defineSlots<{
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    default: any;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    title: any;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    actions: any;
-}>();
 </script>
-
-<style lang="scss" scoped>
-.card {
-    @apply m-2 rounded-2xl bg-neutral-800 p-4;
-
-    > .card-body {
-        > .card-title {
-            @apply mb-4;
-        }
-    }
-
-    &:not(.noMaxWidth) {
-        @apply max-w-screen-md;
-    }
-}
-</style>

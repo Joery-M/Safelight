@@ -1,6 +1,6 @@
 <template>
     <SLCard
-        class="grid-place-items-center bg-primary/20 transition-500 pointer-events-none absolute left-0 top-0 grid h-full w-full"
+        class="grid-place-items-center transition-500 pointer-events-none absolute left-0 top-0 grid h-full w-full bg-surface bg-opacity-20"
         :style="{
             opacity: dropZone.isOverDropZone.value ? 1 : 0
         }"
@@ -12,14 +12,20 @@
         :timeline="project.activeTimeline"
         class="min-h-100 w-full"
     />
-    <SLButton @click="fileDialog.open">Load file</SLButton>
+    <Library v-model="project.media" />
+    <SLButton :loading @click="fileDialog.open">
+        <template #icon>
+            <PhUpload />
+        </template>
+        Load file
+    </SLButton>
     <table>
         <tr v-for="media in project.media" :key="media.id">
             <td>
                 {{ media.name }}
             </td>
             <td>
-                <img :src="media.previewImage" />
+                <img :srcObject="media.previewImage" />
             </td>
         </tr>
     </table>
@@ -27,7 +33,11 @@
 </template>
 
 <script setup lang="ts">
+import Media from '@/controllers/Media/Media';
+import { PhUpload } from '@phosphor-icons/vue';
+import { useObservable } from '@vueuse/rxjs';
 import MimeMatcher from 'mime-matcher';
+import type { UnwrapRef } from 'vue';
 
 const fileDialog = useFileDialog({
     accept: 'image/*,video/*'
@@ -45,38 +55,47 @@ const dropZone = useDropZone(document.body, {
 });
 
 const project = useProject();
+const loading = ref(false);
 
 fileDialog.onChange((fileList) => {
     if (!fileList) return;
 
+    loading.value = true;
+    const promises: Promise<void>[] = [];
     for (let i = 0; i < fileList.length; i++) {
         const file = fileList.item(i);
 
-        if (file) loadFile(file);
+        if (file) promises.push(loadFile(file));
     }
+    Promise.all(promises).then(() => {
+        loading.value = false;
+    });
 });
 
-async function loadFile(file: File) {
-    let media = project.createMedia(file);
+function loadFile(file: File) {
+    return new Promise<void>((resolve) => {
+        const storingProcessing = useObservable(IdbMediaManager.storeMedia(file));
+        watch(storingProcessing, (s) => {
+            console.log(s?.type, s?.hashProgress);
+        });
 
-    // Just to use the proxy from pinia
-    media = project.getMediaFromID(media.value!.id);
+        watch(storingProcessing, () => {
+            if (storingProcessing.value && storingProcessing.value.type == 'done') {
+                const existingMedia = project.media.some(
+                    (m) => m.id == storingProcessing.value!.id
+                );
 
-    /*     await generateMediaThumbnail(file).then((blob) => {
-        const m = project.getMediaFromID(media.id);
-        if (m) m.previewImage = blob;
-    }); */
+                if (!existingMedia) {
+                    const media = new Media(storingProcessing.value.id!);
 
-    /* await getVideoInfo(file).then((info) => {
-        if (!info) return;
-        const m = project.getMediaFromID(media.id);
-        if (m) {
-            m.fileInfo = info;
-            m.duration = parseFloat(info.format.duration) * 1000;
-        }
-    }); */
+                    project.media.push(media as unknown as UnwrapRef<Media>);
+                    project.activeTimeline.createTimelineItem(media);
+                }
 
-    project.activeTimeline.createTimelineItem(media.value!.id);
+                resolve();
+            }
+        });
+    });
 }
 
 onBeforeUnmount(() => {
@@ -86,5 +105,8 @@ onBeforeUnmount(() => {
 </script>
 
 <route lang="json">
-{ "path": "/editor", "name": "Editor" }
+{
+    "path": "/editor",
+    "name": "Editor"
+}
 </route>

@@ -1,8 +1,9 @@
 import Dexie, { type Table } from 'dexie';
+import type { FileInfo } from 'ffprobe-wasm';
 import type { ProjectType } from '../base/Project';
 import type { TimelineItemType } from '../base/TimelineItem';
 
-export class MySubClassedDexie extends Dexie {
+export class SafelightIndexedDB extends Dexie {
     media!: Table<StoredMedia, string>;
     project!: Table<StoredProject, string>;
 
@@ -19,7 +20,9 @@ export interface StoredMedia {
     id: string;
     name: string;
     contentHash: string;
-    data: ArrayBuffer;
+    fileInfo?: FileInfo;
+    previewImage?: Blob;
+    data: Blob;
 }
 
 export interface StoredProject {
@@ -47,4 +50,4 @@ export interface StoredTimelineItem {
     end?: number;
 }
 
-export const db = new MySubClassedDexie();
+export const db = new SafelightIndexedDB();

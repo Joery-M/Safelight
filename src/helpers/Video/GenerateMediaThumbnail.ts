@@ -1,7 +1,7 @@
 import MimeMatcher from 'mime-matcher';
 
 export function generateMediaThumbnail(file: File, percent = 0.1, maxWidth = 427, maxHeight = 240) {
-    return new Promise<string>((resolve) => {
+    return new Promise<Blob | null>((resolve) => {
         const isVideo = new MimeMatcher('video/*').match(file.type);
         const isImage = new MimeMatcher('image/*').match(file.type);
 
@@ -35,12 +35,16 @@ export function generateMediaThumbnail(file: File, percent = 0.1, maxWidth = 427
 
                     ctx.drawImage(img, 0, 0, newSize.width, newSize.height);
 
-                    const previewImage = canvas.toDataURL('image/png', 60);
+                    canvas.toBlob(
+                        (previewImage) => {
+                            resolve(previewImage);
 
-                    resolve(previewImage);
-
-                    img.remove();
-                    canvas.remove();
+                            img.remove();
+                            canvas.remove();
+                        },
+                        'image/png',
+                        60
+                    );
                 },
                 { once: true }
             );
@@ -85,13 +89,17 @@ export function generateMediaThumbnail(file: File, percent = 0.1, maxWidth = 427
 
                         ctx.drawImage(video, 0, 0, newSize.width, newSize.height);
 
-                        const previewImage = canvas.toDataURL('image/png', 60);
+                        canvas.toBlob(
+                            (previewImage) => {
+                                video.remove();
+                                canvas.remove();
 
-                        video.remove();
-                        canvas.remove();
-
-                        URL.revokeObjectURL(blob);
-                        resolve(previewImage);
+                                URL.revokeObjectURL(blob);
+                                resolve(previewImage);
+                            },
+                            'image/png',
+                            60
+                        );
                     },
                     { once: true }
                 );

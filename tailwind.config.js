@@ -5,7 +5,7 @@ export default {
     theme: {
         extend: {
             colors: {
-                safe: {
+                primary: {
                     DEFAULT: '#FFE200',
                     50: '#FFF7B8',
                     100: '#FFF5A3',
@@ -33,7 +33,7 @@ export default {
                     900: '#362D82',
                     950: '#221A4C'
                 },
-                base: {
+                surface: {
                     DEFAULT: '#1E1E1E',
                     50: '#FFFFFF',
                     100: '#F7F7F7',

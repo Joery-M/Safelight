@@ -1,8 +1,8 @@
 <!-- eslint-disable vue/no-v-model-argument -->
 <template>
-    <SLButton to="/dev/" style="margin: 0.5rem" alt="To dev pages overview"
-        ><PhArrowLeft
-    /></SLButton>
+    <SLButton to="/dev/" style="margin: 0.5rem" alt="To dev pages overview">
+        <PhArrowLeft />
+    </SLButton>
     <SLCard title="Buttons">
         <SLButton size="sm" alt="Small Button"> Small </SLButton>
         <SLButton size="md" alt="Medium Button"> Medium </SLButton>

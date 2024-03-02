@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-    @apply m-0 h-screen w-screen text-white bg-base-900 overflow-hidden;
+    @apply m-0 h-screen w-screen text-white bg-surface-900 overflow-hidden;
 
     #app {
         @apply overflow-auto;

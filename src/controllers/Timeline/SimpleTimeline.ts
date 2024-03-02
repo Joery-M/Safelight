@@ -1,7 +1,8 @@
-import BaseTimeline, { type TimelineType } from '../base/Timeline';
 import { v4 as uuidv4 } from 'uuid';
-import type BaseTimelineItem from '../base/TimelineItem';
+import type Media from '../Media/Media';
 import AVTimelineItem from '../TimelineItem/AVTimelineItem';
+import BaseTimeline, { type TimelineType } from '../base/Timeline';
+import type BaseTimelineItem from '../base/TimelineItem';
 
 export default class SimpleTimeline extends BaseTimeline {
     public name = 'Untitled';
@@ -11,8 +12,8 @@ export default class SimpleTimeline extends BaseTimeline {
     public items: BaseTimelineItem[] = reactive([]);
 
     public duration = 0;
-    public width = 1920;
-    public height = 1080;
+    public viewportWidth = 1920;
+    public viewportWeight = 1080;
     public framerate = 60;
 
     constructor() {
@@ -23,11 +24,11 @@ export default class SimpleTimeline extends BaseTimeline {
         this.framerate = 60;
     }
 
-    createTimelineItem(mediaId: string) {
-        console.log(mediaId);
+    createTimelineItem(media: Media) {
+        console.log(media);
         const ti = new AVTimelineItem(this);
 
-        ti.LoadMedia(mediaId);
+        ti.media.value = media;
         ti.layer = this.items.length;
         this.items.push(ti);
 
