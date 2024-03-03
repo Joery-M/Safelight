@@ -1,13 +1,14 @@
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
+import { createRouter, createWebHistory, setupDataFetchingGuard } from 'vue-router/auto';
+import App from './App.vue';
 
 import PrimeVue, { type PrimeVueConfiguration } from 'primevue/config';
 import 'primevue/resources/themes/aura-dark-amber/theme.css';
-import { createRouter, createWebHistory, setupDataFetchingGuard } from 'vue-router/auto';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import SafelightTheme from '@/@core/Safelight';
-import App from './App.vue';
+
 import './style.scss';
 
 const router = createRouter({

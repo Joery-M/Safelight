@@ -1,0 +1,16 @@
+node_modules
+dist
+
+*.tsbuildinfo
+
+# Generated dev files
+/stats.html
+/auto-imports.d.ts
+/components.d.ts
+/typed-router.d.ts
+
+# Generated items
+/src/generated/*
+
+# Temporary vite configs
+/vite.config.ts.timestamp-*.mjs

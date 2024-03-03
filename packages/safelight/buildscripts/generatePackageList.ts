@@ -1,5 +1,6 @@
 import { spawn } from 'child_process';
 import { existsSync } from 'fs';
+import { join } from 'path';
 import { mkdir, writeFile } from 'fs/promises';
 
 if (!existsSync('./src/generated')) {
@@ -9,7 +10,7 @@ if (!existsSync('./src/generated')) {
 const bannedKeys = ['unsavedDependencies', 'path'];
 
 const output = spawn('pnpm', ['list', '--depth', '2', '--json', '--long'], {
-    cwd: process.cwd(),
+    cwd: join(process.cwd(), '../../'),
     stdio: ['inherit', 'pipe', 'inherit'],
     shell: true
 });

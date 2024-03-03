@@ -56,11 +56,11 @@ const tabs = ref<{ title: string; content: string }[]>([
 
 const result = ref('');
 
-const compiler = new EsbuildScriptCompiler();
+// const compiler = new EsbuildScriptCompiler();
 
 async function compile() {
     try {
-        result.value = (await compiler.compile(tabs.value)).outputFiles[0].text;
+        // result.value = (await compiler.compile(tabs.value)).outputFiles[0].text;
     } catch (error) {
         result.value = error as string;
     }

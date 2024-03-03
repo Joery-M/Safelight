@@ -9,23 +9,10 @@
     <Card title="Timeline">
         <template #content>
             <div class="flex">
-                <Slider v-model="timeline1ViewStart" :min="0" />
-                <Slider v-model="timeline1ViewEnd" :max="120" />
+                <Slider v-model="timeline1ViewRange" :max="120" range />
             </div>
             <Button @click="timeline1.resizeToFitAll()">Fit</Button>
-            <SLTimeline
-                ref="timeline1"
-                v-model="timeline1Items"
-                v-model:start="timeline1ViewStart"
-                v-model:end="timeline1ViewEnd"
-                v-model:selectedItems="timeline1Selection"
-                class="h-96"
-                @item-click="
-                    (item) => {
-                        if (!timeline1Selection?.includes(item)) timeline1Selection?.push(item);
-                    }
-                "
-            >
+            <Timeline ref="timeline1">
                 <template #layerControls="{ index }">
                     <Button outlined>
                         <template #icon>
@@ -34,7 +21,7 @@
                     </Button>
                     {{ index }}
                 </template>
-            </SLTimeline>
+            </Timeline>
             <Listbox :options="timeline1Selection" data-key="id" />
         </template>
     </Card>
@@ -59,37 +46,29 @@
 </template>
 
 <script setup lang="ts">
-import { v4 as uuidv4 } from 'uuid';
-import { type TimelineComponentItem } from '../../@core/components/Timeline/SLTimeline.vue';
-import Listbox from 'primevue/listbox';
+import Timeline from '@safelight/timeline';
 import Button from 'primevue/button';
+import Listbox from 'primevue/listbox';
+import { v4 as uuidv4 } from 'uuid';
 import { RouterLink } from 'vue-router';
 
-const showDownloadLoading = ref(false);
-const showDownloadSuccess = ref(false);
-const showDownloadFail = ref(false);
-
-function ClickDownload() {
-    showDownloadLoading.value = true;
-    useTimeoutFn(() => {
-        showDownloadLoading.value = false;
-
-        if (Math.random() > 0.5) showDownloadSuccess.value = true;
-        else {
-            showDownloadFail.value = true;
-        }
-        useTimeoutFn(() => {
-            showDownloadSuccess.value = false;
-            showDownloadFail.value = false;
-        }, 1000);
-    }, 1000);
-}
-
 const timeline1 = ref();
-const timeline1Selection = ref<TimelineComponentItem[]>();
+const timeline1Selection = ref<any[]>();
 const timeline1ViewStart = ref(0);
 const timeline1ViewEnd = ref(120);
-const timeline1Items = ref<TimelineComponentItem[]>([]);
+const timeline1ViewRange = ref([0, 120]);
+const timeline1Items = ref<any[]>([]);
+
+watch(timeline1ViewRange, () => {
+    timeline1ViewStart.value = timeline1ViewRange.value[0];
+    timeline1ViewEnd.value = timeline1ViewRange.value[1];
+});
+watch(timeline1ViewStart, () => {
+    timeline1ViewRange.value[0] = timeline1ViewStart.value;
+});
+watch(timeline1ViewStart, () => {
+    timeline1ViewRange.value[1] = timeline1ViewEnd.value;
+});
 
 onMounted(() => {
     for (let i = 0; i < 20; i++) {

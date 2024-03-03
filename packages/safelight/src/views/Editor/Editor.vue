@@ -1,6 +1,6 @@
 <template>
     <SLCard
-        class="grid-place-items-center transition-500 pointer-events-none absolute left-0 top-0 grid h-full w-full bg-surface bg-opacity-20"
+        class="grid-place-items-center transition-500 bg-surface pointer-events-none absolute left-0 top-0 grid h-full w-full bg-opacity-20"
         :style="{
             opacity: dropZone.isOverDropZone.value ? 1 : 0
         }"
