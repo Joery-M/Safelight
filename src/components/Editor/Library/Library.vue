@@ -1,5 +1,8 @@
 <template>
-    <SLCard no-max-width>
+    <SLCard>
+        <Toolbar>
+            <Button>A</Button>
+        </Toolbar>
         <DataTable :value="media" scrollable scroll-height="400px" data-key="id">
             <Column field="name" header="Name">
                 <template #loading="slotProps">
@@ -23,6 +26,7 @@
 
 <script setup lang="ts">
 import type Media from '@/controllers/Media/Media';
+import Button from 'primevue/button';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 import Image from 'primevue/image';

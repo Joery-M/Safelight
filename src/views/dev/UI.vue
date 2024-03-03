@@ -1,103 +1,69 @@
 <!-- eslint-disable vue/no-v-model-argument -->
 <template>
-    <SLButton to="/dev/" style="margin: 0.5rem" alt="To dev pages overview">
-        <PhArrowLeft />
-    </SLButton>
-    <SLCard title="Buttons">
-        <SLButton size="sm" alt="Small Button"> Small </SLButton>
-        <SLButton size="md" alt="Medium Button"> Medium </SLButton>
-        <SLButton size="lg" alt="Large Button"> Large </SLButton>
-        <SLButton size="xl" alt="Extra Large Button"> Extra Large </SLButton>
+    <RouterLink to="/dev/">
+        <Button style="margin: 0.5rem" alt="To dev pages overview">
+            <PhArrowLeft />
+        </Button>
+    </RouterLink>
 
-        <h2>Wide</h2>
-        <SLButton wide>Wide</SLButton>
+    <Card title="Timeline">
+        <template #content>
+            <div class="flex">
+                <Slider v-model="timeline1ViewStart" :min="0" />
+                <Slider v-model="timeline1ViewEnd" :max="120" />
+            </div>
+            <Button @click="timeline1.resizeToFitAll()">Fit</Button>
+            <SLTimeline
+                ref="timeline1"
+                v-model="timeline1Items"
+                v-model:start="timeline1ViewStart"
+                v-model:end="timeline1ViewEnd"
+                v-model:selectedItems="timeline1Selection"
+                class="h-96"
+                @item-click="
+                    (item) => {
+                        if (!timeline1Selection?.includes(item)) timeline1Selection?.push(item);
+                    }
+                "
+            >
+                <template #layerControls="{ index }">
+                    <Button outlined>
+                        <template #icon>
+                            <PhEye size="12" />
+                        </template>
+                    </Button>
+                    {{ index }}
+                </template>
+            </SLTimeline>
+            <Listbox :options="timeline1Selection" data-key="id" />
+        </template>
+    </Card>
 
-        <h2>States</h2>
-        <SLButton outline>Outline</SLButton>
-        <SLButton square>Colorado</SLButton>
-        <SLButton circle>Circle</SLButton>
-        <SLButton active>Active</SLButton>
-        <SLButton disabled>Disabled</SLButton>
-
-        <h2>Icons</h2>
-        <SLButton loading />
-        <SLButton loading>Loading text</SLButton>
-        <SLButton loading square />
-        <SLButton square>
-            <PhFileVue />
-        </SLButton>
-        <SLButton circle>
-            <PhPlus />
-        </SLButton>
-        <SLButton
-            :loading="showDownloadLoading"
-            :disabled="showDownloadLoading"
-            :type="showDownloadSuccess ? 'success' : showDownloadFail ? 'fail' : undefined"
-            @click="ClickDownload"
-        >
-            <template #icon>
-                <PhCheck v-if="showDownloadSuccess" />
-                <PhX v-else-if="showDownloadFail" />
-                <PhDownload v-else />
-            </template>
-            Download
-        </SLButton>
-    </SLCard>
-
-    <SLCard title="Timeline">
-        <p>View range:</p>
-        <input v-model="timeline1ViewStart" type="number" min="0" /> -
-        <input v-model="timeline1ViewEnd" type="number" min="0" />
-        <SLButton @click="timeline1.resizeToFitAll()">Fit</SLButton>
-        <SLTimeline
-            ref="timeline1"
-            v-model="timeline1Items"
-            v-model:start="timeline1ViewStart"
-            v-model:end="timeline1ViewEnd"
-            v-model:selectedItems="timeline1Selection"
-            class="h-96"
-            @item-click="
-                (item) => {
-                    if (!timeline1Selection?.includes(item)) timeline1Selection?.push(item);
-                }
-            "
-        >
-            <template #layerControls="{ index }">
-                <SLButton size="sm" style="height: 28px; width: 28px; margin: 0" circle>
-                    <PhEye size="12" />
-                </SLButton>
-                {{ index }}
-            </template>
-        </SLTimeline>
-        <div>
-            <p v-for="selected in timeline1Selection" :key="selected.id">
-                {{ selected.id }}
-            </p>
-        </div>
-    </SLCard>
-
-    <SLCard title="Lists">
-        <SLList v-slot="{ item }" :items="'abcdefghijklmnopqrstuvwxyz'.split('')">
-            <div>{{ item }}</div>
-        </SLList>
-        <SLList v-slot="{ item }" scrollable search :items="'abcdefghijklmnopqrstuvwxyz'.split('')">
-            <div>{{ item }}</div>
-        </SLList>
-    </SLCard>
+    <Card title="Lists">
+        <template #content>
+            <label id="noSearchLb">No search</label>
+            <Listbox
+                aria-labelledby="#noSearchLb"
+                :options="'abcdefghijklmnopqrstuvwxyz'.split('')"
+            >
+            </Listbox>
+            <label id="searchLb">With search</label>
+            <Listbox
+                aria-labelledby="#searchLb"
+                filter
+                :options="'abcdefghijklmnopqrstuvwxyz'.split('')"
+            >
+            </Listbox>
+        </template>
+    </Card>
 </template>
 
 <script setup lang="ts">
-import {
-    PhArrowLeft,
-    PhCheck,
-    PhDownload,
-    PhEye,
-    PhFileVue,
-    PhPlus,
-    PhX
-} from '@phosphor-icons/vue';
 import { v4 as uuidv4 } from 'uuid';
 import { type TimelineComponentItem } from '../../@core/components/Timeline/SLTimeline.vue';
+import Listbox from 'primevue/listbox';
+import Button from 'primevue/button';
+import { RouterLink } from 'vue-router';
 
 const showDownloadLoading = ref(false);
 const showDownloadSuccess = ref(false);

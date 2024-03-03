@@ -1,8 +1,10 @@
 <template>
-    <SLButton size="sm" to="/dev">test</SLButton>
-    <SLButton to="/editor">To Editor</SLButton>
+    <RouterLink to="/dev"> <Button>test</Button> </RouterLink>
+    <RouterLink to="/editor"> <Button>To Editor</Button> </RouterLink>
 </template>
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { RouterLink } from 'vue-router';
+</script>
 
 <route lang="json">
 { "name": "Home" }

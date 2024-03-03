@@ -1,24 +1,24 @@
 <template>
-    <SLButton to="/">
-        <template #icon>
+    <RouterLink to="/">
+        <Button>
             <PhHouse />
-        </template>
-    </SLButton>
+        </Button>
+    </RouterLink>
     <SLCard title="Dev pages">
         <template
             v-for="route in $router.getRoutes().filter((a) => a.path.startsWith('/dev/'))"
             :key="route.path"
         >
-            <SLButton :to="route.path">{{
-                sentenceCase(route.path.replace('/dev/', ''))
-            }}</SLButton>
+            <RouterLink :to="route.path">
+                <Button>{{ sentenceCase(route.path.replace('/dev/', '')) }}</Button>
+            </RouterLink>
         </template>
     </SLCard>
 </template>
 
 <script setup lang="ts">
-import { PhHouse } from '@phosphor-icons/vue';
 import { sentenceCase } from 'change-case';
+import { RouterLink } from 'vue-router';
 </script>
 
 <route lang="json">
