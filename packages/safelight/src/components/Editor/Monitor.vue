@@ -1,6 +1,6 @@
 <template>
     <div ref="monitorContainer" class="flex-justify-center flex">
-        <Renderer
+        <!-- <Renderer
             ref="renderer"
             :auto-resize="false"
             :antialias="antialias ?? true"
@@ -15,28 +15,19 @@
                     <BoxGeometry :width="15" :height="10" />
                 </Mesh>
             </Scene>
-        </Renderer>
+        </Renderer> -->
     </div>
 </template>
 
 <script setup lang="ts">
-import { Vector3, type Vector3Like } from 'three';
-import {
-    Renderer,
-    MeshBasicMaterial,
-    Mesh,
-    Scene,
-    OrthographicCamera,
-    BoxGeometry
-} from '@janvorisek/drie';
 import BaseTimeline from '@/controllers/base/Timeline';
 
 const monitorContainer = ref<HTMLDivElement>();
 
 const props = defineProps<{
     timeline: BaseTimeline;
-    position?: Vector3Like;
-    rotation?: Vector3Like;
+    position?: any;
+    rotation?: any;
     width?: number;
     height?: number;
     perspective?: boolean;

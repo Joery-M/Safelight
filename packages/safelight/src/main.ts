@@ -1,6 +1,6 @@
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
-import { createRouter, createWebHistory, setupDataFetchingGuard } from 'vue-router/auto';
+import { createRouter, createWebHistory } from 'vue-router/auto';
 import App from './App.vue';
 
 import PrimeVue, { type PrimeVueConfiguration } from 'primevue/config';
@@ -12,13 +12,8 @@ import SafelightTheme from '@/@core/Safelight';
 import './style.scss';
 
 const router = createRouter({
-    history: createWebHistory(),
-    extendRoutes: (routes) => {
-        return routes;
-    }
+    history: createWebHistory()
 });
-
-setupDataFetchingGuard(router);
 
 const app = createApp(App);
 

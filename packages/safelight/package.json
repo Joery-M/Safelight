@@ -18,9 +18,8 @@
         "lint": "eslint . ./src/**/*[.ts,.js,.scss,.vue] --fix"
     },
     "dependencies": {
-        "@janvorisek/drie": "1.0.0-alpha-1.48",
         "@phosphor-icons/vue": "^2.1.6",
-        "@quantco/pnpm-licenses": "^1.0.3",
+        "@quantco/pnpm-licenses": "^2.0.0",
         "@safelight/timeline": "workspace:*",
         "@vueuse/core": "^10.9.0",
         "@vueuse/gesture": "^2.0.0",
@@ -38,10 +37,8 @@
         "pinia": "^2.1.7",
         "primevue": "^3.49.1",
         "rxjs": "^7.8.1",
-        "three": "^0.161.0",
         "uuid": "^9.0.1",
         "vue": "^3.4.21",
-        "vue-demi": "^0.14.7",
         "vue-draggable-resizable": "^3.0.0",
         "vue-router": "^4.3.0"
     },
@@ -52,7 +49,6 @@
         "@types/dom-webcodecs": "^0.1.11",
         "@types/luxon": "^3.4.2",
         "@types/node": "^20.11.24",
-        "@types/three": "^0.161.2",
         "@types/uuid": "^9.0.8",
         "@typescript-eslint/eslint-plugin": "^7.1.1",
         "@typescript-eslint/parser": "^7.1.1",
@@ -80,9 +76,9 @@
         "unplugin-auto-import": "^0.17.5",
         "unplugin-turbo-console": "^1.4.0",
         "unplugin-vue-components": "^0.26.0",
-        "unplugin-vue-router": "^0.7.0",
+        "unplugin-vue-router": "^0.8.4",
         "vite": "^5.1.5",
         "vite-plugin-mkcert": "^1.17.4",
-        "vue-tsc": "^1.8.27"
+        "vue-tsc": "^2.0.4"
     }
 }

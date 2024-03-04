@@ -7,7 +7,7 @@ const pageTitle = useTitle();
 
 watchImmediate(useRouter().currentRoute, (newRoute) => {
     if (newRoute && newRoute.name)
-        pageTitle.value = newRoute.name.replace(/^\//, '') + ' | Safelight';
+        pageTitle.value = newRoute.name.toString().replace(/^\//, '') + ' | Safelight';
     else {
         pageTitle.value = 'Safelight';
     }

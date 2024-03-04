@@ -1,6 +1,5 @@
-import type { Ref } from 'vue-demi';
-import { DateTime } from 'luxon';
 import type { ShallowUnwrapRef } from '@vueuse/core';
+import { DateTime } from 'luxon';
 
 export default class Timecode {
     public time = 0;
@@ -36,4 +35,4 @@ export default class Timecode {
 interface ITimecode {
     formattedTime: string;
 }
-export type TimecodeRef = ShallowUnwrapRef<ITimecode> & Ref<number>;
+export type TimecodeRef = ShallowUnwrapRef<ITimecode> & globalThis.Ref<number>;
