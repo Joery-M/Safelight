@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "module": "esnext",
+        "types": ["vite/client"],
+        "rootDir": "../"
+    },
+    "include": ["./*.ts", "../lib/*"],
+    "exclude": ["dist"]
+}
