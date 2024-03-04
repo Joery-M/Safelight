@@ -22,8 +22,8 @@ output.stdout.once('data', async (msg) => {
 });
 
 // Recursively remove all fields that have the key "path", since this is a local path
-function removePath(obj: object) {
-    const newObj = {};
+function removePath(obj: { [key: string]: any }) {
+    const newObj: { [key: string]: any } = {};
     for (const key in obj) {
         if (Object.prototype.hasOwnProperty.call(obj, key)) {
             let val = obj[key];

@@ -1,6 +1,6 @@
 {
     "extends": "@tsconfig/node20/tsconfig.json",
-    "include": ["vite.config.*"],
+    "include": ["vite.config.*", "buildscripts/*"],
     "compilerOptions": {
         "composite": true,
         "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
