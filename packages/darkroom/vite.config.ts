@@ -1,14 +1,19 @@
-import path from 'path';
-import dts from 'vite-plugin-dts';
+import { resolve } from 'path';
 import { defineConfig } from 'vite';
+import dts from 'vite-plugin-dts';
 
 export default defineConfig({
-    plugins: [dts()],
+    // only use the dts plugin in dev mode,
+    // since pnpm doesn't wait for it to finish when
+    // running 'build' in workspace root.
+    // Use tsc instead.
+    plugins: [process.env.npm_lifecycle_event == 'dev' ? dts() : undefined],
     build: {
         lib: {
             formats: ['es'],
-            entry: path.resolve(__dirname, 'lib/main.ts'),
+            entry: resolve(__dirname, 'lib/main.ts'),
             name: 'darkroom'
-        }
+        },
+        sourcemap: true
     }
 });

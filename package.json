@@ -6,6 +6,11 @@
     "author": "Joery Münninghoff",
     "license": "MIT",
     "scripts": {
+        "build": "pnpm \"/build:(?!(packages)|(safelight))/\" && pnpm build:safelight",
+        "build:packages": "pnpm \"/build:(?!(packages)|(safelight))/\"",
+        "build:darkroom": "cd packages/darkroom && pnpm build",
+        "build:timeline": "cd packages/timeline && pnpm build",
+        "build:safelight": "cd packages/safelight && pnpm build",
         "test": "vitest --ui",
         "test:timeline": "vitest timeline --ui"
     },
@@ -16,10 +21,11 @@
     ],
     "devDependencies": {
         "@vitejs/plugin-vue": "^5.0.4",
-        "@vitest/coverage-v8": "^1.3.1",
+        "@vitest/browser": "^1.3.1",
         "@vitest/ui": "^1.3.1",
         "vite": "^5.1.4",
         "vitest": "^1.3.1",
-        "vue": "^3.4.21"
+        "vue": "^3.4.21",
+        "webdriverio": "^8.32.4"
     }
 }

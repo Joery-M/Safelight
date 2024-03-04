@@ -1,10 +1,7 @@
-import { defineConfig } from 'vitest/config';
+import { defineProject } from 'vitest/config';
 
-export default defineConfig({
-    plugins: [],
+export default defineProject({
     test: {
-        setupFiles: ['@vitest/web-worker'],
-        globals: true,
-        environment: 'happy-dom'
+        globals: true
     }
 });

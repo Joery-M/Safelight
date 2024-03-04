@@ -1,17 +1,50 @@
 import esbuild from 'esbuild-wasm';
+import 'ses';
+import { customResolver } from './moduleResolver';
 
 export default class Darkroom {
-    esbuildReady: Promise<void>;
+    esbuildReady: Promise<void> | undefined;
+    private globals: any;
+
+    private esBuildOptions: esbuild.BuildOptions = {
+        target: ['esnext'],
+        jsx: 'automatic',
+        minifyIdentifiers: true,
+        sourcemap: true
+    };
 
     constructor(esbuildWasmUrl: string) {
         esbuild.stop();
 
-        this.initialize(esbuildWasmUrl);
+        this.esbuildReady = esbuild.initialize({
+            wasmURL: esbuildWasmUrl
+        });
     }
 
-    private async initialize(wasmURL: string) {
-        this.esbuildReady = esbuild.initialize({
-            wasmURL
+    defineGlobals(globals: any) {
+        this.globals = globals;
+    }
+
+    async compileSingleScript(script: string) {
+        const compilation = await esbuild.build({
+            ...this.esBuildOptions,
+            entryPoints: ['index.ts'],
+            bundle: true,
+            write: false,
+            inject: ['@darkroom-internal/darkroom-shim.ts'],
+            plugins: [
+                customResolver({
+                    '/index.ts': script
+                })
+            ]
         });
+
+        return compilation.outputFiles[0].text;
+    }
+
+    executeScript(script: string) {
+        const comp = new Compartment(this.globals);
+
+        return comp.evaluate(script);
     }
 }

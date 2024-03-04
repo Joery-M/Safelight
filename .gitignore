@@ -39,4 +39,4 @@ coverage
 /src/generated/*
 
 # Temporary vite configs
-/vite.config.ts.timestamp-*.mjs
+vite.config.ts.timestamp-*.mjs
