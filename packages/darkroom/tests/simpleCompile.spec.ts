@@ -1,15 +1,15 @@
 import esbuild from 'esbuild-wasm/esbuild.wasm?url';
 import { expect, test } from 'vitest';
-import Darkroom from '..';
+import { Compiler } from '..';
 
 test('Simple build 1', async () => {
-    const dr = new Darkroom(esbuild);
+    const compiler = new Compiler(esbuild);
 
-    expect(dr).toBeDefined();
+    expect(compiler).toBeDefined();
 
-    await dr.esbuildReady;
+    await compiler.esbuildReady;
 
-    const result = await dr.compileSingleScript(`
+    const result = await compiler.compileSingleScript(`
         export const test = "A" + "s" + 'df' + "g"
     `);
 

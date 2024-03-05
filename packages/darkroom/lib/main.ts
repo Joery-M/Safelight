@@ -2,13 +2,14 @@ import esbuild from 'esbuild-wasm';
 import 'ses';
 import { customResolver } from './moduleResolver';
 
-export default class Darkroom {
+export class Compiler {
     esbuildReady: Promise<void> | undefined;
-    private globals: any;
 
     private esBuildOptions: esbuild.BuildOptions = {
         target: ['esnext'],
+        format: 'esm',
         jsx: 'automatic',
+        bundle: true,
         minifyIdentifiers: true,
         sourcemap: true
     };
@@ -21,15 +22,10 @@ export default class Darkroom {
         });
     }
 
-    defineGlobals(globals: any) {
-        this.globals = globals;
-    }
-
     async compileSingleScript(script: string) {
         const compilation = await esbuild.build({
             ...this.esBuildOptions,
             entryPoints: ['index.ts'],
-            bundle: true,
             write: false,
             inject: ['@darkroom-internal/darkroom-shim.ts'],
             plugins: [
@@ -41,10 +37,6 @@ export default class Darkroom {
 
         return compilation.outputFiles[0].text;
     }
-
-    executeScript(script: string) {
-        const comp = new Compartment(this.globals);
-
-        return comp.evaluate(script);
-    }
 }
+
+export * from './script';

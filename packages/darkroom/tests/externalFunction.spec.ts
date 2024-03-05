@@ -1,26 +1,28 @@
 import esbuild from 'esbuild-wasm/esbuild.wasm?url';
 import { expect, test, vi } from 'vitest';
-import Darkroom from '..';
+import { Compiler, Script } from '..';
 
 test('External function', async () => {
-    const dr = new Darkroom(esbuild);
+    const compiler = new Compiler(esbuild);
 
-    expect(dr).toBeDefined();
+    expect(compiler).toBeDefined();
 
-    await dr.esbuildReady;
+    await compiler.esbuildReady;
 
     const hitMe = vi.fn();
 
-    dr.defineGlobals({
-        hitMe
-    });
-
-    const result = await dr.compileSingleScript(`
+    const result = await compiler.compileSingleScript(`
         hitMe("Ok")
         hitMe("Sure")
     `);
 
-    dr.executeScript(result);
+    const script = new Script(result);
+
+    script.defineGlobals({
+        hitMe
+    });
+
+    script.execute();
 
     expect(hitMe).toBeCalledWith('Ok');
     expect(hitMe).toBeCalledWith('Sure');

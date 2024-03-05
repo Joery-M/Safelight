@@ -28,3 +28,4 @@ coverage
 
 # Temporary vite configs
 vite.config.ts.timestamp-*.mjs
+vitest.config.ts.timestamp-*.mjs

@@ -1,8 +1,15 @@
 import { OnLoadArgs, OnResolveArgs, Plugin, PluginBuild } from 'esbuild-wasm';
 import Path from 'path-browserify';
-import shim from './darkroom-shim?raw';
+import shim from './shim/darkroom-shim?raw';
 
 const internalPaths = new Map<string, string>([['/@darkroom-internal/darkroom-shim.ts', shim]]);
+
+const jsDelivrNpm =
+    /^https:\/\/cdn\.jsdelivr\.net\/(npm|gh)\/@?[a-z0-9-.]+@(latest|v?(?:0|[1-9][0-9]*\.?)+(?:-[\da-z-]+(?:\.[\da-z-]+)*)?(?:\+[\da-z-]+(?:\.[\da-z-]+)*)?)\/?$/g;
+const esmRun =
+    /^https:\/\/(www\.)?esm\.run\/@?[a-z0-9-.]+@(latest|v?(?:0|[1-9][0-9]*\.?)+(?:-[\da-z-]+(?:\.[\da-z-]+)*)?(?:\+[\da-z-]+(?:\.[\da-z-]+)*)?)\/?$/g;
+const unpkgNpm =
+    /^https:\/\/(www\.)?unpkg\.com\/@?[a-z0-9-.]+@(latest|v?(?:0|[1-9][0-9]*\.?)+(?:-[\da-z-]+(?:\.[\da-z-]+)*)?(?:\+[\da-z-]+(?:\.[\da-z-]+)*)?)\/?$/g;
 
 // https://github.com/evanw/esbuild/issues/1952#issuecomment-1020006960
 export function customResolver(tree: Record<string, string>): Plugin {
@@ -18,6 +25,17 @@ export function customResolver(tree: Record<string, string>): Plugin {
                 }
 
                 if (args.kind === 'import-statement' || args.kind === 'dynamic-import') {
+                    if (
+                        jsDelivrNpm.test(args.path) ||
+                        esmRun.test(args.path) ||
+                        unpkgNpm.test(args.path)
+                    ) {
+                        return {
+                            path: '#darkroom-external://' + args.path,
+                            external: true
+                        };
+                    }
+
                     const dirname = Path.dirname(args.importer);
 
                     const path = Path.join(dirname, args.path);

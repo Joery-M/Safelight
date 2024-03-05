@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "composite": true,
         "target": "esnext",
         "moduleResolution": "node",
         "esModuleInterop": true,
@@ -9,8 +10,10 @@
         "declaration": true,
         "sourceMap": true,
         "strict": true,
-        "types": ["vite/client"]
+        "types": ["vite/client"],
+        "rootDir": "."
     },
     "files": ["lib/main.ts"],
+    "include": ["lib/*.ts", "tsconfig.shim.json"],
     "exclude": ["dist"]
 }

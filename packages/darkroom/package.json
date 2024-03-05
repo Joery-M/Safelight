@@ -4,13 +4,13 @@
     "author": "Joery Münninghoff",
     "license": "MIT",
     "type": "module",
-    "types": "dist/main.d.ts",
+    "types": "dist/lib/main.d.ts",
     "main": "dist/darkroom.js",
     "browser": "dist/darkroom.js",
     "module": "dist/darkroom.js",
     "exports": {
         ".": {
-            "types": "./dist/main.d.ts",
+            "types": "./dist/lib/main.d.ts",
             "import": "./dist/darkroom.js",
             "default": "./dist/darkroom.js"
         }
@@ -26,8 +26,10 @@
         "test": "vitest"
     },
     "dependencies": {
+        "@endo/static-module-record": "^1.0.4",
         "esbuild-wasm": "^0.20.1",
         "path-browserify": "^1.0.1",
+        "rxjs": "^7.8.1",
         "ses": "^1.3.0"
     },
     "devDependencies": {
