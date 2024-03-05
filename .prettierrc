@@ -1,5 +1,5 @@
 {
-    "$schema": "https://json.schemastore.org/prettierrc",
+    "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/prettierrc.json",
     "plugins": [
         "prettier-plugin-tailwindcss"
     ],
@@ -8,5 +8,6 @@
     "useTabs": false,
     "singleQuote": true,
     "printWidth": 100,
-    "trailingComma": "none"
+    "trailingComma": "none",
+    "endOfLine": "auto"
 }

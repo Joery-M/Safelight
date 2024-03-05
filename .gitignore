@@ -14,9 +14,6 @@ dist-ssr
 coverage
 *.local
 
-/cypress/videos/
-/cypress/screenshots/
-
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -28,15 +25,6 @@ coverage
 *.sw?
 
 *.tsbuildinfo
-
-# Generated dev files
-/stats.html
-/auto-imports.d.ts
-/components.d.ts
-/typed-router.d.ts
-
-# Generated items
-/src/generated/*
 
 # Temporary vite configs
 vite.config.ts.timestamp-*.mjs
