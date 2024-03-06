@@ -4,10 +4,11 @@ import { customResolver } from './moduleResolver';
 
 export class Compiler {
     esbuildReady: Promise<void> | undefined;
+    private esbuildWasm: string = '';
 
     private esBuildOptions: esbuild.BuildOptions = {
-        target: ['esnext'],
-        format: 'esm',
+        target: ['es2020', 'chrome70', 'firefox70'],
+        format: 'iife',
         jsx: 'automatic',
         bundle: true,
         minifyIdentifiers: true,
@@ -15,19 +16,42 @@ export class Compiler {
     };
 
     constructor(esbuildWasmUrl: string) {
-        esbuild.stop();
+        fetch(esbuildWasmUrl)
+            .then((res) => res.blob())
+            .then(async (blob) => {
+                if (!this.esbuildWasm.includes('blob'))
+                    this.esbuildWasm = URL.createObjectURL(blob);
 
-        this.esbuildReady = esbuild.initialize({
-            wasmURL: esbuildWasmUrl
+                await esbuild.stop();
+
+                this.esbuildReady = esbuild.initialize({
+                    wasmURL: esbuildWasmUrl
+                });
+            });
+    }
+
+    async restartEsbuild() {
+        await esbuild.stop();
+        await esbuild.initialize({
+            wasmURL: this.esbuildWasm
         });
     }
 
     async compileSingleScript(script: string) {
+        const moduleResolveRegex = /(?<=from "|')(#package\/|https:\/\/)([A-z0-9./@]*)(?="|')/g;
+
+        const modules: string[] = [];
+        let match: RegExpExecArray;
+        while ((match = moduleResolveRegex.exec(script)!) != null) {
+            modules.push(match[0], '/' + match[0]);
+        }
+
         const compilation = await esbuild.build({
             ...this.esBuildOptions,
             entryPoints: ['index.ts'],
             write: false,
             inject: ['@darkroom-internal/darkroom-shim.ts'],
+            external: modules,
             plugins: [
                 customResolver({
                     '/index.ts': script
@@ -35,6 +59,7 @@ export class Compiler {
             ]
         });
 
+        await this.restartEsbuild();
         return compilation.outputFiles[0].text;
     }
 }

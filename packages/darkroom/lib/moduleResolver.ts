@@ -5,11 +5,11 @@ import shim from './shim/darkroom-shim?raw';
 const internalPaths = new Map<string, string>([['/@darkroom-internal/darkroom-shim.ts', shim]]);
 
 const jsDelivrNpm =
-    /^https:\/\/cdn\.jsdelivr\.net\/(npm|gh)\/@?[a-z0-9-.]+@(latest|v?(?:0|[1-9][0-9]*\.?)+(?:-[\da-z-]+(?:\.[\da-z-]+)*)?(?:\+[\da-z-]+(?:\.[\da-z-]+)*)?)\/?$/g;
+    /^https:\/\/cdn\.jsdelivr\.net\/(npm|gh)\/@?[a-z0-9-.]+@(latest|v?(?:0|[1-9][0-9]*\.?)+(?:-[\da-z-]+(?:\.[\da-z-]+)*)?(?:\+[\da-z-]+(?:\.[\da-z-]+)*)?)\/?/g;
 const esmRun =
-    /^https:\/\/(www\.)?esm\.run\/@?[a-z0-9-.]+@(latest|v?(?:0|[1-9][0-9]*\.?)+(?:-[\da-z-]+(?:\.[\da-z-]+)*)?(?:\+[\da-z-]+(?:\.[\da-z-]+)*)?)\/?$/g;
+    /^https:\/\/(www\.)?esm\.run\/@?[a-z0-9-.]+@(latest|v?(?:0|[1-9][0-9]*\.?)+(?:-[\da-z-]+(?:\.[\da-z-]+)*)?(?:\+[\da-z-]+(?:\.[\da-z-]+)*)?)\/?/g;
 const unpkgNpm =
-    /^https:\/\/(www\.)?unpkg\.com\/@?[a-z0-9-.]+@(latest|v?(?:0|[1-9][0-9]*\.?)+(?:-[\da-z-]+(?:\.[\da-z-]+)*)?(?:\+[\da-z-]+(?:\.[\da-z-]+)*)?)\/?$/g;
+    /^https:\/\/(www\.)?unpkg\.com\/@?[a-z0-9-.]+@(latest|v?(?:0|[1-9][0-9]*\.?)+(?:-[\da-z-]+(?:\.[\da-z-]+)*)?(?:\+[\da-z-]+(?:\.[\da-z-]+)*)?)\/?/g;
 
 // https://github.com/evanw/esbuild/issues/1952#issuecomment-1020006960
 export function customResolver(tree: Record<string, string>): Plugin {
@@ -19,7 +19,7 @@ export function customResolver(tree: Record<string, string>): Plugin {
         name: 'inmemory-plugin-file-resolver',
 
         setup: (build: PluginBuild) => {
-            build.onResolve({ filter: /.*/ }, (args: OnResolveArgs) => {
+            build.onResolve({ filter: /.*/ }, async (args: OnResolveArgs) => {
                 if (args.kind === 'entry-point') {
                     return { path: '/' + args.path };
                 }
@@ -30,9 +30,12 @@ export function customResolver(tree: Record<string, string>): Plugin {
                         esmRun.test(args.path) ||
                         unpkgNpm.test(args.path)
                     ) {
+                        map.set(
+                            '/#darkroom-external://' + args.path,
+                            await (await fetch(args.path)).text()
+                        );
                         return {
-                            path: '#darkroom-external://' + args.path,
-                            external: true
+                            path: '/#darkroom-external://' + args.path
                         };
                     }
 
@@ -49,6 +52,19 @@ export function customResolver(tree: Record<string, string>): Plugin {
             });
 
             build.onLoad({ filter: /.*/ }, (args: OnLoadArgs) => {
+                // Idk what is happening, but if i remove this, an error occurs every second time i build
+                // From what i can tell, this is not used what so ever
+                if (
+                    /\/?#darkroom-external/.test(args.path) ||
+                    jsDelivrNpm.test(args.path) ||
+                    esmRun.test(args.path) ||
+                    unpkgNpm.test(args.path)
+                ) {
+                    return {
+                        contents: map.get(args.path),
+                        loader: 'js'
+                    };
+                }
                 if (args.path.startsWith('/@darkroom-internal/')) {
                     if (internalPaths.has(args.path)) {
                         return {

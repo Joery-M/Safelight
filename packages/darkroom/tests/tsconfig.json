@@ -8,6 +8,6 @@
         "types": ["vite/client"],
         "rootDir": "../"
     },
-    "include": ["./*.ts", "../lib/*"],
+    "include": ["./*.ts", "../lib/*", "../Manual.js"],
     "exclude": ["dist"]
 }
