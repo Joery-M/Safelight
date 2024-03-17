@@ -12,19 +12,9 @@
                 <Slider v-model="timeline1ViewRange" :max="120" range />
             </div>
             <Button @click="timeline1.resizeToFitAll()">Fit</Button>
-            <Timeline ref="timeline1">
-                <template #layerControls="{ index }">
-                    <Button outlined>
-                        <template #icon>
-                            <PhEye size="12" />
-                        </template>
-                    </Button>
-                    {{ index }}
-                </template>
-            </Timeline>
-            <Listbox :options="timeline1Selection" data-key="id" />
         </template>
     </Card>
+    <SLTimeline/>
 
     <Card title="Lists">
         <template #content>
@@ -46,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import Timeline from '@safelight/timeline';
+import SLTimeline from '@safelight/timeline';
 import Button from 'primevue/button';
 import Listbox from 'primevue/listbox';
 import { v4 as uuidv4 } from 'uuid';

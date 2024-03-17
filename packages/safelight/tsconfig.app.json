@@ -23,6 +23,7 @@
             "$/*": ["./public/*"]
         },
         "allowSyntheticDefaultImports": true,
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "types": ["unplugin-vue-router/client"]
     }
 }
