@@ -340,12 +340,12 @@ importers:
       vite:
         specifier: ^5.1.6
         version: 5.1.6(@types/node@20.11.28)(lightningcss@1.24.1)(sass@1.72.0)
+      vite-plugin-dts:
+        specifier: ^3.7.3
+        version: 3.7.3(@types/node@20.11.28)(typescript@5.4.2)(vite@5.1.6)
       vitest:
         specifier: ^1.4.0
         version: 1.4.0(@types/node@20.11.28)(@vitest/browser@1.4.0)(@vitest/ui@1.4.0)(jsdom@24.0.0)
-      vue-tsc:
-        specifier: ^2.0.6
-        version: 2.0.6(typescript@5.4.2)
 
 packages:
 

@@ -1,4 +1,4 @@
-import Timecode, { type TimecodeRef } from '@safelight/shared/Timecode';
+import Timecode, { type TimecodeRef } from '@safelight/shared/timecode';
 import { v4 as uuidv4 } from 'uuid';
 import type AVTimelineItem from '../TimelineItem/AVTimelineItem';
 import type BaseTimeline from './Timeline';

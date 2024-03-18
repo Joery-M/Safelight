@@ -27,7 +27,7 @@ const items = reactive<TimelineItem[]>([
         id: uuidv4(),
         name: 'a',
         start: 100,
-        duration: 1000
+        duration: 500
     }
 ]);
 </script>

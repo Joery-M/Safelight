@@ -1,7 +1,6 @@
 import { ref, type Component } from 'vue';
-import SLTimeline from './Timeline.vue';
 
-export default SLTimeline;
+export * from './Timeline.vue';
 
 export interface TimelineItem {
     id: string;

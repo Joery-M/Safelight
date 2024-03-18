@@ -1,10 +1,11 @@
-import { defineConfig } from 'vite';
-import { resolve } from 'path';
 import vue from '@vitejs/plugin-vue';
+import { resolve } from 'path';
+import { defineConfig } from 'vite';
+import dts from 'vite-plugin-dts';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [vue()],
+    plugins: [vue(), dts({ cleanVueFileName: true })],
     build: {
         lib: {
             entry: resolve(__dirname, 'src/index.ts'),
@@ -16,10 +17,19 @@ export default defineConfig({
             external: ['vue'],
             output: [
                 {
-                    preserveModules: true,
                     format: 'esm',
                     entryFileNames: `[name].mjs`,
                     inlineDynamicImports: false,
+                    // Provide global variables to use in the UMD build
+                    // for externalized deps
+                    globals: {
+                        vue: 'Vue'
+                    }
+                },
+                {
+                    format: 'commonjs',
+                    entryFileNames: `[name].cjs`,
+                    inlineDynamicImports: true,
                     // Provide global variables to use in the UMD build
                     // for externalized deps
                     globals: {

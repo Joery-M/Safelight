@@ -100,7 +100,7 @@ function updateItem(newItem: TimelineItem) {
 //#endregion
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #container {
     position: relative;
     height: 100%;

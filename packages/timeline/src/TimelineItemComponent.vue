@@ -23,7 +23,7 @@ defineEmits<{
 }>();
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .timelineItem {
     position: absolute;
     overflow-x: scroll;
