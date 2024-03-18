@@ -31,7 +31,7 @@
                                 style="grid-template-columns: repeat(auto-fill, minmax(325px, 1fr))"
                             >
                                 <div
-                                    v-for="(item, index) in slotProps.items"
+                                    v-for="item in slotProps.items"
                                     :key="item.name"
                                     class="border-round m-2 flex min-h-48 flex-col rounded-md border-solid border-white/10 p-4"
                                     style="border-width: 1px"
@@ -46,8 +46,8 @@
                                         <PhArrowSquareOut size="16" class="align-text-top" />
                                     </a>
                                     <span
-                                        class="text-secondary text-sm font-medium"
                                         v-if="item.author || item.license"
+                                        class="text-secondary text-sm font-medium"
                                     >
                                         <template v-if="item.author">
                                             {{ item.author?.name }} -
@@ -75,9 +75,9 @@
                                     <div class="flex-column mt-4 flex gap-4">
                                         <div class="flex gap-2">
                                             <Button
-                                                @click="openUrl(item.homepage)"
                                                 v-if="item.homepage"
                                                 role="link"
+                                                @click="openUrl(item.homepage)"
                                             >
                                                 <template #icon>
                                                     <PhHouse />
@@ -87,10 +87,10 @@
                                                 v-if="item.repository"
                                                 outlined
                                                 :title="'Open code repository for ' + item.from"
+                                                role="link"
                                                 @click="
                                                     openUrl(item.repository.replace('git+', ''))
                                                 "
-                                                role="link"
                                             >
                                                 <template #icon>
                                                     <PhGitBranch />
@@ -111,12 +111,14 @@
                         }"
                         style="height: 72vh"
                     >
-                        <template v-if="!disclaimer.data.value" v-for="i in 100">
-                            <Skeleton
-                                shape="rectangle"
-                                :width="Math.random() * 100 + '%'"
-                                :class="{ ['mb-' + (Math.random() > 0.5 ? '2' : '4')]: true }"
-                            />
+                        <template v-if="!disclaimer.data.value">
+                            <template v-for="i in 100" :key="i">
+                                <Skeleton
+                                    shape="rectangle"
+                                    :width="Math.random() * 100 + '%'"
+                                    :class="{ ['mb-' + (Math.random() > 0.5 ? '2' : '4')]: true }"
+                                />
+                            </template>
                         </template>
                         <vue-markdown
                             v-else
@@ -134,7 +136,7 @@
 </template>
 
 <script setup lang="ts">
-import { PhArrowLeft, PhArrowSquareOut, PhGitBranch, PhScroll } from '@phosphor-icons/vue';
+import { PhArrowLeft, PhArrowSquareOut, PhGitBranch } from '@phosphor-icons/vue';
 import type { Dependency, DependencyWithName, Packages } from 'types/packages';
 import VueMarkdown from 'vue-markdown-render';
 
