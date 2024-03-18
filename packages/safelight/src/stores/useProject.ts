@@ -1,6 +1,6 @@
 import Media from '@/controllers/Media/Media';
 import SimpleTimeline from '@/controllers/Timeline/SimpleTimeline';
-import Timecode from '@/helpers/Timecode';
+import Timecode from '@safelight/shared/timecode';
 
 export const useProject = defineStore('Project', () => {
     const name = ref('Untitled');

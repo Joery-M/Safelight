@@ -21,6 +21,7 @@
         "@phosphor-icons/vue": "^2.1.6",
         "@quantco/pnpm-licenses": "^2.0.0",
         "@safelight/timeline": "workspace:*",
+        "@safelight/shared": "workspace:*",
         "@vueuse/core": "^10.9.0",
         "@vueuse/gesture": "^2.0.0",
         "@vueuse/integrations": "^10.9.0",

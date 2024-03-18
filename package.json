@@ -17,7 +17,8 @@
     "workspaces": [
         "packages/timeline",
         "packages/darkroom",
-        "packages/safelight"
+        "packages/safelight",
+        "packages/shared"
     ],
     "devDependencies": {
         "@vitejs/plugin-vue": "^5.0.4",

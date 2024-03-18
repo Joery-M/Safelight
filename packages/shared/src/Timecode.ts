@@ -1,5 +1,7 @@
 import type { ShallowUnwrapRef } from '@vueuse/core';
+import { extendRef } from '@vueuse/shared';
 import { DateTime } from 'luxon';
+import { computed, ref, type Ref } from 'vue';
 
 export default class Timecode {
     public time = 0;
@@ -28,6 +30,7 @@ export default class Timecode {
     }
 
     static fromFrames(frame: number, fps: number): TimecodeRef {
+        console.log('A');
         return Timecode.from(frame * (1 / fps));
     }
 }
@@ -35,4 +38,4 @@ export default class Timecode {
 interface ITimecode {
     formattedTime: string;
 }
-export type TimecodeRef = ShallowUnwrapRef<ITimecode> & globalThis.Ref<number>;
+export type TimecodeRef = ShallowUnwrapRef<ITimecode> & Ref<number>;
