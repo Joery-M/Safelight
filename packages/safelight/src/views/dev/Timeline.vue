@@ -19,7 +19,7 @@
 
 <script lang="ts" setup>
 import type { TimelineItem } from '@safelight/timeline';
-import Timeline from '@safelight/timeline';
+import { Timeline } from '@safelight/timeline';
 import { v4 as uuidv4 } from 'uuid';
 
 const items = reactive<TimelineItem[]>([
@@ -27,7 +27,8 @@ const items = reactive<TimelineItem[]>([
         id: uuidv4(),
         name: 'a',
         start: 100,
-        duration: 500
+        duration: 500,
+        layer: 1
     }
 ]);
 </script>

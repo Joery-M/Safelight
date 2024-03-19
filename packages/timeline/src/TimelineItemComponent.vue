@@ -2,10 +2,17 @@
     <div
         class="timelineItem"
         :style="{
-            transform: `translate(` + viewport.TimecodeToXPosition(item.start) + `px, 0px)`,
+            transform:
+                `translate(` +
+                viewport.TimecodeToXPosition(item.start) +
+                `px, ${viewport.LayerToYPosition(item.layer, false, true)}px)`,
             width:
                 viewport.TimecodeToXPosition(item.start + item.duration) -
                 viewport.TimecodeToXPosition(item.start) +
+                'px',
+            height:
+                viewport.LayerToYPosition(item.layer, true) -
+                viewport.LayerToYPosition(item.layer) +
                 'px'
         }"
     >
@@ -27,6 +34,7 @@ defineEmits<{
 .timelineItem {
     position: absolute;
     overflow-x: scroll;
+    background-color: purple;
 
     p {
         margin: 0;

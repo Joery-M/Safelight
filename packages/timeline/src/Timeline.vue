@@ -1,32 +1,30 @@
 <template>
-    <div
-        id="container"
-        ref="target"
-        @pointerover="targetPointerOver = true"
-        @pointerout="targetPointerOver = false"
-    >
+    <div id="container" ref="target">
         <template v-for="item in props.items" :key="item.id">
             <TimelineItemComponent :item="item" :viewport="viewport" @item-change="updateItem" />
         </template>
     </div>
+    {{ pointerOut }}
 </template>
 
 <script setup lang="ts">
-import { useEventListener, useVModel } from '@vueuse/core';
+import { useEventListener, useMouseInElement, useVModel } from '@vueuse/core';
 import { usePinch, useWheel } from '@vueuse/gesture';
 import { ref, watch } from 'vue';
 import TimelineItemComponent from './TimelineItemComponent.vue';
-import { TimelineViewport, type TimelineItem } from './index';
+import { TimelineViewport, type TimelineAlignment, type TimelineItem } from './index';
 
 const target = ref<HTMLDivElement>();
-const targetPointerOver = ref(false);
+const pointerOut = useMouseInElement(target, {}).isOutside;
 
 const props = withDefaults(
     defineProps<{
         items: { [id: string]: TimelineItem };
+        alignment: TimelineAlignment;
     }>(),
     {
-        items: () => ({})
+        items: () => ({}),
+        alignment: 'bottom'
     }
 );
 
@@ -38,13 +36,17 @@ const items = useVModel(props, 'items', emit);
 
 const viewport = new TimelineViewport();
 
+watch(props, () => {
+    viewport.alignment.value = props.alignment;
+});
+
 //#region Zooming
 
 // Prevent browser zooming
 useEventListener(
     'wheel',
     (ev) => {
-        if (targetPointerOver.value) {
+        if (!pointerOut.value) {
             ev.preventDefault();
         }
     },
@@ -56,10 +58,10 @@ const isScrolling = ref(false);
 
 usePinch(
     (ev) => {
-        if (!isScrolling.value) {
+        if (!isScrolling.value && ev.event.eventPhase == 2) {
             isPinching.value = ev.pinching;
 
-            viewport.scaleX.value += ev.delta[1] / 200;
+            viewport.scaleX.value += ((ev.event as WheelEvent).deltaY ?? ev.delta[1]) / 200;
             viewport.scaleX.value = Math.max(0.1, viewport.scaleX.value);
         }
     },
@@ -71,14 +73,33 @@ usePinch(
 //#endregion
 
 //#region Scrolling
+
 useWheel(
     (ev) => {
         if (!isPinching.value) {
             isScrolling.value = ev.scrolling;
 
-            viewport.x.value += ev.delta[0];
-            viewport.x.value = Math.max(0, viewport.x.value);
-            viewport.y.value += ev.delta[1];
+            if (ev.shiftKey) {
+                viewport.x.value += ev.delta[1];
+                viewport.x.value = Math.max(0, viewport.x.value);
+                if (viewport.alignment.value == 'bottom') {
+                    viewport.y.value -= ev.delta[0];
+                    viewport.y.value = Math.max(0, viewport.y.value);
+                } else {
+                    viewport.y.value += ev.delta[0];
+                    viewport.y.value = Math.max(0, viewport.y.value);
+                }
+            } else {
+                viewport.x.value += ev.delta[0];
+                viewport.x.value = Math.max(0, viewport.x.value);
+                if (viewport.alignment.value == 'bottom') {
+                    viewport.y.value -= ev.delta[1];
+                    viewport.y.value = Math.max(0, viewport.y.value);
+                } else {
+                    viewport.y.value += ev.delta[1];
+                    viewport.y.value = Math.max(0, viewport.y.value);
+                }
+            }
         }
     },
     {

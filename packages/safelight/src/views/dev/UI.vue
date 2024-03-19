@@ -14,7 +14,7 @@
             <Button @click="timeline1.resizeToFitAll()">Fit</Button>
         </template>
     </Card>
-    <SLTimeline/>
+    <!-- <SLTimeline/> -->
 
     <Card title="Lists">
         <template #content>
@@ -36,14 +36,14 @@
 </template>
 
 <script setup lang="ts">
-import SLTimeline from '@safelight/timeline';
+// import SLTimeline from '@safelight/timeline';
 import Button from 'primevue/button';
 import Listbox from 'primevue/listbox';
 import { v4 as uuidv4 } from 'uuid';
 import { RouterLink } from 'vue-router';
 
 const timeline1 = ref();
-const timeline1Selection = ref<any[]>();
+// const timeline1Selection = ref<any[]>();
 const timeline1ViewStart = ref(0);
 const timeline1ViewEnd = ref(120);
 const timeline1ViewRange = ref([0, 120]);
