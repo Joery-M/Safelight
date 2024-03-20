@@ -25,10 +25,17 @@ import { v4 as uuidv4 } from 'uuid';
 const items = reactive<TimelineItem[]>([
     {
         id: uuidv4(),
-        name: 'a',
+        name: '100 start',
         start: 100,
         duration: 500,
         layer: 1
+    },
+    {
+        id: uuidv4(),
+        name: '250 start',
+        start: 250,
+        duration: 500,
+        layer: 2
     }
 ]);
 </script>

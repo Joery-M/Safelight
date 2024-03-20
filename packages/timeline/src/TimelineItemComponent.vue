@@ -4,23 +4,22 @@
         :style="{
             transform:
                 `translate(` +
-                viewport.TimecodeToXPosition(item.start) +
+                viewport.millisecondsToX(item.start).value +
                 `px, ${viewport.LayerToYPosition(item.layer, false, true)}px)`,
-            width:
-                viewport.TimecodeToXPosition(item.start + item.duration) -
-                viewport.TimecodeToXPosition(item.start) +
-                'px',
-            height:
-                viewport.LayerToYPosition(item.layer, true) -
-                viewport.LayerToYPosition(item.layer) +
-                'px'
+            width: width + 'px',
+            height: height + 'px'
         }"
     >
-        <p>Timeline item works! {{ item.id }} {{ viewport.TimecodeToXPosition(item.start) }}</p>
+        <p>
+            {{ item.name }} -
+            {{ viewport.millisecondsToX(item.start).value }}
+            {{ width }}
+        </p>
     </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import type { TimelineItem, TimelineViewport } from '.';
 
 const { viewport, item } = defineProps<{ item: TimelineItem; viewport: TimelineViewport }>();
@@ -28,6 +27,15 @@ const { viewport, item } = defineProps<{ item: TimelineItem; viewport: TimelineV
 defineEmits<{
     itemChange: [TimelineItem];
 }>();
+
+const width = computed(
+    () =>
+        viewport.millisecondsToX(item.start + item.duration).value -
+        viewport.millisecondsToX(item.start).value
+);
+const height = computed(
+    () => viewport.LayerToYPosition(item.layer, true) - viewport.LayerToYPosition(item.layer)
+);
 </script>
 
 <style lang="scss" scoped>
@@ -35,6 +43,7 @@ defineEmits<{
     position: absolute;
     overflow-x: scroll;
     background-color: purple;
+    height: 32px;
 
     p {
         margin: 0;

@@ -1,4 +1,5 @@
-import { ref, type Component } from 'vue';
+import { createProjection } from '@vueuse/math';
+import { computed, ref, type Component } from 'vue';
 
 export { default as Timeline } from './Timeline.vue';
 
@@ -22,17 +23,24 @@ export class TimelineViewport {
     boundingBoxHeight = ref(250);
     boundingBoxWidth = ref(250);
 
-    private constantXScale = 1;
+    private boundingBoxMs = computed<readonly [number, number]>(() => [
+        this.x.value * this.scaleX.value,
+        (this.x.value + 1000) * this.scaleX.value
+    ]);
+    private boundingBox = computed<readonly [number, number]>(() => [
+        0,
+        this.boundingBoxWidth.value
+    ]);
+
+    millisecondsToX = createProjection(this.boundingBoxMs, this.boundingBox);
+    xToMilliseconds = createProjection(this.boundingBox, this.boundingBoxMs);
+
     private constantYScale = 0.5;
 
     private defaultLayerHeight = 32;
     private layerHeights: number[] = [];
 
     alignment = ref<TimelineAlignment>('bottom');
-
-    TimecodeToXPosition(timecode: number) {
-        return timecode / (this.scaleX.value * this.constantXScale) - this.x.value;
-    }
 
     /**
      * Convert a layer index to its corresponding Y position

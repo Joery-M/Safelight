@@ -1,26 +1,43 @@
 <template>
-    <div id="container" ref="target">
-        <template v-for="item in props.items" :key="item.id">
-            <TimelineItemComponent :item="item" :viewport="viewport" @item-change="updateItem" />
-        </template>
+    <div id="horizontalContainer">
+        <div id="verticalContainer">
+            <div id="timelineItemContainer" ref="target">
+                <template v-for="item in props.items" :key="item.id">
+                    <TimelineItemComponent
+                        :item="item"
+                        :viewport="viewport"
+                        @item-change="updateItem"
+                    />
+                </template>
+            </div>
+            <div class="scrollbarContainer horizontal">
+                <div ref="XScrollbar" />
+            </div>
+        </div>
+        <div class="scrollbarContainer vertical">
+            <div ref="YScrollbar" />
+        </div>
     </div>
-    {{ pointerOut }}
+    {{ viewport.xToMilliseconds(0) }}
+    {{ viewport.xToMilliseconds(viewport.boundingBoxWidth) }}
 </template>
 
 <script setup lang="ts">
 import { useEventListener, useMouseInElement, useVModel } from '@vueuse/core';
-import { usePinch, useWheel } from '@vueuse/gesture';
+import { useWheel } from '@vueuse/gesture';
 import { ref, watch } from 'vue';
 import TimelineItemComponent from './TimelineItemComponent.vue';
 import { TimelineViewport, type TimelineAlignment, type TimelineItem } from './index';
 
 const target = ref<HTMLDivElement>();
+const YScrollbar = ref<HTMLDivElement>();
+const XScrollbar = ref<HTMLDivElement>();
 const pointerOut = useMouseInElement(target, {}).isOutside;
 
 const props = withDefaults(
     defineProps<{
         items: { [id: string]: TimelineItem };
-        alignment: TimelineAlignment;
+        alignment?: TimelineAlignment;
     }>(),
     {
         items: () => ({}),
@@ -53,22 +70,7 @@ useEventListener(
     { passive: false }
 );
 
-const isPinching = ref(false);
 const isScrolling = ref(false);
-
-usePinch(
-    (ev) => {
-        if (!isScrolling.value && ev.event.eventPhase == 2) {
-            isPinching.value = ev.pinching;
-
-            viewport.scaleX.value += ((ev.event as WheelEvent).deltaY ?? ev.delta[1]) / 200;
-            viewport.scaleX.value = Math.max(0.1, viewport.scaleX.value);
-        }
-    },
-    {
-        domTarget: target
-    }
-);
 
 //#endregion
 
@@ -76,29 +78,37 @@ usePinch(
 
 useWheel(
     (ev) => {
-        if (!isPinching.value) {
-            isScrolling.value = ev.scrolling;
+        isScrolling.value = ev.scrolling;
 
-            if (ev.shiftKey) {
-                viewport.x.value += ev.delta[1];
-                viewport.x.value = Math.max(0, viewport.x.value);
-                if (viewport.alignment.value == 'bottom') {
-                    viewport.y.value -= ev.delta[0];
-                    viewport.y.value = Math.max(0, viewport.y.value);
-                } else {
-                    viewport.y.value += ev.delta[0];
-                    viewport.y.value = Math.max(0, viewport.y.value);
+        if (ev.ctrlKey) {
+            if (ev.delta[1] > 0) {
+                if (viewport.scaleX.value * 1.5 < 150) {
+                    viewport.scaleX.value *= 1.5;
                 }
+            } else if (ev.delta[1] < 0) {
+                if (viewport.scaleX.value / 1.5 > 0.01) {
+                    viewport.scaleX.value /= 1.5;
+                }
+            }
+        } else if (ev.shiftKey) {
+            viewport.x.value += ev.delta[1];
+            viewport.x.value = Math.max(0, viewport.x.value);
+            if (viewport.alignment.value == 'bottom') {
+                viewport.y.value -= ev.delta[0];
+                viewport.y.value = Math.max(0, viewport.y.value);
             } else {
-                viewport.x.value += ev.delta[0];
-                viewport.x.value = Math.max(0, viewport.x.value);
-                if (viewport.alignment.value == 'bottom') {
-                    viewport.y.value -= ev.delta[1];
-                    viewport.y.value = Math.max(0, viewport.y.value);
-                } else {
-                    viewport.y.value += ev.delta[1];
-                    viewport.y.value = Math.max(0, viewport.y.value);
-                }
+                viewport.y.value += ev.delta[0];
+                viewport.y.value = Math.max(0, viewport.y.value);
+            }
+        } else {
+            viewport.x.value += ev.delta[0];
+            viewport.x.value = Math.max(0, viewport.x.value);
+            if (viewport.alignment.value == 'bottom') {
+                viewport.y.value -= ev.delta[1];
+                viewport.y.value = Math.max(0, viewport.y.value);
+            } else {
+                viewport.y.value += ev.delta[1];
+                viewport.y.value = Math.max(0, viewport.y.value);
             }
         }
     },
@@ -122,11 +132,33 @@ function updateItem(newItem: TimelineItem) {
 </script>
 
 <style lang="scss" scoped>
-#container {
+@use 'sass:color';
+
+#horizontalContainer {
+    display: flex;
+}
+#verticalContainer {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+#timelineItemContainer {
     position: relative;
     height: 100%;
     width: 100%;
     overflow: hidden;
     min-height: 250px;
+}
+
+.scrollbarContainer {
+    background-color: color.change(white, $alpha: 0.05);
+
+    &.horizontal {
+        height: 0.5rem;
+    }
+
+    &.vertical {
+        width: 0.5rem;
+    }
 }
 </style>
