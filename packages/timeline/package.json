@@ -43,13 +43,13 @@
         "vue": "3.4.21"
     },
     "devDependencies": {
-        "@types/node": "^20.11.28",
+        "@types/node": "^20.11.30",
         "@vitejs/plugin-vue": "^5.0.4",
         "@vue/test-utils": "^2.4.5",
         "@vue/tsconfig": "^0.5.1",
         "jsdom": "^24.0.0",
-        "typescript": "^5.4.2",
-        "vite": "^5.1.6",
+        "typescript": "^5.4.3",
+        "vite": "^5.2.2",
         "vite-plugin-dts": "^3.7.3",
         "vitest": "^1.4.0"
     }
