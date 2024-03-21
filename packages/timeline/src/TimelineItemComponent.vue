@@ -44,6 +44,7 @@ const height = computed(
     overflow-x: scroll;
     background-color: purple;
     height: 32px;
+    z-index: 3;
 
     p {
         margin: 0;

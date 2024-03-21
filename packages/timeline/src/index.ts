@@ -16,7 +16,13 @@ export interface TimelineItem {
 export type TimelineAlignment = 'top' | 'bottom';
 
 export class TimelineViewport {
+    /**
+     * X position in milliseconds
+     */
     x = ref(0);
+    /**
+     * Y position in pixels
+     */
     y = ref(0);
     scaleX = ref(1);
     scaleY = ref(1);
@@ -24,8 +30,8 @@ export class TimelineViewport {
     boundingBoxWidth = ref(250);
 
     private boundingBoxMs = computed<readonly [number, number]>(() => [
-        this.x.value * this.scaleX.value,
-        (this.x.value + 1000) * this.scaleX.value
+        this.x.value,
+        this.x.value + 1000 * this.scaleX.value
     ]);
     private boundingBox = computed<readonly [number, number]>(() => [
         0,
@@ -34,6 +40,17 @@ export class TimelineViewport {
 
     millisecondsToX = createProjection(this.boundingBoxMs, this.boundingBox);
     xToMilliseconds = createProjection(this.boundingBox, this.boundingBoxMs);
+
+    millisecondsToXNoOffset = createProjection(
+        () => [0, 1000 * this.scaleX.value],
+        this.boundingBox
+    );
+    millisecondsToXNoScale = createProjection(
+        [this.x.value, this.x.value + 1000],
+        this.boundingBox
+    );
+    millisecondsToXNoScaleNoOffset = createProjection([0, 1000], this.boundingBox);
+    viewWidth = computed(() => this.xToMilliseconds(this.boundingBoxWidth).value - this.x.value);
 
     private constantYScale = 0.5;
 
@@ -69,4 +86,30 @@ export class TimelineViewport {
             return offset;
         }
     }
+
+    pan(x: number, y: number, reverseAxis = false) {
+        if (reverseAxis) {
+            this.x.value += x * this.scaleX.value;
+            this.x.value = Math.max(0, this.x.value);
+            if (this.alignment.value == 'bottom') {
+                this.y.value -= y;
+                this.y.value = Math.max(0, this.y.value);
+            } else {
+                this.y.value += y;
+                this.y.value = Math.max(0, this.y.value);
+            }
+        } else {
+            this.x.value += x * this.scaleX.value;
+            this.x.value = Math.max(0, this.x.value);
+            if (this.alignment.value == 'bottom') {
+                this.y.value -= y;
+                this.y.value = Math.max(0, this.y.value);
+            } else {
+                this.y.value += y;
+                this.y.value = Math.max(0, this.y.value);
+            }
+        }
+    }
+
+    lastMs = ref(1);
 }

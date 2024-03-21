@@ -9,39 +9,60 @@
                         @item-change="updateItem"
                     />
                 </template>
+                <div id="backgroundContainer">
+                    <div
+                        class="verticalBars"
+                        :style="{
+                            '--start':
+                                viewport.millisecondsToX(nearestTenth(viewport.viewWidth.value, 1))
+                                    .value + 'px',
+                            '--gap':
+                                viewport.millisecondsToXNoOffset(
+                                    nearestTenth(viewport.viewWidth.value, 1)
+                                ).value + 'px'
+                        }"
+                    />
+                </div>
             </div>
-            <div class="scrollbarContainer horizontal">
-                <div ref="XScrollbar" />
-            </div>
-        </div>
-        <div class="scrollbarContainer vertical">
-            <div ref="YScrollbar" />
         </div>
     </div>
-    {{ viewport.xToMilliseconds(0) }}
-    {{ viewport.xToMilliseconds(viewport.boundingBoxWidth) }}
+    <p>{{ useRound(viewport.xToMilliseconds(0)) }}</p>
+    <p>{{ useRound(viewport.xToMilliseconds(viewport.boundingBoxWidth)) }}</p>
+    <p>{{ useRound(viewport.viewWidth) }}</p>
+    <p>{{ useRound(viewport.lastMs) }}</p>
+    <p>{{ useRound(viewport.millisecondsToXNoOffset(viewport.x)) }} px</p>
+    <p>{{ useRound(bounds.width) }} px</p>
 </template>
 
 <script setup lang="ts">
-import { useEventListener, useMouseInElement, useVModel } from '@vueuse/core';
+import {
+    useElementBounding,
+    useEventListener,
+    useMouseInElement,
+    useVModel,
+    watchImmediate
+} from '@vueuse/core';
 import { useWheel } from '@vueuse/gesture';
+import { useRound } from '@vueuse/math';
 import { ref, watch } from 'vue';
 import TimelineItemComponent from './TimelineItemComponent.vue';
 import { TimelineViewport, type TimelineAlignment, type TimelineItem } from './index';
 
 const target = ref<HTMLDivElement>();
-const YScrollbar = ref<HTMLDivElement>();
-const XScrollbar = ref<HTMLDivElement>();
-const pointerOut = useMouseInElement(target, {}).isOutside;
+// const YScrollbar = ref<HTMLDivElement>();
+// const XScrollbar = ref<HTMLDivElement>();
+const pointerOut = useMouseInElement(target).isOutside;
 
 const props = withDefaults(
     defineProps<{
         items: { [id: string]: TimelineItem };
         alignment?: TimelineAlignment;
+        zoomFactor?: number;
     }>(),
     {
         items: () => ({}),
-        alignment: 'bottom'
+        alignment: 'bottom',
+        zoomFactor: 1.02
     }
 );
 
@@ -57,7 +78,14 @@ watch(props, () => {
     viewport.alignment.value = props.alignment;
 });
 
-//#region Zooming
+watchImmediate(items.value, () => {
+    // get the max duration of all items
+    viewport.lastMs.value = Math.max(
+        ...Object.values(items.value).map((i) => i.duration + i.start)
+    );
+});
+
+//#region Scrolling/Zooming
 
 // Prevent browser zooming
 useEventListener(
@@ -72,44 +100,42 @@ useEventListener(
 
 const isScrolling = ref(false);
 
-//#endregion
-
-//#region Scrolling
+const bounds = useElementBounding(target);
+viewport.boundingBoxHeight = bounds.height;
+viewport.boundingBoxWidth = bounds.width;
 
 useWheel(
     (ev) => {
         isScrolling.value = ev.scrolling;
 
         if (ev.ctrlKey) {
+            // Zooming
             if (ev.delta[1] > 0) {
-                if (viewport.scaleX.value * 1.5 < 150) {
-                    viewport.scaleX.value *= 1.5;
-                }
+                const oldScale = viewport.scaleX.value;
+                viewport.scaleX.value *= props.zoomFactor;
+                const mousePos = viewport.xToMilliseconds(ev.event.clientX).value; // get the current mouse position
+                const currentX = viewport.x.value;
+                const newScaleX = viewport.scaleX.value;
+                viewport.x.value = Math.max(
+                    0,
+                    mousePos + ((currentX - mousePos) / oldScale) * newScaleX
+                );
             } else if (ev.delta[1] < 0) {
-                if (viewport.scaleX.value / 1.5 > 0.01) {
-                    viewport.scaleX.value /= 1.5;
+                if (viewport.scaleX.value / props.zoomFactor > 0.01) {
+                    const oldScale = viewport.scaleX.value;
+                    viewport.scaleX.value /= props.zoomFactor;
+                    const mousePos = viewport.xToMilliseconds(ev.event.clientX).value; // get the current mouse position
+                    const currentX = viewport.x.value;
+                    const newScaleX = viewport.scaleX.value;
+                    viewport.x.value = Math.max(
+                        0,
+                        mousePos + ((currentX - mousePos) / oldScale) * newScaleX
+                    );
                 }
-            }
-        } else if (ev.shiftKey) {
-            viewport.x.value += ev.delta[1];
-            viewport.x.value = Math.max(0, viewport.x.value);
-            if (viewport.alignment.value == 'bottom') {
-                viewport.y.value -= ev.delta[0];
-                viewport.y.value = Math.max(0, viewport.y.value);
-            } else {
-                viewport.y.value += ev.delta[0];
-                viewport.y.value = Math.max(0, viewport.y.value);
             }
         } else {
-            viewport.x.value += ev.delta[0];
-            viewport.x.value = Math.max(0, viewport.x.value);
-            if (viewport.alignment.value == 'bottom') {
-                viewport.y.value -= ev.delta[1];
-                viewport.y.value = Math.max(0, viewport.y.value);
-            } else {
-                viewport.y.value += ev.delta[1];
-                viewport.y.value = Math.max(0, viewport.y.value);
-            }
+            // Scrolling
+            viewport.pan(ev.delta[0], ev.delta[1], ev.shiftKey);
         }
     },
     {
@@ -129,6 +155,10 @@ function updateItem(newItem: TimelineItem) {
 }
 
 //#endregion
+
+function nearestTenth(v: number, offset: number = 0) {
+    return Math.pow(10, Math.floor(Math.log10(v)) - offset);
+}
 </script>
 
 <style lang="scss" scoped>
@@ -150,15 +180,53 @@ function updateItem(newItem: TimelineItem) {
     min-height: 250px;
 }
 
-.scrollbarContainer {
-    background-color: color.change(white, $alpha: 0.05);
+#backgroundContainer {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 
-    &.horizontal {
-        height: 0.5rem;
-    }
+    pointer-events: none;
+    touch-action: none;
 
-    &.vertical {
-        width: 0.5rem;
+    .verticalBars {
+        height: 100%;
+        width: 100%;
+        left: 0;
+        top: 0;
+        position: absolute;
+
+        $stripeColor: color.change(white, $alpha: 1);
+        $stripeColor2: color.change(white, $alpha: 1);
+
+        background-image: repeating-linear-gradient(
+            90deg,
+            transparent var(--start),
+            transparent calc(var(--gap) + var(--start)),
+            $stripeColor calc(var(--gap) + var(--start)),
+            transparent calc(var(--gap) + var(--start))
+        );
     }
 }
+
+// TODO: Add scrollbars
+// .scrollbarContainer {
+//     background-color: color.change(white, $alpha: 0.05);
+//     overflow: hidden;
+
+//     &.horizontal {
+//         height: 0.5rem;
+//     }
+
+//     &.vertical {
+//         width: 0.5rem;
+//     }
+
+//     > div {
+//         background-color: color.change(white, $alpha: 0.5);
+//         border-radius: 0.25rem;
+//         height: 100%;
+//     }
+// }
 </style>
