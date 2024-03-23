@@ -1,37 +1,30 @@
 <template>
-    <div id="horizontalContainer">
-        <div id="verticalContainer">
+    <Splitter id="horizontalContainer">
+        <SplitterPanel id="layerControls" :min-size="2" :size="10">
+            <template v-for="i in viewport.highestLayer.value + 1" :key="i">
+                <LayerControl :layer="i - 1" />
+            </template>
+        </SplitterPanel>
+        <SplitterPanel id="verticalContainer" :size="90">
             <div id="timelineItemContainer" ref="target">
                 <template v-for="item in props.items" :key="item.id">
-                    <TimelineItemComponent
-                        :item="item"
-                        :viewport="viewport"
-                        @item-change="updateItem"
-                    />
+                    <TimelineItemComponent :item="item" @item-change="updateItem" />
                 </template>
-                <div id="backgroundContainer">
-                    <div
-                        class="verticalBars"
-                        :style="{
-                            '--start':
-                                viewport.millisecondsToX(nearestTenth(viewport.viewWidth.value, 1))
-                                    .value + 'px',
-                            '--gap':
-                                viewport.millisecondsToXNoOffset(
-                                    nearestTenth(viewport.viewWidth.value, 1)
-                                ).value + 'px'
-                        }"
-                    />
-                </div>
             </div>
-        </div>
-    </div>
-    <p>{{ useRound(viewport.xToMilliseconds(0)) }}</p>
-    <p>{{ useRound(viewport.xToMilliseconds(viewport.boundingBoxWidth)) }}</p>
-    <p>{{ useRound(viewport.viewWidth) }}</p>
-    <p>{{ useRound(viewport.lastMs) }}</p>
-    <p>{{ useRound(viewport.millisecondsToXNoOffset(viewport.x)) }} px</p>
+        </SplitterPanel>
+    </Splitter>
+    <p>{{ useRound(viewport.getTimePosition(0)) }}</p>
     <p>{{ useRound(bounds.width) }} px</p>
+    <input
+        v-model.number="viewport.startTime.value"
+        type="range"
+        :max="viewport.maxTime.value + 1000"
+    />
+    <input
+        v-model.number="viewport.endTime.value"
+        type="range"
+        :max="viewport.maxTime.value + 1000"
+    />
 </template>
 
 <script setup lang="ts">
@@ -44,13 +37,14 @@ import {
 } from '@vueuse/core';
 import { useWheel } from '@vueuse/gesture';
 import { useRound } from '@vueuse/math';
-import { ref, watch } from 'vue';
-import TimelineItemComponent from './TimelineItemComponent.vue';
+import Splitter from 'primevue/splitter';
+import SplitterPanel from 'primevue/splitterpanel';
+import { provide, ref, watch } from 'vue';
 import { TimelineViewport, type TimelineAlignment, type TimelineItem } from './index';
+import LayerControl from './LayerControl.vue';
+import TimelineItemComponent from './TimelineItemComponent.vue';
 
 const target = ref<HTMLDivElement>();
-// const YScrollbar = ref<HTMLDivElement>();
-// const XScrollbar = ref<HTMLDivElement>();
 const pointerOut = useMouseInElement(target).isOutside;
 
 const props = withDefaults(
@@ -58,11 +52,13 @@ const props = withDefaults(
         items: { [id: string]: TimelineItem };
         alignment?: TimelineAlignment;
         zoomFactor?: number;
+        invertScrollAxes?: boolean;
     }>(),
     {
         items: () => ({}),
         alignment: 'bottom',
-        zoomFactor: 1.02
+        zoomFactor: 1.02,
+        invertScrollAxes: false
     }
 );
 
@@ -74,15 +70,20 @@ const items = useVModel(props, 'items', emit);
 
 const viewport = new TimelineViewport();
 
+provide('viewport', viewport);
+
 watch(props, () => {
     viewport.alignment.value = props.alignment;
 });
 
 watchImmediate(items.value, () => {
     // get the max duration of all items
-    viewport.lastMs.value = Math.max(
+    viewport.maxTime.value = Math.max(
         ...Object.values(items.value).map((i) => i.duration + i.start)
     );
+
+    // Get the highest layer of all items
+    viewport.highestLayer.value = Math.max(...Object.values(items.value).map((i) => i.layer));
 });
 
 //#region Scrolling/Zooming
@@ -110,32 +111,14 @@ useWheel(
 
         if (ev.ctrlKey) {
             // Zooming
-            if (ev.delta[1] > 0) {
-                const oldScale = viewport.scaleX.value;
-                viewport.scaleX.value *= props.zoomFactor;
-                const mousePos = viewport.xToMilliseconds(ev.event.clientX).value; // get the current mouse position
-                const currentX = viewport.x.value;
-                const newScaleX = viewport.scaleX.value;
-                viewport.x.value = Math.max(
-                    0,
-                    mousePos + ((currentX - mousePos) / oldScale) * newScaleX
-                );
-            } else if (ev.delta[1] < 0) {
-                if (viewport.scaleX.value / props.zoomFactor > 0.01) {
-                    const oldScale = viewport.scaleX.value;
-                    viewport.scaleX.value /= props.zoomFactor;
-                    const mousePos = viewport.xToMilliseconds(ev.event.clientX).value; // get the current mouse position
-                    const currentX = viewport.x.value;
-                    const newScaleX = viewport.scaleX.value;
-                    viewport.x.value = Math.max(
-                        0,
-                        mousePos + ((currentX - mousePos) / oldScale) * newScaleX
-                    );
-                }
-            }
+
+            const mouseX = ev.event.clientX - bounds.left.value;
+            const mouseXPerc = mouseX / bounds.width.value;
+            console.log(mouseXPerc);
+            viewport.zoom(ev.delta[1], mouseXPerc);
         } else {
             // Scrolling
-            viewport.pan(ev.delta[0], ev.delta[1], ev.shiftKey);
+            viewport.move(ev.delta[1]);
         }
     },
     {
@@ -155,10 +138,6 @@ function updateItem(newItem: TimelineItem) {
 }
 
 //#endregion
-
-function nearestTenth(v: number, offset: number = 0) {
-    return Math.pow(10, Math.floor(Math.log10(v)) - offset);
-}
 </script>
 
 <style lang="scss" scoped>
@@ -178,37 +157,25 @@ function nearestTenth(v: number, offset: number = 0) {
     width: 100%;
     overflow: hidden;
     min-height: 250px;
+
+    scroll-behavior: smooth;
 }
 
-#backgroundContainer {
+#layerControls {
     position: relative;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-
-    pointer-events: none;
-    touch-action: none;
-
-    .verticalBars {
-        height: 100%;
-        width: 100%;
-        left: 0;
-        top: 0;
-        position: absolute;
-
-        $stripeColor: color.change(white, $alpha: 1);
-        $stripeColor2: color.change(white, $alpha: 1);
-
-        background-image: repeating-linear-gradient(
-            90deg,
-            transparent var(--start),
-            transparent calc(var(--gap) + var(--start)),
-            $stripeColor calc(var(--gap) + var(--start)),
-            transparent calc(var(--gap) + var(--start))
-        );
-    }
 }
+
+// TODO: Add background
+// #backgroundContainer {
+//     position: relative;
+//     top: 0;
+//     left: 0;
+//     width: 100%;
+//     height: 100%;
+
+//     pointer-events: none;
+//     touch-action: none;
+// }
 
 // TODO: Add scrollbars
 // .scrollbarContainer {

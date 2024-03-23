@@ -2,27 +2,28 @@
     <div
         class="timelineItem"
         :style="{
-            transform:
-                `translate(` +
-                viewport.millisecondsToX(item.start).value +
-                `px, ${viewport.LayerToYPosition(item.layer, false, true)}px)`,
+            top: ySmooth + 'px',
+            left: xSmooth + 'px',
             width: width + 'px',
             height: height + 'px'
         }"
     >
         <p>
             {{ item.name }} -
-            {{ viewport.millisecondsToX(item.start).value }}
-            {{ width }}
+            {{ useRound(viewport.getTimePosition(item.start)) }}
+            {{ useRound(width) }}
         </p>
     </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { useRound } from '@vueuse/math';
+import { computed, inject } from 'vue';
 import type { TimelineItem, TimelineViewport } from '.';
 
-const { viewport, item } = defineProps<{ item: TimelineItem; viewport: TimelineViewport }>();
+const { item } = defineProps<{ item: TimelineItem }>();
+
+const viewport = inject('viewport') as TimelineViewport;
 
 defineEmits<{
     itemChange: [TimelineItem];
@@ -30,12 +31,18 @@ defineEmits<{
 
 const width = computed(
     () =>
-        viewport.millisecondsToX(item.start + item.duration).value -
-        viewport.millisecondsToX(item.start).value
+        viewport.getTimePosition(item.start + item.duration) - viewport.getTimePosition(item.start)
 );
 const height = computed(
-    () => viewport.LayerToYPosition(item.layer, true) - viewport.LayerToYPosition(item.layer)
+    () =>
+        viewport.LayerToYPosition(item.layer, false, true) -
+        viewport.LayerToYPosition(item.layer, true, true)
 );
+
+const x = computed(() => viewport.getTimePosition(item.start) - viewport.offsetX.value);
+const y = computed(() => viewport.LayerToYPosition(item.layer, true, true));
+const xSmooth = x;
+const ySmooth = y;
 </script>
 
 <style lang="scss" scoped>
