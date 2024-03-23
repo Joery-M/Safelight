@@ -79,7 +79,7 @@
         "unplugin-turbo-console": "^1.5.0",
         "unplugin-vue-components": "^0.26.0",
         "unplugin-vue-router": "^0.8.5",
-        "vite": "^5.2.2",
+        "vite": "^5.2.4",
         "vite-plugin-mkcert": "^1.17.5",
         "vue-tsc": "^2.0.7"
     }
