@@ -24,7 +24,13 @@
                     :key="project"
                     :header="project.toString()"
                 >
-                    <DataView :value="deps" data-key="name" layout="grid" lazy>
+                    <DataView
+                        :value="deps"
+                        data-key="name"
+                        layout="grid"
+                        lazy
+                        style="max-height: 72vh; overflow-y: scroll"
+                    >
                         <template #grid="slotProps: { items: DependencyWithName[] }">
                             <div
                                 class="grid-nogutter grid"
@@ -109,7 +115,7 @@
                             'overflow-y-auto': disclaimer.data.value,
                             'overflow-y-clip': !disclaimer.data.value
                         }"
-                        style="height: 72vh"
+                        style="max-height: 72vh"
                     >
                         <template v-if="!disclaimer.data.value">
                             <template v-for="i in 100" :key="i">
@@ -126,6 +132,7 @@
                                 linkify: true
                             }"
                             :source="disclaimer.data.value"
+                            class="m-2"
                         >
                         </vue-markdown>
                     </div>
