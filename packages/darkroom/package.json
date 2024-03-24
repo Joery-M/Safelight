@@ -2,7 +2,7 @@
     "name": "@safelight/darkroom",
     "description": "The plugin compiler and 'runtime' for Safelight",
     "author": "Joery Münninghoff",
-    "license": "MIT",
+    "license": "Apache-2.0",
     "type": "module",
     "types": "dist/lib/main.d.ts",
     "main": "dist/darkroom.js",

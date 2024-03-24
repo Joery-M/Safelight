@@ -4,7 +4,7 @@
     "private": true,
     "type": "module",
     "author": "Joery Münninghoff",
-    "license": "MIT",
+    "license": "Apache-2.0",
     "scripts": {
         "build": "pnpm \"/build:(?!(packages)|(safelight))/\" && pnpm build:safelight",
         "build:packages": "pnpm \"/build:(?!(packages)|(safelight))/\"",
