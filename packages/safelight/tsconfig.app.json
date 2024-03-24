@@ -12,6 +12,7 @@
     "compilerOptions": {
         "composite": true,
         "noEmit": false,
+        "moduleResolution": "Bundler",
 
         "verbatimModuleSyntax": true,
         "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",

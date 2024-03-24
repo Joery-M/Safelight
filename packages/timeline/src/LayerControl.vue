@@ -19,7 +19,6 @@
 </template>
 
 <script setup lang="ts">
-import { useEventListener } from '@vueuse/core';
 import { computed, inject, ref } from 'vue';
 import type { TimelineViewport } from '.';
 
@@ -41,8 +40,7 @@ const startHeight = ref(0);
 
 const minHeight = 22;
 
-useEventListener('mousemove', resizing);
-useEventListener('mouseup', endResize);
+defineExpose({ resizing, endResize });
 
 function startResize(ev: MouseEvent) {
     isResizing.value = true;

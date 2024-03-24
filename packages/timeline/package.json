@@ -5,35 +5,28 @@
     "author": "Joery Münninghoff",
     "license": "MIT",
     "type": "module",
-    "typings": "dist/src/index.d.ts",
-    "main": "src/index.ts",
-    "browser": "src/index.ts",
-    "module": "src/index.ts",
+    "files": [
+        "dist"
+    ],
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.mjs",
     "exports": {
         ".": {
-            "types": "./dist/src/index.d.ts",
-            "import": [
-                "./src/index.ts",
-                "./dist/index.mjs"
-            ],
-            "require": [
-                "./src/index.ts",
-                "./dist/index.cjs"
-            ]
+            "import": "./dist/index.mjs",
+            "require": "./dist/index.cjs"
         },
         "./*": [
             "./packages/timeline/src/*",
             "./src/*"
-        ]
+        ],
+        "./style.css": "./dist/style.css"
     },
-    "files": [
-        "dist",
-        "src"
-    ],
+    "types": "./dist/index.d.ts",
     "scripts": {
         "dev": "pnpm \"/build:/\" --watch",
         "build": "pnpm \"/build:/\"",
-        "build:vite": "vite build --emptyOutDir"
+        "build:vite": "vite build",
+        "build:tsc": "vue-tsc --emitDeclarationOnly"
     },
     "dependencies": {
         "@safelight/shared": "workspace:*",
@@ -51,7 +44,7 @@
         "jsdom": "^24.0.0",
         "typescript": "^5.4.3",
         "vite": "^5.2.4",
-        "vite-plugin-dts": "^3.7.3",
-        "vitest": "^1.4.0"
+        "vitest": "^1.4.0",
+        "vue-tsc": "^2.0.7"
     }
 }

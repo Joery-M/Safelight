@@ -2,18 +2,32 @@
     <Splitter id="horizontalContainer">
         <SplitterPanel id="layerControls" :min-size="2" :size="10">
             <template v-for="i in viewport.highestLayer.value + 1" :key="i">
-                <LayerControl :layer="i - 1" />
+                <LayerControl ref="layerControls" :layer="i - 1" />
             </template>
         </SplitterPanel>
         <SplitterPanel id="verticalContainer" :size="90">
             <div id="timelineItemContainer" ref="target">
                 <template v-for="item in props.items" :key="item.id">
-                    <TimelineItemComponent :item="item" @item-change="updateItem" />
+                    <TimelineItemComponent
+                        v-if="viewport.isItemVisible(item)"
+                        :item="item"
+                        @item-change="updateItem"
+                    />
                 </template>
+            </div>
+            <div class="scrollbarContainer horizontal">
+                <div
+                    ref="horizontalScroll"
+                    :style="{
+                        left: scrollbarLeft + '%',
+                        width: scrollbarWidth + '%'
+                    }"
+                    @mousedown="startResize"
+                ></div>
             </div>
         </SplitterPanel>
     </Splitter>
-    <p>{{ useRound(viewport.getTimePosition(0)) }}</p>
+    <p>{{ useRound(viewport.getTimePosition(100)) }}</p>
     <p>{{ useRound(bounds.width) }} px</p>
     <input
         v-model.number="viewport.startTime.value"
@@ -39,28 +53,23 @@ import { useWheel } from '@vueuse/gesture';
 import { useRound } from '@vueuse/math';
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
-import { provide, ref, watch } from 'vue';
-import { TimelineViewport, type TimelineAlignment, type TimelineItem } from './index';
+import { computed, provide, ref, watch } from 'vue';
+import { TimelineViewport, type TimelineProps, type TimelineItem } from './index';
 import LayerControl from './LayerControl.vue';
 import TimelineItemComponent from './TimelineItemComponent.vue';
 
 const target = ref<HTMLDivElement>();
+const horizontalScroll = ref<HTMLDivElement>();
 const pointerOut = useMouseInElement(target).isOutside;
 
-const props = withDefaults(
-    defineProps<{
-        items: { [id: string]: TimelineItem };
-        alignment?: TimelineAlignment;
-        zoomFactor?: number;
-        invertScrollAxes?: boolean;
-    }>(),
-    {
-        items: () => ({}),
-        alignment: 'bottom',
-        zoomFactor: 1.02,
-        invertScrollAxes: false
-    }
-);
+const props = withDefaults(defineProps<TimelineProps>(), {
+    items: () => ({}),
+    alignment: 'bottom',
+    zoomFactor: 2,
+    invertScrollAxes: false,
+    invertHorizontalScroll: false,
+    invertVerticalScroll: false
+});
 
 const emit = defineEmits<{
     'update:modelValue': any[];
@@ -68,12 +77,15 @@ const emit = defineEmits<{
 
 const items = useVModel(props, 'items', emit);
 
+const layerControls = ref<(typeof LayerControl)[]>([]);
+
 const viewport = new TimelineViewport();
 
 provide('viewport', viewport);
 
-watch(props, () => {
+watchImmediate(props, () => {
     viewport.alignment.value = props.alignment;
+    viewport.zoomFactor.value = props.zoomFactor;
 });
 
 watchImmediate(items.value, () => {
@@ -111,14 +123,19 @@ useWheel(
 
         if (ev.ctrlKey) {
             // Zooming
-
             const mouseX = ev.event.clientX - bounds.left.value;
             const mouseXPerc = mouseX / bounds.width.value;
-            console.log(mouseXPerc);
             viewport.zoom(ev.delta[1], mouseXPerc);
         } else {
             // Scrolling
-            viewport.move(ev.delta[1]);
+            const shift = props.invertScrollAxes ? !ev.shiftKey : ev.shiftKey;
+            if (shift) {
+                const invert = props.invertVerticalScroll ? -1 : 1;
+                viewport.moveY(ev.delta[1] * invert);
+            } else {
+                const invert = props.invertHorizontalScroll ? -1 : 1;
+                viewport.move(ev.delta[1] * invert);
+            }
         }
     },
     {
@@ -138,6 +155,47 @@ function updateItem(newItem: TimelineItem) {
 }
 
 //#endregion
+
+//#region Scrollbar
+
+const scrollbarLeft = computed(
+    () => (viewport.startTime.value / (viewport.maxTime.value + viewport.endPadding)) * 100
+);
+const scrollbarWidth = computed(
+    () =>
+        ((viewport.endTime.value - viewport.startTime.value) /
+            (viewport.maxTime.value + viewport.endPadding)) *
+        100
+);
+
+useEventListener('mousemove', resizing);
+useEventListener('mouseup', endResize);
+
+const isHoldingHorizontal = ref(false);
+const horizontalLastX = ref(0);
+
+function startResize(ev: MouseEvent) {
+    isHoldingHorizontal.value = true;
+    horizontalLastX.value = ev.clientX;
+}
+
+function resizing(ev: MouseEvent) {
+    layerControls.value.forEach((lc) => lc.resizing(ev));
+
+    if (isHoldingHorizontal.value) {
+        window.getSelection()?.removeAllRanges();
+        // Feels hacky, but it works
+        viewport.move(viewport.getTimePosition(ev.clientX - horizontalLastX.value) * 2.175);
+        horizontalLastX.value = ev.clientX;
+    }
+}
+function endResize(ev: MouseEvent) {
+    layerControls.value.forEach((lc) => lc.endResize(ev));
+    if (isHoldingHorizontal.value) {
+        isHoldingHorizontal.value = false;
+    }
+}
+//#endregion
 </script>
 
 <style lang="scss" scoped>
@@ -145,6 +203,9 @@ function updateItem(newItem: TimelineItem) {
 
 #horizontalContainer {
     display: flex;
+    resize: both;
+    overflow: auto;
+    height: 250px;
 }
 #verticalContainer {
     flex-grow: 1;
@@ -156,7 +217,6 @@ function updateItem(newItem: TimelineItem) {
     height: 100%;
     width: 100%;
     overflow: hidden;
-    min-height: 250px;
 
     scroll-behavior: smooth;
 }
@@ -178,22 +238,24 @@ function updateItem(newItem: TimelineItem) {
 // }
 
 // TODO: Add scrollbars
-// .scrollbarContainer {
-//     background-color: color.change(white, $alpha: 0.05);
-//     overflow: hidden;
+.scrollbarContainer {
+    background-color: color.change(white, $alpha: 0.05);
+    overflow: hidden;
+    position: relative;
 
-//     &.horizontal {
-//         height: 0.5rem;
-//     }
+    &.horizontal {
+        height: 0.25rem;
+    }
 
-//     &.vertical {
-//         width: 0.5rem;
-//     }
+    &.vertical {
+        width: 0.25rem;
+    }
 
-//     > div {
-//         background-color: color.change(white, $alpha: 0.5);
-//         border-radius: 0.25rem;
-//         height: 100%;
-//     }
-// }
+    > div {
+        background-color: color.change(white, $alpha: 0.5);
+        border-radius: 0.25rem;
+        height: 100%;
+        position: absolute;
+    }
+}
 </style>

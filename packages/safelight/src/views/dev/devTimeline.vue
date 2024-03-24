@@ -11,7 +11,7 @@
         </template>
         <template #content>
             <div style="min-height: 250px">
-                <Timeline :items="items" />
+                <Timeline :items="items" invert- />
             </div>
         </template>
     </Card>
@@ -56,7 +56,7 @@ const items = reactive<TimelineItem[]>([
         name: '30 start',
         start: 30,
         duration: 770,
-        layer: 7
+        layer: 17
     },
     {
         id: uuidv4(),
@@ -88,3 +88,7 @@ body {
     overscroll-behavior-x: none;
 }
 </style>
+
+<route lang="json">
+{ "path": "/dev/timeline" }
+</route>
