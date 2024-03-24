@@ -1,4 +1,4 @@
-import { ModuleExportsNamespace } from 'ses';
+import { Metafile } from 'esbuild-wasm';
 
 export class Script {
     private compartment: Compartment | undefined;
@@ -6,22 +6,28 @@ export class Script {
     public requestedModules: string[] = [];
     modules = new Map<string, string>();
 
-    constructor(private content: string) {
-        const moduleResolveRegex = /("|')#darkroom-external:\/\/([A-z0-9./:@]*)("|')/g;
-
-        let match: RegExpExecArray;
-        while ((match = moduleResolveRegex.exec(content)!) != null) {
-            this.requestedModules.push(match[2]);
+    constructor(
+        private content: string,
+        inputs: Metafile['inputs']
+    ) {
+        for (const key in inputs) {
+            if (key.startsWith('#darkroom-external:/')) {
+                this.requestedModules.push(key.slice(20));
+            }
         }
     }
 
     registerModule(name: string, content: string) {
         console.log(name);
-        this.modules.set('#darkroom-external:' + name, content);
+        this.modules.set('#darkroom-external://' + name, content);
     }
 
     execute() {
-        this.compartment = new Compartment(this.globals);
+        console.log(this.modules);
+        this.compartment = new Compartment(
+            this.globals,
+            Object.fromEntries(this.modules.entries())
+        );
 
         return this.compartment.evaluate(this.content);
     }

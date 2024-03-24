@@ -56,11 +56,12 @@ export class Compiler {
                 customResolver({
                     '/index.ts': script
                 })
-            ]
+            ],
+            metafile: true
         });
 
-        await this.restartEsbuild();
-        return compilation.outputFiles[0].text;
+        this.restartEsbuild();
+        return compilation;
     }
 }
 

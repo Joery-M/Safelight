@@ -5,11 +5,11 @@ import shim from './shim/darkroom-shim?raw';
 const internalPaths = new Map<string, string>([['/@darkroom-internal/darkroom-shim.ts', shim]]);
 
 const jsDelivrNpm =
-    /^https:\/\/cdn\.jsdelivr\.net\/(npm|gh)\/@?[a-z0-9-.]+@(latest|v?(?:0|[1-9][0-9]*\.?)+(?:-[\da-z-]+(?:\.[\da-z-]+)*)?(?:\+[\da-z-]+(?:\.[\da-z-]+)*)?)\/?/g;
+    /^https:\/\/cdn\.jsdelivr\.net\/(npm|gh)\/@?[a-z0-9-.]+(@(latest|v?(?:0|[1-9][0-9]*\.?)+(?:-[\da-z-]+(?:\.[\da-z-]+)*)?(?:\+[\da-z-]+(?:\.[\da-z-]+)*)?))?(\/[\da-z-.]+)\/?/g;
 const esmRun =
-    /^https:\/\/(www\.)?esm\.run\/@?[a-z0-9-.]+@(latest|v?(?:0|[1-9][0-9]*\.?)+(?:-[\da-z-]+(?:\.[\da-z-]+)*)?(?:\+[\da-z-]+(?:\.[\da-z-]+)*)?)\/?/g;
+    /^https:\/\/(www\.)?esm\.run\/@?[a-z0-9-.]+(@(latest|v?(?:0|[1-9][0-9]*\.?)+(?:-[\da-z-]+(?:\.[\da-z-]+)*)?(?:\+[\da-z-]+(?:\.[\da-z-]+)*)?))?(\/[\da-z-.]+)\/?/g;
 const unpkgNpm =
-    /^https:\/\/(www\.)?unpkg\.com\/@?[a-z0-9-.]+@(latest|v?(?:0|[1-9][0-9]*\.?)+(?:-[\da-z-]+(?:\.[\da-z-]+)*)?(?:\+[\da-z-]+(?:\.[\da-z-]+)*)?)\/?/g;
+    /^https:\/\/(www\.)?unpkg\.com\/@?[a-z0-9-.]+(@(latest|v?(?:0|[1-9][0-9]*\.?)+(?:-[\da-z-]+(?:\.[\da-z-]+)*)?(?:\+[\da-z-]+(?:\.[\da-z-]+)*)?))?(\/[\da-z-.]+)\/?/g;
 
 // https://github.com/evanw/esbuild/issues/1952#issuecomment-1020006960
 export function customResolver(tree: Record<string, string>): Plugin {
@@ -30,12 +30,13 @@ export function customResolver(tree: Record<string, string>): Plugin {
                         esmRun.test(args.path) ||
                         unpkgNpm.test(args.path)
                     ) {
-                        map.set(
-                            '/#darkroom-external://' + args.path,
-                            await (await fetch(args.path)).text()
-                        );
+                        console.log(args.path);
+                        // const request = await fetch(args.path);
+                        // console.log(request.url);
+                        // map.set('#darkroom-external://' + request.url, await request.text());
                         return {
-                            path: '/#darkroom-external://' + args.path
+                            path: args.path,
+                            namespace: 'darkroom-external'
                         };
                     }
 
@@ -43,7 +44,7 @@ export function customResolver(tree: Record<string, string>): Plugin {
 
                     const path = Path.join(dirname, args.path);
 
-                    return { path };
+                    return { path, external: false };
                 }
 
                 throw Error(

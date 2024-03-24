@@ -20,6 +20,8 @@
             "@/*": ["./src/*"],
         },
         "allowSyntheticDefaultImports": true,
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+
+        "types": ["vite/client", "@types/node"],
     }
 }

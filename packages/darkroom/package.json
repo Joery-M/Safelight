@@ -1,5 +1,6 @@
 {
     "name": "@safelight/darkroom",
+    "version": "1.0.0",
     "description": "The plugin compiler and 'runtime' for Safelight",
     "author": "Joery Münninghoff",
     "license": "Apache-2.0",
@@ -50,6 +51,7 @@
         "@vue/tsconfig": "^0.5.1",
         "@vueuse/core": "^10.9.0",
         "util": "^0.12.5",
+        "vite-plugin-mkcert": "^1.17.5",
         "vue-codemirror": "^6.1.1"
     }
 }
