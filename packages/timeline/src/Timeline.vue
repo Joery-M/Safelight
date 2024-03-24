@@ -27,18 +27,6 @@
             </div>
         </SplitterPanel>
     </Splitter>
-    <p>{{ useRound(viewport.getTimePosition(100)) }}</p>
-    <p>{{ useRound(bounds.width) }} px</p>
-    <input
-        v-model.number="viewport.startTime.value"
-        type="range"
-        :max="viewport.maxTime.value + 1000"
-    />
-    <input
-        v-model.number="viewport.endTime.value"
-        type="range"
-        :max="viewport.maxTime.value + 1000"
-    />
 </template>
 
 <script setup lang="ts">
@@ -50,11 +38,10 @@ import {
     watchImmediate
 } from '@vueuse/core';
 import { useWheel } from '@vueuse/gesture';
-import { useRound } from '@vueuse/math';
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
 import { computed, provide, ref, watch } from 'vue';
-import { TimelineViewport, type TimelineProps, type TimelineItem } from './index';
+import { TimelineViewport, type TimelineItem, type TimelineProps } from './index';
 import LayerControl from './LayerControl.vue';
 import TimelineItemComponent from './TimelineItemComponent.vue';
 
@@ -129,12 +116,14 @@ useWheel(
         } else {
             // Scrolling
             const shift = props.invertScrollAxes ? !ev.shiftKey : ev.shiftKey;
+            const invertY = props.invertVerticalScroll ? -1 : 1;
+            const invertX = props.invertHorizontalScroll ? -1 : 1;
             if (shift) {
-                const invert = props.invertVerticalScroll ? -1 : 1;
-                viewport.moveY(ev.delta[1] * invert);
+                viewport.moveY(ev.delta[1] * invertY);
+                viewport.move(ev.delta[0] * invertX);
             } else {
-                const invert = props.invertHorizontalScroll ? -1 : 1;
-                viewport.move(ev.delta[1] * invert);
+                viewport.moveY(ev.delta[0] * invertY);
+                viewport.move(ev.delta[1] * invertX);
             }
         }
     },
@@ -203,8 +192,6 @@ function endResize(ev: MouseEvent) {
 
 #horizontalContainer {
     display: flex;
-    resize: both;
-    overflow: auto;
     height: 250px;
 }
 #verticalContainer {

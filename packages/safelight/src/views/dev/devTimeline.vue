@@ -10,9 +10,11 @@
             </RouterLink>
         </template>
         <template #content>
-            <div style="min-height: 250px">
-                <Timeline :items="items" invert- />
+            <div style="min-height: 250px; resize: both; overflow: auto">
+                <Timeline :items="items" :invert-scroll-axes="invertScrollAxes" />
             </div>
+            <input v-model="invertScrollAxes" type="checkbox" />
+            <label> Trackpad mode </label>
         </template>
     </Card>
 </template>
@@ -21,6 +23,8 @@
 import type { TimelineItem } from '@safelight/timeline';
 import { Timeline } from '@safelight/timeline';
 import { v4 as uuidv4 } from 'uuid';
+
+const invertScrollAxes = ref(true);
 
 const items = reactive<TimelineItem[]>([
     {
