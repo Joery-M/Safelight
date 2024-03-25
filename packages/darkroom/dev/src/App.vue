@@ -1,8 +1,13 @@
 <template>
     <h2>Darkroom</h2>
     <p>esbuild ready: {{ isReady }}</p>
+    <button v-for="(content, file) in source" :key="file" @click="activeFile = file.toString()">
+        {{ file }}
+    </button>
+    <p>Type a new file name here, then start typing in the code editor (IK, scuffed)</p>
+    <input v-model="activeFile" type="text" />
     <codemirror
-        v-model="source"
+        v-model="source[activeFile]"
         placeholder="Code goes here..."
         :style="{ height: '300px' }"
         :autofocus="true"
@@ -10,13 +15,8 @@
         :tab-size="4"
         :extensions="[javascript()]"
     />
-    <div>
-        <template v-for="mod in allowedModules">
-            {{ mod }}
-        </template>
-    </div>
-    <button @click="compile">Compile</button>
-    <button @click="execute">Execute</button>
+    <button @click="compile()">Compile</button>
+    <button @click="execute()">Execute</button>
     <p>Compilation time: {{ timeEnd }}ms</p>
     <div style="display: flex; width: 100%">
         <codemirror
@@ -33,41 +33,74 @@
 </template>
 
 <script setup lang="ts">
-import { Codemirror } from 'vue-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
-import { reactive, ref } from 'vue';
-import { Compiler, Script } from '../../';
-import { useLocalStorage } from '@vueuse/core';
-import util from 'util';
-import esbuild from 'esbuild-wasm/esbuild.wasm?url';
+import {
+    onKeyPressed,
+    useDebounce,
+    useKeyModifier,
+    useLocalStorage,
+    watchDebounced
+} from '@vueuse/core';
+import { useObservable } from '@vueuse/rxjs';
 import { type BuildResult } from 'esbuild-wasm';
+import esbuild from 'esbuild-wasm/esbuild.wasm?url';
+import { lastValueFrom, Observable } from 'rxjs';
+import util from 'util';
+import { ref } from 'vue';
+import { Codemirror } from 'vue-codemirror';
+import { Compiler, Script } from '../../';
 
 const compiler = new Compiler(esbuild);
 
-const isReady = ref(false);
-const source = useLocalStorage('darkroom-dev-sourcecode', '');
+const isReady = useObservable(compiler.esbuildReady);
+const source = useLocalStorage<{ [filename: string]: string }>('darkroom-dev-sourcecode', {
+    '/index.ts': ''
+});
+const activeFile = ref('/index.ts');
 const output = ref('');
 const log = ref('');
-const allowedModules = reactive(new Map<string, boolean>());
-let compiledScript: BuildResult | null = null;
 
-compiler.esbuildReady?.then(() => {
-    console.log('esbuild ready');
-    isReady.value = true;
+const debouncedRef = useDebounce(source, 2000);
+watchDebounced(
+    debouncedRef,
+    () => {
+        console.log('Compile');
+        compile();
+    },
+    {
+        debounce: 500,
+        deep: true
+    }
+);
+
+const ctrl = useKeyModifier('Control');
+onKeyPressed('Enter', () => {
+    if (ctrl.value) {
+        execute();
+    }
 });
+
+let compiledScript: BuildResult | null = null;
 
 const timeStart = ref(0);
 const timeEnd = ref(0);
 
 async function compile() {
+    await lastValueFrom(
+        new Observable((sub) => {
+            compiler.esbuildReady.subscribe((isReady) => {
+                if (isReady) {
+                    sub.next(isReady);
+                    sub.complete();
+                }
+            });
+        })
+    );
     timeStart.value = Date.now();
-    const result = await compiler.compileSingleScript(source.value);
+    const result = await compiler.compileScripts(source.value);
+    timeEnd.value = Date.now() - timeStart.value;
     output.value = result.outputFiles[0].text;
     compiledScript = result;
-    timeEnd.value = Date.now() - timeStart.value;
-    for (const url in result.metafile.inputs) {
-        allowedModules.set(url, true);
-    }
 }
 
 async function execute() {
@@ -75,23 +108,29 @@ async function execute() {
     if (!compiledScript || !compiledScript.metafile) {
         return;
     }
-    const scr = new Script(output.value, compiledScript.metafile.inputs);
+    const scr = new Script(output.value);
 
-    log.value += 'Requested modules: ' + scr.requestedModules.join(', ') + '\n';
-
-    const modulePromises = scr.requestedModules.map(async (m) => {
-        const content = await (await fetch(m)).text();
-        scr.registerModule(m, content);
-    });
-
-    await Promise.all(modulePromises);
+    // Console.time shim
+    const timeLabels: { [label: string]: number } = {};
 
     scr.defineGlobals({
         console: {
             log(...args) {
                 log.value += util.format(...args);
+            },
+            time(label: string) {
+                timeLabels[label] = Date.now();
+            },
+            timeEnd(label: string) {
+                const time = Date.now() - timeLabels[label];
+                log.value += '\n' + util.format(`${label}: ${time}ms`);
             }
-        } as Console
+        } as Console,
+        // Couldnt find a simple way of doing this without allowing for time based attacks
+        // eslint-disable-next-line @typescript-eslint/ban-types
+        setTimeout(callback: Function, ms: number) {
+            setTimeout(callback, ms + Math.random() * 2 - 1);
+        }
     });
 
     try {
@@ -104,7 +143,7 @@ async function execute() {
 </script>
 
 <style>
-.cm-editor {
+#app > div > div > .cm-editor {
     flex-grow: 1;
     max-width: 50%;
 }

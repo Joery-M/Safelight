@@ -7,12 +7,12 @@ test('Simple build 1', async () => {
 
     expect(compiler).toBeDefined();
 
-    await compiler.esbuildReady;
+    await compiler.waitForReady();
 
     const result = await compiler.compileSingleScript(`
         export const test = "A" + "s" + 'df' + "g"
     `);
 
     // Notice the lack of the concationation
-    expect(result).toContain('Asdfg');
+    expect(result.outputFiles[0].text).toContain('Asdfg');
 });

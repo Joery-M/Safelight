@@ -7,7 +7,7 @@ test('External function', async () => {
 
     expect(compiler).toBeDefined();
 
-    await compiler.esbuildReady;
+    await compiler.waitForReady();
 
     const hitMe = vi.fn();
 

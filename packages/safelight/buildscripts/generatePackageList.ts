@@ -29,7 +29,7 @@ if (!existsSync('./src/generated')) {
 const bannedKeys = ['unsavedDependencies', 'path'];
 
 function generatePackagesForProject(projectPath: string, outputFileName: string) {
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>((resolve) => {
         const output = spawn('pnpm', ['list', '--depth', '2', '--json', '--long'], {
             cwd: join(process.cwd(), '../../', projectPath),
             stdio: ['inherit', 'pipe', 'inherit'],

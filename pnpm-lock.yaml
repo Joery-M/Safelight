@@ -63,6 +63,12 @@ importers:
       '@vueuse/core':
         specifier: ^10.9.0
         version: 10.9.0(vue@3.4.21)
+      '@vueuse/rxjs':
+        specifier: ^10.9.0
+        version: 10.9.0(rxjs@7.8.1)(vue@3.4.21)
+      timer-shim:
+        specifier: ^0.3.0
+        version: 0.3.0
       util:
         specifier: ^0.12.5
         version: 0.12.5
@@ -79,6 +85,9 @@ importers:
       '@vitest/browser':
         specifier: ^1.4.0
         version: 1.4.0(vitest@1.4.0)(webdriverio@8.35.1)
+      '@vitest/ui':
+        specifier: ^1.4.0
+        version: 1.4.0(vitest@1.4.0)
       rimraf:
         specifier: ^5.0.5
         version: 5.0.5
@@ -1829,7 +1838,7 @@ packages:
       pathe: 1.1.2
       picocolors: 1.0.0
       sirv: 2.0.4
-      vitest: 1.4.0(@vitest/browser@1.4.0)(@vitest/ui@1.4.0)
+      vitest: 1.4.0(@types/node@20.11.30)(@vitest/browser@1.4.0)(@vitest/ui@1.4.0)(jsdom@24.0.0)
     dev: true
 
   /@vitest/utils@1.4.0:
@@ -4439,6 +4448,13 @@ packages:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
     dev: true
 
+  /linkedlist@1.0.1:
+    resolution: {integrity: sha512-8qHV4R2J1VHLOa06YQHwBceS2HgUmZvoIxLdgASDErfnHWG1THgHpi1kpNCbig+xBIm9rKRXgw/oNm1sF4z/Fw==}
+    engines: {node: '>= v0.6.x'}
+    requiresBuild: true
+    dev: false
+    optional: true
+
   /linkify-it@3.0.3:
     resolution: {integrity: sha512-ynTsyrFSdE5oZ/O9GEf00kPngmOfVwazR5GKDq6EYfhlpFug3J2zybX56a2PRRpc9P+FuSoGNAwjlbDs9jJBPQ==}
     dependencies:
@@ -5994,6 +6010,14 @@ packages:
   /through@2.3.8:
     resolution: {integrity: sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==}
     dev: true
+
+  /timer-shim@0.3.0:
+    resolution: {integrity: sha512-HVSUVvDP/r6EXiatXY+L+hlSQbDbpFNrIk/BtUvIOOG1Xmm92C86UHnag+pMaJcoopNMaflrylUfNORI+6NEuA==}
+    requiresBuild: true
+    dependencies:
+      linkedlist: 1.0.1
+    dev: false
+    optional: true
 
   /tinybench@2.6.0:
     resolution: {integrity: sha512-N8hW3PG/3aOoZAN5V/NSAEDz0ZixDSSt5b/a05iqtpgfLWMSVuCo7w0k2vVvEjdrIoeGqZzweX2WlyioNIHchA==}

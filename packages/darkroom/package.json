@@ -37,6 +37,7 @@
     "devDependencies": {
         "@types/path-browserify": "^1.0.2",
         "@vitest/browser": "^1.4.0",
+        "@vitest/ui": "^1.4.0",
         "rimraf": "^5.0.5",
         "typescript": "^5.4.3",
         "vite": "^5.2.4",
@@ -50,6 +51,8 @@
         "@vitejs/plugin-vue": "^5.0.4",
         "@vue/tsconfig": "^0.5.1",
         "@vueuse/core": "^10.9.0",
+        "@vueuse/rxjs": "^10.9.0",
+        "timer-shim": "^0.3.0",
         "util": "^0.12.5",
         "vite-plugin-mkcert": "^1.17.5",
         "vue-codemirror": "^6.1.1"

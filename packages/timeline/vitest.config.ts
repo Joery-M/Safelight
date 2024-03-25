@@ -4,7 +4,12 @@ import { defineProject } from 'vitest/config';
 export default defineProject({
     plugins: [Vue()],
     test: {
+        reporters: !process.env.GITHUB_ACTIONS ? ['default', 'github-actions'] : ['default'],
         globals: true,
-        environment: 'jsdom'
+        environment: 'jsdom',
+        ui: true,
+        api: {
+            port: 5125
+        }
     }
 });

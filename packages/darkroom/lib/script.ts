@@ -1,33 +1,27 @@
-import { Metafile } from 'esbuild-wasm';
+import { BuildResult } from 'esbuild-wasm';
 
 export class Script {
     private compartment: Compartment | undefined;
     private globals: any;
-    public requestedModules: string[] = [];
-    modules = new Map<string, string>();
+    private content: string;
 
-    constructor(
-        private content: string,
-        inputs: Metafile['inputs']
-    ) {
-        for (const key in inputs) {
-            if (key.startsWith('#darkroom-external:/')) {
-                this.requestedModules.push(key.slice(20));
-            }
+    constructor(content: string | BuildResult) {
+        if (typeof content === 'string') {
+            this.content = content;
+        } else if (content.outputFiles && content.outputFiles.length > 0) {
+            this.content = content.outputFiles[0].text;
+        } else {
+            this.content = 'throw new Error("File content was not provided to Script class.")';
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     registerModule(name: string, content: string) {
-        console.log(name);
-        this.modules.set('#darkroom-external://' + name, content);
+        throw new Error('Method not implemented');
     }
 
     execute() {
-        console.log(this.modules);
-        this.compartment = new Compartment(
-            this.globals,
-            Object.fromEntries(this.modules.entries())
-        );
+        this.compartment = new Compartment(this.globals);
 
         return this.compartment.evaluate(this.content);
     }

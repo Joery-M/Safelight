@@ -6,6 +6,7 @@ test('esbuild initializes', async () => {
     const compiler = new Compiler(esbuild);
 
     expect(compiler).toBeDefined();
+    await compiler.waitForReady();
 
-    await compiler.esbuildReady;
+    compiler.esbuildReady.subscribe((ready) => expect(ready).toBe(true));
 });

@@ -7,7 +7,7 @@ test('Console Shim Error', async () => {
 
     expect(compiler).toBeDefined();
 
-    await compiler.esbuildReady;
+    await compiler.waitForReady();
 
     const result = await compiler.compileSingleScript(`
         console.log('Hey!');

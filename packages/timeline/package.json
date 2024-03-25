@@ -26,7 +26,8 @@
         "dev": "pnpm \"/build:/\" --watch",
         "build": "pnpm \"/build:/\"",
         "build:vite": "vite build",
-        "build:tsc": "vue-tsc --emitDeclarationOnly"
+        "build:tsc": "vue-tsc --emitDeclarationOnly",
+        "test": "vitest"
     },
     "dependencies": {
         "@safelight/shared": "workspace:*",
