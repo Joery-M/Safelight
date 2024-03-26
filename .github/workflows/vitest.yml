@@ -10,23 +10,28 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  test:
 
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [20.12.0]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        node-version: [20.12.0] # Latest LTS
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - name: Install pnpm
-      uses: pnpm/action-setup@v3.0.0
-    - run: pnpm build --if-present
-    - run: pnpm test
+      - uses: actions/checkout@v4
+      
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3.0.0
+      
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - run: pnpm install
+      
+      - run: pnpm build
+      
+      - run: pnpm test
