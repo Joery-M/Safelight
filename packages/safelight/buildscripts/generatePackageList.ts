@@ -1,7 +1,7 @@
-import { spawn } from 'child_process';
-import { existsSync } from 'fs';
+import { spawnSync } from 'child_process';
+import { existsSync, writeFileSync } from 'fs';
+import { mkdir } from 'fs/promises';
 import { join } from 'path';
-import { mkdir, writeFile } from 'fs/promises';
 
 const projects = [
     {
@@ -30,21 +30,19 @@ const bannedKeys = ['unsavedDependencies', 'path'];
 
 function generatePackagesForProject(projectPath: string, outputFileName: string) {
     return new Promise<void>((resolve) => {
-        const output = spawn('pnpm', ['list', '--depth', '2', '--json', '--long'], {
+        const output = spawnSync('pnpm', ['list', '--depth', '2', '--json', '--long'], {
             cwd: join(process.cwd(), '../../', projectPath),
             stdio: ['inherit', 'pipe', 'inherit'],
             shell: true
         });
 
-        // Everything is spat out in one go
-        output.stdout.once('data', async (msg) => {
-            const filteredFile = removePath(JSON.parse(msg.toString())[0]);
-            await writeFile(
-                join('./src/generated/', outputFileName),
-                JSON.stringify(filteredFile, undefined, 4)
-            );
-            resolve();
-        });
+        const filteredFile = removePath(JSON.parse(output.stdout.toString())[0]);
+        writeFileSync(
+            join('./src/generated/', outputFileName),
+            JSON.stringify(filteredFile, undefined, 4)
+        );
+
+        resolve();
     });
 }
 
