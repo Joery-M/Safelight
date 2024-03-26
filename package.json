@@ -12,6 +12,7 @@
         "build:timeline": "cd packages/timeline && pnpm build",
         "build:safelight": "cd packages/safelight && pnpm build",
         "test": "vitest",
+        "test:run": "vitest run --open false --ui false",
         "dev": "pnpm build:packages && cd packages/safelight && pnpm dev",
         "dev:darkroom": "pnpm build:packages && cd packages/darkroom && pnpm dev:web"
     },
