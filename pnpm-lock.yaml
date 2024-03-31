@@ -307,13 +307,37 @@ importers:
       '@vueuse/shared':
         specifier: ^10.9.0
         version: 10.9.0(vue@3.4.21)
+      dexie:
+        specifier: ^3.2.7
+        version: 3.2.7
+      ffprobe-wasm:
+        specifier: ^0.3.1
+        version: 0.3.1
       luxon:
         specifier: ^3.4.4
         version: 3.4.4
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+      uuid:
+        specifier: ^9.0.1
+        version: 9.0.1
+      vue:
+        specifier: ^3.4.21
+        version: 3.4.21(typescript@5.4.3)
     devDependencies:
+      '@tsconfig/node20':
+        specifier: ^20.1.2
+        version: 20.1.2
       '@types/luxon':
         specifier: ^3.4.2
         version: 3.4.2
+      '@types/uuid':
+        specifier: ^9.0.8
+        version: 9.0.8
+      '@vue/tsconfig':
+        specifier: ^0.5.1
+        version: 0.5.1
 
   packages/timeline:
     dependencies:
@@ -1792,7 +1816,7 @@ packages:
       '@vitest/utils': 1.4.0
       magic-string: 0.30.8
       sirv: 2.0.4
-      vitest: 1.4.0(@types/node@20.11.30)(@vitest/browser@1.4.0)(@vitest/ui@1.4.0)(jsdom@24.0.0)
+      vitest: 1.4.0(@vitest/browser@1.4.0)(@vitest/ui@1.4.0)
       webdriverio: 8.35.1(typescript@5.4.3)
     dev: true
 
@@ -1838,7 +1862,7 @@ packages:
       pathe: 1.1.2
       picocolors: 1.0.0
       sirv: 2.0.4
-      vitest: 1.4.0(@types/node@20.11.30)(@vitest/browser@1.4.0)(@vitest/ui@1.4.0)(jsdom@24.0.0)
+      vitest: 1.4.0(@vitest/browser@1.4.0)(@vitest/ui@1.4.0)
     dev: true
 
   /@vitest/utils@1.4.0:
