@@ -12,15 +12,17 @@
         :timeline="project.activeTimeline"
         class="min-h-100 w-full"
     />
-    <Library v-model="project.media" />
-    <SLButton :loading @click="fileDialog.open">
+    <!-- Dont break highlighting -->
+    <!-- eslint-disable-next-line prettier/prettier -->
+    <!-- prettier-ignore -->
+    <Library :media="(project.media as any)" />
+    <Button :loading="loading" label="Load file" @click="fileDialog.open">
         <template #icon>
-            <PhUpload />
+            <PhUpload class="mr-2" />
         </template>
-        Load file
-    </SLButton>
+    </Button>
     <table>
-        <tr v-for="media in project.media" :key="media.id">
+        <tr v-for="media in project.media" :key="media.id.value">
             <td>
                 {{ media.name }}
             </td>
@@ -37,7 +39,6 @@ import Media from '@/controllers/Media/Media';
 import { PhUpload } from '@phosphor-icons/vue';
 import { useObservable } from '@vueuse/rxjs';
 import MimeMatcher from 'mime-matcher';
-import type { UnwrapRef } from 'vue';
 
 const fileDialog = useFileDialog({
     accept: 'image/*,video/*'
@@ -54,7 +55,7 @@ const dropZone = useDropZone(document.body, {
     }
 });
 
-const project = useProject();
+const project = new SimpleProject();
 const loading = ref(false);
 
 fileDialog.onChange((fileList) => {
@@ -67,7 +68,7 @@ fileDialog.onChange((fileList) => {
 
         if (file) promises.push(loadFile(file));
     }
-    Promise.all(promises).then(() => {
+    Promise.all(promises).finally(() => {
         loading.value = false;
     });
 });
@@ -82,13 +83,13 @@ function loadFile(file: File) {
         watch(storingProcessing, () => {
             if (storingProcessing.value && storingProcessing.value.type == 'done') {
                 const existingMedia = project.media.some(
-                    (m) => m.id == storingProcessing.value!.id
+                    (m) => m.id.value == storingProcessing.value!.id
                 );
 
                 if (!existingMedia) {
                     const media = new Media(storingProcessing.value.id!);
 
-                    project.media.push(media as unknown as UnwrapRef<Media>);
+                    project.media.push(media);
                     project.activeTimeline.createTimelineItem(media);
                 }
 
@@ -100,7 +101,7 @@ function loadFile(file: File) {
 
 onBeforeUnmount(() => {
     // reset store, which currently tries to call 'this', trying to reference the store
-    project.$dispose();
+    // project.$dispose();
 });
 </script>
 

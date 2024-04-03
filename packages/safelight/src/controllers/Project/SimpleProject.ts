@@ -6,9 +6,9 @@ export default class SimpleProject extends BaseProject {
     public name = 'Untitled';
     public type: ProjectType = 'Simple';
 
-    public media: Media[] = [];
+    public media: Media[] = reactive([]);
     public timelines: SimpleTimeline[] = [];
-    public activeTimeline: number;
+    public activeTimeline: SimpleTimeline;
 
     constructor() {
         super();
@@ -16,6 +16,6 @@ export default class SimpleProject extends BaseProject {
         const tl = new SimpleTimeline();
 
         this.timelines = [tl];
-        this.activeTimeline = 0;
+        this.activeTimeline = tl;
     }
 }

@@ -10,10 +10,11 @@ export default class Media {
      * @description The duration of this media item. By default it is set to 5 seconds, which will apply to images
      * @default 5000
      */
-    public duration = ref(5000);
+    public duration = ref(0);
     public fileInfo = ref<FileInfo>();
 
-    constructor(public mediaId: string) {
+    constructor(mediaId: string) {
+        this.id.value = mediaId;
         db.media.get({ id: mediaId }).then((med) => {
             if (med) {
                 this.name.value = med.name;
@@ -25,10 +26,6 @@ export default class Media {
 
                 this.id.value = med.id;
                 this.loaded.value = true;
-
-                setInterval(() => {
-                    this.duration.value += 100;
-                }, 1000);
             }
         });
     }

@@ -147,6 +147,9 @@ importers:
       ffprobe-wasm:
         specifier: ^0.3.1
         version: 0.3.1
+      fuzzysearch:
+        specifier: ^1.0.3
+        version: 1.0.3
       hash-wasm:
         specifier: ^4.11.0
         version: 4.11.0
@@ -199,6 +202,9 @@ importers:
       '@types/dom-webcodecs':
         specifier: ^0.1.11
         version: 0.1.11
+      '@types/fuzzysearch':
+        specifier: ^1.0.2
+        version: 1.0.2
       '@types/luxon':
         specifier: ^3.4.2
         version: 3.4.2
@@ -1589,6 +1595,10 @@ packages:
 
   /@types/estree@1.0.5:
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
+
+  /@types/fuzzysearch@1.0.2:
+    resolution: {integrity: sha512-G2M0M7acg75BzTtUv1qmPFMe7nTwX1K2AEKNeBO8zW0o+H2oTmyir7IJ2v0UW8pZkY4nHgHALvgpWQpB9WXPpg==}
+    dev: true
 
   /@types/http-cache-semantics@4.0.4:
     resolution: {integrity: sha512-1m0bIFVc7eJWyve9S0RnuRgcQqF/Xd5QsUZAZeQFr1Q3/p9JWoQQEqmVy+DPTNpGXwhgIetAoYF8JSc33q29QA==}
@@ -3708,6 +3718,10 @@ packages:
 
   /function-bind@1.1.2:
     resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==}
+
+  /fuzzysearch@1.0.3:
+    resolution: {integrity: sha512-s+kNWQuI3mo9OALw0HJ6YGmMbLqEufCh2nX/zzV5CrICQ/y4AwPxM+6TIiF9ItFCHXFCyM/BfCCmN57NTIJuPg==}
+    dev: false
 
   /geckodriver@4.3.3:
     resolution: {integrity: sha512-we2c2COgxFkLVuoknJNx+ioP+7VDq0sr6SCqWHTzlA4kzIbzR0EQ1Pps34s8WrsOnQqPC8a4sZV9dRPROOrkSg==}
