@@ -40,14 +40,14 @@
         "@vitest/ui": "^1.4.0",
         "rimraf": "^5.0.5",
         "typescript": "^5.4.3",
-        "vite": "^5.2.4",
-        "vite-plugin-dts": "^3.7.3",
+        "vite": "^5.2.8",
+        "vite-plugin-dts": "^3.8.1",
         "vitest": "^1.4.0",
         "webdriverio": "^8.35.1"
     },
     "optionalDependencies": {
         "@codemirror/lang-javascript": "^6.2.2",
-        "@types/node": "^20.11.30",
+        "@types/node": "^20.12.3",
         "@vitejs/plugin-vue": "^5.0.4",
         "@vue/tsconfig": "^0.5.1",
         "@vueuse/core": "^10.9.0",

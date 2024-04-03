@@ -19,7 +19,7 @@
         "vue": "^3.4.21"
     },
     "devDependencies": {
-        "@tsconfig/node20": "^20.1.2",
+        "@tsconfig/node20": "^20.1.4",
         "@types/luxon": "^3.4.2",
         "@types/uuid": "^9.0.8",
         "@vue/tsconfig": "^0.5.1"
