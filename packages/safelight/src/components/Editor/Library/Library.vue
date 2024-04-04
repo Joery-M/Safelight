@@ -118,22 +118,22 @@ function sortAndFilter() {
         return fuzzysearch(search.value.toLowerCase(), elem.name.toLowerCase());
     });
 
+    const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+
     filtered.sort((a, b) => {
         const item1 = sortDescending.value ? b : a;
         const item2 = sortDescending.value ? a : b;
+
+        const ext1 = item1.name.split('.').at(-1) ?? 'ZZZ';
+        const ext2 = item2.name.split('.').at(-1) ?? 'ZZZ';
 
         switch (sortBy.value) {
             case 'Duration':
                 return item1.duration - item2.duration;
             case 'File type':
-                return (item1.name.split('.').at(-1) ?? 'ZZZ').localeCompare(
-                    item2.name.split('.').at(-1) ?? 'ZZZZZ'
-                );
+                return collator.compare(ext1, ext2);
             default:
-                return item1.name.localeCompare(item2.name, undefined, {
-                    numeric: true,
-                    sensitivity: 'base'
-                });
+                return collator.compare(item1.name, item2.name);
         }
     });
 
