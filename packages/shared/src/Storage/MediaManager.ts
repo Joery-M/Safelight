@@ -1,15 +1,13 @@
+import { Storage } from '@/base/Storage';
 import { generateMediaThumbnail } from '@/helpers/Video/GenerateMediaThumbnail';
 import { getVideoInfo } from '@/helpers/Video/GetVideoInfo';
 import { createMD5 } from 'hash-wasm';
 import { Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
-import type { StoredMedia } from '../db';
 
 const chunkSize = 64 * 1024 * 1024;
 
 export default class IdbMediaManager {
-    static storedMedia = shallowRef<StoredMedia[]>([]);
-
     static storeMedia(file: File) {
         return new Observable<LoadMediaProgress>((subscriber) => {
             // Thanks RxJs, makes sense
@@ -47,10 +45,8 @@ export default class IdbMediaManager {
 
                 const hash = hasher.digest();
 
-                // Check if a file with the same has already is stored, if so, use it
-                const existingMedia = await db.media.get({
-                    contentHash: hash
-                });
+                // Check if a file with the same hash is already stored, if so, use it
+                const existingMedia = await Storage.getStorage().HasMediaHash(hash);
 
                 if (existingMedia) {
                     subscriber.next({
@@ -77,12 +73,12 @@ export default class IdbMediaManager {
 
                     const uuid = uuidv4();
 
-                    db.media.add({
+                    Storage.getStorage().SaveMedia({
                         id: uuid,
                         name: file.name,
                         contentHash: hash,
                         data: file,
-                        fileInfo: fileInfo,
+                        fileInfo,
                         previewImage: thumbnail
                     });
                     subscriber.next({
@@ -103,19 +99,3 @@ interface LoadMediaProgress {
     id?: string;
     hashProgress: number;
 }
-
-db.media.hook.creating.subscribe(async () => {
-    IdbMediaManager.storedMedia.value = await db.media.toArray();
-    triggerRef(IdbMediaManager.storedMedia);
-});
-db.media.hook.deleting.subscribe(async () => {
-    IdbMediaManager.storedMedia.value = await db.media.toArray();
-    triggerRef(IdbMediaManager.storedMedia);
-});
-db.media.hook.updating.subscribe(async () => {
-    IdbMediaManager.storedMedia.value = await db.media.toArray();
-    triggerRef(IdbMediaManager.storedMedia);
-});
-db.media.toArray().then((media) => {
-    IdbMediaManager.storedMedia.value = media;
-});

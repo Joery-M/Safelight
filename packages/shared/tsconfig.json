@@ -1,6 +1,6 @@
 {
     "extends": "@vue/tsconfig/tsconfig.dom.json",
-    "include": ["*.d.ts", "src/**/*", "src/**/*.vue", "src/**/*.json"],
+    "include": ["*.d.ts", "src/**/*", "types/*.d.ts", "src/**/*.vue", "src/**/*.json"],
     "compilerOptions": {
         "noEmit": false,
         "moduleResolution": "Bundler",

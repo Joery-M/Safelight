@@ -79,18 +79,15 @@
 </template>
 
 <script setup lang="ts">
+import { CURRENT_TIMELINE } from '@/injections';
+import { PhMagnifyingGlass, PhSortDescending } from '@phosphor-icons/vue';
 import type BaseProject from '@safelight/shared/base/Project';
 import type Media from '@safelight/shared/Media/Media';
-import { PhMagnifyingGlass, PhSortDescending } from '@phosphor-icons/vue';
 import fuzzysearch from 'fuzzysearch';
 import MimeMatcher from 'mime-matcher';
 import InputGroup from 'primevue/inputgroup';
 import InputGroupAddon from 'primevue/inputgroupaddon';
 import type { UnwrapRef } from 'vue';
-
-const props = defineProps<{
-    media: UnwrapRef<Media[]>;
-}>();
 
 const emit = defineEmits<{
     'update:modelValue': any[];

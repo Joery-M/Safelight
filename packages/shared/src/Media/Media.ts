@@ -14,8 +14,9 @@ export default class Media {
     public duration = ref(5000);
     public fileInfo = ref<FileInfo>();
 
-    constructor(public mediaId: string) {
-        db.media.get({ id: mediaId }).then((med) => {
+    constructor(id: string) {
+        this.id.value = id;
+        db.media.get({ id }).then((med) => {
             if (med) {
                 this.name.value = med.name;
 

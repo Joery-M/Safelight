@@ -7,7 +7,7 @@ export default defineConfig({
         reporters: process.env.GITHUB_ACTIONS ? ['default', 'github-actions'] : ['default'],
         globals: true,
         environment: 'jsdom',
-        open: true,
+        open: false,
         ui: true,
         api: {
             port: 5125

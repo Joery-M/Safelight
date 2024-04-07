@@ -1,21 +1,17 @@
+import SimpleTimeline from '@/Timeline/SimpleTimeline';
+import { computed, ref, shallowReactive } from 'vue';
 import Media from '../Media/Media';
-import SimpleTimeline from '../Timeline/SimpleTimeline';
+import { v4 as uuidv4 } from 'uuid';
 import BaseProject, { type ProjectType } from '../base/Project';
 
 export default class SimpleProject extends BaseProject {
+    public id = uuidv4();
     public name = 'Untitled';
     public type: ProjectType = 'Simple';
 
-    public media: Media[] = [];
-    public timelines: SimpleTimeline[] = [];
-    public activeTimeline: number;
+    public media = shallowReactive<Media[]>([]);
 
-    constructor() {
-        super();
-
-        const tl = new SimpleTimeline();
-
-        this.timelines = [tl];
-        this.activeTimeline = 0;
-    }
+    protected selectedTimelineIndex = ref(0);
+    public timelines = shallowReactive<SimpleTimeline[]>([]);
+    public timeline = computed(() => this.timelines.at(this.selectedTimelineIndex.value)!);
 }

@@ -7,6 +7,13 @@ export default defineProject({
         reporters: !process.env.GITHUB_ACTIONS ? ['default', 'github-actions'] : ['default'],
         globals: true,
         environment: 'jsdom',
-        ui: true
+        ui: true,
+        api: {
+            port: 5125
+        },
+        browser: {
+            name: 'chrome',
+            enabled: false
+        }
     }
 });

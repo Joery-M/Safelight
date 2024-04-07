@@ -1,37 +1,40 @@
 import type { ShallowUnwrapRef } from '@vueuse/core';
-import { extendRef } from '@vueuse/shared';
-import { DateTime } from 'luxon';
-import { computed, ref, type Ref } from 'vue';
+import { type DateTime } from 'luxon';
+import { type Ref } from 'vue';
 
+/**
+ * Helper class to work with project timecodes.
+ */
 export default class Timecode {
-    public time = 0;
-
-    static from(time: number): TimecodeRef {
-        const tc = ref(time);
-        return extendRef(tc, {
-            formattedTime: computed(() => {
-                return DateTime.fromMillis(tc.value).toFormat('HH:mm:ss.SSS');
-            })
-        });
+    static fromDate(date: Date | DateTime) {
+        return date instanceof Date ? date.getTime() : date.toMillis();
     }
 
-    static fromTimecode(otherTimecode: Timecode): TimecodeRef {
-        return Timecode.from(otherTimecode.time);
-    }
+    static fromFormattedTimecode(
+        timecode: `${number}:${number}:${number}.${number}` | (string & {})
+    ) {
+        const parts = timecode.split(/(?:\.|:)/);
+        const hours = parseInt(parts[0]) * 3_600_000;
+        const minutes = parseInt(parts[1]) * 60_000;
+        const seconds = parseInt(parts[2]) * 1_000;
+        const milliseconds = parseInt(parts[3]);
 
-    static fromDate(date: Date | DateTime): TimecodeRef {
-        return Timecode.from(date instanceof Date ? date.getTime() : date.toMillis());
-    }
-
-    static fromFormattedTimecode(timecode: `${number}:${number}:${number}.${number}`) {
-        const newTC = Timecode.from(0);
-        newTC.formattedTime = timecode;
+        const newTC = hours + minutes + seconds + milliseconds;
         return newTC;
     }
 
-    static fromFrames(frame: number, fps: number): TimecodeRef {
-        console.log('A');
-        return Timecode.from(frame * (1 / fps));
+    static fromFrames(frame: number, fps: number) {
+        return frame * (1 / fps) * 1000;
+    }
+
+    static toFormattedTimecode(ms: number) {
+        const hours = Math.floor(ms / 3_600_000)
+            .toString()
+            .padStart(2, '0');
+        const minutes = (Math.floor(ms / 60_000) % 60).toString().padStart(2, '0');
+        const seconds = (Math.floor(ms / 1_000) % 60).toString().padStart(2, '0');
+        const milliseconds = (ms % 1000).toString().padStart(3, '0');
+        return `${hours}:${minutes}:${seconds}.${milliseconds}`;
     }
 }
 
