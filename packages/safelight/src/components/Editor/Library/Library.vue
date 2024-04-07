@@ -79,9 +79,11 @@
 </template>
 
 <script setup lang="ts">
-import type Media from '@/controllers/Media/Media';
+import type BaseProject from '@safelight/shared/base/Project';
+import type Media from '@safelight/shared/Media/Media';
 import { PhMagnifyingGlass, PhSortDescending } from '@phosphor-icons/vue';
 import fuzzysearch from 'fuzzysearch';
+import MimeMatcher from 'mime-matcher';
 import InputGroup from 'primevue/inputgroup';
 import InputGroupAddon from 'primevue/inputgroupaddon';
 import type { UnwrapRef } from 'vue';
@@ -94,6 +96,44 @@ const emit = defineEmits<{
     'update:modelValue': any[];
 }>();
 
+const dropZone = useDropZone(document.body, {
+    onDrop(files) {
+        files?.forEach(project);
+    },
+    dataTypes(types) {
+        return !types.some((val) => {
+            return !new MimeMatcher('image/*', 'video/*').match(val);
+        });
+    }
+});
+
+function loadFile(file: File) {
+    return new Promise<void>((resolve) => {
+        const storingProcessing = useObservable(IdbMediaManager.storeMedia(file));
+        watch(storingProcessing, (s) => {
+            console.log(s?.type, s?.hashProgress);
+        });
+
+        watch(storingProcessing, () => {
+            if (storingProcessing.value && storingProcessing.value.type == 'done') {
+                const existingMedia = project.media.some(
+                    (m) => m.id.value == storingProcessing.value!.id
+                );
+
+                if (!existingMedia) {
+                    const media = new Media(storingProcessing.value.id!);
+
+                    project.media.push(media);
+                    project.activeTimeline.createTimelineItem(media);
+                }
+
+                resolve();
+            }
+        });
+    });
+}
+
+const project = inject<BaseProject>('currentProject');
 const media = useVModel(props, 'media', emit);
 
 const search = ref('');

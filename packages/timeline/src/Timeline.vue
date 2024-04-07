@@ -192,7 +192,6 @@ function endResize(ev: MouseEvent) {
 
 #horizontalContainer {
     display: flex;
-    height: 250px;
 }
 #verticalContainer {
     flex-grow: 1;

@@ -11,15 +11,12 @@
     "main": "./dist/index.cjs",
     "module": "./dist/index.mjs",
     "exports": {
+        "./style.css": "./dist/style.css",
         ".": {
             "import": "./dist/index.mjs",
-            "require": "./dist/index.cjs"
-        },
-        "./*": [
-            "./packages/timeline/src/*",
-            "./src/*"
-        ],
-        "./style.css": "./dist/style.css"
+            "require": "./dist/index.cjs",
+            "types": "./dist/index.d.ts"
+        }
     },
     "types": "./dist/index.d.ts",
     "scripts": {

@@ -1,58 +1,44 @@
 <template>
-    <SLCard
-        class="grid-place-items-center transition-500 bg-surface pointer-events-none absolute left-0 top-0 grid h-full w-full bg-opacity-20"
-        :style="{
-            opacity: dropZone.isOverDropZone.value ? 1 : 0
-        }"
-    >
-        <h1 class="font-sans">Just drop it gently</h1>
-    </SLCard>
-    <Monitor
-        v-if="project.activeTimeline"
-        :timeline="project.activeTimeline"
-        class="min-h-100 w-full"
-    />
-    <!-- Dont break highlighting -->
-    <!-- eslint-disable-next-line prettier/prettier -->
-    <!-- prettier-ignore -->
-    <Library :media="(project.media as any)" />
-    <Button :loading="loading" label="Load file" @click="fileDialog.open">
-        <template #icon>
-            <PhUpload class="mr-2" />
-        </template>
-    </Button>
-    <table>
-        <tr v-for="media in project.media" :key="media.id.value">
-            <td>
-                {{ media.name }}
-            </td>
-            <td>
-                <img :srcObject="media.previewImage" />
-            </td>
-        </tr>
-    </table>
-    <Timeline class="h-96 w-full" />
+    <Splitter layout="vertical" class="vertSlitter">
+        <SplitterPanel>
+            <Splitter>
+                <SplitterPanel>
+                    <TabView>
+                        <TabPanel>
+                            <template #header>
+                                <div class="flex items-center gap-2">
+                                    <PhFolders size="20" />
+                                    <span class="white-space-nowrap font-bold"> Library </span>
+                                </div>
+                            </template>
+                            <!-- Dont break highlighting -->
+                            <!-- eslint-disable-next-line prettier/prettier -->
+                            <!-- prettier-ignore -->
+                            <Library :media="(project.media as any)" />
+                        </TabPanel>
+                    </TabView>
+                </SplitterPanel>
+                <SplitterPanel>
+                    <Monitor
+                        v-if="project.activeTimeline"
+                        :timeline="project.activeTimeline"
+                        class="min-h-100 w-full"
+                    />
+                </SplitterPanel>
+            </Splitter>
+        </SplitterPanel>
+        <SplitterPanel :size="40">
+            <Timeline class="h-full w-full" />
+        </SplitterPanel>
+    </Splitter>
 </template>
 
 <script setup lang="ts">
-import Media from '@/controllers/Media/Media';
-import { PhUpload } from '@phosphor-icons/vue';
 import { useObservable } from '@vueuse/rxjs';
-import MimeMatcher from 'mime-matcher';
+import SplitterPanel from 'primevue/splitterpanel';
 
 const fileDialog = useFileDialog({
     accept: 'image/*,video/*'
-});
-
-const dropZone = useDropZone(document.body, {
-    onDrop(files) {
-        files?.forEach(loadFile);
-    },
-    dataTypes(types) {
-        return !types.some((val) => {
-            return !new MimeMatcher('image/*', 'video/*').match(val);
-        });
-    }
 });
 
 const project = new SimpleProject();
@@ -104,6 +90,12 @@ onBeforeUnmount(() => {
     // project.$dispose();
 });
 </script>
+
+<style lang="scss" scoped>
+.vertSlitter {
+    height: 100vh;
+}
+</style>
 
 <route lang="json">
 {

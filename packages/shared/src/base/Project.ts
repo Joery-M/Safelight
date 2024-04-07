@@ -12,7 +12,7 @@ export default abstract class BaseProject {
     isBaseProject(): this is BaseProject {
         return this.type == 'Base';
     }
-    isBaseSimpleProject(): this is SimpleProject {
+    isSimpleProject(): this is SimpleProject {
         return this.type == 'Simple';
     }
 }

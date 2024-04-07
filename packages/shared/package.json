@@ -4,9 +4,7 @@
     "private": "true",
     "type": "module",
     "exports": {
-        "./timecode": {
-            "default": "./src/Timecode.ts"
-        }
+        "./*": "./src/*.ts"
     },
     "dependencies": {
         "@vueuse/core": "^10.9.0",
