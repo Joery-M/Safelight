@@ -1,7 +1,7 @@
 import type { AudioTrackInfo, ImageInfo, TextTrackInfo, VideoTrackInfo } from '@/Media/Media';
 import { type default as Media, type MediaType } from '@/Media/Media';
 import type { MediaInfoType } from 'mediainfo.js';
-import type IndexedDbStorageController from '../Storage/IndexDbStorage';
+import type IndexedDbStorageController from '../Storage/IndexedDbStorage';
 import type BaseProject from './Project';
 import type { ProjectType } from './Project';
 import type BaseTimeline from './Timeline';
