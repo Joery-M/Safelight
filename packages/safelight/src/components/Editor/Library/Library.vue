@@ -79,10 +79,10 @@
 </template>
 
 <script setup lang="ts">
-import { CURRENT_TIMELINE } from '@/injections';
 import { PhMagnifyingGlass, PhSortDescending } from '@phosphor-icons/vue';
 import type BaseProject from '@safelight/shared/base/Project';
 import type Media from '@safelight/shared/Media/Media';
+import MediaManager from '@safelight/shared/Storage/MediaManager';
 import fuzzysearch from 'fuzzysearch';
 import MimeMatcher from 'mime-matcher';
 import InputGroup from 'primevue/inputgroup';
@@ -106,7 +106,7 @@ const dropZone = useDropZone(document.body, {
 
 function loadFile(file: File) {
     return new Promise<void>((resolve) => {
-        const storingProcessing = useObservable(IdbMediaManager.storeMedia(file));
+        const storingProcessing = useObservable(MediaManager.StoreMedia(file));
         watch(storingProcessing, (s) => {
             console.log(s?.type, s?.hashProgress);
         });

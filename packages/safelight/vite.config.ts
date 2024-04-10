@@ -24,6 +24,26 @@ const PhosphorResolver: ComponentResolverObject = {
     }
 };
 
+const vueuseRxjsAutoImport = {
+    from: '@vueuse/rxjs',
+    imports: [
+        'OnCleanup',
+        'UseExtractedObservableOptions',
+        'UseObservableOptions',
+        'UseSubjectOptions',
+        'WatchExtractedObservableCallback',
+        'WatchExtractedObservableOptions',
+        'from',
+        'fromEvent',
+        'toObserver',
+        'useExtractedObservable',
+        'useObservable',
+        'useSubject',
+        'useSubscription',
+        'watchExtractedObservable'
+    ]
+};
+
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [
@@ -38,7 +58,14 @@ export default defineConfig({
             resolvers: [PrimeVueResolver({ importIcons: false }), PhosphorResolver]
         }),
         AutoImport({
-            imports: ['vue', 'vue-router', '@vueuse/core', '@vueuse/math', 'pinia'],
+            imports: [
+                'vue',
+                'vue-router',
+                '@vueuse/core',
+                '@vueuse/math',
+                'pinia',
+                vueuseRxjsAutoImport
+            ],
             dirs: ['./src/stores', './src/controllers/**'],
             vueTemplate: true
         }),

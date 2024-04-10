@@ -1,6 +1,6 @@
-import type Media from '@/Media/Media';
+import type { AudioTrackInfo, ImageInfo, TextTrackInfo, VideoTrackInfo } from '@/Media/Media';
+import { type default as Media, type MediaType } from '@/Media/Media';
 import type { MediaInfoType } from 'mediainfo.js';
-import { Subject, type Observable } from 'rxjs';
 import type IndexedDbStorageController from '../Storage/IndexDbStorage';
 import type BaseProject from './Project';
 import type { ProjectType } from './Project';
@@ -11,16 +11,16 @@ export default abstract class BaseStorageController {
     public abstract type: StorageControllerType;
     public version: string = '0.0.0';
 
-    StopSaveProject = new Subject<void>();
-    abstract SaveProject(project: BaseProject): SaveObservable;
+    abstract SaveProject(project: BaseProject): Promise<SaveResults>;
     abstract LoadProject(projectId: string): Promise<BaseProject | undefined>;
 
-    StopSaveMedia = new Subject<void>();
-    abstract SaveMedia(media: StoredMedia): SaveObservable;
+    abstract SaveMedia(media: StoredMedia): Promise<SaveResults>;
+    abstract SaveMedia(media: Media): Promise<SaveResults>;
     abstract LoadMedia(mediaId: string): Promise<Media | undefined>;
-    abstract GetMediaFromHash(id: string): Promise<Media | undefined>;
+    abstract getMediaFromHash(hash: string): Promise<Media | undefined>;
+    abstract hasMediaHash(hash: string): Promise<boolean>;
 
-    abstract SaveTimeline(timeline: BaseTimeline): SaveObservable;
+    abstract SaveTimeline(timeline: BaseTimeline): Promise<SaveResults>;
     abstract LoadTimeline(timelineId: string): Promise<BaseTimeline | undefined>;
 
     isIndexDBstorage = (): this is IndexedDbStorageController => this.type == 'IndexedDB';
@@ -49,20 +49,21 @@ export class Storage {
 }
 
 export type StorageControllerType = 'IndexedDB' | 'WebFileSystem';
-export type SaveResults = 'Success' | 'Cancelled' | (string & {});
-
-export type SaveObservable = Observable<{
-    status: 'Waiting' | 'Success' | 'Error' | 'Cancelled';
-    data?: any;
-}>;
+export type SaveResults = 'Success' | 'Cancelled' | 'Error' | (string & {});
 
 export interface StoredMedia {
     id: string;
     name: string;
+    type: MediaType;
     contentHash: string;
     fileInfo?: MediaInfoType;
     previewImage?: Blob;
     data: Blob;
+    duration: number;
+    videoTracks: VideoTrackInfo[];
+    audioTracks: AudioTrackInfo[];
+    textTracks: TextTrackInfo[];
+    imageInfo?: ImageInfo;
 }
 
 export interface StoredProject {

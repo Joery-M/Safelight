@@ -1,18 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import BaseProject from '@/base/Project';
+import type BaseTimeline from '@/base/Timeline';
 import Media from '@/Media/Media';
 import SimpleProject from '@/Project/SimpleProject';
-import { from, Observable, Subject, takeUntil } from 'rxjs';
+import type SimpleTimeline from '@/Timeline/SimpleTimeline';
 import type {
-    SaveObservable,
+    SaveResults,
     StorageControllerType,
     StoredMedia,
     StoredProject
 } from '../base/Storage';
 import BaseStorageController from '../base/Storage';
 import { SafelightIndexedDB } from './db';
-import type BaseTimeline from '@/base/Timeline';
-import type SimpleTimeline from '@/Timeline/SimpleTimeline';
 
 export default class IndexedDbStorageController extends BaseStorageController {
     public type: StorageControllerType = 'IndexedDB';
@@ -20,38 +18,21 @@ export default class IndexedDbStorageController extends BaseStorageController {
 
     private db = new SafelightIndexedDB();
 
-    SaveProject(project: BaseProject): SaveObservable {
-        this.StopSaveProject = new Subject();
-        return new Observable((subscriber) => {
-            const storableProject: StoredProject = {
-                id: project.id,
-                name: project.name,
-                type: project.type,
-                media: project.media.map((m) => m.id.value).filter((id) => id !== undefined),
-                timelines: project.timelines.map((m) => m.id)
-            };
-            subscriber.next({
-                status: 'Waiting'
-            });
+    async SaveProject(project: BaseProject): Promise<SaveResults> {
+        const storableProject: StoredProject = {
+            id: project.id,
+            name: project.name,
+            type: project.type,
+            media: project.media.map((m) => m.id).filter((id) => id !== undefined),
+            timelines: project.timelines.map((m) => m.id)
+        };
 
-            this.StopSaveProject.subscribe(() => {
-                subscriber.next({
-                    status: 'Cancelled'
-                });
-                subscriber.complete();
-                this.StopSaveProject.complete();
-            });
-
-            from(this.db.project.put(storableProject, project.id))
-                .pipe(takeUntil(this.StopSaveProject))
-                .subscribe(() => {
-                    subscriber.next({
-                        status: 'Success'
-                    });
-                    subscriber.complete();
-                    this.StopSaveProject.complete();
-                });
-        });
+        try {
+            await this.db.project.put(storableProject, project.id);
+            return 'Success';
+        } catch (error: any) {
+            return error.toString();
+        }
     }
     async LoadProject(projectId: string): Promise<BaseProject | undefined> {
         return this.db.project
@@ -80,25 +61,91 @@ export default class IndexedDbStorageController extends BaseStorageController {
             });
     }
 
-    SaveMedia(media: StoredMedia): SaveObservable {
-        throw new Error('Method not implemented.');
+    async SaveMedia(media: Media | StoredMedia): Promise<SaveResults> {
+        const storedMedia: StoredMedia =
+            'data' in media
+                ? media
+                : {
+                      name: media.name.value,
+                      id: media.id,
+                      audioTracks: media.audioTracks,
+                      contentHash: media.contentHash,
+                      data: media.file,
+                      duration: media.duration.value,
+                      textTracks: media.textTracks,
+                      type: media.type,
+                      videoTracks: media.videoTracks,
+                      fileInfo: media.fileInfo,
+                      imageInfo: media.imageInfo,
+                      previewImage: await (await fetch(media.previewImage.value)).blob()
+                  };
+
+        try {
+            await this.db.media.put(storedMedia);
+            return 'Success';
+        } catch (error) {
+            console.error(error);
+            return 'Error';
+        }
     }
     LoadMedia(mediaId: string): Promise<Media | undefined> {
-        throw new Error('Method not implemented.');
+        return new Promise((resolve, reject) => {
+            this.db.media
+                .get({ id: mediaId })
+                .then((storedMedia) => {
+                    if (storedMedia) {
+                        resolve(this.storedMediaToMedia(storedMedia));
+                    }
+                })
+                .catch(reject);
+        });
     }
-    async GetMediaFromHash(hash: string): Promise<Media | undefined> {
+    async getMediaFromHash(hash: string): Promise<Media | undefined> {
         const m = await this.db.media.get({
             contentHash: hash
         });
-        const media = new Media(m?.id)
-        return ;
+
+        if (!m) return;
+
+        const media = this.storedMediaToMedia(m);
+        return media;
+    }
+    async hasMediaHash(hash: string): Promise<boolean> {
+        const m = await this.db.media.get({
+            contentHash: hash
+        });
+        return !!m;
     }
 
-    SaveTimeline(timeline: BaseTimeline): SaveObservable {
+    private storedMediaToMedia(storedMedia: StoredMedia) {
+        const media = new Media();
+        media.name.value = storedMedia.name;
+        media.id = storedMedia.id;
+
+        media.duration.value = storedMedia.duration;
+        media.type = storedMedia.type;
+        media.videoTracks = storedMedia.videoTracks;
+        media.audioTracks = storedMedia.audioTracks;
+        media.textTracks = storedMedia.textTracks;
+        media.file = storedMedia.data;
+
+        if (storedMedia.imageInfo) media.imageInfo = storedMedia.imageInfo;
+        if (storedMedia.fileInfo) media.fileInfo = storedMedia.fileInfo;
+        if (storedMedia.previewImage)
+            media.previewImage.value = URL.createObjectURL(storedMedia.previewImage);
+
+        media.loaded.value = true;
+
+        return media;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async SaveTimeline(_timeline: BaseTimeline): Promise<SaveResults> {
         throw new Error('Method not implemented.');
     }
     LoadTimeline<Timeline extends BaseTimeline = BaseTimeline>(
-        timelineId: string
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        _timelineId: string
     ): Promise<Timeline | undefined> {
         throw new Error('Method not implemented.');
     }

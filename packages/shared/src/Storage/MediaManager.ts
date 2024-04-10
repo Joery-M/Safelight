@@ -7,8 +7,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 const chunkSize = 64 * 1024 * 1024;
 
-export default class IdbMediaManager {
-    static storeMedia(file: File) {
+export default class MediaManager {
+    static StoreMedia(file: File) {
         return new Observable<LoadMediaProgress>((subscriber) => {
             // Thanks RxJs, makes sense
             (async () => {
@@ -46,7 +46,7 @@ export default class IdbMediaManager {
                 const hash = hasher.digest();
 
                 // Check if a file with the same hash is already stored, if so, use it
-                const existingMedia = await Storage.getStorage().HasMediaHash(hash);
+                const existingMedia = await Storage.getStorage().getMediaFromHash(hash);
 
                 if (existingMedia) {
                     subscriber.next({
@@ -79,7 +79,15 @@ export default class IdbMediaManager {
                         contentHash: hash,
                         data: file,
                         fileInfo,
-                        previewImage: thumbnail
+                        previewImage: thumbnail,
+
+                        // TODO: Implement
+
+                        duration: 0,
+                        audioTracks: [],
+                        textTracks: [],
+                        type: 0,
+                        videoTracks: []
                     });
                     subscriber.next({
                         type: 'done',
