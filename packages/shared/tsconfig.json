@@ -8,11 +8,6 @@
         "verbatimModuleSyntax": true,
         "lib": ["DOM", "ESNext"],
 
-        "baseUrl": ".",
-        "paths": {
-            "@/*": ["./src/*"],
-            "$/*": ["./public/*"]
-        },
         "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
 

@@ -1,5 +1,5 @@
-import type { StoredMedia, StoredProject } from '@/base/Storage';
 import Dexie, { type Table } from 'dexie';
+import type { StoredMedia, StoredProject } from '../base/Storage';
 
 export class SafelightIndexedDB extends Dexie {
     media!: Table<StoredMedia, string>;

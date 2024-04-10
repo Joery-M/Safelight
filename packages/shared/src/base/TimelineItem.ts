@@ -1,5 +1,5 @@
-import type AudioTimelineItem from '@/TimelineItem/AudioTimelineItem';
-import type VideoTimelineItem from '@/TimelineItem/VideoTimelineItem';
+import type AudioTimelineItem from '../TimelineItem/AudioTimelineItem';
+import type VideoTimelineItem from '../TimelineItem/VideoTimelineItem';
 import { v4 as uuidv4 } from 'uuid';
 import { ref } from 'vue';
 

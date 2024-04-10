@@ -1,8 +1,4 @@
-import BaseProject from '@/base/Project';
-import type BaseTimeline from '@/base/Timeline';
-import Media from '@/Media/Media';
-import SimpleProject from '@/Project/SimpleProject';
-import type SimpleTimeline from '@/Timeline/SimpleTimeline';
+import type BaseProject from '../base/Project';
 import type {
     SaveResults,
     StorageControllerType,
@@ -10,6 +6,10 @@ import type {
     StoredProject
 } from '../base/Storage';
 import BaseStorageController from '../base/Storage';
+import type BaseTimeline from '../base/Timeline';
+import Media from '../Media/Media';
+import SimpleProject from '../Project/SimpleProject';
+import type SimpleTimeline from '../Timeline/SimpleTimeline';
 import { SafelightIndexedDB } from './db';
 
 export default class IndexedDbStorageController extends BaseStorageController {

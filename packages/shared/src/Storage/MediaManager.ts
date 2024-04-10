@@ -1,9 +1,9 @@
-import { Storage } from '@/base/Storage';
-import { generateMediaThumbnail } from '@/helpers/Video/GenerateMediaThumbnail';
-import { getVideoInfo } from '@/helpers/Video/GetVideoInfo';
 import { createMD5 } from 'hash-wasm';
 import { Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
+import { Storage } from '../base/Storage';
+import { generateMediaThumbnail } from '../helpers/Video/GenerateMediaThumbnail';
+import { getVideoInfo } from '../helpers/Video/GetVideoInfo';
 
 const chunkSize = 64 * 1024 * 1024;
 

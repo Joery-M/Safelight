@@ -1,8 +1,8 @@
-import SimpleTimeline from '@/Timeline/SimpleTimeline';
-import { computed, ref, shallowReactive } from 'vue';
-import Media from '../Media/Media';
+import SimpleTimeline from '../Timeline/SimpleTimeline';
 import { v4 as uuidv4 } from 'uuid';
-import BaseProject, { type ProjectType } from '../base/Project';
+import { computed, ref, shallowReactive } from 'vue';
+import { default as BaseProject, type ProjectType } from '../base/Project';
+import Media from '../Media/Media';
 
 export default class SimpleProject extends BaseProject {
     public id = uuidv4();
