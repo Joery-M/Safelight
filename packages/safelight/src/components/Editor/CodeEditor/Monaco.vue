@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-const monaco = await import('monaco-editor');
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import OneMonokai from './themes/OneMonokai-Monaco.json';
 import type { editor } from 'monaco-editor';
 

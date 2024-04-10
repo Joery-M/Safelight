@@ -28,18 +28,18 @@
         "test": "vitest"
     },
     "dependencies": {
-        "@endo/static-module-record": "^1.1.0",
+        "@endo/static-module-record": "^1.1.1",
         "esbuild-wasm": "^0.20.2",
         "path-browserify": "^1.0.1",
         "rxjs": "^7.8.1",
-        "ses": "^1.4.0"
+        "ses": "^1.4.1"
     },
     "devDependencies": {
         "@types/path-browserify": "^1.0.2",
         "@vitest/browser": "^1.4.0",
         "@vitest/ui": "^1.4.0",
         "rimraf": "^5.0.5",
-        "typescript": "^5.4.3",
+        "typescript": "^5.4.5",
         "vite": "^5.2.8",
         "vite-plugin-dts": "^3.8.1",
         "vitest": "^1.4.0",
@@ -47,7 +47,7 @@
     },
     "optionalDependencies": {
         "@codemirror/lang-javascript": "^6.2.2",
-        "@types/node": "^20.12.3",
+        "@types/node": "^20.12.7",
         "@vitejs/plugin-vue": "^5.0.4",
         "@vue/tsconfig": "^0.5.1",
         "@vueuse/core": "^10.9.0",

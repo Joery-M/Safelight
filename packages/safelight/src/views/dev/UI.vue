@@ -14,7 +14,6 @@
             <Button @click="timeline1.resizeToFitAll()">Fit</Button>
         </template>
     </Card>
-    <!-- <SLTimeline/> -->
 
     <Card title="Lists">
         <template #content>
@@ -36,7 +35,6 @@
 </template>
 
 <script setup lang="ts">
-// import SLTimeline from '@safelight/timeline';
 import Button from 'primevue/button';
 import Listbox from 'primevue/listbox';
 import { v4 as uuidv4 } from 'uuid';

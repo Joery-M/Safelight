@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { Timeline as SLTimeline, type TimelineItem } from '@safelight/timeline';
+import { Timeline as SLTimeline, type TimelineItem } from '@safelight/timeline/source';
 import { v4 as uuidv4 } from 'uuid';
 import { reactive } from 'vue';
 

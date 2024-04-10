@@ -43,16 +43,12 @@ export default defineConfig({
             vueTemplate: true
         }),
         TurboConsole(),
-        mkcert()
+        mkcert(),
+        visualizer()
     ],
     resolve: {
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url))
-        }
-    },
-    build: {
-        rollupOptions: {
-            plugins: [visualizer()]
         }
     },
     server: {
