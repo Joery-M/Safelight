@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import type BaseProject from '../base/Project';
 import type {
     SaveResults,
@@ -19,12 +20,16 @@ export default class IndexedDbStorageController extends BaseStorageController {
     private db = new SafelightIndexedDB();
 
     async SaveProject(project: BaseProject): Promise<SaveResults> {
+        const existingProject = await this.db.project.get({ id: project.id });
+
         const storableProject: StoredProject = {
             id: project.id,
             name: project.name,
             type: project.type,
             media: project.media.map((m) => m.id).filter((id) => id !== undefined),
-            timelines: project.timelines.map((m) => m.id)
+            timelines: project.timelines.map((m) => m.id),
+            updated: DateTime.now().toISO(),
+            created: existingProject?.created ?? DateTime.now().toISO()
         };
 
         try {
@@ -77,7 +82,8 @@ export default class IndexedDbStorageController extends BaseStorageController {
                       videoTracks: media.videoTracks,
                       fileInfo: media.fileInfo,
                       imageInfo: media.imageInfo,
-                      previewImage: await (await fetch(media.previewImage.value)).blob()
+                      previewImage: await (await fetch(media.previewImage.value)).blob(),
+                      created: media.created.toISO()
                   };
 
         try {

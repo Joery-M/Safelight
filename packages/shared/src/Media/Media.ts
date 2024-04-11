@@ -1,6 +1,7 @@
 import { type MediaInfoType } from 'mediainfo.js';
 import { ref } from 'vue';
 import MissingThumbnailUrl from '../../assets/missing_thumbnail.png?url';
+import type { DateTime } from 'luxon';
 
 // Not sure if refs are needed here, might want to look at this in the future.
 
@@ -23,6 +24,7 @@ export default class Media {
     public contentHash!: string;
 
     public file!: Blob;
+    public created!: DateTime<true>;
 
     /**
      * @description The duration of this media item. By default it is set to 5 seconds, which will apply to images

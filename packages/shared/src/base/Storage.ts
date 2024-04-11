@@ -1,9 +1,9 @@
 import type { MediaInfoType } from 'mediainfo.js';
 import type {
-    default as Media,
-    MediaType,
     AudioTrackInfo,
     ImageInfo,
+    default as Media,
+    MediaType,
     TextTrackInfo,
     VideoTrackInfo
 } from '../Media/Media';
@@ -69,6 +69,7 @@ export interface StoredMedia {
     audioTracks: AudioTrackInfo[];
     textTracks: TextTrackInfo[];
     imageInfo?: ImageInfo;
+    created: string;
 }
 
 export interface StoredProject {
@@ -83,6 +84,8 @@ export interface StoredProject {
      * Array of timeline id's
      */
     timelines: string[];
+    created: string;
+    updated: string;
 }
 
 export interface StoredTimeline {

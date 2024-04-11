@@ -1,10 +1,11 @@
 import { createMD5 } from 'hash-wasm';
+import { DateTime } from 'luxon';
+import type { MediaInfoType } from 'mediainfo.js';
 import { Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { Storage } from '../base/Storage';
 import { generateMediaThumbnail } from '../helpers/Video/GenerateMediaThumbnail';
 import { getVideoInfo } from '../helpers/Video/GetVideoInfo';
-import type { MediaInfoType } from 'mediainfo.js';
 import {
     MediaType,
     type AudioTrackInfo,
@@ -104,7 +105,8 @@ export default class MediaManager {
                         fileInfo,
                         previewImage: thumbnail,
                         type,
-                        ...trackInfo
+                        ...trackInfo,
+                        created: DateTime.now().toISO()
                     });
                     subscriber.next({
                         type: 'done',

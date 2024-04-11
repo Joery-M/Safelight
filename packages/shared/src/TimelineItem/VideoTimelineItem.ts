@@ -1,10 +1,10 @@
-import { ref } from 'vue';
+import { shallowRef } from 'vue';
 import Media from '../Media/Media';
 import BaseTimelineItem, { type TimelineItemType } from '../base/TimelineItem';
 
 export default class VideoTimelineItem extends BaseTimelineItem {
     public type: TimelineItemType = 'Video';
-    public media = ref<Media>();
+    public media = shallowRef<Media>();
 
     public RenderVideoFrame() {}
 }
