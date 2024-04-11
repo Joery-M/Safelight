@@ -1,4 +1,5 @@
 import MimeMatcher from 'mime-matcher';
+import MissingThumbnail from '../../../assets/missing_thumbnail.png?url';
 
 export function generateMediaThumbnail(file: File, percent = 0.1, maxWidth = 427, maxHeight = 240) {
     return new Promise<Blob | null>((resolve) => {
@@ -48,9 +49,7 @@ export function generateMediaThumbnail(file: File, percent = 0.1, maxWidth = 427
                 },
                 { once: true }
             );
-        }
-
-        if (isVideo) {
+        } else if (isVideo) {
             // Generate video frame
 
             const video = document.createElement('video');
@@ -104,6 +103,13 @@ export function generateMediaThumbnail(file: File, percent = 0.1, maxWidth = 427
                     { once: true }
                 );
             };
+        } else {
+            fetch(MissingThumbnail)
+                .then((r) => r.blob())
+                .then((img) => resolve(img))
+                .catch((err) => {
+                    console.error('Could not load missing thumbnail', err);
+                });
         }
     });
 }
@@ -124,7 +130,7 @@ function calculateAspectRatioFit(
     srcHeight: number,
     maxWidth: number,
     maxHeight: number
-) {
+): { width: number; height: number } {
     const ratio = Math.min(maxWidth / srcWidth, maxHeight / srcHeight);
 
     return { width: srcWidth * ratio, height: srcHeight * ratio };

@@ -82,7 +82,8 @@ export interface VideoTrackInfo {
     bitDepth: number;
     colorSpace: string;
     isHDR: boolean;
-    title?: string;
+    title: string;
+    duration: number;
 }
 
 export interface AudioTrackInfo {
@@ -90,6 +91,7 @@ export interface AudioTrackInfo {
     sampleRate: number;
     channels: number;
     title?: string;
+    duration: number;
 }
 
 export interface ImageInfo {

@@ -4,6 +4,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { Storage } from '../base/Storage';
 import { generateMediaThumbnail } from '../helpers/Video/GenerateMediaThumbnail';
 import { getVideoInfo } from '../helpers/Video/GetVideoInfo';
+import type { MediaInfoType } from 'mediainfo.js';
+import {
+    MediaType,
+    type AudioTrackInfo,
+    type ImageInfo,
+    type TextTrackInfo,
+    type VideoTrackInfo
+} from '../Media/Media';
 
 const chunkSize = 64 * 1024 * 1024;
 
@@ -60,9 +68,7 @@ export default class MediaManager {
                         type: 'fileInfo',
                         hashProgress: 1
                     });
-                    const fileInfo = await getVideoInfo(file).catch(() => {
-                        return undefined;
-                    });
+                    const fileInfo = await getVideoInfo(file);
 
                     // Get thumbnail
                     subscriber.next({
@@ -73,6 +79,23 @@ export default class MediaManager {
 
                     const uuid = uuidv4();
 
+                    const trackInfo = this.parseFileInfo(fileInfo);
+
+                    let type: MediaType = 0;
+
+                    if (trackInfo.videoTracks.length > 0) {
+                        type = type | MediaType.Video;
+                    }
+                    if (trackInfo.audioTracks.length > 0) {
+                        type = type | MediaType.Audio;
+                    }
+                    if (trackInfo.textTracks.length > 0) {
+                        type = type | MediaType.Text;
+                    }
+                    if (trackInfo.imageInfo) {
+                        type = type | MediaType.Image;
+                    }
+
                     Storage.getStorage().SaveMedia({
                         id: uuid,
                         name: file.name,
@@ -80,14 +103,8 @@ export default class MediaManager {
                         data: file,
                         fileInfo,
                         previewImage: thumbnail,
-
-                        // TODO: Implement
-
-                        duration: 0,
-                        audioTracks: [],
-                        textTracks: [],
-                        type: 0,
-                        videoTracks: []
+                        type,
+                        ...trackInfo
                     });
                     subscriber.next({
                         type: 'done',
@@ -99,6 +116,64 @@ export default class MediaManager {
                 subscriber.complete();
             })();
         });
+    }
+
+    private static parseFileInfo(info: MediaInfoType) {
+        const videoTracks: VideoTrackInfo[] = [];
+        const audioTracks: AudioTrackInfo[] = [];
+        const textTracks: TextTrackInfo[] = [];
+        const sampledDurations: number[] = [];
+        let imageInfo: ImageInfo | undefined;
+
+        info.media?.track.forEach((track) => {
+            if (track['@type'] == 'Video') {
+                videoTracks.push({
+                    title: track.Title ?? `Video Track ${videoTracks.length + 1}`,
+                    bitDepth: track.BitDepth!,
+                    codec: (track.CodecID ?? track.Format)!,
+                    colorSpace: track.ColorSpace!,
+                    frameRate: track.FrameRate!,
+                    frameRateMode:
+                        track.FrameRate_Mode === 'CFR' || !track.FrameRate_Mode ? 'CFR' : 'VFR',
+                    height: track.Height!,
+                    width: track.Width!,
+                    isHDR: 'HDR_Format' in track,
+                    duration: track.Duration!
+                });
+                if (track.Duration) {
+                    sampledDurations.push(track.Duration);
+                }
+            } else if (track['@type'] == 'Audio') {
+                audioTracks.push({
+                    title: track.Title ?? `Audio Track ${audioTracks.length + 1}`,
+                    channels: (track.Channels ?? track.Audio_Channels_Total)!,
+                    codec: (track.CodecID ?? track.Format)!,
+                    sampleRate: track.SamplingRate!,
+                    duration: track.Duration!
+                });
+                if (track.Duration) {
+                    sampledDurations.push(track.Duration);
+                }
+            } else if (track['@type'] == 'Image') {
+                imageInfo = {
+                    format: track.Format!,
+                    height: track.Height!,
+                    width: track.Width!
+                };
+            } else if (track['@type'] == 'Text') {
+                textTracks.push({
+                    format: track.Format!
+                });
+            }
+        });
+
+        return {
+            videoTracks,
+            audioTracks,
+            textTracks,
+            imageInfo,
+            duration: Math.max(...sampledDurations)
+        };
     }
 }
 

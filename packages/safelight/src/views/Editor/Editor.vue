@@ -34,6 +34,8 @@
 </template>
 
 <script setup lang="ts">
+import { Storage } from '@safelight/shared/base/Storage';
+import MediaManager from '@safelight/shared/Storage/MediaManager';
 import { useObservable } from '@vueuse/rxjs';
 import SplitterPanel from 'primevue/splitterpanel';
 
@@ -61,20 +63,16 @@ fileDialog.onChange((fileList) => {
 
 function loadFile(file: File) {
     return new Promise<void>((resolve) => {
-        const storingProcessing = useObservable(IdbMediaManager.storeMedia(file));
+        const storingProcessing = useObservable(MediaManager.StoreMedia(file));
         watch(storingProcessing, (s) => {
             console.log(s?.type, s?.hashProgress);
         });
 
-        watch(storingProcessing, () => {
+        watch(storingProcessing, async () => {
             if (storingProcessing.value && storingProcessing.value.type == 'done') {
-                const existingMedia = project.media.some(
-                    (m) => m.id.value == storingProcessing.value!.id
-                );
+                const media = await Storage.getStorage().LoadMedia(storingProcessing.value.id!);
 
-                if (!existingMedia) {
-                    const media = new Media(storingProcessing.value.id!);
-
+                if (media) {
                     project.media.push(media);
                     project.activeTimeline.createTimelineItem(media);
                 }
