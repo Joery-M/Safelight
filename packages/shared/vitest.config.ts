@@ -6,14 +6,12 @@ export default defineProject({
     test: {
         reporters: !process.env.GITHUB_ACTIONS ? ['default', 'github-actions'] : ['default'],
         globals: true,
-        environment: 'jsdom',
+        environment: 'happy-dom',
+        name: 'shared',
         ui: true,
+        open: false,
         api: {
             port: 5125
-        },
-        browser: {
-            name: 'chrome',
-            enabled: false
         }
     }
 });

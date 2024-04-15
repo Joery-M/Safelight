@@ -6,6 +6,10 @@
     "exports": {
         "./*": "./src/*.ts"
     },
+    "scripts": {
+        "test": "vitest",
+        "test:run": "vitest run --ui false"
+    },
     "dependencies": {
         "@vueuse/core": "^10.9.0",
         "@vueuse/shared": "^10.9.0",
@@ -23,6 +27,8 @@
         "@tsconfig/node20": "^20.1.4",
         "@types/luxon": "^3.4.2",
         "@types/uuid": "^9.0.8",
-        "@vue/tsconfig": "^0.5.1"
+        "@vue/tsconfig": "^0.5.1",
+        "fake-indexeddb": "^5.0.2",
+        "happy-dom": "^14.7.1"
     }
 }

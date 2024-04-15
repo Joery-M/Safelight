@@ -6,7 +6,13 @@ export class SafelightIndexedDB extends Dexie {
     project!: Table<StoredProject, string>;
 
     constructor() {
-        super('SafelightIdb');
+        // Only during tests
+        if (global?.vitest) {
+            super('SafelightIdb', { indexedDB: global.indexedDB, IDBKeyRange: global.IDBKeyRange });
+        } else {
+            super('SafelightIdb');
+        }
+
         this.version(1).stores({
             media: 'id, name, contentHash',
             project: 'id, name, type'

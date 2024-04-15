@@ -25,7 +25,8 @@
         "build": "rimraf ./dist/ && vite build && tsc --emitDeclarationOnly",
         "build:vite": "vite build",
         "build:tsc": "tsc --emitDeclarationOnly",
-        "test": "vitest"
+        "test": "vitest",
+        "test:run": "vitest run --ui false"
     },
     "dependencies": {
         "@endo/static-module-record": "^1.1.1",

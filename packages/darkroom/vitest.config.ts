@@ -4,6 +4,7 @@ export default defineProject({
     test: {
         reporters: !process.env.GITHUB_ACTIONS ? ['default', 'github-actions'] : ['default'],
         globals: true,
+        name: 'Darkroom',
         browser: {
             enabled: true,
             headless: true,

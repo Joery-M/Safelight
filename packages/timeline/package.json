@@ -27,7 +27,8 @@
         "build": "pnpm \"/build:/\"",
         "build:vite": "vite build",
         "build:tsc": "vue-tsc --emitDeclarationOnly",
-        "test": "vitest"
+        "test": "vitest",
+        "test:run": "vitest run --ui false"
     },
     "dependencies": {
         "@safelight/shared": "workspace:*",
@@ -42,7 +43,7 @@
         "@vitejs/plugin-vue": "^5.0.4",
         "@vue/test-utils": "^2.4.5",
         "@vue/tsconfig": "^0.5.1",
-        "jsdom": "^24.0.0",
+        "happy-dom": "^14.7.1",
         "typescript": "^5.4.5",
         "vite": "^5.2.8",
         "vitest": "^1.4.0",
