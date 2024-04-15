@@ -10,7 +10,7 @@ export default abstract class BaseProject {
 
     public abstract media: ShallowReactive<Media[]>;
 
-    protected abstract selectedTimelineIndex: Ref<number>;
+    public abstract selectedTimelineIndex: Ref<number>;
     public abstract timelines: ShallowReactive<BaseTimeline[]>;
     public abstract timeline: ComputedRef<BaseTimeline>;
 

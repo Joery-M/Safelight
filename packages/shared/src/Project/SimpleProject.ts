@@ -11,7 +11,7 @@ export default class SimpleProject extends BaseProject {
 
     public media = shallowReactive<Media[]>([]);
 
-    protected selectedTimelineIndex = ref(0);
+    public selectedTimelineIndex = ref(0);
     public timelines = shallowReactive<SimpleTimeline[]>([]);
     public timeline = computed(() => this.timelines.at(this.selectedTimelineIndex.value)!);
 }

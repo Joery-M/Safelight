@@ -1,5 +1,12 @@
 <template>
-    <DataView :value="sortedAndFiltered" scrollable scroll-height="400px" data-key="id">
+    <DataView
+        :value="sortedAndFiltered"
+        scrollable
+        scroll-height="400px"
+        class="flex h-full flex-col"
+        data-key="id"
+        @dblclick="fileDialog.open()"
+    >
         <template #header>
             <Toolbar class="border-none p-0">
                 <template #start>
@@ -64,10 +71,10 @@
                         />
                     </div>
                     <p
-                        v-tooltip.bottom="{ value: item.name, showDelay: 1000 }"
+                        v-tooltip.bottom="{ value: item.name.value, showDelay: 1000 }"
                         class="m-0 mt-1 max-w-full overflow-x-hidden overflow-ellipsis text-base"
                     >
-                        {{ item.name }}
+                        {{ item.name.value }}
                     </p>
                     <p v-if="item.duration > 0">
                         {{ item.duration }}
@@ -75,27 +82,26 @@
                 </div>
             </div>
         </template>
+        <template #empty>
+            <div class="grid h-full place-items-center" @dblclick="fileDialog.open()">
+                <label class="select-none opacity-60">No media imported</label>
+            </div>
+        </template>
     </DataView>
 </template>
 
 <script setup lang="ts">
 import { PhMagnifyingGlass, PhSortDescending } from '@phosphor-icons/vue';
-import type BaseProject from '@safelight/shared/base/Project';
-import type Media from '@safelight/shared/Media/Media';
-import MediaManager from '@safelight/shared/Storage/MediaManager';
+import Media from '@safelight/shared/Media/Media';
 import fuzzysearch from 'fuzzysearch';
 import MimeMatcher from 'mime-matcher';
 import InputGroup from 'primevue/inputgroup';
 import InputGroupAddon from 'primevue/inputgroupaddon';
 import type { UnwrapRef } from 'vue';
 
-const emit = defineEmits<{
-    'update:modelValue': any[];
-}>();
-
-const dropZone = useDropZone(document.body, {
+useDropZone(document.body, {
     onDrop(files) {
-        files?.forEach(project);
+        files?.forEach(project.loadFile);
     },
     dataTypes(types) {
         return !types.some((val) => {
@@ -103,43 +109,32 @@ const dropZone = useDropZone(document.body, {
         });
     }
 });
+const fileDialog = useFileDialog({
+    accept: 'image/*,video/*'
+});
 
-function loadFile(file: File) {
-    return new Promise<void>((resolve) => {
-        const storingProcessing = useObservable(MediaManager.StoreMedia(file));
-        watch(storingProcessing, (s) => {
-            console.log(s?.type, s?.hashProgress);
-        });
+fileDialog.onChange((fileList) => {
+    if (!fileList) return;
 
-        watch(storingProcessing, () => {
-            if (storingProcessing.value && storingProcessing.value.type == 'done') {
-                const existingMedia = project.media.some(
-                    (m) => m.id.value == storingProcessing.value!.id
-                );
+    for (let i = 0; i < fileList.length; i++) {
+        const item = fileList.item(i);
 
-                if (!existingMedia) {
-                    const media = new Media(storingProcessing.value.id!);
+        if (item) {
+            project.loadFile(item);
+        }
+    }
+});
 
-                    project.media.push(media);
-                    project.activeTimeline.createTimelineItem(media);
-                }
-
-                resolve();
-            }
-        });
-    });
-}
-
-const project = inject<BaseProject>('currentProject');
-const media = useVModel(props, 'media', emit);
+const project = useProject();
+const media = project.project!.media;
 
 const search = ref('');
 const sortBy = ref<sortOptions>('Name');
 const sortDescending = ref(false);
 
-const sortedAndFiltered = ref<Media[]>([]);
+const sortedAndFiltered = shallowRef<Media[]>([]);
 
-watchDebounced([props.media, search, sortBy, sortDescending], sortAndFilter, {
+watchDebounced([media, search, sortBy, sortDescending], sortAndFilter, {
     deep: true,
     debounce: 100,
     maxWait: 1000,
@@ -147,12 +142,12 @@ watchDebounced([props.media, search, sortBy, sortDescending], sortAndFilter, {
 });
 
 function sortAndFilter() {
-    const filtered = media.value.filter((elem) => {
+    const filtered = media.filter((elem) => {
         if (search.value.length == 0) {
             return true;
         }
 
-        return fuzzysearch(search.value.toLowerCase(), elem.name.toLowerCase());
+        return fuzzysearch(search.value.toLowerCase(), elem.name.value.toLowerCase());
     });
 
     const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
@@ -161,16 +156,16 @@ function sortAndFilter() {
         const item1 = sortDescending.value ? b : a;
         const item2 = sortDescending.value ? a : b;
 
-        const ext1 = item1.name.split('.').at(-1) ?? 'ZZZ';
-        const ext2 = item2.name.split('.').at(-1) ?? 'ZZZ';
+        const ext1 = item1.name.value.split('.').at(-1) ?? 'ZZZ';
+        const ext2 = item2.name.value.split('.').at(-1) ?? 'ZZZ';
 
         switch (sortBy.value) {
             case 'Duration':
-                return item1.duration - item2.duration;
+                return item1.duration.value - item2.duration.value;
             case 'File type':
                 return collator.compare(ext1, ext2);
             default:
-                return collator.compare(item1.name, item2.name);
+                return collator.compare(item1.name.value, item2.name.value);
         }
     });
 
@@ -189,5 +184,11 @@ type sortOptions = 'Name' | 'Duration' | 'File type';
 
 :deep(.p-dataview-header) {
     @apply p-1;
+}
+:deep(.p-dataview-content) {
+    @apply flex-1;
+}
+:deep(.p-dataview-emptymessage) {
+    @apply h-full;
 }
 </style>

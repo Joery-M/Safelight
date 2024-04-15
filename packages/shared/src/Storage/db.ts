@@ -7,8 +7,10 @@ export class SafelightIndexedDB extends Dexie {
 
     constructor() {
         // Only during tests
-        if (global?.vitest) {
-            super('SafelightIdb', { indexedDB: global.indexedDB, IDBKeyRange: global.IDBKeyRange });
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        if (window?.vitest) {
+            super('SafelightIdb', { indexedDB: window.indexedDB, IDBKeyRange: window.IDBKeyRange });
         } else {
             super('SafelightIdb');
         }

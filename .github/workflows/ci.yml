@@ -56,5 +56,11 @@ jobs:
             - name: Build safelight
               run: pnpm build:safelight
 
-            - name: Test
-              run: pnpm test
+            - name: Test darkroom
+              run: pnpm test:darkroom
+
+            - name: Test shared
+              run: pnpm test:shared
+
+            - name: Test timeline
+              run: pnpm test:timeline

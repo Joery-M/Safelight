@@ -2,25 +2,23 @@ import { IDBKeyRange, indexedDB } from 'fake-indexeddb';
 import { expect, test } from 'vitest';
 import SimpleProject from '../../../src/Project/SimpleProject';
 import IndexedDbStorageController from '../../../src/Storage/IndexedDbStorage';
+import { Storage } from '../../../src/base/Storage';
 
-test('List projects', async () => {
-    global.indexedDB = indexedDB;
-    global.IDBKeyRange = IDBKeyRange;
+window.indexedDB = indexedDB;
+window.IDBKeyRange = IDBKeyRange;
 
+test('List project', async () => {
     const storage = new IndexedDbStorageController();
 
     const project = new SimpleProject();
     await storage.SaveProject(project);
 
-    const projects = await storage.getProjects();
+    const projects = await Storage.getProjects();
 
-    expect(projects[0].id).toBe(project.id);
+    expect(projects.some((p) => p.id == project.id)).toBeTruthy();
 });
 
 test('Retrieve project', async () => {
-    global.indexedDB = indexedDB;
-    global.IDBKeyRange = IDBKeyRange;
-
     const storage = new IndexedDbStorageController();
 
     const project = new SimpleProject();

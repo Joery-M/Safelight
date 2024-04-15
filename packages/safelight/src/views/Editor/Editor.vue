@@ -3,7 +3,7 @@
         <SplitterPanel>
             <Splitter>
                 <SplitterPanel>
-                    <TabView>
+                    <TabView class="flex h-full flex-col">
                         <TabPanel>
                             <template #header>
                                 <div class="flex items-center gap-2">
@@ -14,14 +14,14 @@
                             <!-- Dont break highlighting -->
                             <!-- eslint-disable-next-line prettier/prettier -->
                             <!-- prettier-ignore -->
-                            <Library :media="(project.media as any)" />
+                            <Library />
                         </TabPanel>
                     </TabView>
                 </SplitterPanel>
                 <SplitterPanel>
                     <Monitor
-                        v-if="project.activeTimeline"
-                        :timeline="project.activeTimeline"
+                        v-if="project.project?.timeline"
+                        :timeline="project.project?.timeline"
                         class="min-h-100 w-full"
                     />
                 </SplitterPanel>
@@ -35,18 +35,16 @@
 
 <script setup lang="ts">
 import { Storage } from '@safelight/shared/base/Storage';
-import MediaManager from '@safelight/shared/Storage/MediaManager';
-import { useObservable } from '@vueuse/rxjs';
 import SplitterPanel from 'primevue/splitterpanel';
 
-const fileDialog = useFileDialog({
-    accept: 'image/*,video/*'
-});
+// const fileDialog = useFileDialog({
+//     accept: 'image/*,video/*'
+// });
 
-const project = new SimpleProject();
-const loading = ref(false);
+const project = useProject();
+// const loading = ref(false);
 
-fileDialog.onChange((fileList) => {
+/* fileDialog.onChange((fileList) => {
     if (!fileList) return;
 
     loading.value = true;
@@ -59,39 +57,25 @@ fileDialog.onChange((fileList) => {
     Promise.all(promises).finally(() => {
         loading.value = false;
     });
-});
-
-function loadFile(file: File) {
-    return new Promise<void>((resolve) => {
-        const storingProcessing = useObservable(MediaManager.StoreMedia(file));
-        watch(storingProcessing, (s) => {
-            console.log(s?.type, s?.hashProgress);
-        });
-
-        watch(storingProcessing, async () => {
-            if (storingProcessing.value && storingProcessing.value.type == 'done') {
-                const media = await Storage.getStorage().LoadMedia(storingProcessing.value.id!);
-
-                if (media) {
-                    project.media.push(media);
-                    project.activeTimeline.createTimelineItem(media);
-                }
-
-                resolve();
-            }
-        });
-    });
-}
+}); */
 
 onBeforeUnmount(() => {
     // reset store, which currently tries to call 'this', trying to reference the store
     // project.$dispose();
+    if (project.project) Storage.getStorage().SaveProject(project.project);
 });
 </script>
 
 <style lang="scss" scoped>
 .vertSlitter {
     height: 100vh;
+}
+
+:deep(.p-tabview-panels) {
+    @apply flex-1;
+}
+:deep(.p-tabview-panel) {
+    @apply h-full;
 }
 </style>
 

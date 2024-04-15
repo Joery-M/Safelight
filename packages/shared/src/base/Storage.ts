@@ -18,7 +18,7 @@ export default abstract class BaseStorageController {
 
     abstract SaveProject(project: BaseProject): Promise<SaveResults>;
     abstract LoadProject(projectId: string): Promise<BaseProject | undefined>;
-    abstract getProjects(): Promise<StoredProject[]>;
+    static getProjects: () => Promise<StoredProject[]>;
 
     abstract SaveMedia(media: StoredMedia): Promise<SaveResults>;
     abstract SaveMedia(media: Media): Promise<SaveResults>;
@@ -34,16 +34,22 @@ export default abstract class BaseStorageController {
     // isWebFileSystem = (): this is IndexedDbStorageController => this.type == 'WebFileSystem';
 }
 
-// Singleton pattern
 export class Storage {
+    public static async getProjects(): Promise<StoredProject[]> {
+        const storageControllers = [(await import('../Storage/IndexedDbStorage')).default];
+
+        const getPromises = storageControllers.map((controller) => controller.getProjects());
+
+        const results = await Promise.all(getPromises);
+
+        return results.flat(1);
+    }
+
+    // Singleton pattern
     private static currentStorageController: BaseStorageController;
 
     static setStorage(storageController: BaseStorageController) {
-        if (!this.currentStorageController) {
-            this.currentStorageController = storageController;
-        } else {
-            throw new Error('Storage controller already defined');
-        }
+        this.currentStorageController = storageController;
     }
     static getStorage() {
         if (this.currentStorageController) {

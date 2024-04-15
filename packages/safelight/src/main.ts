@@ -13,7 +13,7 @@ import Tooltip from 'primevue/tooltip';
 
 import './style.scss';
 
-const router = createRouter({
+export const router = createRouter({
     history: createWebHistory()
 });
 

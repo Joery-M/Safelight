@@ -12,6 +12,9 @@
         "build:timeline": "cd packages/timeline && pnpm build",
         "build:safelight": "cd packages/safelight && pnpm build",
         "test": "pnpm run -r test:run",
+        "test:darkroom": "cd packages/darkroom && pnpm test:run",
+        "test:shared": "cd packages/shared && pnpm test:run",
+        "test:timeline": "cd packages/timeline && pnpm test:run",
         "dev": "pnpm build:packages && cd packages/safelight && pnpm dev",
         "dev:darkroom": "pnpm build:packages && cd packages/darkroom && pnpm dev:web"
     },

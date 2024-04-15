@@ -65,8 +65,13 @@ export default class IndexedDbStorageController extends BaseStorageController {
                 }
             });
     }
-    getProjects(): Promise<StoredProject[]> {
-        return this.db.project.toArray();
+    static getProjects(): Promise<StoredProject[]> {
+        return new Promise(async (resolve) => {
+            const db = new SafelightIndexedDB();
+            await db.open();
+            resolve(db.project.toArray());
+            db.close();
+        });
     }
 
     async SaveMedia(media: Media | StoredMedia): Promise<SaveResults> {

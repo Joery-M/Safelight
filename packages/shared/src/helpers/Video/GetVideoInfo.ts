@@ -1,4 +1,5 @@
 import MediaInfoFactory, { type MediaInfoType, type ReadChunkFunc } from 'mediainfo.js';
+import MediaInfoWasmUrl from 'mediainfo.js/MediaInfoModule.wasm?url';
 import MimeMatcher from 'mime-matcher';
 
 export async function getVideoInfo(file: File) {
@@ -22,7 +23,7 @@ export async function getVideoInfo(file: File) {
         MediaInfoFactory({
             locateFile(url, scriptDirectory) {
                 console.log(url, scriptDirectory);
-                return '';
+                return MediaInfoWasmUrl;
             }
         }).then(async (mediaInfo) => {
             const data = await mediaInfo.analyzeData(() => file.size, readChunk);
