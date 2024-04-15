@@ -65,6 +65,9 @@ export default class IndexedDbStorageController extends BaseStorageController {
                 }
             });
     }
+    getProjects(): Promise<StoredProject[]> {
+        return this.db.project.toArray();
+    }
 
     async SaveMedia(media: Media | StoredMedia): Promise<SaveResults> {
         const storedMedia: StoredMedia =

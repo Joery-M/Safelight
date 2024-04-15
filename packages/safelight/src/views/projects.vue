@@ -15,10 +15,21 @@
 </template>
 
 <script setup lang="ts">
-import type { StoredProject } from '@safelight/shared/base/Storage';
+import { Storage, type StoredProject } from '@safelight/shared/base/Storage';
 import { DateTime } from 'luxon';
 
 const projects = ref<StoredProject[]>([]);
+
+onMounted(() => {
+    Storage.getStorage()
+        .getProjects()
+        .then((p) => {
+            projects.value = p;
+        })
+        .catch(() => {
+            
+        });
+});
 
 function formatDateTime(dt: string) {
     const date = DateTime.fromISO(dt).toLocal();
