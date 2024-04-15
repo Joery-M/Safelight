@@ -10,7 +10,7 @@ on:
         branches: ['main']
 
 jobs:
-    setup:
+    test-all:
         runs-on: ubuntu-latest
 
         strategy:
@@ -47,53 +47,20 @@ jobs:
             - name: Install dependencies
               run: pnpm install
 
-    build-safelight:
-        runs-on: ubuntu-latest
-        needs: [setup, build-darkroom, build-timeline, test-shared]
-
-        strategy:
-            matrix:
-                node-version: [20.12.0] # Latest LTS
-
-        steps:
-            - name: Build safelight
-              run: pnpm build:safelight
-    build-darkroom:
-        runs-on: ubuntu-latest
-        needs: [setup]
-
-        strategy:
-            matrix:
-                node-version: [20.12.0] # Latest LTS
-
-        steps:
             - name: Build Darkroom
               run: pnpm build:darkroom
 
-            - name: Test darkroom
-              run: pnpm test:darkroom
-    build-timeline:
-        runs-on: ubuntu-latest
-        needs: [setup]
-
-        strategy:
-            matrix:
-                node-version: [20.12.0] # Latest LTS
-
-        steps:
             - name: Build Timeline
               run: pnpm build:timeline
 
-            - name: Test Timeline
-              run: pnpm test:timeline
-    test-shared:
-        runs-on: ubuntu-latest
-        needs: [setup]
+            - name: Build safelight
+              run: pnpm build:safelight
 
-        strategy:
-            matrix:
-                node-version: [20.12.0] # Latest LTS
+            - name: Test darkroom
+              run: pnpm test:darkroom
 
-        steps:
             - name: Test shared
               run: pnpm test:shared
+
+            - name: Test timeline
+              run: pnpm test:timeline
