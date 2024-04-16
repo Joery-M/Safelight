@@ -48,16 +48,29 @@ export default class IndexedDbStorageController extends BaseStorageController {
                 if (project.type == 'Simple') {
                     const proj = new SimpleProject();
                     proj.id = project.id;
-                    const mediaFetches = project.media.map((m) => this.LoadMedia(m));
-                    const timelineFetches = project.timelines.map((t) =>
-                        this.LoadTimeline<SimpleTimeline>(t)
-                    );
-                    proj.media.push(
-                        ...(await Promise.all(mediaFetches)).filter((m) => m !== undefined)
-                    );
-                    proj.timelines.push(
-                        ...(await Promise.all(timelineFetches)).filter((t) => t !== undefined)
-                    );
+                    const mediaFetches = project.media.map(async (m) => {
+                        const media = await this.LoadMedia(m).catch((reason) => {
+                            console.error('Error loading media file for project', reason);
+                        });
+                        if (media) {
+                            proj.media.push(media);
+                        } else {
+                            // TODO: Add a way for media to be marked as missing
+                        }
+                    });
+                    const timelineFetches = project.timelines.map(async (t) => {
+                        const timeline = await this.LoadTimeline<SimpleTimeline>(t).catch(
+                            (reason) => {
+                                console.error('Error loading timeline for project', reason);
+                            }
+                        );
+                        if (timeline) {
+                            proj.timelines.push(timeline);
+                        }
+                    });
+
+                    // Load all timelines and media
+                    await Promise.allSettled([...timelineFetches, ...mediaFetches]);
                     proj.name = project.name;
                     return proj;
                 } else {
@@ -107,9 +120,7 @@ export default class IndexedDbStorageController extends BaseStorageController {
             this.db.media
                 .get({ id: mediaId })
                 .then((storedMedia) => {
-                    if (storedMedia) {
-                        resolve(this.storedMediaToMedia(storedMedia));
-                    }
+                    resolve(storedMedia ? this.storedMediaToMedia(storedMedia) : undefined);
                 })
                 .catch(reject);
         });

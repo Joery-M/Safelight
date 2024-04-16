@@ -65,8 +65,18 @@ body {
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    // Might wanna change this in the future
+    display: flex;
+    min-height: 100vh;
+
+    #app {
+        flex-grow: 1;
+        min-height: 100%;
+    }
 }
 
 html {
     font-size: 14px;
+    min-height: 100%;
 }

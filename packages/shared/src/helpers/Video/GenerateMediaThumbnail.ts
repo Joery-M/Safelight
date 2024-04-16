@@ -1,6 +1,7 @@
 import MimeMatcher from 'mime-matcher';
 import MissingThumbnail from '../../../assets/missing_thumbnail.png?url';
 
+// TODO: Fix video not working for my HDR test video (HDR RGB lights.MOV)
 export function generateMediaThumbnail(file: File, percent = 0.1, maxWidth = 427, maxHeight = 240) {
     return new Promise<Blob | null>((resolve) => {
         const isVideo = new MimeMatcher('video/*').match(file.type);

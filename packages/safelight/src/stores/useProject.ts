@@ -1,5 +1,6 @@
+import { router } from '@/main';
 import type BaseProject from '@safelight/shared/base/Project';
-import { Storage } from '@safelight/shared/base/Storage';
+import { Storage, type StoredProject } from '@safelight/shared/base/Storage';
 import MediaManager from '@safelight/shared/Storage/MediaManager';
 
 export const useProject = defineStore('Project', () => {
@@ -8,9 +9,13 @@ export const useProject = defineStore('Project', () => {
     const timelineViewEnd = ref(0);
 
     const project = shallowRef<BaseProject>();
+    const isLoaded = ref(false);
 
     function setProject(newProject: BaseProject) {
         project.value = newProject;
+        isLoaded.value = true;
+
+        useSessionStorage<string>('project', '').value = newProject.id;
     }
 
     function loadFile(file: File) {
@@ -26,7 +31,6 @@ export const useProject = defineStore('Project', () => {
                         (m) => m.id == storingProcessing.value!.id
                     );
 
-                    console.log(existingMedia);
                     if (!existingMedia) {
                         const media = await Storage.getStorage().LoadMedia(
                             storingProcessing.value.id!
@@ -36,7 +40,6 @@ export const useProject = defineStore('Project', () => {
                             project.value!.media.push(media);
                             save();
                         }
-                        // project.activeTimeline.createTimelineItem(media);
                     }
 
                     resolve();
@@ -53,9 +56,49 @@ export const useProject = defineStore('Project', () => {
         project,
         setProject,
         loadFile,
+        isLoaded,
         cursor,
         timelineViewStart,
         timelineViewEnd,
-        save
+        save,
+        openProject,
+        new: {
+            newSimpleProject
+        }
     };
 });
+
+async function newSimpleProject() {
+    const IndexedDbStorageController = (await import('@safelight/shared/Storage/IndexedDbStorage'))
+        .default;
+    Storage.setStorage(new IndexedDbStorageController());
+    const projectStore = useProject();
+    const SimpleProject = (await import('@safelight/shared/Project/SimpleProject')).default;
+    projectStore.setProject(new SimpleProject());
+}
+
+async function openProject(selectedProject: StoredProject) {
+    if (selectedProject.type == 'Simple') {
+        const IndexedDbStorageController = (
+            await import('@safelight/shared/Storage/IndexedDbStorage')
+        ).default;
+
+        const projectStore = useProject();
+        Storage.setStorage(new IndexedDbStorageController());
+
+        const project = await Storage.getStorage().LoadProject(selectedProject.id);
+
+        if (project) {
+            projectStore.setProject(project);
+            await toEditor();
+        } else {
+            console.error('Could not load project');
+        }
+    } else {
+        console.error('Project type not supported');
+    }
+}
+
+async function toEditor() {
+    await router.push('/editor');
+}

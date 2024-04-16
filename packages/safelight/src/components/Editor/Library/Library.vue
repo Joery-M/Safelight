@@ -5,7 +5,6 @@
         scroll-height="400px"
         class="flex h-full flex-col"
         data-key="id"
-        @dblclick="fileDialog.open()"
     >
         <template #header>
             <Toolbar class="border-none p-0">
@@ -38,66 +37,56 @@
                         />
                     </InputGroup>
                 </template>
+                <template #end>
+                    <Button title="Load file" rounded @click="fileDialog.open()">
+                        <template #icon>
+                            <PhUpload />
+                        </template>
+                    </Button>
+                </template>
             </Toolbar>
         </template>
-        <template #list="{ items }: { items: UnwrapRef<Media>[] }">
+        <template #list="{ items }: { items: Media[] }">
             <div
-                class="grid-nogutter grid"
+                class="grid-nogutter grid h-full select-none"
                 role="grid"
-                style="grid-template-columns: repeat(auto-fill, minmax(150px, 1fr))"
+                style="
+                    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                    grid-template-rows: min-content;
+                "
+                @dblclick.self="fileDialogOpenDblClick"
             >
                 <div
                     v-for="item in items"
                     :key="item.id"
                     role="gridcell"
-                    class="border-round m-1 flex min-h-32 flex-col rounded-md border-solid border-white/10"
+                    class="border-round m-1 flex min-h-32 select-text flex-col rounded-md border-solid border-white/10"
                     style="border-width: 1px"
-                    :aria-label="item.name"
+                    :aria-label="item.name.value"
                 >
-                    <div
-                        class="bg-checkerboard flex aspect-video w-full items-center justify-center"
-                    >
-                        <img
-                            v-if="item.previewImage"
-                            class="max-h-full max-w-full rounded-t-md"
-                            :aria-label="'Preview image for ' + item.name"
-                            :src="item.previewImage"
-                        />
-                        <Skeleton
-                            v-else
-                            class="max-h-full max-w-full rounded-none rounded-t-md"
-                            height="100%"
-                            width="100%"
-                        />
-                    </div>
-                    <p
-                        v-tooltip.bottom="{ value: item.name.value, showDelay: 1000 }"
-                        class="m-0 mt-1 max-w-full overflow-x-hidden overflow-ellipsis text-base"
-                    >
-                        {{ item.name.value }}
-                    </p>
-                    <p v-if="item.duration > 0">
-                        {{ item.duration }}
-                    </p>
+                    <LibraryItem :item="item" />
                 </div>
             </div>
         </template>
         <template #empty>
-            <div class="grid h-full place-items-center" @dblclick="fileDialog.open()">
-                <label class="select-none opacity-60">No media imported</label>
+            <div
+                class="grid h-full select-none place-items-center opacity-60"
+                @dblclick="fileDialogOpenDblClick"
+            >
+                <label v-if="media.length == 0"> No media imported </label>
+                <label v-else>No media found</label>
             </div>
         </template>
     </DataView>
 </template>
 
 <script setup lang="ts">
-import { PhMagnifyingGlass, PhSortDescending } from '@phosphor-icons/vue';
+import { PhMagnifyingGlass, PhSortDescending, PhUpload } from '@phosphor-icons/vue';
 import Media from '@safelight/shared/Media/Media';
 import fuzzysearch from 'fuzzysearch';
 import MimeMatcher from 'mime-matcher';
 import InputGroup from 'primevue/inputgroup';
 import InputGroupAddon from 'primevue/inputgroupaddon';
-import type { UnwrapRef } from 'vue';
 
 useDropZone(document.body, {
     onDrop(files) {
@@ -164,6 +153,8 @@ function sortAndFilter() {
                 return item1.duration.value - item2.duration.value;
             case 'File type':
                 return collator.compare(ext1, ext2);
+            case 'Media type':
+                return collator.compare(item1.type.toString(), item1.type.toString());
             default:
                 return collator.compare(item1.name.value, item2.name.value);
         }
@@ -172,7 +163,13 @@ function sortAndFilter() {
     sortedAndFiltered.value = filtered;
 }
 
-type sortOptions = 'Name' | 'Duration' | 'File type';
+function fileDialogOpenDblClick(event: MouseEvent) {
+    event.preventDefault();
+    document.getSelection()?.removeAllRanges();
+    fileDialog.open();
+}
+
+type sortOptions = 'Name' | 'Duration' | 'File type' | 'Media type';
 </script>
 
 <style lang="scss" scoped>
