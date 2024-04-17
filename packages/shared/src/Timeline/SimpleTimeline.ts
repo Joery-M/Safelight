@@ -23,5 +23,22 @@ export default class SimpleTimeline extends BaseTimeline {
         this.framerate = 60;
     }
 
+    /**
+     * Called when an item is dropped in the timeline
+     */
+    public itemDropped(otherItem: BaseTimelineItem) {
+        this.items
+            .filter(
+                (i) =>
+                    i.layer.value === otherItem.layer.value &&
+                    i.end.value > otherItem.start.value &&
+                    i.start.value < otherItem.end.value &&
+                    i.id !== otherItem.id
+            )
+            .forEach((item) => {
+                item.onDroppedOn(otherItem);
+            });
+    }
+
     updateDuration() {}
 }
