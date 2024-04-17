@@ -8,6 +8,8 @@ export default abstract class BaseTimelineItem {
     public id = uuidv4();
     public type: TimelineItemType = 'Base';
 
+    public name = ref('');
+
     private lastStart = ref(0);
     private lastEnd = ref(0);
     private lastLayer = ref(0);

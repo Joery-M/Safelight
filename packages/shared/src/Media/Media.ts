@@ -1,7 +1,10 @@
+import type { DateTime } from 'luxon';
 import { type MediaInfoType } from 'mediainfo.js';
 import { ref } from 'vue';
 import MissingThumbnailUrl from '../../assets/missing_thumbnail.png?url';
-import type { DateTime } from 'luxon';
+import type { MaybePromiseResult } from '../../types/MaybePromise';
+import type BaseTimelineItem from '../base/TimelineItem';
+import VideoTimelineItem from '../TimelineItem/VideoTimelineItem';
 
 // Not sure if refs are needed here, might want to look at this in the future.
 
@@ -52,6 +55,27 @@ export default class Media {
         type.forEach((t) => (totalType = totalType | t));
 
         return (this.type & totalType) == totalType;
+    }
+
+    static timelineItemCreators: MediaToTimelineItemFunc[] = [mediaToVideoTimelineItem];
+
+    async createTimelineItem<T extends BaseTimelineItem>(): Promise<T[] | undefined> {
+        const results = await Promise.all(Media.timelineItemCreators.map((f) => f(this)));
+        return results.filter((i) => i !== undefined).flat(1) as T[];
+    }
+}
+
+function mediaToVideoTimelineItem(media: Media) {
+    if (media.isOfType(MediaType.Video)) {
+        return media.videoTracks.map((track, i) => {
+            const tItem = new VideoTimelineItem();
+            tItem.media.value = media;
+            tItem.trackInfo.value = track;
+            // TODO: get sleep and implement difference between audio timeline items and video timeline items
+            tItem.layer.value = i - 1;
+            tItem.duration.value = track.duration;
+            return tItem;
+        });
     }
 }
 
@@ -105,3 +129,7 @@ export interface ImageInfo {
 export interface TextTrackInfo {
     format: string;
 }
+
+export type MediaToTimelineItemFunc = (
+    media: Media
+) => MaybePromiseResult<BaseTimelineItem[] | undefined>;
