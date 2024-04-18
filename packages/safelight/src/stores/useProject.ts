@@ -75,6 +75,8 @@ async function newSimpleProject() {
     const projectStore = useProject();
     const SimpleProject = (await import('@safelight/shared/Project/SimpleProject')).default;
     projectStore.setProject(new SimpleProject());
+
+    await toEditor();
 }
 
 async function openProject(selectedProject: StoredProject) {
