@@ -4,6 +4,7 @@ import { ref } from 'vue';
 import MissingThumbnailUrl from '../../assets/missing_thumbnail.png?url';
 import type { MaybePromiseResult } from '../../types/MaybePromise';
 import type BaseTimelineItem from '../base/TimelineItem';
+import AudioTimelineItem from '../TimelineItem/AudioTimelineItem';
 import VideoTimelineItem from '../TimelineItem/VideoTimelineItem';
 
 // Not sure if refs are needed here, might want to look at this in the future.
@@ -59,24 +60,52 @@ export default class Media {
 
     static timelineItemCreators: MediaToTimelineItemFunc[] = [mediaToVideoTimelineItem];
 
-    async createTimelineItem<T extends BaseTimelineItem>(): Promise<T[] | undefined> {
-        const results = await Promise.all(Media.timelineItemCreators.map((f) => f(this)));
-        return results.filter((i) => i !== undefined).flat(1) as T[];
+    async createTimelineItems<T extends BaseTimelineItem>(): Promise<T[] | undefined> {
+        const results = (await Promise.all(Media.timelineItemCreators.map((f) => f(this))))
+            .filter((i) => i !== undefined)
+            .flat(1);
+
+        // Link all items together so they move with each other
+        results.forEach((item) => {
+            results.forEach((itemToLink) => {
+                if (item !== itemToLink) {
+                    item.linkedItems.add(itemToLink);
+                }
+            });
+        });
+
+        return results as T[];
     }
 }
 
 function mediaToVideoTimelineItem(media: Media) {
+    const allItems = [] as (VideoTimelineItem | AudioTimelineItem)[];
     if (media.isOfType(MediaType.Video)) {
-        return media.videoTracks.map((track, i) => {
+        const videoItems = media.videoTracks.map((track, i) => {
             const tItem = new VideoTimelineItem();
             tItem.media.value = media;
             tItem.trackInfo.value = track;
-            // TODO: get sleep and implement difference between audio timeline items and video timeline items
-            tItem.layer.value = i - 1;
+            tItem.layer.value = media.audioTracks.length + i;
             tItem.duration.value = track.duration;
             return tItem;
         });
+
+        allItems.push(...videoItems);
     }
+    if (media.isOfType(MediaType.Audio)) {
+        const audioItems = media.audioTracks.map((track, i) => {
+            const tItem = new AudioTimelineItem();
+            tItem.media.value = media;
+            tItem.trackInfo.value = track;
+            tItem.layer.value = i;
+            tItem.duration.value = track.duration;
+            return tItem;
+        });
+
+        allItems.push(...audioItems);
+    }
+
+    return allItems;
 }
 
 export enum MediaType {

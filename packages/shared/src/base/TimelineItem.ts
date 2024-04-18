@@ -50,9 +50,11 @@ export default abstract class BaseTimelineItem {
      */
     public onMoveDrag(offset: number) {
         this.start.value += offset;
+        this.end.value += offset;
 
         this.linkedItems.forEach((item) => {
             item.start.value += offset;
+            item.end.value += offset;
         });
     }
     public onMoveCancel() {
@@ -86,17 +88,32 @@ export default abstract class BaseTimelineItem {
     /**
      * Move this timeline item to a specific millisecond value programmatically
      *
+     * Note that this will be able to move linked items out of the range of the timeline.
+     *
      * @param time New millisecond time to move to.
      */
     public MoveTo(time: number) {
+        this.linkedItems.forEach((item) => {
+            // Offset between current item and other item
+            const offset = item.start.value - this.start.value;
+
+            const startEndOffset = item.end.value - item.start.value;
+
+            item.start.value = time + offset;
+            item.end.value = time + offset + startEndOffset;
+            item.isGhost.value = false;
+        });
+
+        const startEndOffset = this.end.value - this.start.value;
         this.start.value = time;
+        this.end.value = time + startEndOffset;
         this.isGhost.value = false;
+
         this.timeline.itemDropped(this);
     }
 
     isBaseTimelineItem = (): this is BaseTimelineItem => this.type === 'Base';
     isVideo = (): this is VideoTimelineItem => this.type === 'Video';
-    // Implement
     isAudio = (): this is AudioTimelineItem => this.type === 'Audio';
     // Implement
     isImage = (): this is AudioTimelineItem => this.type === 'Image';

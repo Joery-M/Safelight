@@ -1,7 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
-import { shallowReactive } from 'vue';
+import { ref, shallowReactive } from 'vue';
 import BaseTimeline, { type TimelineType } from '../base/Timeline';
 import type BaseTimelineItem from '../base/TimelineItem';
+import type Media from '../Media/Media';
 
 export default class SimpleTimeline extends BaseTimeline {
     public name = 'Untitled';
@@ -10,17 +11,17 @@ export default class SimpleTimeline extends BaseTimeline {
 
     public items = shallowReactive<BaseTimelineItem[]>([]);
 
-    public duration = 0;
-    public viewportWidth = 1920;
-    public viewportWeight = 1080;
-    public framerate = 60;
+    public duration = ref(0);
+    public width = ref(1920);
+    public height = ref(1080);
+    public framerate = ref(60);
 
     constructor() {
         super();
-        this.duration = 0;
-        this.width = 1920;
-        this.height = 1080;
-        this.framerate = 60;
+        this.duration.value = 0;
+        this.width.value = 1920;
+        this.height.value = 1080;
+        this.framerate.value = 60;
     }
 
     /**
@@ -40,5 +41,9 @@ export default class SimpleTimeline extends BaseTimeline {
             });
     }
 
-    updateDuration() {}
+    public usesMedia(media: Media) {
+        return this.items.some(
+            (item) => (item.isVideo() || item.isAudio()) && item.media.value == media
+        );
+    }
 }
