@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { ref } from 'vue';
+import { ref, shallowReactive } from 'vue';
 import type SimpleTimeline from '../Timeline/SimpleTimeline';
 import type AudioTimelineItem from '../TimelineItem/AudioTimelineItem';
 import type VideoTimelineItem from '../TimelineItem/VideoTimelineItem';
@@ -9,6 +9,8 @@ export default abstract class BaseTimelineItem {
     public type: TimelineItemType = 'Base';
 
     public name = ref('');
+
+    public linkedItems = shallowReactive(new Set<BaseTimelineItem>());
 
     private lastStart = ref(0);
     private lastEnd = ref(0);
@@ -35,22 +37,45 @@ export default abstract class BaseTimelineItem {
         this.lastStart.value = this.start.value;
         this.lastEnd.value = this.end.value;
         this.lastLayer.value = this.layer.value;
+
+        this.linkedItems.forEach((item) => {
+            item.isGhost.value = true;
+            item.lastStart.value = item.start.value;
+            item.lastEnd.value = item.end.value;
+            item.lastLayer.value = item.layer.value;
+        });
     }
     /**
      * @param offset Offset in milliseconds
      */
     public onMoveDrag(offset: number) {
         this.start.value += offset;
+
+        this.linkedItems.forEach((item) => {
+            item.start.value += offset;
+        });
     }
     public onMoveCancel() {
         this.start.value = this.lastStart.value;
         this.end.value = this.lastEnd.value;
         this.layer.value = this.lastLayer.value;
         this.isGhost.value = false;
+
+        this.linkedItems.forEach((item) => {
+            item.start.value = item.lastStart.value;
+            item.end.value = item.lastEnd.value;
+            item.layer.value = item.lastLayer.value;
+            item.isGhost.value = false;
+        });
     }
     public onDrop() {
         this.isGhost.value = false;
 
+        this.linkedItems.forEach((item) => {
+            item.isGhost.value = false;
+        });
+
+        this.linkedItems.forEach(this.timeline.itemDropped);
         this.timeline.itemDropped(this);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
