@@ -1,49 +1,68 @@
 import { v4 as uuidv4 } from 'uuid';
-import { ref, shallowReactive } from 'vue';
+import { computed, ref, shallowReactive } from 'vue';
 import BaseTimeline, { type TimelineType } from '../base/Timeline';
 import type BaseTimelineItem from '../base/TimelineItem';
 import type Media from '../Media/Media';
 
 export default class SimpleTimeline extends BaseTimeline {
-    public name = 'Untitled';
+    public name = ref('Untitled');
     public id = uuidv4();
     public type: TimelineType = 'Simple';
 
-    public items = shallowReactive<BaseTimelineItem[]>([]);
+    public items = shallowReactive(new Set<BaseTimelineItem>());
 
-    public duration = ref(0);
     public width = ref(1920);
     public height = ref(1080);
     public framerate = ref(60);
+    /**
+     * Duration of a single frame in milliseconds
+     */
+    public frameDuration = computed(() => {
+        return 1000 / this.framerate.value;
+    });
 
-    constructor() {
+    constructor(config: SimpleTimelineConfig) {
         super();
-        this.duration.value = 0;
-        this.width.value = 1920;
-        this.height.value = 1080;
-        this.framerate.value = 60;
+        if (config.name) {
+            this.name.value = config.name;
+        }
+        this.width.value = config.width;
+        this.height.value = config.height;
+        this.framerate.value = config.framerate;
     }
 
     /**
      * Called when an item is dropped in the timeline
      */
     public itemDropped(otherItem: BaseTimelineItem) {
-        this.items
-            .filter(
-                (i) =>
-                    i.layer.value === otherItem.layer.value &&
-                    i.end.value > otherItem.start.value &&
-                    i.start.value < otherItem.end.value &&
-                    i.id !== otherItem.id
-            )
-            .forEach((item) => {
+        this.items.forEach((item) => {
+            if (
+                item.layer.value === otherItem.layer.value &&
+                item.end.value > otherItem.start.value &&
+                item.start.value < otherItem.end.value &&
+                item.id !== otherItem.id
+            ) {
                 item.onDroppedOn(otherItem);
-            });
+            }
+        });
     }
 
     public usesMedia(media: Media) {
-        return this.items.some(
-            (item) => (item.isVideo() || item.isAudio()) && item.media.value == media
-        );
+        for (const item of this.items) {
+            return item.hasMedia() && item.media.value == media;
+        }
+        return false;
     }
+
+    public deleteItem(item: BaseTimelineItem) {
+        item.Delete();
+        return this.items.delete(item);
+    }
+}
+
+export interface SimpleTimelineConfig {
+    name?: string;
+    width: number;
+    height: number;
+    framerate: number;
 }

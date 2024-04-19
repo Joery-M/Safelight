@@ -1,5 +1,5 @@
 import type { DateTime } from 'luxon';
-import { type MediaInfoType } from 'mediainfo.js';
+import type { MediaInfoType } from 'mediainfo.js';
 import { ref } from 'vue';
 import MissingThumbnailUrl from '../../assets/missing_thumbnail.png?url';
 import type { MaybePromiseResult } from '../../types/MaybePromise';

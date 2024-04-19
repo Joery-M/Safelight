@@ -3,6 +3,7 @@ import { ref, shallowReactive } from 'vue';
 import type SimpleTimeline from '../Timeline/SimpleTimeline';
 import type AudioTimelineItem from '../TimelineItem/AudioTimelineItem';
 import type VideoTimelineItem from '../TimelineItem/VideoTimelineItem';
+import type { TimelineItemMedia } from '../TimelineItem/interfaces';
 
 export default abstract class BaseTimelineItem {
     public id = uuidv4();
@@ -80,9 +81,24 @@ export default abstract class BaseTimelineItem {
         this.linkedItems.forEach(this.timeline.itemDropped);
         this.timeline.itemDropped(this);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     public onDroppedOn(otherItem: BaseTimelineItem) {
-        // TODO: Implement behavior for when an item is dropped on the current item
+        if (otherItem.end.value > this.start.value && otherItem.start.value < this.start.value) {
+            // ▼  [====]    < Other item
+            // ▼    [=====] < This item
+            this.start.value = otherItem.end.value + this.timeline.frameDuration.value;
+        } else if (otherItem.start.value < this.end.value && otherItem.end.value > this.end.value) {
+            // ▼    [=====] < Other item
+            // ▼  [====]    < This item
+            this.end.value = otherItem.start.value - this.timeline.frameDuration.value;
+        } else if (
+            otherItem.start.value <= this.start.value &&
+            otherItem.end.value >= this.end.value
+        ) {
+            // ▼  [======] < Other item
+            // ▼   [====]  < This item
+            this.timeline.deleteItem(this);
+        }
     }
 
     /**
@@ -112,11 +128,20 @@ export default abstract class BaseTimelineItem {
         this.timeline.itemDropped(this);
     }
 
+    public Delete() {
+        this.linkedItems.forEach((item) => {
+            // Delete myself from other linked items
+            item.linkedItems.delete(this);
+        });
+    }
+
     isBaseTimelineItem = (): this is BaseTimelineItem => this.type === 'Base';
     isVideo = (): this is VideoTimelineItem => this.type === 'Video';
     isAudio = (): this is AudioTimelineItem => this.type === 'Audio';
     // Implement
     isImage = (): this is AudioTimelineItem => this.type === 'Image';
+
+    hasMedia = (): this is typeof this & TimelineItemMedia => false;
 }
 
 export type TimelineItemType = 'Base' | 'Video' | 'Audio' | 'Image' | 'EffectLayer';

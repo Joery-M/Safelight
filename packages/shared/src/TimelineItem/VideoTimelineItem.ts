@@ -1,8 +1,9 @@
 import { ref, shallowRef } from 'vue';
 import Media, { type VideoTrackInfo } from '../Media/Media';
 import BaseTimelineItem, { type TimelineItemType } from '../base/TimelineItem';
+import type { TimelineItemMedia } from './interfaces';
 
-export default class VideoTimelineItem extends BaseTimelineItem {
+export default class VideoTimelineItem extends BaseTimelineItem implements TimelineItemMedia {
     public type: TimelineItemType = 'Video';
     public media = shallowRef<Media>();
 
@@ -21,4 +22,6 @@ export default class VideoTimelineItem extends BaseTimelineItem {
     public RenderVideoFrame() {
         throw new Error('Not implemented');
     }
+
+    hasMedia = (): this is typeof this & TimelineItemMedia => true;
 }
