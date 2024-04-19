@@ -72,8 +72,6 @@ const menuItems = ref<MenuItem[]>([
     }
 ]);
 
-// My god
-// TODO: Not this
 const hasItemInTimeline = computed(
     () =>
         project.project &&
