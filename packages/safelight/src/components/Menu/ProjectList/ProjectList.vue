@@ -16,7 +16,11 @@
                 />
             </div>
         </template>
-        <Column field="name" header="Project" />
+        <Column field="name" header="Project">
+            <template #body="{ data }: { data: StoredProject }">
+                <InplaceRename :value="data.name" @change="(ev) => setProjectName(ev, data)" />
+            </template>
+        </Column>
         <Column field="type" header="Type" />
         <Column header="Modified">
             <template #body="slotProps">
@@ -32,6 +36,7 @@
 </template>
 
 <script setup lang="ts">
+import InplaceRename from '@/components/InplaceRename.vue';
 import { Storage, type StoredProject } from '@safelight/shared/base/Storage';
 import { DateTime } from 'luxon';
 import type { MenuItem } from 'primevue/menuitem';
@@ -69,6 +74,15 @@ function loadList() {
 
 function formatDateTime(dt: string) {
     const date = DateTime.fromISO(dt).toLocal();
-    return date.toLocaleString({ dateStyle: 'long', timeStyle: 'short' });
+    return date.toLocaleString({
+        dateStyle: 'long',
+        timeStyle: 'short'
+    });
+}
+
+async function setProjectName(newName: string, project: StoredProject) {
+    const storage = await getStorageControllerForProject(project);
+    await storage?.UpdateStoredProject({ id: project.id, name: newName });
+    loadList();
 }
 </script>

@@ -19,18 +19,21 @@ export default class IndexedDbStorageController extends BaseStorageController {
 
     private db = new SafelightIndexedDB();
 
-    async SaveProject(project: BaseProject): Promise<SaveResults> {
+    async SaveProject(project: BaseProject | StoredProject): Promise<SaveResults> {
         const existingProject = await this.db.project.get({ id: project.id });
 
-        const storableProject: StoredProject = {
-            id: project.id,
-            name: project.name,
-            type: project.type,
-            media: project.media.map((m) => m.id).filter((id) => id !== undefined),
-            timelines: project.timelines.map((m) => m.id),
-            updated: DateTime.now().toISO(),
-            created: existingProject?.created ?? DateTime.now().toISO()
-        };
+        const storableProject: StoredProject =
+            'updated' in project
+                ? project
+                : {
+                      id: project.id,
+                      name: project.name,
+                      type: project.type,
+                      media: project.media.map((m) => m.id).filter((id) => id !== undefined),
+                      timelines: project.timelines.map((m) => m.id),
+                      updated: DateTime.now().toISO(),
+                      created: existingProject?.created ?? DateTime.now().toISO()
+                  };
 
         try {
             await this.db.project.put(storableProject, project.id);
@@ -77,6 +80,28 @@ export default class IndexedDbStorageController extends BaseStorageController {
                     return;
                 }
             });
+    }
+    async UpdateStoredProject(
+        project: Partial<StoredProject> & Pick<StoredProject, 'id'>
+    ): Promise<SaveResults> {
+        const existingProject = await this.db.project.get({ id: project.id });
+
+        // Remove created so it can't be overridden
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { created, ...restProject } = project;
+
+        const storableProject: StoredProject = {
+            ...existingProject,
+            ...(restProject as StoredProject),
+            updated: DateTime.now().toISO()
+        };
+
+        try {
+            await this.db.project.put(storableProject, project.id);
+            return 'Success';
+        } catch (error: any) {
+            return error.toString();
+        }
     }
     static getProjects(): Promise<StoredProject[]> {
         return new Promise(async (resolve) => {

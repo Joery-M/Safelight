@@ -74,21 +74,12 @@ const menuItems = ref<MenuItem[]>([
 
 // My god
 // TODO: Not this
-const hasItemInTimeline = computed(() => {
-    console.log('A');
-    return project.project
-        ? project.project.timelines.some(
-              (t) =>
-                  t.isSimpleTimeline() &&
-                  t.items.some(
-                      (i) =>
-                          i.isBaseTimelineItem() &&
-                          i.isVideo() &&
-                          i.media.value?.id == props.item.id
-                  )
-          )
-        : false;
-});
+const hasItemInTimeline = computed(
+    () =>
+        project.project &&
+        project.project.isSimpleProject() &&
+        project.project.usesMedia(props.item)
+);
 
 const alertt = (text: string) => window.alert(text);
 

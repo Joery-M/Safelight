@@ -1,6 +1,6 @@
 import { router } from '@/main';
 import type BaseProject from '@safelight/shared/base/Project';
-import { Storage, type StoredProject } from '@safelight/shared/base/Storage';
+import BaseStorageController, { Storage, type StoredProject } from '@safelight/shared/base/Storage';
 import MediaManager from '@safelight/shared/Storage/MediaManager';
 
 export const useProject = defineStore('Project', () => {
@@ -79,25 +79,32 @@ async function newSimpleProject() {
     await toEditor();
 }
 
-async function openProject(selectedProject: StoredProject) {
-    if (selectedProject.type == 'Simple') {
-        const IndexedDbStorageController = (
-            await import('@safelight/shared/Storage/IndexedDbStorage')
-        ).default;
-
-        const projectStore = useProject();
-        Storage.setStorage(new IndexedDbStorageController());
-
-        const project = await Storage.getStorage().LoadProject(selectedProject.id);
-
-        if (project) {
-            projectStore.setProject(project);
-            await toEditor();
-        } else {
-            console.error('Could not load project');
-        }
+export async function getStorageControllerForProject(
+    project: StoredProject
+): Promise<BaseStorageController | undefined> {
+    if (project.type == 'Simple') {
+        return new (await import('@safelight/shared/Storage/IndexedDbStorage')).default();
     } else {
         console.error('Project type not supported');
+    }
+}
+
+async function openProject(selectedProject: StoredProject) {
+    const storageType = await getStorageControllerForProject(selectedProject);
+    if (!storageType) {
+        throw new Error('Could not find storage controller for project type');
+    }
+
+    const projectStore = useProject();
+    Storage.setStorage(storageType);
+
+    const project = await Storage.getStorage().LoadProject(selectedProject.id);
+
+    if (project) {
+        projectStore.setProject(project);
+        await toEditor();
+    } else {
+        console.error('Could not load project');
     }
 }
 
