@@ -18,6 +18,9 @@ export default abstract class BaseStorageController {
 
     abstract SaveProject(project: BaseProject): Promise<SaveResults>;
     abstract LoadProject(projectId: string): Promise<BaseProject | undefined>;
+    abstract UpdateStoredProject(
+        project: Partial<StoredProject> & Pick<StoredProject, 'id'>
+    ): Promise<SaveResults>;
     static getProjects: () => Promise<StoredProject[]>;
 
     abstract SaveMedia(media: StoredMedia): Promise<SaveResults>;
