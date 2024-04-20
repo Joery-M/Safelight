@@ -48,8 +48,24 @@ export const useProject = defineStore('Project', () => {
         });
     }
 
+    watch(
+        project,
+        () => {
+            project.value?.onDeepChange.next();
+        },
+        {
+            flush: 'post',
+            deep: true
+        }
+    );
+
     function save() {
         if (project.value) Storage.getStorage().SaveProject(project.value);
+    }
+
+    function beforeDestroy() {
+        save();
+        project.value?.onDeepChange.complete();
     }
 
     return {
@@ -61,6 +77,7 @@ export const useProject = defineStore('Project', () => {
         timelineViewStart,
         timelineViewEnd,
         save,
+        beforeDestroy,
         openProject,
         new: {
             newSimpleProject

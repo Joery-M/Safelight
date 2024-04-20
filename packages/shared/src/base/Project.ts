@@ -1,4 +1,5 @@
-import type { ComputedRef, Ref, ShallowReactive } from 'vue';
+import { Subject } from 'rxjs';
+import { ref, type ComputedRef, type Ref, type ShallowReactive } from 'vue';
 import type Media from '../Media/Media';
 import type SimpleProject from '../Project/SimpleProject';
 import type BaseTimeline from './Timeline';
@@ -13,6 +14,11 @@ export default abstract class BaseProject {
     public abstract selectedTimelineIndex: Ref<number>;
     public abstract timelines: ShallowReactive<BaseTimeline[]>;
     public abstract timeline: ComputedRef<BaseTimeline>;
+
+    /**
+     * Triggered when this class has been changed
+     */
+    public onDeepChange = new Subject<void>();
 
     isBaseProject = (): this is BaseProject => this.type == 'Base';
     isSimpleProject = (): this is SimpleProject => this.type == 'Simple';
