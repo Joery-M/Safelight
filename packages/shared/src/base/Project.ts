@@ -1,11 +1,11 @@
-import type { ComputedRef, Ref, ShallowReactive } from 'vue';
+import { ref, type ComputedRef, type Ref, type ShallowReactive } from 'vue';
 import type Media from '../Media/Media';
 import type SimpleProject from '../Project/SimpleProject';
 import type BaseTimeline from './Timeline';
 
 export default abstract class BaseProject {
     public abstract id: string;
-    public abstract name: string;
+    public name = ref('Untitled');
     public type: ProjectType = 'Base';
 
     public abstract media: ShallowReactive<Media[]>;

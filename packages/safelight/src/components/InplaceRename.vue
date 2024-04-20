@@ -1,6 +1,6 @@
 <template>
     <slot v-if="!isOpen" name="default">
-        <label @dblclick="open()">{{ value }}</label>
+        <label class="cursor-pointer select-none" @dblclick="open()">{{ value }}</label>
     </slot>
     <slot v-else name="content" :cur-value="curValue" :close="close">
         <div v-focustrap>

@@ -73,7 +73,9 @@
                 class="grid h-full select-none place-items-center opacity-60"
                 @dblclick="fileDialogOpenDblClick"
             >
-                <label v-if="media.length == 0"> No media imported </label>
+                <label v-if="CurrentProject.project.value?.media.length == 0">
+                    No media imported
+                </label>
                 <label v-else>No media found</label>
             </div>
         </template>
@@ -90,7 +92,7 @@ import InputGroupAddon from 'primevue/inputgroupaddon';
 
 useDropZone(document.body, {
     onDrop(files) {
-        files?.forEach(project.loadFile);
+        files?.forEach(CurrentProject.loadFile);
     },
     dataTypes(types) {
         return !types.some((val) => {
@@ -109,13 +111,10 @@ fileDialog.onChange((fileList) => {
         const item = fileList.item(i);
 
         if (item) {
-            project.loadFile(item);
+            CurrentProject.loadFile(item);
         }
     }
 });
-
-const project = useProject();
-const media = project.project!.media;
 
 const search = ref('');
 const sortBy = ref<sortOptions>('Name');
@@ -123,15 +122,21 @@ const sortDescending = ref(false);
 
 const sortedAndFiltered = shallowRef<Media[]>([]);
 
-watchDebounced([media, search, sortBy, sortDescending], sortAndFilter, {
-    deep: true,
-    debounce: 100,
-    maxWait: 1000,
-    immediate: true
-});
+watchDebounced(
+    [CurrentProject.project.value?.media, search, sortBy, sortDescending],
+    sortAndFilter,
+    {
+        deep: true,
+        debounce: 100,
+        maxWait: 1000,
+        immediate: true
+    }
+);
 
 function sortAndFilter() {
-    const filtered = media.filter((elem) => {
+    if (!CurrentProject.project.value) return;
+
+    const filtered = CurrentProject.project.value.media.filter((elem) => {
         if (search.value.length == 0) {
             return true;
         }
@@ -173,11 +178,6 @@ type sortOptions = 'Name' | 'Duration' | 'File type' | 'Media type';
 </script>
 
 <style lang="scss" scoped>
-.bg-checkerboard {
-    /* This is beautifully simple
-       https://stackoverflow.com/a/65129916 */
-    background: repeating-conic-gradient(#ffffff0a 0% 25%, transparent 0% 50%) 50% / 20px 20px;
-}
 
 :deep(.p-dataview-header) {
     @apply p-1;

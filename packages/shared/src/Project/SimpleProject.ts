@@ -6,7 +6,6 @@ import SimpleTimeline, { type SimpleTimelineConfig } from '../Timeline/SimpleTim
 
 export default class SimpleProject extends BaseProject {
     public id = uuidv4();
-    public name = 'Untitled';
     public type: ProjectType = 'Simple';
 
     public media = shallowReactive<Media[]>([]);
