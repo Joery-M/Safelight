@@ -5,13 +5,24 @@
         scroll-height="400px"
         class="flex h-full flex-col"
         data-key="id"
+        :pt="{
+            header: {
+                class: 'p-1'
+            },
+            content: {
+                style: 'flex: 1;'
+            },
+            emptyMessage: {
+                style: 'height: 100%;'
+            }
+        }"
     >
         <template #header>
             <Toolbar class="border-none p-0">
                 <template #start>
                     <InputGroup class="mr-2">
                         <InputGroupAddon class="p-0">
-                            <PhMagnifyingGlass size="14" />
+                            <PhMagnifyingGlass />
                         </InputGroupAddon>
                         <InputText v-model="search" placeholder="Search"> </InputText>
                     </InputGroup>
@@ -25,8 +36,8 @@
                             @click="sortDescending = !sortDescending"
                         >
                             <template #icon>
-                                <PhSortAscending v-if="!sortDescending" size="14" />
-                                <PhSortDescending v-else size="14" />
+                                <PhSortAscending v-if="!sortDescending" />
+                                <PhSortDescending v-else />
                             </template>
                         </Button>
                         <Dropdown
@@ -176,16 +187,3 @@ function fileDialogOpenDblClick(event: MouseEvent) {
 
 type sortOptions = 'Name' | 'Duration' | 'File type' | 'Media type';
 </script>
-
-<style lang="scss" scoped>
-
-:deep(.p-dataview-header) {
-    @apply p-1;
-}
-:deep(.p-dataview-content) {
-    @apply flex-1;
-}
-:deep(.p-dataview-emptymessage) {
-    @apply h-full;
-}
-</style>

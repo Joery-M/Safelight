@@ -10,7 +10,7 @@
             <template #start>
                 <Menubar :pt="{ root: { class: 'border-none' } }" :model="menuItems">
                     <template #itemicon="{ item: { icon } }">
-                        <component :is="icon" v-if="icon" size="18" class="pr-1" />
+                        <component :is="icon" v-if="icon" class="pr-1" />
                     </template>
                 </Menubar>
             </template>
@@ -35,7 +35,7 @@
                             <TabPanel>
                                 <template #header>
                                     <div class="flex items-center gap-2">
-                                        <PhFolders size="20" />
+                                        <PhFolders />
                                         <span class="white-space-nowrap font-bold"> Library </span>
                                     </div>
                                 </template>

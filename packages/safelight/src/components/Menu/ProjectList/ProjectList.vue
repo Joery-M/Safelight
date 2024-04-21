@@ -5,7 +5,7 @@
                 <h2 class="m-0 flex-1">Projects</h2>
                 <Button rounded title="Refresh list" @click="loadList()">
                     <template #icon>
-                        <PhArrowsClockwise size="18" />
+                        <PhArrowsClockwise />
                     </template>
                 </Button>
                 <SplitButton

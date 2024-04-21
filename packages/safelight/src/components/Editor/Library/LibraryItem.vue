@@ -36,8 +36,23 @@
             </template>
         </Button>
     </div>
-    <OverlayPanel id="library_item_menu" ref="overlay">
-        <Toolbar>
+    <OverlayPanel
+        id="library_item_menu"
+        ref="overlay"
+        :pt="{
+            content: {
+                style: 'padding: 0'
+            }
+        }"
+    >
+        <Toolbar
+            :pt="{
+                root: {
+                    class: 'p-1 rounded-b-none',
+                    style: 'border-width: 0 0 1px 0'
+                }
+            }"
+        >
             <template #center>
                 <Button
                     v-tooltip.bottom="{ value: 'Delete', showDelay: 500 }"
@@ -52,7 +67,14 @@
                 </Button>
             </template>
         </Toolbar>
-        <Menu :model="menuItems" />
+        <Menu
+            :model="menuItems"
+            :pt="{
+                root: {
+                    style: 'border: none;'
+                }
+            }"
+        />
     </OverlayPanel>
 </template>
 <script setup lang="ts">
@@ -85,21 +107,6 @@ const overlay = ref<OverlayPanel>();
 </script>
 
 <style lang="scss">
-#library_item_menu .p-overlaypanel-content {
-    padding: 0 !important;
-
-    > .p-menu {
-        border: none;
-    }
-    > .p-toolbar {
-        // @apply border-surface-100/10 rounded-b-none p-1;
-
-        // border-top-width: 0;
-        // border-left-width: 0;
-        // border-right-width: 0;
-    }
-}
-
 .bg-checkerboard {
     /* This is beautifully simple
        https://stackoverflow.com/a/65129916 */
