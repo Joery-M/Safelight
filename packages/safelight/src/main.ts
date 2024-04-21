@@ -28,6 +28,9 @@ app.use(PrimeVue, {
 } as PrimeVueConfiguration);
 app.use(ConfirmationService);
 
+// Phosphor icons
+app.provide('size', 18);
+
 // Directives
 app.directive('tooltip', Tooltip);
 app.directive('focustrap', FocusTrap);

@@ -5,14 +5,14 @@
                 <h2 class="m-0 flex-1">Projects</h2>
                 <Button rounded title="Refresh list" @click="loadList()">
                     <template #icon>
-                        <PhArrowsClockwise size="18" />
+                        <PhArrowsClockwise />
                     </template>
                 </Button>
                 <SplitButton
                     label="New project"
                     rounded
                     :model="projectTypes"
-                    @click="project.new.newSimpleProject()"
+                    @click="CurrentProject.newSimpleProject()"
                 />
             </div>
         </template>
@@ -29,7 +29,7 @@
         </Column>
         <Column>
             <template #body="slotProps">
-                <Button @click="project.openProject(slotProps.data)">Open</Button>
+                <Button @click="CurrentProject.openProject(slotProps.data)">Open</Button>
             </template>
         </Column>
     </DataTable>
@@ -41,12 +41,10 @@ import { Storage, type StoredProject } from '@safelight/shared/base/Storage';
 import { DateTime } from 'luxon';
 import type { MenuItem } from 'primevue/menuitem';
 
-const project = useProject();
-
 const projectTypes: MenuItem[] = [
     {
         label: 'Simple',
-        command: project.new.newSimpleProject
+        command: () => CurrentProject.newSimpleProject()
     },
     { label: 'Test', command() {} }
 ] as const;
@@ -81,7 +79,7 @@ function formatDateTime(dt: string) {
 }
 
 async function setProjectName(newName: string, project: StoredProject) {
-    const storage = await getStorageControllerForProject(project);
+    const storage = await CurrentProject.getStorageControllerForProject(project);
     await storage?.UpdateStoredProject({ id: project.id, name: newName });
     loadList();
 }

@@ -4,6 +4,8 @@
         "esbenp.prettier-vscode",
         "bradlc.vscode-tailwindcss",
         "vivaxy.vscode-conventional-commits",
-        "vue.volar"
+        "vue.volar",
+        "github.vscode-pull-request-github",
+        "github.vscode-github-actions"
     ]
 }

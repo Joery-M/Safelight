@@ -1,8 +1,10 @@
 <template>
-    <div class="bg-checkerboard flex aspect-video w-full items-center justify-center">
+    <div
+        class="bg-checkerboard flex aspect-video w-full items-center justify-center overflow-clip rounded-t-md"
+    >
         <img
             v-if="$props.item.previewImage.value"
-            class="max-h-full max-w-full rounded-t-md"
+            class="overflow-none max-h-full max-w-full"
             :aria-label="'Preview image for ' + $props.item.name.value"
             :src="$props.item.previewImage.value"
         />
@@ -34,8 +36,23 @@
             </template>
         </Button>
     </div>
-    <OverlayPanel id="library_item_menu" ref="overlay">
-        <Toolbar>
+    <OverlayPanel
+        id="library_item_menu"
+        ref="overlay"
+        :pt="{
+            content: {
+                style: 'padding: 0'
+            }
+        }"
+    >
+        <Toolbar
+            :pt="{
+                root: {
+                    class: 'p-1 rounded-b-none',
+                    style: 'border-width: 0 0 1px 0'
+                }
+            }"
+        >
             <template #center>
                 <Button
                     v-tooltip.bottom="{ value: 'Delete', showDelay: 500 }"
@@ -50,7 +67,14 @@
                 </Button>
             </template>
         </Toolbar>
-        <Menu :model="menuItems" />
+        <Menu
+            :model="menuItems"
+            :pt="{
+                root: {
+                    style: 'border: none;'
+                }
+            }"
+        />
     </OverlayPanel>
 </template>
 <script setup lang="ts">
@@ -64,8 +88,6 @@ const props = defineProps<{
     item: Media;
 }>();
 
-const project = useProject();
-
 const menuItems = ref<MenuItem[]>([
     {
         label: 'Temp'
@@ -74,9 +96,9 @@ const menuItems = ref<MenuItem[]>([
 
 const hasItemInTimeline = computed(
     () =>
-        project.project &&
-        project.project.isSimpleProject() &&
-        project.project.usesMedia(props.item)
+        CurrentProject.project.value &&
+        CurrentProject.project.value.isSimpleProject() &&
+        CurrentProject.project.value.usesMedia(props.item)
 );
 
 const alertt = (text: string) => window.alert(text);
@@ -85,18 +107,9 @@ const overlay = ref<OverlayPanel>();
 </script>
 
 <style lang="scss">
-#library_item_menu .p-overlaypanel-content {
-    padding: 0 !important;
-
-    > .p-menu {
-        border: none;
-    }
-    > .p-toolbar {
-        @apply border-surface-100/10 rounded-b-none p-1;
-
-        border-top-width: 0;
-        border-left-width: 0;
-        border-right-width: 0;
-    }
+.bg-checkerboard {
+    /* This is beautifully simple
+       https://stackoverflow.com/a/65129916 */
+    background: repeating-conic-gradient(#ffffff0a 0% 25%, transparent 0% 50%) 50% / 20px 20px;
 }
 </style>
