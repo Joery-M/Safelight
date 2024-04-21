@@ -51,7 +51,7 @@
                 <template #end>
                     <Button title="Load file" rounded @click="fileDialog.open()">
                         <template #icon>
-                            <PhUpload />
+                            <PhPlus />
                         </template>
                     </Button>
                 </template>
@@ -94,7 +94,6 @@
 </template>
 
 <script setup lang="ts">
-import { PhMagnifyingGlass, PhSortDescending, PhUpload } from '@phosphor-icons/vue';
 import Media from '@safelight/shared/Media/Media';
 import fuzzysearch from 'fuzzysearch';
 import MimeMatcher from 'mime-matcher';

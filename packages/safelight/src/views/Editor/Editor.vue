@@ -1,5 +1,5 @@
 <template>
-    <div v-if="project.isLoaded" class="flex h-full w-full flex-col">
+    <div v-if="CurrentProject.isLoaded.value" class="flex h-full w-full flex-col">
         <Toolbar
             :pt="{
                 root: {
@@ -31,8 +31,19 @@
             <SplitterPanel>
                 <Splitter @resize="clearSelection()">
                     <SplitterPanel>
-                        <TabView class="flex h-full flex-col">
-                            <TabPanel>
+                        <TabView
+                            class="flex h-full flex-col"
+                            :pt="{
+                                panelContainer: {
+                                    class: 'flex-1'
+                                }
+                            }"
+                        >
+                            <TabPanel
+                                :pt="{
+                                    root: { class: 'h-full' }
+                                }"
+                            >
                                 <template #header>
                                     <div class="flex items-center gap-2">
                                         <PhFolders />
@@ -63,11 +74,8 @@
 <script setup lang="ts">
 import { router } from '@/main';
 import { PhFile } from '@phosphor-icons/vue';
-import { Storage } from '@safelight/shared/base/Storage';
-import ConfirmDialog from 'primevue/confirmdialog';
 import type { MenuItem } from 'primevue/menuitem';
-import SplitterPanel from 'primevue/splitterpanel';
-import Toolbar from 'primevue/toolbar';
+import ConfirmDialog from 'primevue/confirmdialog';
 import { useConfirm } from 'primevue/useconfirm';
 
 const project = useProject();
@@ -83,7 +91,7 @@ const menuItems: MenuItem[] = [
                 label: 'Exit',
                 disabled: false,
                 command: async () => {
-                    await CurrentProject.save();
+                    await CurrentProject.beforeExit();
                     router.push('/projects');
                 }
             }
@@ -93,17 +101,15 @@ const menuItems: MenuItem[] = [
 
 onMounted(async () => {
     await router.isReady();
-    if (!project.isLoaded) {
-        const lastId = useSessionStorage('project', undefined).value;
-        if (lastId) {
-            Storage.getProjects().then((projects) => {
-                const projectFromId = projects.find((p) => p.id == lastId);
-                if (projectFromId) {
-                    CurrentProject.openProject(projectFromId, false /* Already here */);
-                } else {
-                    showNoProjectDialog();
-                }
-            });
+    if (!CurrentProject.isLoaded.value) {
+        const lastProject = CurrentProject.getSessionProject();
+        console.log(lastProject);
+        if (lastProject) {
+            if (lastProject) {
+                CurrentProject.openProject(lastProject, false /* Already here */);
+            } else {
+                showNoProjectDialog();
+            }
         } else {
             showNoProjectDialog();
         }
@@ -116,6 +122,8 @@ function showNoProjectDialog() {
         header: 'No project loaded',
         message: 'No project has been loaded, go to project list?',
         reject() {
+            // TODO: idk actually. What should happen when no projects are loaded and the user just says "No"
+            // Maybe use a regular Dialog, and add the "Yes" button to it
             router.push('/');
         },
         accept() {
@@ -128,9 +136,9 @@ function clearSelection() {
     document.getSelection()?.removeAllRanges();
 }
 
-onBeforeUnmount(() => {
-    if (project.isLoaded) {
-        CurrentProject.save();
+onBeforeUnmount(async () => {
+    if (CurrentProject.isLoaded.value) {
+        await CurrentProject.beforeExit(false);
         project.$dispose();
     }
 });
@@ -139,13 +147,6 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 .vertSlitter {
     height: 100%;
-}
-
-:deep(.p-tabview-panels) {
-    @apply flex-1;
-}
-:deep(.p-tabview-panel) {
-    @apply h-full;
 }
 </style>
 

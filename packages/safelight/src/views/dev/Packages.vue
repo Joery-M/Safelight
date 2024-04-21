@@ -95,7 +95,7 @@
                                                 :title="'Open code repository for ' + item.from"
                                                 role="link"
                                                 @click="
-                                                    openUrl(item.repository.replace('git+', ''))
+                                                    openUrl(item.repository!.replace('git+', ''))
                                                 "
                                             >
                                                 <template #icon>
