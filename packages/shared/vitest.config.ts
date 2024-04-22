@@ -11,7 +11,7 @@ export default defineProject({
         ui: true,
         open: false,
         api: {
-            port: 5125
+            port: 6138
         }
     }
 });

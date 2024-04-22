@@ -56,8 +56,11 @@ jobs:
             - name: Build safelight
               run: pnpm build:safelight
 
-            - name: Test darkroom
+            - name: Test darkroom on Chromium
               run: pnpm test:darkroom
+
+            - name: Test darkroom on Firefox
+              run: pnpm test:darkroom-firefox
 
             - name: Test shared
               run: pnpm test:shared
