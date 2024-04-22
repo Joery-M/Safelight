@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { Storage } from '../base/Storage';
 import { generateMediaThumbnail } from '../helpers/Video/GenerateMediaThumbnail';
-import { getVideoInfo } from '../helpers/Video/GetVideoInfo';
+import { getFileInfo } from '../helpers/Files/GetFileInfo';
 import {
     MediaType,
     type AudioTrackInfo,
@@ -69,7 +69,7 @@ export default class MediaManager {
                         type: 'fileInfo',
                         hashProgress: 1
                     });
-                    const fileInfo = await getVideoInfo(file);
+                    const fileInfo = await getFileInfo(file);
 
                     // Get thumbnail
                     subscriber.next({

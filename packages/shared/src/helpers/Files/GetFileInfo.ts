@@ -1,13 +1,8 @@
 import MediaInfoFactory, { type MediaInfoType, type ReadChunkFunc } from 'mediainfo.js';
 import MediaInfoWasmUrl from 'mediainfo.js/MediaInfoModule.wasm?url';
-import MimeMatcher from 'mime-matcher';
 
-export async function getVideoInfo(file: File) {
+export async function getFileInfo(file: File) {
     return new Promise<MediaInfoType>((resolve, reject) => {
-        const isVideo = new MimeMatcher('video/*').match(file.type);
-
-        if (!isVideo) reject('File is not a video');
-
         const readChunk: ReadChunkFunc = (chunkSize, offset) =>
             new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -25,10 +20,12 @@ export async function getVideoInfo(file: File) {
             locateFile(_url, _scriptDirectory) {
                 return MediaInfoWasmUrl;
             }
-        }).then(async (mediaInfo) => {
-            const data = await mediaInfo.analyzeData(() => file.size, readChunk);
+        })
+            .then(async (mediaInfo) => {
+                const data = await mediaInfo.analyzeData(() => file.size, readChunk);
 
-            resolve(data);
-        });
+                resolve(data);
+            })
+            .catch(reject);
     });
 }

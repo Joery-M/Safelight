@@ -1,6 +1,8 @@
+import { debounceTime, takeUntil } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { computed, ref, shallowReactive } from 'vue';
 import BaseProject, { type ProjectType } from '../base/Project';
+import { Storage } from '../base/Storage';
 import Media from '../Media/Media';
 import SimpleTimeline, { type SimpleTimelineConfig } from '../Timeline/SimpleTimeline';
 
@@ -17,8 +19,8 @@ export default class SimpleProject extends BaseProject {
     constructor() {
         super();
 
-        this.onDeepChange.subscribe(() => {
-            console.log('Change');
+        this.onDeepChange.pipe(takeUntil(this.destroy$), debounceTime(1000)).subscribe(() => {
+            Storage.getStorage().SaveProject(this);
         });
     }
 

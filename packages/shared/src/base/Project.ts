@@ -1,3 +1,4 @@
+import { Subject } from 'rxjs';
 import { ref, type ComputedRef, type Ref, type ShallowReactive } from 'vue';
 import type Media from '../Media/Media';
 import type SimpleProject from '../Project/SimpleProject';
@@ -18,6 +19,8 @@ export default abstract class BaseProject {
      * Triggered when this class has been changed
      */
     public onDeepChange = new Subject<void>();
+
+    public destroy$ = new Subject<void>();
 
     isBaseProject = (): this is BaseProject => this.type == 'Base';
     isSimpleProject = (): this is SimpleProject => this.type == 'Simple';

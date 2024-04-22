@@ -124,6 +124,8 @@ export class CurrentProject {
 
     public static async beforeExit(clearSession = true) {
         if (this.project.value) {
+            this.project.value.destroy$.next();
+            this.project.value.destroy$.complete();
             if (clearSession) this.clearSessionProject();
             await this.save();
             this.project.value = undefined;
