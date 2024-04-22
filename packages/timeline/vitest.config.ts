@@ -9,6 +9,9 @@ export default defineProject({
         name: 'timeline',
         environment: 'happy-dom',
         ui: true,
-        open: false
+        open: false,
+        api: {
+            port: 6139
+        }
     }
 });

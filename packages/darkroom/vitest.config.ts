@@ -5,10 +5,16 @@ export default defineProject({
         reporters: !process.env.GITHUB_ACTIONS ? ['default', 'github-actions'] : ['default'],
         globals: true,
         name: 'Darkroom',
+        ui: true,
+        open: false,
         browser: {
             enabled: true,
             headless: true,
-            name: 'chrome'
+            name: 'chromium',
+            provider: 'playwright'
+        },
+        api: {
+            port: 6135
         }
     }
 });

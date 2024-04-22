@@ -26,7 +26,10 @@
         "build:vite": "vite build",
         "build:tsc": "tsc --emitDeclarationOnly",
         "test": "vitest",
-        "test:run": "vitest run --ui false"
+        "test-firefox": "vitest -c ./vitest.config.firefox.ts --test-timeout=10000",
+        "test:run": "vitest run --ui false",
+        "test:run-firefox": "vitest run --ui false -c ./vitest.config.firefox.ts --test-timeout=10000",
+        "postinstall": "playwright install"
     },
     "dependencies": {
         "@endo/static-module-record": "^1.1.1",
@@ -37,14 +40,14 @@
     },
     "devDependencies": {
         "@types/path-browserify": "^1.0.2",
-        "@vitest/browser": "^1.4.0",
-        "@vitest/ui": "^1.4.0",
+        "@vitest/browser": "^1.5.0",
+        "@vitest/ui": "^1.5.0",
+        "playwright": "^1.43.1",
         "rimraf": "^5.0.5",
         "typescript": "^5.4.5",
-        "vite": "^5.2.8",
-        "vite-plugin-dts": "^3.8.1",
-        "vitest": "^1.4.0",
-        "webdriverio": "^8.35.1"
+        "vite": "^5.2.10",
+        "vite-plugin-dts": "^3.8.3",
+        "vitest": "^1.5.0"
     },
     "optionalDependencies": {
         "@codemirror/lang-javascript": "^6.2.2",
