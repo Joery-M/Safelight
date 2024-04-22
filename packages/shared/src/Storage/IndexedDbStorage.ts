@@ -27,7 +27,7 @@ export default class IndexedDbStorageController extends BaseStorageController {
                 ? project
                 : {
                       id: project.id,
-                      name: project.name,
+                      name: project.name.value,
                       type: project.type,
                       media: project.media.map((m) => m.id).filter((id) => id !== undefined),
                       timelines: project.timelines.map((m) => m.id),
@@ -74,7 +74,7 @@ export default class IndexedDbStorageController extends BaseStorageController {
 
                     // Load all timelines and media
                     await Promise.allSettled([...timelineFetches, ...mediaFetches]);
-                    proj.name = project.name;
+                    proj.name.value = project.name;
                     return proj;
                 } else {
                     return;

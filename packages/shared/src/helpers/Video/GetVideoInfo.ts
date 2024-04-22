@@ -21,14 +21,13 @@ export async function getVideoInfo(file: File) {
             });
 
         MediaInfoFactory({
-            locateFile(url, scriptDirectory) {
-                console.log(url, scriptDirectory);
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            locateFile(_url, _scriptDirectory) {
                 return MediaInfoWasmUrl;
             }
         }).then(async (mediaInfo) => {
             const data = await mediaInfo.analyzeData(() => file.size, readChunk);
 
-            console.log(data);
             resolve(data);
         });
     });

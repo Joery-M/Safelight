@@ -49,7 +49,7 @@
                                         style="text-decoration: none; text-decoration-line: none"
                                     >
                                         {{ item.from }}
-                                        <PhArrowSquareOut size="16" class="align-text-top" />
+                                        <PhArrowSquareOut class="align-text-top" />
                                     </a>
                                     <span
                                         v-if="item.author || item.license"
@@ -95,7 +95,7 @@
                                                 :title="'Open code repository for ' + item.from"
                                                 role="link"
                                                 @click="
-                                                    openUrl(item.repository.replace('git+', ''))
+                                                    openUrl(item.repository!.replace('git+', ''))
                                                 "
                                             >
                                                 <template #icon>

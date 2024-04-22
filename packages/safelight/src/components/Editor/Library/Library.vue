@@ -5,13 +5,24 @@
         scroll-height="400px"
         class="flex h-full flex-col"
         data-key="id"
+        :pt="{
+            header: {
+                class: 'p-1'
+            },
+            content: {
+                style: 'flex: 1;'
+            },
+            emptyMessage: {
+                style: 'height: 100%;'
+            }
+        }"
     >
         <template #header>
             <Toolbar class="border-none p-0">
                 <template #start>
                     <InputGroup class="mr-2">
                         <InputGroupAddon class="p-0">
-                            <PhMagnifyingGlass size="14" />
+                            <PhMagnifyingGlass />
                         </InputGroupAddon>
                         <InputText v-model="search" placeholder="Search"> </InputText>
                     </InputGroup>
@@ -25,8 +36,8 @@
                             @click="sortDescending = !sortDescending"
                         >
                             <template #icon>
-                                <PhSortAscending v-if="!sortDescending" size="14" />
-                                <PhSortDescending v-else size="14" />
+                                <PhSortAscending v-if="!sortDescending" />
+                                <PhSortDescending v-else />
                             </template>
                         </Button>
                         <Dropdown
@@ -40,7 +51,7 @@
                 <template #end>
                     <Button title="Load file" rounded @click="fileDialog.open()">
                         <template #icon>
-                            <PhUpload />
+                            <PhPlus />
                         </template>
                     </Button>
                 </template>
@@ -73,7 +84,9 @@
                 class="grid h-full select-none place-items-center opacity-60"
                 @dblclick="fileDialogOpenDblClick"
             >
-                <label v-if="media.length == 0"> No media imported </label>
+                <label v-if="CurrentProject.project.value?.media.length == 0">
+                    No media imported
+                </label>
                 <label v-else>No media found</label>
             </div>
         </template>
@@ -81,7 +94,6 @@
 </template>
 
 <script setup lang="ts">
-import { PhMagnifyingGlass, PhSortDescending, PhUpload } from '@phosphor-icons/vue';
 import Media from '@safelight/shared/Media/Media';
 import fuzzysearch from 'fuzzysearch';
 import MimeMatcher from 'mime-matcher';
@@ -90,7 +102,7 @@ import InputGroupAddon from 'primevue/inputgroupaddon';
 
 useDropZone(document.body, {
     onDrop(files) {
-        files?.forEach(project.loadFile);
+        files?.forEach(CurrentProject.loadFile);
     },
     dataTypes(types) {
         return !types.some((val) => {
@@ -109,13 +121,10 @@ fileDialog.onChange((fileList) => {
         const item = fileList.item(i);
 
         if (item) {
-            project.loadFile(item);
+            CurrentProject.loadFile(item);
         }
     }
 });
-
-const project = useProject();
-const media = project.project!.media;
 
 const search = ref('');
 const sortBy = ref<sortOptions>('Name');
@@ -123,15 +132,21 @@ const sortDescending = ref(false);
 
 const sortedAndFiltered = shallowRef<Media[]>([]);
 
-watchDebounced([media, search, sortBy, sortDescending], sortAndFilter, {
-    deep: true,
-    debounce: 100,
-    maxWait: 1000,
-    immediate: true
-});
+watchDebounced(
+    [CurrentProject.project.value?.media, search, sortBy, sortDescending],
+    sortAndFilter,
+    {
+        deep: true,
+        debounce: 100,
+        maxWait: 1000,
+        immediate: true
+    }
+);
 
 function sortAndFilter() {
-    const filtered = media.filter((elem) => {
+    if (!CurrentProject.project.value) return;
+
+    const filtered = CurrentProject.project.value.media.filter((elem) => {
         if (search.value.length == 0) {
             return true;
         }
@@ -171,21 +186,3 @@ function fileDialogOpenDblClick(event: MouseEvent) {
 
 type sortOptions = 'Name' | 'Duration' | 'File type' | 'Media type';
 </script>
-
-<style lang="scss" scoped>
-.bg-checkerboard {
-    /* This is beautifully simple
-       https://stackoverflow.com/a/65129916 */
-    background: repeating-conic-gradient(#ffffff0a 0% 25%, transparent 0% 50%) 50% / 20px 20px;
-}
-
-:deep(.p-dataview-header) {
-    @apply p-1;
-}
-:deep(.p-dataview-content) {
-    @apply flex-1;
-}
-:deep(.p-dataview-emptymessage) {
-    @apply h-full;
-}
-</style>
