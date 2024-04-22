@@ -44,11 +44,25 @@ jobs:
                   restore-keys: |
                       ${{ runner.os }}-pnpm-store-
 
-            - name: Install Playwright Browsers
+            - name: Get installed Playwright version
+              id: playwright-version
+              run: echo "::set-output name=version::$(pnpm ls -r | grep playwright | sed 's/.* //')"
+
+            - uses: actions/cache@v3
+              name: Setup playwright cache
+              id: playwright-cache
+              with:
+                  path: '~/.cache/ms-playwright'
+                  key: '${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}'
+                  restore-keys: |
+                      ${{ runner.os }}-playwright-
+
+            - name: Install Playwright's dependencies
+              if: steps.playwright-cache.outputs.cache-hit != 'true'
               run: npx playwright install --with-deps
 
             - name: Install dependencies
-              run: pnpm install
+              run: pnpm install --ignore-scripts
 
             - name: Build Darkroom
               run: pnpm build:darkroom
