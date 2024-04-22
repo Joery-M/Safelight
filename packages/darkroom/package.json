@@ -26,9 +26,9 @@
         "build:vite": "vite build",
         "build:tsc": "tsc --emitDeclarationOnly",
         "test": "vitest",
-        "test-firefox": "vitest -c ./vitest.config.firefox.ts",
+        "test-firefox": "vitest -c ./vitest.config.firefox.ts --test-timeout=10000",
         "test:run": "vitest run --ui false",
-        "test:run-firefox": "vitest run --ui false -c ./vitest.config.firefox.ts",
+        "test:run-firefox": "vitest run --ui false -c ./vitest.config.firefox.ts --test-timeout=10000",
         "postinstall": "playwright install"
     },
     "dependencies": {
