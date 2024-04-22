@@ -61,7 +61,7 @@ jobs:
 
             - name: Install Playwright's dependencies
               if: steps.playwright-cache.outputs.cache-hit != 'true'
-              run: pnpm exec playwright install --with-deps
+              run: npx playwright install --with-deps
 
             - name: Build Darkroom
               run: pnpm build:darkroom
