@@ -79,6 +79,7 @@
 </template>
 <script setup lang="ts">
 import { PhTrash, type PhDotsThreeVertical } from '@phosphor-icons/vue';
+import { ProjectFeatures } from '@safelight/shared/base/Project';
 import type Media from '@safelight/shared/Media/Media';
 import type Menu from 'primevue/menu';
 import type { MenuItem } from 'primevue/menuitem';
@@ -97,7 +98,7 @@ const menuItems = ref<MenuItem[]>([
 const hasItemInTimeline = computed(
     () =>
         CurrentProject.project.value &&
-        CurrentProject.project.value.isSimpleProject() &&
+        CurrentProject.project.value.hasFeature(ProjectFeatures.media) &&
         CurrentProject.project.value.usesMedia(props.item)
 );
 

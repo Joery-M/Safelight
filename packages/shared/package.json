@@ -12,6 +12,7 @@
     },
     "dependencies": {
         "@vueuse/core": "^10.9.0",
+        "@vueuse/rxjs": "^10.9.0",
         "@vueuse/shared": "^10.9.0",
         "dexie": "^3.2.7",
         "ffprobe-wasm": "^0.3.1",
