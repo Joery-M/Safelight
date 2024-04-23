@@ -19,14 +19,16 @@ test('Timeline item renders', () => {
         }
     });
 
-    const item = wrapper.element.querySelector('.timelineItem');
+    const item = wrapper.find('.timelineItem');
     expect(item).toBeDefined();
 });
 
 test('Multiple timeline items renders', () => {
     expect(Timeline).toBeTruthy();
 
+    document.write('<app id="app"></app>');
     const wrapper = mount(Timeline, {
+        attachTo: '#app',
         props: {
             items: {
                 '1': {
@@ -54,9 +56,9 @@ test('Multiple timeline items renders', () => {
         }
     });
 
-    const item = wrapper.element.querySelectorAll<HTMLDivElement>('.timelineItem');
+    const item = wrapper.findAll<HTMLDivElement>('.timelineItem');
     expect(item).toHaveLength(3);
-    expect(item[0].style.top).toBe('-32px');
-    expect(item[1].style.top).toBe('-64px');
-    expect(item[2].style.top).toBe('-96px');
+    expect(item[0].element.style.top).toBe('-32px');
+    expect(item[1].element.style.top).toBe('-64px');
+    expect(item[2].element.style.top).toBe('-96px');
 });

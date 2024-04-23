@@ -28,7 +28,7 @@ jobs:
             - name: Install pnpm
               uses: pnpm/action-setup@v3
               with:
-                  version: 8 # Latest major
+                  version: 8 # Last major
                   run_install: false
 
             - name: Get pnpm store directory
@@ -43,8 +43,25 @@ jobs:
                   key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
                   restore-keys: |
                       ${{ runner.os }}-pnpm-store-
+            
+            - name: Get installed Playwright version
+              run: echo "PLAYWRIGHT_VERSION=$(cat pnpm-lock.yaml | grep /playwright@ | sed -r 's/(.*@)([0-9.]*)(:)/\2/')" >> $GITHUB_ENV
 
             - name: Install dependencies
+              run: pnpm install --ignore-scripts
+
+            - uses: actions/cache@v3
+              name: Setup playwright cache
+              id: playwright-cache
+              with:
+                  path: '~/.cache/ms-playwright'
+                  key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+                  restore-keys: |
+                      ${{ runner.os }}-playwright-
+
+            
+            - name: Install dependencies
+              if: steps.playwright-cache.outputs.cache-hit != 'true'
               run: pnpm install
 
             - name: Build Darkroom
@@ -56,8 +73,11 @@ jobs:
             - name: Build safelight
               run: pnpm build:safelight
 
-            - name: Test darkroom
+            - name: Test darkroom on Chromium
               run: pnpm test:darkroom
+
+            - name: Test darkroom on Firefox
+              run: pnpm test:darkroom-firefox
 
             - name: Test shared
               run: pnpm test:shared
