@@ -30,26 +30,19 @@
             <SplitterPanel>
                 <Splitter @resize="clearSelection()">
                     <SplitterPanel>
-                        <TabView
-                            class="flex h-full flex-col"
-                            :pt="{
-                                panelContainer: {
-                                    class: 'flex-1'
-                                }
-                            }"
-                        >
-                            <TabPanel
-                                :pt="{
-                                    root: { class: 'h-full' }
-                                }"
-                            >
+                        <TabView>
+                            <TabPanel>
                                 <template #header>
                                     <div class="flex items-center gap-2">
                                         <PhFolders />
                                         <span class="white-space-nowrap font-bold"> Library </span>
                                     </div>
                                 </template>
-                                <Library />
+                                <Card>
+                                    <template #content>
+                                        <Library />
+                                    </template>
+                                </Card>
                             </TabPanel>
                         </TabView>
                     </SplitterPanel>

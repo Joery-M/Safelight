@@ -1,21 +1,13 @@
 <template>
     <DataView
         :value="sortedAndFiltered"
-        scrollable
-        scroll-height="400px"
-        class="flex h-full flex-col"
         data-key="id"
         :pt="{
             header: {
                 class: 'p-1'
-            },
-            content: {
-                style: 'flex: 1;'
-            },
-            emptyMessage: {
-                style: 'height: 100%;'
             }
         }"
+        :layout="layout"
     >
         <template #header>
             <Toolbar class="border-none p-0">
@@ -47,6 +39,7 @@
                             :options="['Name', 'Duration', 'File type']"
                         />
                     </InputGroup>
+                    <DataViewLayoutOptions v-model="layout" />
                 </template>
                 <template #end>
                     <Button title="Load file" rounded @click="fileDialog.open()">
@@ -57,9 +50,9 @@
                 </template>
             </Toolbar>
         </template>
-        <template #list="{ items }: { items: Media[] }">
+        <template #grid="{ items }: { items: Media[] }">
             <div
-                class="grid-nogutter grid h-full select-none"
+                class="grid-nogutter grid select-none"
                 role="grid"
                 style="
                     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -134,6 +127,7 @@ fileDialog.onChange((fileList) => {
 const search = ref('');
 const sortBy = ref<sortOptions>('Name');
 const sortDescending = ref(false);
+const layout = ref<string>('grid');
 
 const sortedAndFiltered = shallowRef<Media[]>([]);
 
