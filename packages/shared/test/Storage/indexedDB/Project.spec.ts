@@ -28,3 +28,23 @@ test('Retrieve project', async () => {
 
     expect(loadedProject?.id).toEqual(project.id);
 });
+
+test('Update project', async () => {
+    const storage = new IndexedDbStorageController();
+
+    const project = new SimpleProject();
+    project.name.value = 'Name 1';
+
+    await storage.SaveProject(project);
+
+    project.name.value = 'Name 2';
+
+    Storage.setStorage(storage);
+
+    const res = await project.Save();
+    expect(res).toEqual('Success');
+
+    const loadedProject = await storage.LoadProject(project.id);
+    expect(loadedProject).toBeDefined();
+    expect(loadedProject?.name.value).toBe('Name 2');
+});
