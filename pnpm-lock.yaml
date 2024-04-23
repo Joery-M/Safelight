@@ -301,6 +301,9 @@ importers:
       '@vueuse/core':
         specifier: ^10.9.0
         version: 10.9.0(vue@3.4.24)
+      '@vueuse/rxjs':
+        specifier: ^10.9.0
+        version: 10.9.0(rxjs@7.8.1)(vue@3.4.24)
       '@vueuse/shared':
         specifier: ^10.9.0
         version: 10.9.0(vue@3.4.24)

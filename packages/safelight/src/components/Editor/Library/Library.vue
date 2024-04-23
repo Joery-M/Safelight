@@ -94,6 +94,7 @@
 </template>
 
 <script setup lang="ts">
+import { ProjectFeatures } from '@safelight/shared/base/Project';
 import Media from '@safelight/shared/Media/Media';
 import fuzzysearch from 'fuzzysearch';
 import MimeMatcher from 'mime-matcher';
@@ -102,7 +103,11 @@ import InputGroupAddon from 'primevue/inputgroupaddon';
 
 useDropZone(document.body, {
     onDrop(files) {
-        files?.forEach(CurrentProject.loadFile);
+        files?.forEach((file) => {
+            if (CurrentProject.project.value?.hasFeature(ProjectFeatures.media)) {
+                CurrentProject.project.value.loadFile(file);
+            }
+        });
     },
     dataTypes(types) {
         return !types.some((val) => {
@@ -120,8 +125,8 @@ fileDialog.onChange((fileList) => {
     for (let i = 0; i < fileList.length; i++) {
         const item = fileList.item(i);
 
-        if (item) {
-            CurrentProject.loadFile(item);
+        if (item && CurrentProject.project.value?.hasFeature(ProjectFeatures.media)) {
+            CurrentProject.project.value.loadFile(item);
         }
     }
 });

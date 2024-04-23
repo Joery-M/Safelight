@@ -7,8 +7,7 @@
         "src/**/*.ts",
         "src/**/*.vue",
         "src/**/*.json",
-        "tsconfig.worker.json",
-        "types/injections.ts"
+        "tsconfig.worker.json"
     ],
     "exclude": ["src/**/__tests__/*"],
     "compilerOptions": {

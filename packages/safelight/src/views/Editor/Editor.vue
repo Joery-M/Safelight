@@ -21,7 +21,6 @@
                     @change="
                         (newName) => {
                             CurrentProject.project.value!.name.value = newName;
-                            CurrentProject.save();
                         }
                     "
                 />
@@ -135,6 +134,15 @@ function showNoProjectDialog() {
 function clearSelection() {
     document.getSelection()?.removeAllRanges();
 }
+watch(
+    CurrentProject.project,
+    (project) => {
+        if (project && CurrentProject.isLoaded.value) {
+            project.onDeepChange.next();
+        }
+    },
+    { deep: true }
+);
 
 onBeforeUnmount(async () => {
     if (CurrentProject.isLoaded.value) {

@@ -1,9 +1,8 @@
 /* eslint-disable no-dupe-class-members */
 import { router } from '@/main';
 import type BaseProject from '@safelight/shared/base/Project';
-import type { ProjectType } from '@safelight/shared/base/Project';
+import { ProjectFeatures, type ProjectType } from '@safelight/shared/base/Project';
 import BaseStorageController, { Storage, type StoredProject } from '@safelight/shared/base/Storage';
-import MediaManager from '@safelight/shared/Storage/MediaManager';
 import { DateTime } from 'luxon';
 
 export class CurrentProject {
@@ -87,45 +86,14 @@ export class CurrentProject {
         sessionStorage.removeItem('project');
     }
 
-    // Might want to move this to BaseProject or SimpleProject
-    public static loadFile(file: File) {
-        return new Promise<void>((resolve) => {
-            const storingProcessing = useObservable(MediaManager.StoreMedia(file));
-            watch(storingProcessing, (s) => {
-                console.log(s?.type, s?.hashProgress);
-            });
-
-            watch(storingProcessing, async () => {
-                if (storingProcessing.value && storingProcessing.value.type == 'done') {
-                    const existingMedia = this.project.value!.media.some(
-                        (m) => m.id == storingProcessing.value!.id
-                    );
-
-                    if (!existingMedia) {
-                        const media = await Storage.getStorage().LoadMedia(
-                            storingProcessing.value.id!
-                        );
-
-                        if (media) {
-                            this.project.value!.media.push(media);
-                            this.save();
-                        }
-                    }
-
-                    resolve();
-                }
-            });
-        });
-    }
-
-    public static async save() {
-        if (this.project.value) await Storage.getStorage().SaveProject(this.project.value);
-    }
-
     public static async beforeExit(clearSession = true) {
         if (this.project.value) {
+            this.project.value.destroy$.next();
+            this.project.value.destroy$.complete();
             if (clearSession) this.clearSessionProject();
-            await this.save();
+            if (this.project.value.hasFeature(ProjectFeatures.saving)) {
+                await this.project.value.Save();
+            }
             this.project.value = undefined;
         }
     }
