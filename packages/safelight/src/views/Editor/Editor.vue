@@ -26,46 +26,28 @@
                 />
             </template>
         </Toolbar>
-        <Splitter layout="vertical" class="vertSlitter" @resize="clearSelection()">
+        <PanelGroup>
             <SplitterPanel>
-                <Splitter @resize="clearSelection()">
-                    <SplitterPanel>
-                        <TabView
-                            class="flex h-full flex-col"
-                            :pt="{
-                                panelContainer: {
-                                    class: 'flex-1'
-                                }
-                            }"
-                        >
-                            <TabPanel
-                                :pt="{
-                                    root: { class: 'h-full' }
-                                }"
-                            >
-                                <template #header>
-                                    <div class="flex items-center gap-2">
-                                        <PhFolders />
-                                        <span class="white-space-nowrap font-bold"> Library </span>
-                                    </div>
-                                </template>
-                                <Library />
-                            </TabPanel>
-                        </TabView>
-                    </SplitterPanel>
-                    <SplitterPanel>
-                        <Monitor
-                            v-if="CurrentProject.project.value?.timeline"
-                            :timeline="CurrentProject.project.value?.timeline"
-                            class="min-h-100 w-full"
-                        />
-                    </SplitterPanel>
-                </Splitter>
+                <SplitterPanel>
+                    <PanelContainer
+                        :panels="editor.activePanels.properties.panels"
+                        :active-index="editor.activePanels.properties.activeIndex"
+                    />
+                </SplitterPanel>
+                <SplitterPanel>
+                    <PanelContainer
+                        :panels="editor.activePanels.monitor.panels"
+                        :active-index="editor.activePanels.monitor.activeIndex"
+                    />
+                </SplitterPanel>
             </SplitterPanel>
             <SplitterPanel :size="40">
-                <Timeline class="h-full w-full" />
+                <PanelContainer
+                    :panels="editor.activePanels.timeline?.panels"
+                    :active-index="editor.activePanels.timeline?.activeIndex"
+                />
             </SplitterPanel>
-        </Splitter>
+        </PanelGroup>
     </div>
     <ConfirmDialog group="noProjectDialog"> </ConfirmDialog>
 </template>
@@ -73,11 +55,12 @@
 <script setup lang="ts">
 import { router } from '@/main';
 import { PhFile } from '@phosphor-icons/vue';
-import type { MenuItem } from 'primevue/menuitem';
 import ConfirmDialog from 'primevue/confirmdialog';
+import type { MenuItem } from 'primevue/menuitem';
 import { useConfirm } from 'primevue/useconfirm';
 
 const project = useProject();
+const editor = useEditor();
 
 const projectErrorDialog = useConfirm();
 
@@ -131,9 +114,6 @@ function showNoProjectDialog() {
     });
 }
 
-function clearSelection() {
-    document.getSelection()?.removeAllRanges();
-}
 watch(
     CurrentProject.project,
     (project) => {
