@@ -1,51 +1,19 @@
-import Library from '@/components/Editor/Library/Library.vue';
-import Monitor from '@/components/Editor/Monitor/Monitor.vue';
-import Timeline from '@/components/Editor/Timeline/Timeline.vue';
-import { PhFilmStrip, PhFolders, PhFrameCorners } from '@phosphor-icons/vue';
 import { defineStore } from 'pinia';
-import type { Component } from 'vue';
+import type { Component, DefineComponent } from 'vue';
 
 export const useEditor = defineStore('Editor', () => {
     const activePanels = reactive<ActivePanels>({
         timeline: {
             activeIndex: 0,
-            panels: [
-                {
-                    component: Timeline,
-                    icon: PhFilmStrip,
-                    name: 'Timeline'
-                }
-            ]
+            panels: ['SL-Timeline']
         },
         properties: {
             activeIndex: 0,
-            panels: [
-                {
-                    component: Library,
-                    icon: PhFolders,
-                    name: 'Library'
-                },
-                {
-                    component: Timeline,
-                    icon: PhFilmStrip,
-                    name: 'Timeline'
-                },
-                {
-                    component: Library,
-                    icon: PhFolders,
-                    name: 'Library'
-                }
-            ]
+            panels: ['SL-Library', 'SL-Timeline', 'SL-Library']
         },
         monitor: {
             activeIndex: 0,
-            panels: [
-                {
-                    component: Monitor,
-                    icon: PhFrameCorners,
-                    name: 'Monitor'
-                }
-            ]
+            panels: ['SL-Monitor']
         }
     });
 
@@ -57,12 +25,18 @@ export const useEditor = defineStore('Editor', () => {
 export interface Panel {
     name: string;
     icon: Component;
-    component: Component;
+    component: DefineComponent<any, any, any>;
 }
 
 export interface ActivePanels {
     [group: string]: {
-        panels: Panel[];
+        /**
+         * List of panel IDs
+         */
+        panels: string[];
+        /**
+         * Active index
+         */
         activeIndex: number;
     };
 }

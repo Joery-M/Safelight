@@ -26,7 +26,7 @@
                 />
             </template>
         </Toolbar>
-        <PanelGroup>
+        <PanelGroup id="timeline">
             <SplitterPanel>
                 <SplitterPanel>
                     <PanelContainer
