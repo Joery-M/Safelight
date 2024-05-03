@@ -1,20 +1,18 @@
 <template>
-    <div :style="groupStyle">
-        <Suspense>
-            <component :is="activeComponent" />
-            <template #fallback>
-                <div class="grid h-full w-full place-content-center">
-                    <PhCircleNotch class="animate-spin" aria-label="Loading" size="48" />
-                </div>
-            </template>
-        </Suspense>
-    </div>
+    <Suspense>
+        <component :is="activeComponent" />
+    </Suspense>
 </template>
 
 <script setup lang="ts">
-import type { Panel } from '@/stores/useEditor';
-import type { StyleValue } from 'vue';
-import { DRAGGING_PANEL } from './injection';
+import { createStaticVNode, createTextVNode, type StyleValue } from 'vue';
+import { DRAGGING_PANEL, type Panel, type PanelGroupConfig } from './injection';
+import LoadingPanel from './LoadingPanel.vue';
+
+const props = defineProps<{
+    config: PanelGroupConfig;
+    groupStyle?: StyleValue;
+}>();
 
 const activeDragPanel = ref<Panel>();
 
@@ -25,17 +23,30 @@ const dragPanel = provide(DRAGGING_PANEL, {
     }
 });
 
-const editor = useEditor();
-
-const activeComponent = computed(() => PanelManager.allPanels.get(activeTab.value)?.component);
-
 const activeTab = computed(() => {
-    const panel = editor.activePanels[props.id];
-    return panel?.panels[panel.activeIndex];
+    const panelGroup = props.config;
+    if (!panelGroup) return;
+
+    const panel = panelGroup.panels[panelGroup.activePanelIndex];
+    return panel;
 });
 
-const props = defineProps<{
-    id: string;
-    groupStyle?: StyleValue;
-}>();
+const activeComponent = ref<Component>();
+watchImmediate(activeTab, (tab) => {
+    if (!tab) return;
+
+    activeComponent.value = defineAsyncComponent({
+        loader:
+            PanelManager.allPanels.get(tab.panelId ?? '')?.component ??
+            (async () =>
+                createStaticVNode(
+                    `<div style="flex: 1; display: grid; place-items: center; height: 100%;">${tab.panelId}</div>`,
+                    1
+                )),
+        loadingComponent: LoadingPanel,
+        suspensible: true,
+        errorComponent: createTextVNode(tab.panelId),
+        timeout: 3000
+    });
+});
 </script>

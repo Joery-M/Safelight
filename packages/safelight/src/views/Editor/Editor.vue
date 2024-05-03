@@ -1,5 +1,5 @@
 <template>
-    <div v-if="CurrentProject.isLoaded.value" class="flex h-full w-full flex-col">
+    <template v-if="CurrentProject.isLoaded.value">
         <Toolbar
             :pt="{
                 root: {
@@ -24,31 +24,16 @@
                         }
                     "
                 />
+                <!-- <template v-for="(_, panel) in editor.activePanels" :key="panel">
+                    <input
+                        v-model.number="editor.activePanels[panel].activePanelIndex"
+                        type="number"
+                    />
+                </template> -->
             </template>
         </Toolbar>
-        <PanelGroup id="timeline">
-            <SplitterPanel>
-                <SplitterPanel>
-                    <PanelContainer
-                        :panels="editor.activePanels.properties.panels"
-                        :active-index="editor.activePanels.properties.activeIndex"
-                    />
-                </SplitterPanel>
-                <SplitterPanel>
-                    <PanelContainer
-                        :panels="editor.activePanels.monitor.panels"
-                        :active-index="editor.activePanels.monitor.activeIndex"
-                    />
-                </SplitterPanel>
-            </SplitterPanel>
-            <SplitterPanel :size="40">
-                <PanelContainer
-                    :panels="editor.activePanels.timeline?.panels"
-                    :active-index="editor.activePanels.timeline?.activeIndex"
-                />
-            </SplitterPanel>
-        </PanelGroup>
-    </div>
+        <PanelView :panel-config="editor.activePanels" />
+    </template>
     <ConfirmDialog group="noProjectDialog"> </ConfirmDialog>
 </template>
 
@@ -58,6 +43,8 @@ import { PhFile } from '@phosphor-icons/vue';
 import ConfirmDialog from 'primevue/confirmdialog';
 import type { MenuItem } from 'primevue/menuitem';
 import { useConfirm } from 'primevue/useconfirm';
+
+PanelManager.AddDefaultPanels();
 
 const project = useProject();
 const editor = useEditor();
@@ -131,12 +118,6 @@ onBeforeUnmount(async () => {
     }
 });
 </script>
-
-<style lang="scss" scoped>
-.vertSlitter {
-    height: 100%;
-}
-</style>
 
 <route lang="json">
 {

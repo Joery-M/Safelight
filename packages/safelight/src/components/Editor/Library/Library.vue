@@ -10,7 +10,7 @@
                 class: 'p-1'
             },
             content: {
-                style: 'flex: 1;'
+                style: 'flex-shrink: 1; min-height: 0;'
             },
             emptyMessage: {
                 style: 'height: 100%;'
@@ -59,7 +59,7 @@
         </template>
         <template #list="{ items }: { items: Media[] }">
             <div
-                class="grid-nogutter grid h-full select-none"
+                class="grid-nogutter grid h-full select-none overflow-y-auto"
                 role="grid"
                 style="
                     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));

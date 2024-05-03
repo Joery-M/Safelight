@@ -1,6 +1,7 @@
 <template>
     <div
         class="bg-checkerboard flex aspect-video w-full items-center justify-center overflow-clip rounded-t-md"
+        style="aspect-ratio: 5/4"
     >
         <img
             v-if="$props.item.previewImage.value"
