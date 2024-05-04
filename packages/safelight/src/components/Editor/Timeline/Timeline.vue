@@ -1,5 +1,5 @@
 <template>
-    <SLTimeline style="flex-grow: 1" :items="items" />
+    <SLTimeline style="height: 100%" :items="items" />
 </template>
 
 <script setup lang="ts">

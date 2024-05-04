@@ -6,22 +6,13 @@
 
 <script setup lang="ts">
 import { createStaticVNode, createTextVNode, type StyleValue } from 'vue';
-import { DRAGGING_PANEL, type Panel, type PanelGroupConfig } from './injection';
+import { type PanelGroupConfig } from './injection';
 import LoadingPanel from './LoadingPanel.vue';
 
 const props = defineProps<{
     config: PanelGroupConfig;
     groupStyle?: StyleValue;
 }>();
-
-const activeDragPanel = ref<Panel>();
-
-const dragPanel = provide(DRAGGING_PANEL, {
-    panel: activeDragPanel,
-    setPanel: (panel) => {
-        activeDragPanel.value = panel;
-    }
-});
 
 const activeTab = computed(() => {
     const panelGroup = props.config;

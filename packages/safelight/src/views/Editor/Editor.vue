@@ -24,15 +24,10 @@
                         }
                     "
                 />
-                <!-- <template v-for="(_, panel) in editor.activePanels" :key="panel">
-                    <input
-                        v-model.number="editor.activePanels[panel].activePanelIndex"
-                        type="number"
-                    />
-                </template> -->
             </template>
         </Toolbar>
-        <PanelView :panel-config="editor.activePanels" />
+        <!-- Just default data for the first split -->
+        <PanelContainer :config="{ splitDirection: 'vertical', split: editor.activePanels }" />
     </template>
     <ConfirmDialog group="noProjectDialog"> </ConfirmDialog>
 </template>
