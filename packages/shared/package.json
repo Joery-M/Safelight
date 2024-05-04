@@ -11,7 +11,9 @@
         "test:run": "vitest run --ui false"
     },
     "dependencies": {
+        "@phosphor-icons/vue": "^2.2.1",
         "@vueuse/core": "^10.9.0",
+        "@safelight/safelight": "workspace:*",
         "@vueuse/rxjs": "^10.9.0",
         "@vueuse/shared": "^10.9.0",
         "dexie": "^3.2.7",

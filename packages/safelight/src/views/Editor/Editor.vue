@@ -35,6 +35,7 @@
 <script setup lang="ts">
 import { router } from '@/main';
 import { PhFile } from '@phosphor-icons/vue';
+import PanelManager from '@safelight/shared/UI/Panels/PanelManager';
 import ConfirmDialog from 'primevue/confirmdialog';
 import type { MenuItem } from 'primevue/menuitem';
 import { useConfirm } from 'primevue/useconfirm';

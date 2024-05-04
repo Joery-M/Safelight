@@ -1,5 +1,5 @@
 {
-    "name": "safelight",
+    "name": "@safelight/safelight",
     "version": "1.0.0",
     "description": "A extensible, browser based, video editor",
     "private": true,

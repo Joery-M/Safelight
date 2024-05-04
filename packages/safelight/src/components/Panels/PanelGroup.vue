@@ -1,12 +1,29 @@
 <template>
+    <!-- @vue-expect-error Its fine -->
+    <TabMenu :model="allTabs">
+        <!-- eslint-disable-next-line vue/no-template-shadow -->
+        <template #item="{ item, props, index }">
+            <a
+                v-ripple
+                v-bind="props.action"
+                class="align-items-center flex gap-1 p-2 px-3"
+                draggable="true"
+                @click="activeIndex = index"
+            >
+                <component :is="item.icon" class="mr-2" />
+                <span class="font-bold">{{ item.name }}</span>
+            </a>
+        </template>
+    </TabMenu>
     <Suspense>
         <component :is="activeComponent" />
     </Suspense>
 </template>
 
 <script setup lang="ts">
+import PanelManager from '@safelight/shared/UI/Panels/PanelManager';
 import { createStaticVNode, createTextVNode, type StyleValue } from 'vue';
-import { type PanelGroupConfig } from './injection';
+import { type Panel, type PanelGroupConfig } from './injection';
 import LoadingPanel from './LoadingPanel.vue';
 
 const props = defineProps<{
@@ -14,11 +31,23 @@ const props = defineProps<{
     groupStyle?: StyleValue;
 }>();
 
+const activeIndex = ref(0);
+
+const allTabs = computed<Panel[]>(() => {
+    const panelGroup = props.config;
+    if (!panelGroup) return [];
+
+    return panelGroup.panels
+        .sort((p1, p2) => p1.order - p2.order)
+        .map(({ panelId }) => PanelManager.allPanels.get(panelId))
+        .filter((p) => !!p);
+});
+
 const activeTab = computed(() => {
     const panelGroup = props.config;
     if (!panelGroup) return;
 
-    const panel = panelGroup.panels[panelGroup.activePanelIndex];
+    const panel = panelGroup.panels[activeIndex.value];
     return panel;
 });
 

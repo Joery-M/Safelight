@@ -1,8 +1,8 @@
 <template>
     <div
         role="gridcell"
-        class="border-round m-1 flex min-h-32 select-text flex-col rounded-md border-solid border-white/10"
-        style="border-width: 1px; aspect-ratio: 10/9"
+        class="border-round m-1 flex min-h-44 select-text flex-col rounded-md border-solid border-white/10"
+        style="border-width: 1px"
         :aria-label="item.name.value"
     >
         <div
@@ -46,7 +46,7 @@
         <div class="flex items-center gap-1 px-1">
             <p
                 v-tooltip.bottom="{ value: item.name.value, showDelay: 500 }"
-                class="flex-1 overflow-x-hidden overflow-ellipsis whitespace-nowrap text-base"
+                class="line-clamp-2 flex-1 text-base"
             >
                 {{ item.name.value }}
             </p>
@@ -152,6 +152,6 @@ const overlay = ref<OverlayPanel>();
     justify-content: end;
     align-items: end;
 
-    background: radial-gradient(circle at 100% 100%, rgba(0, 0, 0, 0.4) 0%, transparent 100%);
+    background: radial-gradient(circle at 100% 100%, rgba(0, 0, 0, 0.4) 0%, transparent 50%);
 }
 </style>

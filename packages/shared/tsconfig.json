@@ -11,6 +11,9 @@
         "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
 
-        "types": ["vite/client"]
+        "types": ["vite/client"],
+        "paths": {
+            "@sl/*": ["../safelight/src/*"]
+        }
     }
 }
