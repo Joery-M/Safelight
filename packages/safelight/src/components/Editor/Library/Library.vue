@@ -67,16 +67,9 @@
                 "
                 @dblclick.self="fileDialogOpenDblClick"
             >
-                <div
-                    v-for="item in items"
-                    :key="item.id"
-                    role="gridcell"
-                    class="border-round m-1 flex min-h-32 select-text flex-col rounded-md border-solid border-white/10"
-                    style="border-width: 1px"
-                    :aria-label="item.name.value"
-                >
+                <template v-for="item in items" :key="item.id">
                     <LibraryItem :item="item" />
-                </div>
+                </template>
             </div>
         </template>
         <template #empty>
@@ -173,8 +166,6 @@ function sortAndFilter() {
                 return item1.duration.value - item2.duration.value;
             case 'File type':
                 return collator.compare(ext1, ext2);
-            case 'Media type':
-                return collator.compare(item1.type.toString(), item1.type.toString());
             default:
                 return collator.compare(item1.name.value, item2.name.value);
         }
@@ -189,5 +180,5 @@ function fileDialogOpenDblClick(event: MouseEvent) {
     fileDialog.open();
 }
 
-type sortOptions = 'Name' | 'Duration' | 'File type' | 'Media type';
+type sortOptions = 'Name' | 'Duration' | 'File type';
 </script>
