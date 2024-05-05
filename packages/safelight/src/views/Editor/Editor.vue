@@ -3,7 +3,7 @@
         <Toolbar
             :pt="{
                 root: {
-                    class: 'p-0'
+                    class: 'p-0 rounded-none'
                 }
             }"
         >

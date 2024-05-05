@@ -3,14 +3,14 @@
         :layout="config.splitDirection"
         :pt="{
             root: {
-                style: 'min-height: 0; height: 100%;'
+                style: 'min-height: 0; height: 100%; border-radius: 0;'
             }
         }"
         @resize="clearSelection"
         @resizestart="dragStart"
         @resizeend="dragEnd"
     >
-        <SplitterPanel v-for="(split, i) in config.split" :key="i">
+        <SplitterPanel v-for="(split, i) in config.split" :key="i" :min-size="5">
             <PanelContainer v-if="'splitDirection' in split" :config="split" />
             <PanelGroup v-else :config="split" />
         </SplitterPanel>
