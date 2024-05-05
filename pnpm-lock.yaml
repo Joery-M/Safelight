@@ -135,9 +135,6 @@ importers:
       '@vueuse/rxjs':
         specifier: ^10.9.0
         version: 10.9.0(rxjs@7.8.1)(vue@3.4.24(typescript@5.4.5))
-      change-case:
-        specifier: ^5.4.4
-        version: 5.4.4
       dexie:
         specifier: ^3.2.7
         version: 3.2.7
@@ -147,9 +144,6 @@ importers:
       hash-wasm:
         specifier: ^4.11.0
         version: 4.11.0
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
       luxon:
         specifier: ^3.4.4
         version: 3.4.4
@@ -184,9 +178,6 @@ importers:
       '@babel/types':
         specifier: ^7.24.0
         version: 7.24.0
-      '@iconify-json/ph':
-        specifier: ^1.1.12
-        version: 1.1.12
       '@tsconfig/node20':
         specifier: ^20.1.4
         version: 20.1.4
@@ -301,9 +292,6 @@ importers:
       '@phosphor-icons/vue':
         specifier: ^2.2.1
         version: 2.2.1(vue@3.4.24(typescript@5.4.5))
-      '@safelight/safelight':
-        specifier: workspace:*
-        version: link:../safelight
       '@vueuse/core':
         specifier: ^10.9.0
         version: 10.9.0(vue@3.4.24(typescript@5.4.5))
@@ -316,9 +304,6 @@ importers:
       dexie:
         specifier: ^3.2.7
         version: 3.2.7
-      ffprobe-wasm:
-        specifier: ^0.3.1
-        version: 0.3.1
       hash-wasm:
         specifier: ^4.11.0
         version: 4.11.0
@@ -822,12 +807,6 @@ packages:
 
   '@humanwhocodes/object-schema@2.0.3':
     resolution: {integrity: sha512-93zYdMES/c1D69yZiKDBj0V24vqNzB/koF26KPaagAfd3P/4gUlh3Dys5ogAK+Exi9QyzlD8x/08Zt7wIKcDcA==}
-
-  '@iconify-json/ph@1.1.12':
-    resolution: {integrity: sha512-m+rXTW084YaQQHT+F8TxdkCoAh+i/5MWRoSuPmxCWPlxwMAaLT/QfyVsbEiV95HM5806U/jKpBV6F1b7Pmr3Vg==}
-
-  '@iconify/types@2.0.0':
-    resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
 
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
@@ -1901,9 +1880,6 @@ packages:
 
   fflate@0.8.2:
     resolution: {integrity: sha512-cPJU47OaAoCbg0pBvzsgpTPhmhqI5eJjh/JIu8tPj5q+T7iLvW/JAYUqmE7KOB4R1ZyEhzBaIQpQpardBF5z8A==}
-
-  ffprobe-wasm@0.3.1:
-    resolution: {integrity: sha512-Pyrv/5z/jRzy/csFvgoYZM1wE+jhFpWtFt5AyowepW0ZFvVo9iM5zU0NkZyeAugFyxKZ9Y9wBtlHDhsIcP4e7Q==}
 
   file-entry-cache@6.0.1:
     resolution: {integrity: sha512-7Gps/XWymbLk2QLYK4NzpMOrYjMhdIxXuIvy2QBsLE6ljuodKvdkWs/cpyJJ3CVIVpH0Oi1Hvg1ovbMzLdFBBg==}
@@ -3765,12 +3741,6 @@ snapshots:
 
   '@humanwhocodes/object-schema@2.0.3': {}
 
-  '@iconify-json/ph@1.1.12':
-    dependencies:
-      '@iconify/types': 2.0.0
-
-  '@iconify/types@2.0.0': {}
-
   '@isaacs/cliui@8.0.2':
     dependencies:
       string-width: 5.1.2
@@ -4584,7 +4554,8 @@ snapshots:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
 
-  change-case@5.4.4: {}
+  change-case@5.4.4:
+    optional: true
 
   check-error@1.0.3:
     dependencies:
@@ -4962,8 +4933,6 @@ snapshots:
       reusify: 1.0.4
 
   fflate@0.8.2: {}
-
-  ffprobe-wasm@0.3.1: {}
 
   file-entry-cache@6.0.1:
     dependencies:

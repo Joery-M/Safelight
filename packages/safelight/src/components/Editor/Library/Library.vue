@@ -1,8 +1,6 @@
 <template>
     <DataView
         :value="sortedAndFiltered"
-        scrollable
-        scroll-height="400px"
         class="flex h-full flex-col"
         data-key="id"
         :pt="{

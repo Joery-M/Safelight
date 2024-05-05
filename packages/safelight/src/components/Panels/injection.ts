@@ -1,9 +1,9 @@
-import type { Component, InjectionKey } from 'vue';
+import type { Component, InjectionKey, Ref } from 'vue';
 
 export const DRAGGING_PANEL = Symbol() as InjectionKey<DraggingPanelInject>;
 
 export interface DraggingPanelInject {
-    panel: globalThis.Ref<Panel | undefined>;
+    panel: Ref<Panel | undefined>;
     setPanel: (panel: Panel | undefined) => void;
 }
 

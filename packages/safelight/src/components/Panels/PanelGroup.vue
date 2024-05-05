@@ -1,23 +1,26 @@
 <template>
-    <!-- @vue-expect-error Its fine -->
-    <TabMenu :model="allTabs">
-        <!-- eslint-disable-next-line vue/no-template-shadow -->
-        <template #item="{ item, props, index }">
-            <a
-                v-ripple
-                v-bind="props.action"
-                class="align-items-center flex gap-1 p-2 px-3"
-                draggable="true"
-                @click="activeIndex = index"
-            >
-                <component :is="item.icon" class="mr-2" />
-                <span class="font-bold">{{ item.name }}</span>
-            </a>
-        </template>
-    </TabMenu>
-    <Suspense>
-        <component :is="activeComponent" />
-    </Suspense>
+    <div class="flex h-full flex-col">
+        <!-- @vue-expect-error Its fine -->
+        <TabMenu :model="allTabs">
+            <!-- eslint-disable-next-line vue/no-template-shadow -->
+            <template #item="{ item, props, index }">
+                <a
+                    v-ripple
+                    v-bind="props.action"
+                    class="align-items-center flex gap-1 p-2 px-3"
+                    @click="activeIndex = index"
+                >
+                    <component :is="item.icon" class="mr-2" />
+                    <span class="font-bold">{{ item.name }}</span>
+                </a>
+            </template>
+        </TabMenu>
+        <div class="relative min-h-0 flex-1">
+            <Suspense>
+                <component :is="activeComponent" />
+            </Suspense>
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts">
