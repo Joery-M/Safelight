@@ -66,13 +66,12 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 
-    // Might wanna change this in the future
-    display: flex;
-    min-height: 100vh;
+    height: 100dvh;
 
     #app {
-        flex-grow: 1;
-        min-height: 100%;
+        height: 100dvh;
+        display: flex;
+        flex-direction: column;
     }
 }
 

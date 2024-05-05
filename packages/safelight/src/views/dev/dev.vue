@@ -15,7 +15,9 @@
                 :key="route.path"
             >
                 <RouterLink :to="route.path" class="mb-2 block">
-                    <Button>{{ sentenceCase(route.path.replace('/dev/', '')) }}</Button>
+                    <Button>{{
+                        (route.name?.toString() ?? route.path).replace('/dev/', '')
+                    }}</Button>
                 </RouterLink>
             </template>
         </template>
@@ -23,7 +25,6 @@
 </template>
 
 <script setup lang="ts">
-import { sentenceCase } from 'change-case';
 import { RouterLink } from 'vue-router';
 </script>
 

@@ -11,11 +11,11 @@
         "test:run": "vitest run --ui false"
     },
     "dependencies": {
+        "@phosphor-icons/vue": "^2.2.1",
         "@vueuse/core": "^10.9.0",
         "@vueuse/rxjs": "^10.9.0",
         "@vueuse/shared": "^10.9.0",
         "dexie": "^3.2.7",
-        "ffprobe-wasm": "^0.3.1",
         "hash-wasm": "^4.11.0",
         "luxon": "^3.4.4",
         "mediainfo.js": "^0.2.2",

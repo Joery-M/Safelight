@@ -1,8 +1,6 @@
 <template>
     <DataView
         :value="sortedAndFiltered"
-        scrollable
-        scroll-height="400px"
         class="flex h-full flex-col"
         data-key="id"
         :pt="{
@@ -10,7 +8,7 @@
                 class: 'p-1'
             },
             content: {
-                style: 'flex: 1;'
+                style: 'flex-shrink: 1; min-height: 0;'
             },
             emptyMessage: {
                 style: 'height: 100%;'
@@ -59,7 +57,7 @@
         </template>
         <template #list="{ items }: { items: Media[] }">
             <div
-                class="grid-nogutter grid h-full select-none"
+                class="grid-nogutter grid h-full select-none overflow-y-auto"
                 role="grid"
                 style="
                     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -67,16 +65,9 @@
                 "
                 @dblclick.self="fileDialogOpenDblClick"
             >
-                <div
-                    v-for="item in items"
-                    :key="item.id"
-                    role="gridcell"
-                    class="border-round m-1 flex min-h-32 select-text flex-col rounded-md border-solid border-white/10"
-                    style="border-width: 1px"
-                    :aria-label="item.name.value"
-                >
+                <template v-for="item in items" :key="item.id">
                     <LibraryItem :item="item" />
-                </div>
+                </template>
             </div>
         </template>
         <template #empty>
@@ -173,8 +164,6 @@ function sortAndFilter() {
                 return item1.duration.value - item2.duration.value;
             case 'File type':
                 return collator.compare(ext1, ext2);
-            case 'Media type':
-                return collator.compare(item1.type.toString(), item1.type.toString());
             default:
                 return collator.compare(item1.name.value, item2.name.value);
         }
@@ -189,5 +178,5 @@ function fileDialogOpenDblClick(event: MouseEvent) {
     fileDialog.open();
 }
 
-type sortOptions = 'Name' | 'Duration' | 'File type' | 'Media type';
+type sortOptions = 'Name' | 'Duration' | 'File type';
 </script>
