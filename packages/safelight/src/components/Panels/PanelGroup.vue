@@ -1,5 +1,5 @@
 <template>
-    <div class="flex h-full flex-col">
+    <div class="panel-group-menu flex h-full flex-col">
         <div class="flex">
             <!-- @vue-expect-error Its fine -->
             <TabMenu :model="allTabs">
@@ -17,8 +17,8 @@
                             rounded
                             text
                             severity="contrast"
-                            class="transition-opacity"
-                            style="width: 20px; height: 20px; padding: 0; opacity: 0"
+                            :aria-label="'Close panel ' + item.name"
+                            style="width: 20px; height: 20px; padding: 0"
                             @click="removePanel(item as unknown as Panel)"
                         >
                             <template #icon>
@@ -32,7 +32,15 @@
                 class="flex flex-1 items-center justify-start"
                 style="border-bottom: 1px var(--surface-100) solid"
             >
-                <Button rounded severity="contrast" text @click="addOverlay?.toggle">
+                <Button
+                    rounded
+                    severity="contrast"
+                    text
+                    aria-haspopup="true"
+                    aria-controls="panel_add_menu"
+                    aria-label="Add panel menu"
+                    @click="addOverlay?.toggle"
+                >
                     <template #icon>
                         <PhPlus />
                     </template>
@@ -46,6 +54,7 @@
         </div>
     </div>
     <OverlayPanel
+        id="panel_add_menu"
         ref="addOverlay"
         :pt="{
             content: {
@@ -141,7 +150,22 @@ function addPanel(panel: Panel) {
 </script>
 
 <style lang="scss">
-.p-menuitem-link:hover .p-button {
-    opacity: 1 !important;
+.panel-group-menu {
+    .p-menuitem-link {
+        .p-button {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 250ms 0s;
+        }
+
+        &:hover,
+        &:focus-within,
+        &:focus-visible {
+            .p-button {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+    }
 }
 </style>
