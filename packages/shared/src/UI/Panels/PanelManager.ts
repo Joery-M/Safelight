@@ -1,4 +1,4 @@
-import type { Panel } from '@sl/components/Panels/injection';
+import type { Panel } from '../../../../safelight/src/components/Panels/injection';
 import { reactive } from 'vue';
 
 export default class PanelManager {

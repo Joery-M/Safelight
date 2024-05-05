@@ -88,7 +88,7 @@ function resetHeight() {
         height: 3px;
         cursor: ns-resize;
 
-        background-color: #3f3f46;
+        background-color: var(--surface-100);
     }
 }
 </style>
