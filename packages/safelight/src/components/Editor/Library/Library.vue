@@ -1,5 +1,6 @@
 <template>
     <DataView
+        v-if="layout == 'grid'"
         :value="sortedAndFiltered"
         class="flex h-full flex-col"
         data-key="id"
@@ -14,11 +15,12 @@
                 style: 'height: 100%;'
             }
         }"
-        :layout="layout"
+        layout="grid"
     >
         <template #header>
             <Toolbar class="border-none p-0">
                 <template #start>
+                    <DataViewLayoutOptions v-model="layout" class="mr-2 min-w-fit" />
                     <InputGroup class="mr-2">
                         <InputGroupAddon class="p-0">
                             <PhMagnifyingGlass />
@@ -46,7 +48,6 @@
                             :options="['Name', 'Duration', 'File type']"
                         />
                     </InputGroup>
-                    <DataViewLayoutOptions v-model="layout" />
                 </template>
                 <template #end>
                     <Button title="Load file" rounded @click="fileDialog.open()">
@@ -68,7 +69,7 @@
                 @dblclick.self="fileDialogOpenDblClick"
             >
                 <template v-for="item in items" :key="item.id">
-                    <LibraryItem :item="item" />
+                    <LibraryGridItem :item="item" />
                 </template>
             </div>
         </template>
@@ -84,11 +85,88 @@
             </div>
         </template>
     </DataView>
+    <DataTable
+        v-else-if="layout == 'list'"
+        class="flex h-full flex-col"
+        :value="sortedAndFiltered"
+        :pt="{
+            header: {
+                class: 'p-1'
+            },
+            wrapper: {
+                style: 'flex-shrink: 1'
+            },
+            table: {
+                class: 'h-full'
+            }
+        }"
+        sort-field="field"
+        sort-mode="single"
+        scrollable
+        data-key="id"
+    >
+        <Column field="name.value" header="Name" sortable />
+        <Column header="Type">
+            <template #body="{ data }: { data: Media }">
+                <PhVideoCamera
+                    v-if="data.isOfType(MediaType.Video)"
+                    weight="bold"
+                    aria-label="Media has video"
+                />
+                <PhSpeakerHigh
+                    v-if="data.isOfType(MediaType.Audio)"
+                    weight="bold"
+                    aria-label="Media has audio"
+                />
+                <PhSubtitles
+                    v-if="data.isOfType(MediaType.Text)"
+                    weight="bold"
+                    aria-label="Media has subtitles"
+                />
+                <PhImage
+                    v-if="data.isOfType(MediaType.Image)"
+                    weight="bold"
+                    aria-label="Media is an image"
+                />
+            </template>
+        </Column>
+        <template #header>
+            <Toolbar class="border-none p-0">
+                <template #start>
+                    <DataViewLayoutOptions v-model="layout" class="mr-2 min-w-fit" />
+                    <InputGroup class="mr-2">
+                        <InputGroupAddon class="p-0">
+                            <PhMagnifyingGlass />
+                        </InputGroupAddon>
+                        <InputText v-model="search" placeholder="Search"> </InputText>
+                    </InputGroup>
+                </template>
+                <template #end>
+                    <Button title="Load file" rounded @click="fileDialog.open()">
+                        <template #icon>
+                            <PhPlus />
+                        </template>
+                    </Button>
+                </template>
+            </Toolbar>
+        </template>
+        <template #empty>
+            <div
+                class="grid h-full select-none place-items-center opacity-60"
+                @dblclick="fileDialogOpenDblClick"
+            >
+                <label v-if="CurrentProject.project.value?.media.length == 0">
+                    No media imported
+                </label>
+                <label v-else>No media found</label>
+            </div>
+        </template>
+    </DataTable>
 </template>
 
 <script setup lang="ts">
 import { ProjectFeatures } from '@safelight/shared/base/Project';
-import Media from '@safelight/shared/Media/Media';
+import Media, { MediaType } from '@safelight/shared/Media/Media';
 import fuzzysearch from 'fuzzysearch';
 import MimeMatcher from 'mime-matcher';
 import InputGroup from 'primevue/inputgroup';
