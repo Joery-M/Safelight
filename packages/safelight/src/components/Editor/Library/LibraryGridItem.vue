@@ -1,9 +1,18 @@
 <template>
     <div
         role="gridcell"
-        class="border-round m-1 flex min-h-44 select-text flex-col rounded-md border-solid border-white/10"
+        class="border-round m-1 flex select-text flex-col rounded-md border-solid border-white/10"
         style="border-width: 1px"
+        :style="{
+            width: size + 'px'
+        }"
         :aria-label="item.name.value"
+        @contextmenu.prevent="
+            (ev) => {
+                closeOtherOverlays();
+                overlay?.toggle(ev);
+            }
+        "
     >
         <div
             class="bg-checkerboard relative flex aspect-video w-full items-center justify-center overflow-clip rounded-t-md"
@@ -20,7 +29,7 @@
                 height="100%"
                 width="100%"
             />
-            <div class="mediaType">
+            <div v-if="size >= 96" class="mediaType">
                 <PhVideoCamera
                     v-if="item.isOfType(MediaType.Video)"
                     weight="bold"
@@ -51,6 +60,7 @@
                 {{ item.name.value }}
             </p>
             <Button
+                v-if="size >= 96"
                 title="Options"
                 text
                 rounded
@@ -112,10 +122,11 @@ import type Media from '@safelight/shared/Media/Media';
 import { MediaType } from '@safelight/shared/Media/Media';
 import type Menu from 'primevue/menu';
 import type { MenuItem } from 'primevue/menuitem';
-import type OverlayPanel from 'primevue/overlaypanel';
+import OverlayPanel from 'primevue/overlaypanel';
 
 const props = defineProps<{
     item: Media;
+    size: number;
 }>();
 
 const menuItems = ref<MenuItem[]>([
@@ -134,6 +145,14 @@ const hasItemInTimeline = computed(
 const alertt = (text: string) => window.alert(text);
 
 const overlay = ref<OverlayPanel>();
+
+function closeOtherOverlays() {
+    if (document.activeElement && 'blur' in document.activeElement) {
+        (document.activeElement as HTMLElement).blur();
+    }
+    // Weird, but fine
+    document.body.click();
+}
 </script>
 
 <style lang="scss" scoped>

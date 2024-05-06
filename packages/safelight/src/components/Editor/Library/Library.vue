@@ -13,6 +13,9 @@
             },
             emptyMessage: {
                 style: 'height: 100%;'
+            },
+            footer: {
+                style: 'flex-grow: 1; display: flex; align-items: end'
             }
         }"
         layout="grid"
@@ -60,16 +63,12 @@
         </template>
         <template #grid="{ items }: { items: Media[] }">
             <div
-                class="grid-nogutter grid h-full select-none overflow-y-auto"
+                class="flex h-full select-none flex-wrap justify-center overflow-y-auto"
                 role="grid"
-                style="
-                    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-                    grid-template-rows: min-content;
-                "
                 @dblclick.self="fileDialogOpenDblClick"
             >
                 <template v-for="item in items" :key="item.id">
-                    <LibraryGridItem :item="item" />
+                    <LibraryGridItem :item="item" :size="gridItemSize" />
                 </template>
             </div>
         </template>
@@ -83,6 +82,20 @@
                 </label>
                 <label v-else>No media found</label>
             </div>
+        </template>
+        <template #footer>
+            <Toolbar class="border-none p-0">
+                <template #start>
+                    <Slider
+                        v-model="gridItemSize"
+                        orientation="horizontal"
+                        :min="50"
+                        :max="300"
+                        :step="10"
+                        class="w-48 max-w-full"
+                    />
+                </template>
+            </Toolbar>
         </template>
     </DataView>
     <DataTable
@@ -103,31 +116,45 @@
         sort-field="field"
         sort-mode="single"
         scrollable
+        resizable-columns
+        column-resize-mode="expand"
         data-key="id"
     >
-        <Column field="name.value" header="Name" sortable />
-        <Column header="Type">
+        <Column header="Type" body-class="px-0">
             <template #body="{ data }: { data: Media }">
-                <PhVideoCamera
-                    v-if="data.isOfType(MediaType.Video)"
-                    weight="bold"
-                    aria-label="Media has video"
-                />
-                <PhSpeakerHigh
-                    v-if="data.isOfType(MediaType.Audio)"
-                    weight="bold"
-                    aria-label="Media has audio"
-                />
-                <PhSubtitles
-                    v-if="data.isOfType(MediaType.Text)"
-                    weight="bold"
-                    aria-label="Media has subtitles"
-                />
-                <PhImage
-                    v-if="data.isOfType(MediaType.Image)"
-                    weight="bold"
-                    aria-label="Media is an image"
-                />
+                <div class="flex gap-2 pl-2">
+                    <PhVideoCamera
+                        v-if="data.isOfType(MediaType.Video)"
+                        weight="bold"
+                        aria-label="Media has video"
+                    />
+                    <PhSpeakerHigh
+                        v-if="data.isOfType(MediaType.Audio)"
+                        weight="bold"
+                        aria-label="Media has audio"
+                    />
+                    <PhSubtitles
+                        v-if="data.isOfType(MediaType.Text)"
+                        weight="bold"
+                        aria-label="Media has subtitles"
+                    />
+                    <PhImage
+                        v-if="data.isOfType(MediaType.Image)"
+                        weight="bold"
+                        aria-label="Media is an image"
+                    />
+                </div>
+            </template>
+        </Column>
+        <Column field="name.value" header="Name" sortable />
+        <Column field="duration.value" header="Duration" sortable>
+            <template #body="{ data }: { data: Media }">
+                <template v-if="data.isOfType(MediaType.Image)">
+                    {{ Timecode.toFormattedTimecode(5000) }}
+                </template>
+                <template v-else>
+                    {{ Timecode.toFormattedTimecode(data.duration.value * 1000) }}
+                </template>
             </template>
         </Column>
         <template #header>
@@ -167,6 +194,7 @@
 <script setup lang="ts">
 import { ProjectFeatures } from '@safelight/shared/base/Project';
 import Media, { MediaType } from '@safelight/shared/Media/Media';
+import Timecode from '@safelight/shared/Timecode';
 import fuzzysearch from 'fuzzysearch';
 import MimeMatcher from 'mime-matcher';
 import InputGroup from 'primevue/inputgroup';
@@ -206,8 +234,18 @@ const search = ref('');
 const sortBy = ref<sortOptions>('Name');
 const sortDescending = ref(false);
 const layout = ref<string>('grid');
+const gridItemSize = ref(176); // 11rem
 
 const sortedAndFiltered = shallowRef<Media[]>([]);
+
+// Reset sorting when changing to list
+// List has its own sorting
+watchEffect(() => {
+    if (layout.value == 'list') {
+        sortBy.value = 'Name';
+        sortDescending.value = false;
+    }
+});
 
 watchDebounced(
     [CurrentProject.project.value?.media, search, sortBy, sortDescending],
