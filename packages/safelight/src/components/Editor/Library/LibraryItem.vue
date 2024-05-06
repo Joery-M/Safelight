@@ -1,40 +1,69 @@
 <template>
     <div
-        class="bg-checkerboard flex aspect-video w-full items-center justify-center overflow-clip rounded-t-md"
+        role="gridcell"
+        class="border-round m-1 flex min-h-44 select-text flex-col rounded-md border-solid border-white/10"
+        style="border-width: 1px"
+        :aria-label="item.name.value"
     >
-        <img
-            v-if="$props.item.previewImage.value"
-            class="overflow-none max-h-full max-w-full"
-            :aria-label="'Preview image for ' + $props.item.name.value"
-            :src="$props.item.previewImage.value"
-        />
-        <Skeleton
-            v-else
-            class="max-h-full max-w-full rounded-none rounded-t-md"
-            height="100%"
-            width="100%"
-        />
-    </div>
-    <div class="flex items-center gap-1 px-1">
-        <p
-            v-tooltip.bottom="{ value: $props.item.name.value, showDelay: 500 }"
-            class="flex-1 overflow-x-hidden overflow-ellipsis whitespace-nowrap text-base"
+        <div
+            class="bg-checkerboard relative flex aspect-video w-full items-center justify-center overflow-clip rounded-t-md"
         >
-            {{ $props.item.name.value }}
-        </p>
-        <Button
-            title="Options"
-            text
-            rounded
-            severity="secondary"
-            aria-haspopup="true"
-            aria-controls="library_item_menu"
-            @click="overlay?.show"
-        >
-            <template #icon>
-                <PhDotsThreeVertical size="20" />
-            </template>
-        </Button>
+            <img
+                v-if="item.previewImage.value"
+                class="overflow-none max-h-full max-w-full"
+                :aria-label="'Preview image for ' + item.name.value"
+                :src="item.previewImage.value"
+            />
+            <Skeleton
+                v-else
+                class="max-h-full max-w-full rounded-none rounded-t-md"
+                height="100%"
+                width="100%"
+            />
+            <div class="mediaType">
+                <PhVideoCamera
+                    v-if="item.isOfType(MediaType.Video)"
+                    weight="bold"
+                    aria-label="Media has video"
+                />
+                <PhSpeakerHigh
+                    v-if="item.isOfType(MediaType.Audio)"
+                    weight="bold"
+                    aria-label="Media has audio"
+                />
+                <PhSubtitles
+                    v-if="item.isOfType(MediaType.Text)"
+                    weight="bold"
+                    aria-label="Media has subtitles"
+                />
+                <PhImage
+                    v-if="item.isOfType(MediaType.Image)"
+                    weight="bold"
+                    aria-label="Media is an image"
+                />
+            </div>
+        </div>
+        <div class="flex items-center gap-1 px-1">
+            <p
+                v-tooltip.bottom="{ value: item.name.value, showDelay: 500 }"
+                class="line-clamp-2 flex-1 text-base"
+            >
+                {{ item.name.value }}
+            </p>
+            <Button
+                title="Options"
+                text
+                rounded
+                severity="secondary"
+                aria-haspopup="true"
+                aria-controls="library_item_menu"
+                @click="overlay?.toggle"
+            >
+                <template #icon>
+                    <PhDotsThreeVertical size="20" />
+                </template>
+            </Button>
+        </div>
     </div>
     <OverlayPanel
         id="library_item_menu"
@@ -78,9 +107,9 @@
     </OverlayPanel>
 </template>
 <script setup lang="ts">
-import { PhTrash, type PhDotsThreeVertical } from '@phosphor-icons/vue';
 import { ProjectFeatures } from '@safelight/shared/base/Project';
 import type Media from '@safelight/shared/Media/Media';
+import { MediaType } from '@safelight/shared/Media/Media';
 import type Menu from 'primevue/menu';
 import type { MenuItem } from 'primevue/menuitem';
 import type OverlayPanel from 'primevue/overlaypanel';
@@ -107,10 +136,22 @@ const alertt = (text: string) => window.alert(text);
 const overlay = ref<OverlayPanel>();
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .bg-checkerboard {
     /* This is beautifully simple
        https://stackoverflow.com/a/65129916 */
     background: repeating-conic-gradient(#ffffff0a 0% 25%, transparent 0% 50%) 50% / 20px 20px;
+}
+
+.mediaType {
+    @apply left-0 top-0 h-full w-full gap-2 p-2;
+
+    position: absolute;
+    display: flex;
+
+    justify-content: end;
+    align-items: end;
+
+    background: radial-gradient(circle at 100% 100%, rgba(0, 0, 0, 0.4) 0%, transparent 50%);
 }
 </style>

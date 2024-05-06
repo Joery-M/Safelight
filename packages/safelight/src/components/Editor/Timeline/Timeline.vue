@@ -1,5 +1,5 @@
 <template>
-    <SLTimeline :items="items" />
+    <SLTimeline class="h-full" :items="items" />
 </template>
 
 <script setup lang="ts">

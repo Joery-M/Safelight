@@ -1,9 +1,9 @@
 <template>
-    <div v-if="CurrentProject.isLoaded.value" class="flex h-full w-full flex-col">
+    <template v-if="CurrentProject.isLoaded.value">
         <Toolbar
             :pt="{
                 root: {
-                    class: 'p-0'
+                    class: 'p-0 rounded-none'
                 }
             }"
         >
@@ -26,51 +26,23 @@
                 />
             </template>
         </Toolbar>
-        <Splitter layout="vertical" class="vertSlitter" @resize="clearSelection()">
-            <SplitterPanel>
-                <Splitter @resize="clearSelection()">
-                    <SplitterPanel>
-                        <TabView>
-                            <TabPanel>
-                                <template #header>
-                                    <div class="flex items-center gap-2">
-                                        <PhFolders />
-                                        <span class="white-space-nowrap font-bold"> Library </span>
-                                    </div>
-                                </template>
-                                <Card>
-                                    <template #content>
-                                        <Library />
-                                    </template>
-                                </Card>
-                            </TabPanel>
-                        </TabView>
-                    </SplitterPanel>
-                    <SplitterPanel>
-                        <Monitor
-                            v-if="CurrentProject.project.value?.timeline"
-                            :timeline="CurrentProject.project.value?.timeline"
-                            class="min-h-100 w-full"
-                        />
-                    </SplitterPanel>
-                </Splitter>
-            </SplitterPanel>
-            <SplitterPanel :size="40">
-                <Timeline class="h-full w-full" />
-            </SplitterPanel>
-        </Splitter>
-    </div>
+        <!-- Just default data for the first split -->
+        <PanelContainer :config="{ splitDirection: 'vertical', split: editor.activePanels }" />
+    </template>
     <ConfirmDialog group="noProjectDialog"> </ConfirmDialog>
 </template>
 
 <script setup lang="ts">
 import { router } from '@/main';
 import { PhFile } from '@phosphor-icons/vue';
-import type { MenuItem } from 'primevue/menuitem';
 import ConfirmDialog from 'primevue/confirmdialog';
+import type { MenuItem } from 'primevue/menuitem';
 import { useConfirm } from 'primevue/useconfirm';
 
 const project = useProject();
+const editor = useEditor();
+
+editor.AddDefaultPanels();
 
 const projectErrorDialog = useConfirm();
 
@@ -124,9 +96,6 @@ function showNoProjectDialog() {
     });
 }
 
-function clearSelection() {
-    document.getSelection()?.removeAllRanges();
-}
 watch(
     CurrentProject.project,
     (project) => {
@@ -144,12 +113,6 @@ onBeforeUnmount(async () => {
     }
 });
 </script>
-
-<style lang="scss" scoped>
-.vertSlitter {
-    height: 100%;
-}
-</style>
 
 <route lang="json">
 {

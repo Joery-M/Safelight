@@ -11,18 +11,18 @@
         "test:run": "vitest run --ui false"
     },
     "dependencies": {
+        "@phosphor-icons/vue": "^2.2.1",
         "@vueuse/core": "^10.9.0",
         "@vueuse/rxjs": "^10.9.0",
         "@vueuse/shared": "^10.9.0",
         "dexie": "^3.2.7",
-        "ffprobe-wasm": "^0.3.1",
         "hash-wasm": "^4.11.0",
         "luxon": "^3.4.4",
         "mediainfo.js": "^0.2.2",
         "mime-matcher": "^1.0.5",
         "rxjs": "^7.8.1",
         "uuid": "^9.0.1",
-        "vue": "^3.4.24"
+        "vue": "^3.4.26"
     },
     "devDependencies": {
         "@tsconfig/node20": "^20.1.4",
