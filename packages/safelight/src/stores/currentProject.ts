@@ -1,5 +1,4 @@
 /* eslint-disable no-dupe-class-members */
-import { router } from '@/main';
 import type BaseProject from '@safelight/shared/base/Project';
 import { ProjectFeatures, type ProjectType } from '@safelight/shared/base/Project';
 import BaseStorageController, { Storage, type StoredProject } from '@safelight/shared/base/Storage';
@@ -35,7 +34,8 @@ export class CurrentProject {
     }
 
     public static async toEditor() {
-        await router.push('/editor');
+        // Prevent circular dependency
+        await (await import('../main')).router.push('/editor');
     }
 
     public static async newSimpleProject(goToEditor = true) {
