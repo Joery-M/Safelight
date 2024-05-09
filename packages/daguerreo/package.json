@@ -1,0 +1,36 @@
+{
+    "name": "@safelight/daguerreo",
+    "version": "1.0.0",
+    "description": "A web-based video renderer for Safelight",
+    "author": "Joery Münninghoff",
+    "license": "MIT",
+    "type": "module",
+    "files": [
+        "dist"
+    ],
+    "module": "./dist/daguerreo.js",
+    "types": "./dist/lib/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/daguerreo.js",
+            "types": "./dist/lib/index.d.ts"
+        },
+        "./source": {
+            "import": "./lib/index.ts"
+        }
+    },
+    "scripts": {
+        "dev": "vite",
+        "build": "rimraf ./dist/ && vite build && tsc --emitDeclarationOnly",
+        "build:vite": "vite build",
+        "build:tsc": "tsc --emitDeclarationOnly"
+    },
+    "devDependencies": {
+        "@types/node": "^20.12.8",
+        "rimraf": "^5.0.5",
+        "typescript": "^5.4.5",
+        "vite": "^5.2.11",
+        "vite-plugin-dts": "^3.9.1",
+        "vitest": "^1.6.0"
+    }
+}

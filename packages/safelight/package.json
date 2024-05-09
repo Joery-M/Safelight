@@ -21,6 +21,7 @@
     "dependencies": {
         "@phosphor-icons/vue": "^2.2.1",
         "@quantco/pnpm-licenses": "^2.0.0",
+        "@safelight/daguerreo": "workspace:^",
         "@safelight/shared": "workspace:*",
         "@safelight/timeline": "workspace:*",
         "@vueuse/core": "^10.9.0",
