@@ -1,19 +1,24 @@
 {
     "compilerOptions": {
-        "composite": true,
+        "noEmit": false,
+        "moduleResolution": "Bundler",
         "target": "esnext",
-        "moduleResolution": "node",
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
         "module": "esnext",
         "outDir": "dist",
+
+        "verbatimModuleSyntax": true,
+        "lib": ["DOM", "ESNext"],
+
+        "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
         "declaration": true,
-        "sourceMap": true,
         "strict": true,
+
         "types": ["vite/client"],
         "rootDir": "."
     },
     "files": ["lib/index.ts"],
-    "include": ["lib/*.ts"],
+    "include": ["lib/**/*.ts", "../../global.d.ts"],
     "exclude": ["dist"]
 }
