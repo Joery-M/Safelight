@@ -11,6 +11,7 @@ import type IndexedDbStorageController from '../Storage/IndexedDbStorage';
 import type { default as BaseProject, ProjectType } from './Project';
 import type BaseTimeline from './Timeline';
 import type { TimelineItemType } from './TimelineItem';
+import type { TimelineType } from './Timeline';
 
 export default abstract class BaseStorageController {
     public abstract type: StorageControllerType;
@@ -101,11 +102,16 @@ export interface StoredProject {
 export interface StoredSimpleTimeline {
     id: string;
     name: string;
+    type: TimelineType;
+    width: number;
+    height: number;
+    framerate: number;
     items: string[];
 }
 // TODO Add all necessary properties
 export interface StoredSimpleTimelineItem {
     id: string;
+    name: string;
     type: TimelineItemType;
     /**
      * The ID of a stored media item.
@@ -113,6 +119,8 @@ export interface StoredSimpleTimelineItem {
      * Media has to be included in the stored project's media list to be used.
      */
     media?: string;
-    start?: number;
+    start: number;
+    end: number;
+    layer: number;
     duration?: number;
 }
