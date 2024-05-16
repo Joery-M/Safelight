@@ -189,9 +189,23 @@ export default class IndexedDbStorageController extends BaseStorageController {
         return media;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async SaveTimeline(_timeline: BaseTimeline): Promise<SaveResults> {
-        throw new Error('Method not implemented.');
+    SaveTimeline(timeline: BaseTimeline): Promise<SaveResults> {
+        return new Promise<SaveResults>((resolve) => {
+            this.db.timeline
+                .put({
+                    id: timeline.id,
+                    name: timeline.name.value,
+                    items: timeline.isSimpleTimeline()
+                        ? Array.from(timeline.items.values()).map(({ id }) => id)
+                        : []
+                })
+                .catch(() => {
+                    resolve('Error');
+                })
+                .then(() => {
+                    resolve('Success');
+                });
+        });
     }
     LoadTimeline<Timeline extends BaseTimeline = BaseTimeline>(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars

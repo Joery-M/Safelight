@@ -98,12 +98,13 @@ export interface StoredProject {
     updated: string;
 }
 
-export interface StoredTimeline {
+export interface StoredSimpleTimeline {
     id: string;
+    name: string;
     items: string[];
 }
 // TODO Add all necessary properties
-export interface StoredTimelineItem {
+export interface StoredSimpleTimelineItem {
     id: string;
     type: TimelineItemType;
     /**
