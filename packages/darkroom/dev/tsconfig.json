@@ -17,11 +17,11 @@
 
         "baseUrl": ".",
         "paths": {
-            "@/*": ["./src/*"],
+            "@/*": ["./src/*"]
         },
         "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
 
-        "types": ["vite/client", "@types/node"],
+        "types": ["vite/client", "@types/node"]
     }
 }
