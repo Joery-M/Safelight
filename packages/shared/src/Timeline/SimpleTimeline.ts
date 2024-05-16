@@ -3,6 +3,7 @@ import { computed, ref, shallowReactive } from 'vue';
 import BaseTimeline, { type TimelineType } from '../base/Timeline';
 import type BaseTimelineItem from '../base/TimelineItem';
 import type Media from '../Media/Media';
+import { useManualRefHistory } from '@vueuse/core';
 
 export default class SimpleTimeline extends BaseTimeline {
     public name = ref('Untitled');
@@ -57,6 +58,60 @@ export default class SimpleTimeline extends BaseTimeline {
     public deleteItem(item: BaseTimelineItem) {
         item.Delete();
         return this.items.delete(item);
+    }
+
+    // Playback
+
+    public isPlaying = ref(false);
+    public pbPos = ref(0);
+    public pbPosHistory = useManualRefHistory(this.pbPos, { capacity: 100 });
+    private lastStepTime: number | undefined = undefined;
+
+    public startPlayback(startTime?: number) {
+        if (startTime) {
+            this.pbPos.value = startTime;
+            this.pbPosHistory.commit();
+        }
+        this.isPlaying.value = true;
+        this.stepPlayback();
+    }
+
+    private stepPlayback() {
+        const timeNow = performance.now();
+        // Calculate step, whilst removing excess decimals to prevent floating point inaccuracy
+        const step = Math.round(
+            Math.trunc(
+                (timeNow - (this.lastStepTime ?? timeNow - this.frameDuration.value)) * 1000
+            ) / Math.trunc(this.frameDuration.value * 1000)
+        );
+        // If step is too small, it means were too early
+        if (step < 1) {
+            requestAnimationFrame(this.stepPlayback);
+            return;
+        }
+        // If step is too large it means were too late (skipping frames)
+        if (step > 1) {
+            console.log(`Skipped ${step} frames`);
+        }
+        this.pbPos.value += this.frameDuration.value * step;
+
+        if (this.isPlaying.value) {
+            this.lastStepTime = timeNow;
+
+            requestAnimationFrame(this.stepPlayback);
+        } else {
+            this.lastStepTime = undefined;
+        }
+    }
+
+    public stopPlayback(cancel = false) {
+        this.isPlaying.value = false;
+        if (cancel) {
+            this.pbPos.value = this.pbPosHistory.last.value.snapshot;
+            this.pbPosHistory.undo();
+        } else {
+            this.pbPosHistory.commit();
+        }
     }
 }
 
