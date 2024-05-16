@@ -1,9 +1,9 @@
+import { useManualRefHistory } from '@vueuse/core';
 import { v4 as uuidv4 } from 'uuid';
 import { computed, ref, shallowReactive } from 'vue';
 import BaseTimeline, { type TimelineType } from '../base/Timeline';
 import type BaseTimelineItem from '../base/TimelineItem';
 import type Media from '../Media/Media';
-import { useManualRefHistory } from '@vueuse/core';
 
 export default class SimpleTimeline extends BaseTimeline {
     public name = ref('Untitled');
@@ -60,7 +60,7 @@ export default class SimpleTimeline extends BaseTimeline {
         return this.items.delete(item);
     }
 
-    // Playback
+    //#region Playback
 
     public isPlaying = ref(false);
     public pbPos = ref(0);
@@ -113,6 +113,8 @@ export default class SimpleTimeline extends BaseTimeline {
             this.pbPosHistory.commit();
         }
     }
+
+    //#endregion
 }
 
 export interface SimpleTimelineConfig {
