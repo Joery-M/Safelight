@@ -2,8 +2,8 @@ import { Subject } from 'rxjs';
 import { isReactive, isRef, ref, type ComputedRef, type Ref, type ShallowReactive } from 'vue';
 import type Media from '../Media/Media';
 import type SimpleProject from '../Project/SimpleProject';
+import type SimpleTimeline from '../Timeline/SimpleTimeline';
 import type { SaveResults } from './Storage';
-import type BaseTimeline from './Timeline';
 
 export default abstract class BaseProject {
     public abstract id: string;
@@ -12,9 +12,9 @@ export default abstract class BaseProject {
 
     public abstract media: ShallowReactive<Media[]>;
 
-    public abstract selectedTimelineIndex: Ref<number>;
-    public abstract timelines: ShallowReactive<BaseTimeline[]>;
-    public abstract timeline: ComputedRef<BaseTimeline>;
+    public abstract selectedTimeline: Ref<string | undefined>;
+    public abstract timelines: ShallowReactive<SimpleTimeline[]>;
+    public abstract timeline: ComputedRef<SimpleTimeline | undefined>;
 
     /**
      * Triggered when this class has been changed
