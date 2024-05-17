@@ -10,7 +10,9 @@ import BaseStorageController from '../base/Storage';
 import type BaseTimeline from '../base/Timeline';
 import Media from '../Media/Media';
 import SimpleProject from '../Project/SimpleProject';
-import type SimpleTimeline from '../Timeline/SimpleTimeline';
+import SimpleTimeline from '../Timeline/SimpleTimeline';
+import AudioTimelineItem from '../TimelineItem/AudioTimelineItem';
+import VideoTimelineItem from '../TimelineItem/VideoTimelineItem';
 import { SafelightIndexedDB } from './db';
 
 export default class IndexedDbStorageController extends BaseStorageController {
@@ -19,24 +21,28 @@ export default class IndexedDbStorageController extends BaseStorageController {
 
     private db = new SafelightIndexedDB();
 
-    async SaveProject(project: BaseProject | StoredProject): Promise<SaveResults> {
+    async SaveProject(project: BaseProject, includeTimelines = true): Promise<SaveResults> {
         const existingProject = await this.db.project.get({ id: project.id });
 
-        const storableProject: StoredProject =
-            'updated' in project
-                ? project
-                : {
-                      id: project.id,
-                      name: project.name.value,
-                      type: project.type,
-                      media: project.media.map((m) => m.id).filter((id) => id !== undefined),
-                      timelines: project.timelines.map((m) => m.id),
-                      updated: DateTime.now().toISO(),
-                      created: existingProject?.created ?? DateTime.now().toISO()
-                  };
+        const storableProject: StoredProject = {
+            id: project.id,
+            name: project.name.value,
+            type: project.type,
+            media: project.media.map((m) => m.id).filter((id) => id !== undefined),
+            timelines: project.timelines.map((m) => m.id),
+            activeTimeline: project.timeline.value?.id,
+            updated: DateTime.now().toISO(),
+            created: existingProject?.created ?? DateTime.now().toISO()
+        };
 
         try {
             await this.db.project.put(storableProject, project.id);
+
+            if (includeTimelines) {
+                const proms = project.timelines.map((timeline) => this.SaveTimeline(timeline));
+                await Promise.allSettled(proms);
+            }
+
             return 'Success';
         } catch (error: any) {
             return error.toString();
@@ -69,11 +75,15 @@ export default class IndexedDbStorageController extends BaseStorageController {
                         );
                         if (timeline) {
                             proj.timelines.push(timeline);
+                            if (timeline.id == project.activeTimeline) {
+                                proj.selectTimeline(timeline);
+                            }
                         }
                     });
 
                     // Load all timelines and media
-                    await Promise.allSettled([...timelineFetches, ...mediaFetches]);
+                    await Promise.allSettled(mediaFetches);
+                    await Promise.allSettled(timelineFetches);
                     proj.name.value = project.name;
                     return proj;
                 } else {
@@ -189,14 +199,94 @@ export default class IndexedDbStorageController extends BaseStorageController {
         return media;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async SaveTimeline(_timeline: BaseTimeline): Promise<SaveResults> {
-        throw new Error('Method not implemented.');
+    SaveTimeline(timeline: SimpleTimeline): Promise<SaveResults> {
+        return new Promise<SaveResults>(async (resolve) => {
+            await this.db.timelineItem.bulkAdd(
+                Array.from(timeline.items.values()).map((item) => ({
+                    duration: item.isAudio() || item.isVideo() ? item.duration.value : undefined,
+                    end: item.end.value,
+                    start: item.start.value,
+                    type: item.type,
+                    media: item.hasMedia() ? item.media.value?.id : undefined,
+                    id: item.id,
+                    name: item.name.value,
+                    layer: item.layer.value
+                }))
+            );
+
+            this.db.timeline
+                .put({
+                    id: timeline.id,
+                    name: timeline.name.value,
+                    type: timeline.type,
+                    items: timeline.isSimpleTimeline()
+                        ? Array.from(timeline.items.values()).map(({ id }) => id)
+                        : [],
+                    framerate: timeline.framerate.value,
+                    height: timeline.height.value,
+                    width: timeline.width.value
+                })
+                .catch((err) => {
+                    resolve('Error');
+                    console.error(err);
+                })
+                .then(() => {
+                    resolve('Success');
+                });
+        });
     }
-    LoadTimeline<Timeline extends BaseTimeline = BaseTimeline>(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        _timelineId: string
+    async LoadTimeline<Timeline extends BaseTimeline = BaseTimeline>(
+        timelineId: string
     ): Promise<Timeline | undefined> {
-        throw new Error('Method not implemented.');
+        const storedTimeline = await this.db.timeline.get(timelineId);
+        if (!storedTimeline) return;
+
+        if (storedTimeline.type == 'Simple') {
+            const timeline = new SimpleTimeline({
+                framerate: storedTimeline.framerate,
+                height: storedTimeline.height,
+                width: storedTimeline.width,
+                name: storedTimeline.name
+            });
+
+            timeline.id = storedTimeline.id;
+
+            const TLitems = await this.db.timelineItem.bulkGet(storedTimeline.items);
+
+            const promises = TLitems.map(async (stored) => {
+                if (!stored) return;
+
+                if (stored.type == 'Audio') {
+                    const item = new AudioTimelineItem();
+                    item.id = stored.id;
+                    item.duration.value = stored.duration!;
+                    item.end.value = stored.end;
+                    item.layer.value = stored.layer;
+                    item.name.value = stored.name;
+                    if (stored.media) {
+                        item.media.value = await this.LoadMedia(stored.media);
+                    }
+
+                    timeline.items.add(item);
+                } else if (stored.type == 'Video') {
+                    const item = new VideoTimelineItem();
+
+                    item.id = stored.id;
+                    item.duration.value = stored.duration!;
+                    item.end.value = stored.end;
+                    item.layer.value = stored.layer;
+                    item.name.value = stored.name;
+                    if (stored.media) {
+                        item.media.value = await this.LoadMedia(stored.media);
+                    }
+
+                    timeline.items.add(item);
+                }
+            });
+
+            await Promise.allSettled(promises);
+
+            return timeline as unknown as Timeline;
+        }
     }
 }

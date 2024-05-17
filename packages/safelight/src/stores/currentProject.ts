@@ -44,17 +44,21 @@ export class CurrentProject {
         ).default;
         Storage.setStorage(new IndexedDbStorageController());
         const SimpleProject = (await import('@safelight/shared/Project/SimpleProject')).default;
+
         const proj = new SimpleProject();
+
         // TODO: Make configurable
-        const timeline = proj.createTimeline({
+        proj.createTimeline({
             framerate: 60,
             width: 1920,
             height: 1080,
             name: 'Main'
         });
-        Storage.getStorage().SaveProject(proj);
-        Storage.getStorage().SaveTimeline(timeline);
+
         this.setProject(proj);
+
+        await proj.Save();
+        this.setSessionProject(proj);
 
         if (goToEditor) await this.toEditor();
     }

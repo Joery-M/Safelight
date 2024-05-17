@@ -22,9 +22,12 @@ export default class SimpleProject
 
     public media = shallowReactive<Media[]>([]);
 
-    public selectedTimelineIndex = ref(0);
+    public selectedTimeline = ref<string>();
     public timelines = shallowReactive<SimpleTimeline[]>([]);
-    public timeline = computed(() => this.timelines.at(this.selectedTimelineIndex.value)!);
+    // public timeline = computed(() => this.timelines.find(this.selectedTimelineIndex.value)!);
+    public timeline = computed(() =>
+        this.timelines.find(({ id }) => id == this.selectedTimeline.value)
+    );
 
     constructor() {
         super();
@@ -48,10 +51,7 @@ export default class SimpleProject
     }
 
     public selectTimeline(timeline: SimpleTimeline) {
-        const timelineIndex = this.timelines.indexOf(timeline);
-        if (timelineIndex >= 0) {
-            this.selectedTimelineIndex.value = timelineIndex;
-        }
+        this.selectedTimeline.value = timeline.id;
     }
 
     public createTimeline(config: SimpleTimelineConfig, selectWhenCreated = true): SimpleTimeline {
