@@ -95,6 +95,7 @@ export interface StoredProject {
      * Array of timeline id's
      */
     timelines: string[];
+    activeTimeline?: string;
     created: string;
     updated: string;
 }

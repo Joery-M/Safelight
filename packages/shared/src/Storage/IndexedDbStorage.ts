@@ -21,24 +21,28 @@ export default class IndexedDbStorageController extends BaseStorageController {
 
     private db = new SafelightIndexedDB();
 
-    async SaveProject(project: BaseProject | StoredProject): Promise<SaveResults> {
+    async SaveProject(project: BaseProject, includeTimelines = true): Promise<SaveResults> {
         const existingProject = await this.db.project.get({ id: project.id });
 
-        const storableProject: StoredProject =
-            'updated' in project
-                ? project
-                : {
-                      id: project.id,
-                      name: project.name.value,
-                      type: project.type,
-                      media: project.media.map((m) => m.id).filter((id) => id !== undefined),
-                      timelines: project.timelines.map((m) => m.id),
-                      updated: DateTime.now().toISO(),
-                      created: existingProject?.created ?? DateTime.now().toISO()
-                  };
+        const storableProject: StoredProject = {
+            id: project.id,
+            name: project.name.value,
+            type: project.type,
+            media: project.media.map((m) => m.id).filter((id) => id !== undefined),
+            timelines: project.timelines.map((m) => m.id),
+            activeTimeline: project.timeline.value?.id,
+            updated: DateTime.now().toISO(),
+            created: existingProject?.created ?? DateTime.now().toISO()
+        };
 
         try {
             await this.db.project.put(storableProject, project.id);
+
+            if (includeTimelines) {
+                const proms = project.timelines.map((timeline) => this.SaveTimeline(timeline));
+                await Promise.allSettled(proms);
+            }
+
             return 'Success';
         } catch (error: any) {
             return error.toString();
@@ -71,11 +75,15 @@ export default class IndexedDbStorageController extends BaseStorageController {
                         );
                         if (timeline) {
                             proj.timelines.push(timeline);
+                            if (timeline.id == project.activeTimeline) {
+                                proj.selectTimeline(timeline);
+                            }
                         }
                     });
 
                     // Load all timelines and media
-                    await Promise.allSettled([...timelineFetches, ...mediaFetches]);
+                    await Promise.allSettled(mediaFetches);
+                    await Promise.allSettled(timelineFetches);
                     proj.name.value = project.name;
                     return proj;
                 } else {
@@ -277,6 +285,8 @@ export default class IndexedDbStorageController extends BaseStorageController {
             });
 
             await Promise.allSettled(promises);
+
+            return timeline as unknown as Timeline;
         }
     }
 }
