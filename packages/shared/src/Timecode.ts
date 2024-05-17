@@ -33,7 +33,9 @@ export default class Timecode {
             .padStart(2, '0');
         const minutes = (Math.floor(ms / 60_000) % 60).toString().padStart(2, '0');
         const seconds = (Math.floor(ms / 1_000) % 60).toString().padStart(2, '0');
-        const milliseconds = (ms % 1000).toString().padStart(3, '0');
+        const milliseconds = Math.round(ms % 1000)
+            .toString()
+            .padStart(3, '0');
         return `${hours}:${minutes}:${seconds}.${milliseconds}`;
     }
 }

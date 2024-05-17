@@ -30,6 +30,8 @@ export default class SimpleTimeline extends BaseTimeline {
         this.width.value = config.width;
         this.height.value = config.height;
         this.framerate.value = config.framerate;
+
+        this.pbPosHistory.commit();
     }
 
     /**
@@ -65,18 +67,20 @@ export default class SimpleTimeline extends BaseTimeline {
     public isPlaying = ref(false);
     public pbPos = ref(0);
     public pbPosHistory = useManualRefHistory(this.pbPos, { capacity: 100 });
+    public totalSkippedFrames = ref(0);
     private lastStepTime: number | undefined = undefined;
 
     public startPlayback(startTime?: number) {
-        if (startTime) {
+        if (startTime !== undefined) {
             this.pbPos.value = startTime;
             this.pbPosHistory.commit();
         }
+        this.totalSkippedFrames.value = 0;
         this.isPlaying.value = true;
         this.stepPlayback();
     }
 
-    private stepPlayback() {
+    public stepPlayback(backwards = false) {
         const timeNow = performance.now();
         // Calculate step, whilst removing excess decimals to prevent floating point inaccuracy
         const step = Math.round(
@@ -86,20 +90,25 @@ export default class SimpleTimeline extends BaseTimeline {
         );
         // If step is too small, it means were too early
         if (step < 1) {
-            requestAnimationFrame(this.stepPlayback);
+            requestAnimationFrame(() => this.stepPlayback());
             return;
         }
         // If step is too large it means were too late (skipping frames)
         if (step > 1) {
-            console.log(`Skipped ${step} frames`);
+            this.totalSkippedFrames.value += step - 1;
+            console.log(`Skipped ${step - 1} frame${step > 2 ? 's' : ''}`);
         }
-        this.pbPos.value += this.frameDuration.value * step;
+        this.pbPos.value += this.frameDuration.value * (backwards ? -step : step);
+        if (this.pbPos.value < 0) {
+            this.pbPos.value = 0;
+        }
 
         if (this.isPlaying.value) {
             this.lastStepTime = timeNow;
 
-            requestAnimationFrame(this.stepPlayback);
+            requestAnimationFrame(() => this.stepPlayback());
         } else {
+            this.pbPosHistory.commit();
             this.lastStepTime = undefined;
         }
     }
