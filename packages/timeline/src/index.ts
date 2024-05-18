@@ -16,12 +16,6 @@ export type TimelineAlignment = 'top' | 'bottom';
 
 export interface TimelineProps {
     /**
-     * The items to display in the timeline.
-     *
-     * Key is the ID of the item.
-     */
-    items: { [id: string]: TimelineItem };
-    /**
      * Whether to align the timeline to the top or bottom.
      *
      * Useful when you have 2 timelines vertically stacked.
@@ -55,6 +49,12 @@ export interface TimelineProps {
      * @default false
      */
     invertHorizontalScroll?: boolean;
+    /**
+     * Current timeline FPS
+     *
+     * @default Infinity
+     */
+    fps?: number;
 }
 
 /* 
@@ -122,6 +122,13 @@ export class TimelineViewport {
     boundingBoxWidth = ref(250);
 
     timebarHeight = ref(0);
+
+    /**
+     * Current playback position in milliseconds
+     */
+    pbPos = ref<number | undefined>(0);
+
+    fps = ref(Infinity);
 
     private constantYScale = 0.5;
 
@@ -247,6 +254,12 @@ export class TimelineViewport {
         return (
             ((time - this.minTime.value) / (this.endTime.value - this.startTime.value)) *
             this.boundingBoxWidth.value
+        );
+    }
+
+    getPositionTime(position: number) {
+        return (
+            (position / this.boundingBoxWidth.value) * (this.endTime.value - this.startTime.value)
         );
     }
 

@@ -27,6 +27,10 @@ export default class Timecode {
         return frame * (1 / fps) * 1000;
     }
 
+    static toFrames(ms: number, fps: number) {
+        return (ms / 1000) * fps;
+    }
+
     static toFormattedTimecode(ms: number) {
         const hours = Math.floor(ms / 3_600_000)
             .toString()

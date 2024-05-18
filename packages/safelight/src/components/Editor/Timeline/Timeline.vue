@@ -1,13 +1,33 @@
 <template>
-    <SLTimeline class="h-full" :items="items" />
+    <SLTimeline
+        v-model:items="items"
+        :playback-position="pbPos"
+        :fps="timeline?.framerate.value"
+        class="h-full"
+        @update:playback-position="setPbPos"
+    />
 </template>
 
 <script setup lang="ts">
+import Timecode from '@safelight/shared/Timecode';
 import { Timeline as SLTimeline, type TimelineItem } from '@safelight/timeline/source';
 import { v4 as uuidv4 } from 'uuid';
 import { reactive } from 'vue';
 
 const ids = new Array(17).fill('').map(() => uuidv4());
+
+const timeline = CurrentProject.project.value?.timeline;
+const pbPos = computed(() =>
+    timeline?.value
+        ? Timecode.fromFrames(timeline.value.pbPos.value, timeline.value.framerate.value)
+        : 0
+);
+
+function setPbPos(pb?: number) {
+    if (pb !== undefined && timeline?.value) {
+        timeline.value.pbPos.value = Timecode.toFrames(pb, timeline.value.framerate.value);
+    }
+}
 
 const items = reactive<{ [key: string]: TimelineItem }>({
     [ids[0]]: {

@@ -65,14 +65,17 @@ export default class SimpleTimeline extends BaseTimeline {
     //#region Playback
 
     public isPlaying = ref(false);
+    /**
+     * Current playback position in frames
+     */
     public pbPos = ref(0);
     public pbPosHistory = useManualRefHistory(this.pbPos, { capacity: 100 });
     public totalSkippedFrames = ref(0);
     private lastStepTime: number | undefined = undefined;
 
-    public startPlayback(startTime?: number) {
-        if (startTime !== undefined) {
-            this.pbPos.value = startTime;
+    public startPlayback(startFrame?: number) {
+        if (startFrame !== undefined) {
+            this.pbPos.value = startFrame;
             this.pbPosHistory.commit();
         }
         this.totalSkippedFrames.value = 0;
@@ -98,7 +101,7 @@ export default class SimpleTimeline extends BaseTimeline {
             this.totalSkippedFrames.value += step - 1;
             console.log(`Skipped ${step - 1} frame${step > 2 ? 's' : ''}`);
         }
-        this.pbPos.value += this.frameDuration.value * (backwards ? -step : step);
+        this.pbPos.value += backwards ? -step : step;
         if (this.pbPos.value < 0) {
             this.pbPos.value = 0;
         }

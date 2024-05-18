@@ -31,31 +31,16 @@ function drawAll() {
 
     ctx.clearRect(0, 0, canvas.value?.width ?? 1000, canvas.value?.height ?? 1000);
 
-    if (viewport.getTimePosition(1) > 25) {
-        // 50ms
-        drawTicks(
-            ctx,
-            viewport.getTimePosition(1),
-            bounding.height.value * 0.4,
-            'rgba(255, 255, 255, 0.15)',
-            false
-        );
+    // every frame
+    const frameWidth = viewport.getTimePosition(1000 / viewport.fps.value);
+    if (frameWidth > 25) {
+        drawTicks(ctx, frameWidth, bounding.height.value * 0.4, 'rgba(255, 255, 255, 0.2)', false);
     }
-    if (viewport.getTimePosition(50) > 25) {
-        // 50ms
-        drawTicks(
-            ctx,
-            viewport.getTimePosition(50),
-            bounding.height.value * 0.4,
-            'rgba(255, 255, 255, 0.15)',
-            false
-        );
-    }
-    // 100ms
+    // 500ms
     drawTicks(
         ctx,
         viewport.getTimePosition(100),
-        bounding.height.value * 0.7,
+        bounding.height.value * 0.6,
         'rgba(255, 255, 255, 0.3)'
     );
     // 1s
@@ -93,5 +78,7 @@ function drawTicks(
 <style lang="scss" scoped>
 canvas {
     height: 2em;
+    pointer-events: none;
+    user-select: none;
 }
 </style>
