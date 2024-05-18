@@ -82,7 +82,7 @@ export class TimelineViewport {
      *
      * @default 1 second
      */
-    endTime = ref(1000);
+    endTime = ref(10000);
 
     /**
      * The current bottom side boundary of the viewport, when alignment is set to 'bottom'.
@@ -120,6 +120,8 @@ export class TimelineViewport {
 
     boundingBoxHeight = ref(250);
     boundingBoxWidth = ref(250);
+
+    timebarHeight = ref(0);
 
     private constantYScale = 0.5;
 

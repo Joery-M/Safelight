@@ -6,6 +6,7 @@
             </template>
         </SplitterPanel>
         <SplitterPanel id="verticalContainer" :size="90">
+            <TimeBar />
             <div id="timelineItemContainer" ref="target">
                 <template v-for="item in props.items" :key="item.id">
                     <TimelineItemComponent
@@ -43,6 +44,7 @@ import SplitterPanel from 'primevue/splitterpanel';
 import { computed, provide, ref, watch } from 'vue';
 import { TimelineViewport, type TimelineItem, type TimelineProps } from './index';
 import LayerControl from './LayerControl.vue';
+import TimeBar from './TimeBar.vue';
 import TimelineItemComponent from './TimelineItemComponent.vue';
 
 const target = ref<HTMLDivElement>();
