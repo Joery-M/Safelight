@@ -1,8 +1,6 @@
 <template>
     <template v-if="timeline">
-        <p>
-            {{ Timecode.toFormattedTimecode(timeline.pbPos.value) }}
-        </p>
+        <Timecode />
         <ButtonGroup>
             <Button
                 severity="secondary"
@@ -37,7 +35,6 @@
 </template>
 
 <script lang="ts" setup>
-import Timecode from '@safelight/shared/Timecode';
 import ButtonGroup from 'primevue/buttongroup';
 
 const { project } = CurrentProject;
