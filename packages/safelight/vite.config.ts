@@ -78,6 +78,47 @@ export default defineConfig({
             '@': fileURLToPath(new URL('./src', import.meta.url))
         }
     },
+    optimizeDeps: {
+        include: [
+            '@phosphor-icons/vue',
+            '@vueuse/gesture',
+            '@vueuse/math',
+            '@vueuse/rxjs',
+            'dexie',
+            'fuzzysearch',
+            'hash-wasm',
+            'luxon',
+            'mediainfo.js',
+            'mime-matcher',
+            'primevue/button',
+            'primevue/buttongroup',
+            'primevue/card',
+            'primevue/column',
+            'primevue/confirmdialog',
+            'primevue/datatable',
+            'primevue/dataview',
+            'primevue/dataviewlayoutoptions',
+            'primevue/dropdown',
+            'primevue/inplace',
+            'primevue/inputgroup',
+            'primevue/inputgroupaddon',
+            'primevue/inputmask',
+            'primevue/inputtext',
+            'primevue/menu',
+            'primevue/menubar',
+            'primevue/overlaypanel',
+            'primevue/skeleton',
+            'primevue/slider',
+            'primevue/splitbutton',
+            'primevue/splitter',
+            'primevue/splitterpanel',
+            'primevue/tabmenu',
+            'primevue/toolbar',
+            'primevue/useconfirm',
+            'rxjs',
+            'uuid'
+        ]
+    },
     server: {
         headers: {
             'Cross-Origin-Embedder-Policy': 'require-corp',
