@@ -64,7 +64,7 @@
         "typescript": "^5.4.5",
         "unplugin-auto-import": "^0.17.5",
         "unplugin-turbo-console": "^1.8.6",
-        "unplugin-vue-components": "^0.26.0",
+        "unplugin-vue-components": "^0.27.0",
         "unplugin-vue-router": "^0.8.6",
         "vite": "^5.2.11",
         "vite-plugin-mkcert": "^1.17.5",
