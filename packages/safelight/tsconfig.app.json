@@ -1,13 +1,14 @@
 {
     "extends": "@vue/tsconfig/tsconfig.dom.json",
     "include": [
-        "*.d.ts",
+        "./*.d.ts",
         "./types/**/*.d.ts",
         "src/**/*",
         "src/**/*.ts",
         "src/**/*.vue",
         "src/**/*.json",
-        "tsconfig.worker.json"
+        "tsconfig.worker.json",
+        "../../globals.d.ts"
     ],
     "exclude": ["src/**/__tests__/*"],
     "compilerOptions": {

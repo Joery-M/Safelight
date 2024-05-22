@@ -30,7 +30,9 @@ const height = computed(
         viewport.LayerToYPosition(layer, false, true) - viewport.LayerToYPosition(layer, true, true)
 );
 
-const y = computed(() => viewport!.LayerToYPosition(layer, true, true));
+const y = computed(
+    () => viewport!.LayerToYPosition(layer, true, true) + viewport.timebarHeight.value
+);
 const ySmooth = y;
 
 const isResizing = ref(false);

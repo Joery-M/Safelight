@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils';
 import { expect, test } from 'vitest';
-import { Timeline } from '..';
+import { Timeline } from '../src';
 
 test('Timeline item renders', () => {
     expect(Timeline).toBeTruthy();
@@ -26,10 +26,11 @@ test('Timeline item renders', () => {
 test('Multiple timeline items renders', () => {
     expect(Timeline).toBeTruthy();
 
-    document.write('<app id="app"></app>');
+    document.write('<div id="app"></div>');
     const wrapper = mount(Timeline, {
         attachTo: '#app',
         props: {
+            playbackPosition: undefined,
             items: {
                 '1': {
                     id: '1',

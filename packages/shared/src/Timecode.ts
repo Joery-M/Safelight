@@ -27,13 +27,19 @@ export default class Timecode {
         return frame * (1 / fps) * 1000;
     }
 
+    static toFrames(ms: number, fps: number) {
+        return (ms / 1000) * fps;
+    }
+
     static toFormattedTimecode(ms: number) {
         const hours = Math.floor(ms / 3_600_000)
             .toString()
             .padStart(2, '0');
         const minutes = (Math.floor(ms / 60_000) % 60).toString().padStart(2, '0');
         const seconds = (Math.floor(ms / 1_000) % 60).toString().padStart(2, '0');
-        const milliseconds = (ms % 1000).toString().padStart(3, '0');
+        const milliseconds = Math.round(ms % 1000)
+            .toString()
+            .padStart(3, '0');
         return `${hours}:${minutes}:${seconds}.${milliseconds}`;
     }
 }

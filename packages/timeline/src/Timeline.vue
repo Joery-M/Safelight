@@ -5,9 +5,11 @@
                 <LayerControl ref="layerControls" :layer="i - 1" />
             </template>
         </SplitterPanel>
-        <SplitterPanel id="verticalContainer" :size="90">
+        <SplitterPanel id="verticalContainer" :size="90" style="position: relative">
+            <TimeBar ref="timeBar" />
+            <PlaybackHead v-if="viewport.pbPos.value !== undefined" ref="pbHead" />
             <div id="timelineItemContainer" ref="target">
-                <template v-for="item in props.items" :key="item.id">
+                <template v-for="item in items" :key="item.id">
                     <TimelineItemComponent
                         v-if="viewport.isItemVisible(item)"
                         :item="item"
@@ -34,15 +36,16 @@ import {
     useElementBounding,
     useEventListener,
     useMouseInElement,
-    useVModel,
     watchImmediate
 } from '@vueuse/core';
 import { useWheel } from '@vueuse/gesture';
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
-import { computed, provide, ref, watch } from 'vue';
+import { computed, provide, ref } from 'vue';
 import { TimelineViewport, type TimelineItem, type TimelineProps } from './index';
 import LayerControl from './LayerControl.vue';
+import PlaybackHead from './PlaybackHead.vue';
+import TimeBar from './TimeBar.vue';
 import TimelineItemComponent from './TimelineItemComponent.vue';
 
 const target = ref<HTMLDivElement>();
@@ -50,29 +53,38 @@ const horizontalScroll = ref<HTMLDivElement>();
 const pointerOut = useMouseInElement(target).isOutside;
 
 const props = withDefaults(defineProps<TimelineProps>(), {
-    items: () => ({}),
     alignment: 'bottom',
     zoomFactor: 2,
     invertScrollAxes: false,
     invertHorizontalScroll: false,
-    invertVerticalScroll: false
+    invertVerticalScroll: false,
+    playbackPosition: undefined
 });
 
-const emit = defineEmits<{
-    'update:modelValue': any[];
-}>();
+const items = defineModel<{ [id: string]: TimelineItem }>('items', {
+    default: {},
+    required: true
+});
 
-const items = useVModel(props, 'items', emit);
+const playbackPosition = defineModel<number | undefined>('playbackPosition', {
+    default: undefined,
+    required: false
+});
 
 const layerControls = ref<(typeof LayerControl)[]>([]);
+const pbHead = ref<typeof PlaybackHead>();
+const timeBar = ref<typeof TimeBar>();
 
 const viewport = new TimelineViewport();
+
+viewport.pbPos = playbackPosition;
 
 provide('viewport', viewport);
 
 watchImmediate(props, () => {
     viewport.alignment.value = props.alignment;
     viewport.zoomFactor.value = props.zoomFactor;
+    viewport.fps.value = props.fps ?? Infinity;
 });
 
 watchImmediate(items.value, () => {
@@ -135,10 +147,6 @@ useWheel(
 
 //#region Items
 
-watch(props.items, () => {
-    console.log(props.items);
-});
-
 function updateItem(newItem: TimelineItem) {
     items.value[newItem.id] = newItem;
 }
@@ -170,6 +178,8 @@ function startResize(ev: MouseEvent) {
 
 function resizing(ev: MouseEvent) {
     layerControls.value.forEach((lc) => lc.resizing(ev));
+    pbHead.value?.moving(ev);
+    timeBar.value?.moving(ev);
 
     if (isHoldingHorizontal.value) {
         window.getSelection()?.removeAllRanges();
@@ -180,6 +190,9 @@ function resizing(ev: MouseEvent) {
 }
 function endResize(ev: MouseEvent) {
     layerControls.value.forEach((lc) => lc.endResize(ev));
+    pbHead.value?.endMove();
+    timeBar.value?.endMove();
+
     if (isHoldingHorizontal.value) {
         isHoldingHorizontal.value = false;
     }

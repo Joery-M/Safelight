@@ -1,6 +1,7 @@
 <template>
-    <div class="flex items-center justify-center">
+    <div class="flex flex-col items-center justify-center">
         <p>Monitor</p>
+        <PlaybackControls />
     </div>
 </template>
 

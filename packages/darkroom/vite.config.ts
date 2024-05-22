@@ -15,5 +15,8 @@ export default defineConfig({
             name: 'darkroom'
         },
         sourcemap: true
+    },
+    define: {
+        __TEST__: false
     }
 });

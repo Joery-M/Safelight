@@ -13,10 +13,7 @@ export class SafelightIndexedDB extends Dexie {
     timelineItem!: Table<StoredSimpleTimelineItem, string>;
 
     constructor() {
-        // Only during tests
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore
-        if (window?.vitest) {
+        if (__TEST__) {
             super('SafelightIdb', { indexedDB: window.indexedDB, IDBKeyRange: window.IDBKeyRange });
         } else {
             super('SafelightIdb');
