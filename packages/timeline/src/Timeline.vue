@@ -6,7 +6,7 @@
             </template>
         </SplitterPanel>
         <SplitterPanel id="verticalContainer" :size="90" style="position: relative">
-            <TimeBar />
+            <TimeBar ref="timeBar" />
             <PlaybackHead v-if="viewport.pbPos.value !== undefined" ref="pbHead" />
             <div id="timelineItemContainer" ref="target">
                 <template v-for="item in items" :key="item.id">
@@ -73,6 +73,7 @@ const playbackPosition = defineModel<number | undefined>('playbackPosition', {
 
 const layerControls = ref<(typeof LayerControl)[]>([]);
 const pbHead = ref<typeof PlaybackHead>();
+const timeBar = ref<typeof TimeBar>();
 
 const viewport = new TimelineViewport();
 
@@ -178,6 +179,7 @@ function startResize(ev: MouseEvent) {
 function resizing(ev: MouseEvent) {
     layerControls.value.forEach((lc) => lc.resizing(ev));
     pbHead.value?.moving(ev);
+    timeBar.value?.moving(ev);
 
     if (isHoldingHorizontal.value) {
         window.getSelection()?.removeAllRanges();
@@ -188,7 +190,8 @@ function resizing(ev: MouseEvent) {
 }
 function endResize(ev: MouseEvent) {
     layerControls.value.forEach((lc) => lc.endResize(ev));
-    pbHead.value?.endMove(ev);
+    pbHead.value?.endMove();
+    timeBar.value?.endMove();
 
     if (isHoldingHorizontal.value) {
         isHoldingHorizontal.value = false;

@@ -129,6 +129,7 @@ export class TimelineViewport {
     pbPos = ref<number | undefined>(0);
 
     fps = ref(Infinity);
+    frameDuration = computed(() => 1000 / this.fps.value);
 
     private constantYScale = 0.5;
 

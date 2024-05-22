@@ -7,7 +7,7 @@
             left: left + 'px'
         }"
     >
-        <div id="pbHandle" @mousedown="startMove" @mouseup="endMove"></div>
+        <div id="pbHandle" @mousedown="startMove"></div>
     </div>
 </template>
 
@@ -38,9 +38,9 @@ function moving(ev: MouseEvent) {
         window.getSelection()?.removeAllRanges();
         virtualPos.value = virtualPos.value + viewport.getPositionTime(ev.clientX - lastPos.value);
         if (performance.now() - lastMoveTime > 10) {
-            const frameDuration = 1000 / viewport.fps.value;
             viewport.pbPos.value =
-                Math.round(Math.max(0, virtualPos.value) / frameDuration) * frameDuration;
+                Math.round(Math.max(0, virtualPos.value) / viewport.frameDuration.value) *
+                viewport.frameDuration.value;
             lastMoveTime = performance.now();
         }
         lastPos.value = ev.clientX;
@@ -49,9 +49,9 @@ function moving(ev: MouseEvent) {
 function endMove() {
     if (isMoving.value) {
         isMoving.value = false;
-        const frameDuration = 1000 / viewport.fps.value;
         viewport.pbPos.value =
-            Math.round(Math.max(0, virtualPos.value) / frameDuration) * frameDuration;
+            Math.round(Math.max(0, virtualPos.value) / viewport.frameDuration.value) *
+            viewport.frameDuration.value;
     }
 }
 </script>
