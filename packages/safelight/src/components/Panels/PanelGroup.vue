@@ -6,7 +6,6 @@
                 <!-- eslint-disable-next-line vue/no-template-shadow -->
                 <template #item="{ item, props, index }">
                     <a
-                        v-ripple
                         v-bind="props.action"
                         class="align-items-center flex min-w-36 gap-1 p-2 pl-2 pr-1"
                         @click="activeIndex = index"
@@ -110,7 +109,7 @@ const activeTab = computed(() => {
     return panel;
 });
 
-const activeComponent = ref<Component>();
+const activeComponent = shallowRef<Component>();
 watchImmediate(activeTab, (tab) => {
     if (!tab) return;
 
