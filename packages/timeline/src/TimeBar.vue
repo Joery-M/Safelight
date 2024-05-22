@@ -27,7 +27,7 @@ watch(useWindowSize().width, () => {
 });
 
 onMounted(() => {
-    if (canvas.value) {
+    if (canvas.value && !__TEST__) {
         ctx = canvas.value.getContext('2d') ?? undefined;
     }
     drawAll();

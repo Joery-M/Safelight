@@ -46,6 +46,9 @@ const vueuseRxjsAutoImport = {
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    define: {
+        __TEST__: false
+    },
     plugins: [
         VueRouter({
             routesFolder: {
