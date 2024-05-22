@@ -184,8 +184,8 @@ importers:
         specifier: ^1.0.5
         version: 1.0.5
       monaco-editor:
-        specifier: ^0.46.0
-        version: 0.46.0
+        specifier: ^0.48.0
+        version: 0.48.0
       pinia:
         specifier: ^2.1.7
         version: 2.1.7(typescript@5.4.5)(vue@3.4.27)
@@ -3632,8 +3632,8 @@ packages:
       ufo: 1.5.3
     dev: true
 
-  /monaco-editor@0.46.0:
-    resolution: {integrity: sha512-ADwtLIIww+9FKybWscd7OCfm9odsFYHImBRI1v9AviGce55QY8raT+9ihH8jX/E/e6QVSGM+pKj4jSUSRmALNQ==}
+  /monaco-editor@0.48.0:
+    resolution: {integrity: sha512-goSDElNqFfw7iDHMg8WDATkfcyeLTNpBHQpO8incK6p5qZt5G/1j41X0xdGzpIkGojGXM+QiRQyLjnfDVvrpwA==}
     dev: false
 
   /mrmime@2.0.0:
