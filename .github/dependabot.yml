@@ -1,0 +1,46 @@
+version: 2
+updates:
+  - package-ecosystem: "pnpm"
+    directory: "/" # Workspace
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "@safelight/*"
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-patch"]
+
+  - package-ecosystem: "pnpm" # darkroom
+    directory: "/packages/darkroom"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "@safelight/*"
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-patch"]
+
+  - package-ecosystem: "pnpm" # safelight
+    directory: "/packages/safelight"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "@safelight/*"
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-patch"]
+
+  - package-ecosystem: "pnpm" # timeline
+    directory: "/packages/timeline"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "@safelight/*"
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-patch"]
+
+  - package-ecosystem: "pnpm" # shared
+    directory: "/packages/shared"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "@safelight/*"
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-patch"]
