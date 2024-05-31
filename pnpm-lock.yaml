@@ -166,8 +166,8 @@ importers:
         specifier: ^10.9.0
         version: 10.9.0(rxjs@7.8.1)(vue@3.4.27)
       dexie:
-        specifier: ^4.0.4
-        version: 4.0.4
+        specifier: ^4.0.7
+        version: 4.0.7
       fuzzysearch:
         specifier: ^1.0.3
         version: 1.0.3
@@ -305,8 +305,8 @@ importers:
         specifier: ^10.9.0
         version: 10.9.0(vue@3.4.27)
       dexie:
-        specifier: ^4.0.4
-        version: 4.0.4
+        specifier: ^4.0.7
+        version: 4.0.7
       hash-wasm:
         specifier: ^4.11.0
         version: 4.11.0
@@ -2525,8 +2525,8 @@ packages:
     engines: {node: '>=0.10'}
     hasBin: true
 
-  /dexie@4.0.4:
-    resolution: {integrity: sha512-wFzwWSUdi+MC3jiFeQcCp9nInR7EaX8edzYY+4wmiITkQAiSnHpe4Wo2o5Ce5tJZe2nqt7mLW91MsW4GYx3ziQ==}
+  /dexie@4.0.7:
+    resolution: {integrity: sha512-M+Lo6rk4pekIfrc2T0o2tvVJwL6EAAM/B78DNfb8aaxFVoI1f8/rz5KTxuAnApkwqTSuxx7T5t0RKH7qprapGg==}
     dev: false
 
   /didyoumean@1.2.2:

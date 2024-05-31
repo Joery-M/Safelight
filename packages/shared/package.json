@@ -15,7 +15,7 @@
         "@vueuse/core": "^10.9.0",
         "@vueuse/rxjs": "^10.9.0",
         "@vueuse/shared": "^10.9.0",
-        "dexie": "^4.0.4",
+        "dexie": "^4.0.7",
         "hash-wasm": "^4.11.0",
         "luxon": "^3.4.4",
         "mediainfo.js": "^0.2.2",
