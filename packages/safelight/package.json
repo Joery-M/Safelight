@@ -25,7 +25,7 @@
         "@vueuse/core": "^10.9.0",
         "@vueuse/gesture": "^2.0.0",
         "@vueuse/integrations": "^10.10.0",
-        "@vueuse/math": "^10.9.0",
+        "@vueuse/math": "^10.10.0",
         "@vueuse/rxjs": "^10.9.0",
         "dexie": "^4.0.4",
         "fuzzysearch": "^1.0.3",

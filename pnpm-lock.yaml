@@ -160,8 +160,8 @@ importers:
         specifier: ^10.10.0
         version: 10.10.0(vue@3.4.27)
       '@vueuse/math':
-        specifier: ^10.9.0
-        version: 10.9.0(vue@3.4.27)
+        specifier: ^10.10.0
+        version: 10.10.0(vue@3.4.27)
       '@vueuse/rxjs':
         specifier: ^10.9.0
         version: 10.9.0(rxjs@7.8.1)(vue@3.4.27)
@@ -360,8 +360,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0(vue@3.4.27)
       '@vueuse/math':
-        specifier: ^10.9.0
-        version: 10.9.0(vue@3.4.27)
+        specifier: ^10.10.0
+        version: 10.10.0(vue@3.4.27)
       primevue:
         specifier: ^3.52.0
         version: 3.52.0(vue@3.4.27)
@@ -1712,7 +1712,7 @@ packages:
       pathe: 1.1.2
       picocolors: 1.0.1
       sirv: 2.0.4
-      vitest: 1.6.0(@vitest/browser@1.6.0)(@vitest/ui@1.6.0)
+      vitest: 1.6.0(@types/node@20.12.12)(@vitest/browser@1.6.0)(@vitest/ui@1.6.0)
     dev: true
 
   /@vitest/utils@1.6.0:
@@ -1985,10 +1985,10 @@ packages:
       - vue
     dev: false
 
-  /@vueuse/math@10.9.0(vue@3.4.27):
-    resolution: {integrity: sha512-qb60AzFKzg8Gw85c4YiheEMC2AMkk+eO/nB9MmuQFU/HAHvfVckesiPlwaQqUlZQ4MJt0z8qP18/H7ozpj0sKQ==}
+  /@vueuse/math@10.10.0(vue@3.4.27):
+    resolution: {integrity: sha512-+jAA7wla5T400VcMLLRMMozAkoL/3LGJE8qNoteX1YHsvpDSN0UR0DkgCmu9UakhK3JWpX4SURXtwd98rDtMyA==}
     dependencies:
-      '@vueuse/shared': 10.9.0(vue@3.4.27)
+      '@vueuse/shared': 10.10.0(vue@3.4.27)
       vue-demi: 0.14.7(vue@3.4.27)
     transitivePeerDependencies:
       - '@vue/composition-api'
