@@ -27,7 +27,7 @@
         "@vueuse/integrations": "^10.10.0",
         "@vueuse/math": "^10.10.0",
         "@vueuse/rxjs": "^10.9.0",
-        "dexie": "^4.0.4",
+        "dexie": "^4.0.7",
         "fuzzysearch": "^1.0.3",
         "hash-wasm": "^4.11.0",
         "luxon": "^3.4.4",
