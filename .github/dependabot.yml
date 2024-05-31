@@ -4,6 +4,15 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      vueuse:
+        patterns:
+          - "@vueuse/*"
+      eslint:
+        patterns:
+          - "@typescript-eslint/*"
+          - "eslint-*"
+          - "eslint"
     ignore:
       - dependency-name: "@safelight/*"
       - dependency-name: "@types/node"
