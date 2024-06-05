@@ -289,4 +289,12 @@ export default class IndexedDbStorageController extends BaseStorageController {
             return timeline as unknown as Timeline;
         }
     }
+
+    async checkPersistentStorage() {
+        const persisted = await navigator.storage.persisted();
+        if (!persisted) {
+            useDialog
+            navigator.storage.persist();
+        }
+    }
 }
