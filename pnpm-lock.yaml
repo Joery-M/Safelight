@@ -111,13 +111,13 @@ importers:
         version: 1.0.2
       '@vitest/browser':
         specifier: ^1.6.0
-        version: 1.6.0(playwright@1.44.0)(vitest@1.6.0)
+        version: 1.6.0(playwright@1.44.1)(vitest@1.6.0)
       '@vitest/ui':
         specifier: ^1.6.0
         version: 1.6.0(vitest@1.6.0)
       playwright:
-        specifier: ^1.43.1
-        version: 1.44.0
+        specifier: ^1.44.1
+        version: 1.44.1
       rimraf:
         specifier: ^5.0.5
         version: 5.0.7
@@ -1743,7 +1743,7 @@ packages:
       vite: ^5.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 5.2.12
+      vite: 5.2.12(@types/node@20.12.12)(lightningcss@1.25.0)(sass@1.77.2)
       vue: 3.4.27(typescript@5.4.5)
     dev: true
 
@@ -1760,7 +1760,7 @@ packages:
     dev: false
     optional: true
 
-  /@vitest/browser@1.6.0(playwright@1.44.0)(vitest@1.6.0):
+  /@vitest/browser@1.6.0(playwright@1.44.1)(vitest@1.6.0):
     resolution: {integrity: sha512-3Wpp9h1hf++rRVPvoXevkdHybLhJVn7MwIMKMIh08tVaoDMmT6fnNhbP222Z48V9PptpYeA5zvH9Ct/ZcaAzmQ==}
     peerDependencies:
       playwright: '*'
@@ -1777,7 +1777,7 @@ packages:
     dependencies:
       '@vitest/utils': 1.6.0
       magic-string: 0.30.10
-      playwright: 1.44.0
+      playwright: 1.44.1
       sirv: 2.0.4
       vitest: 1.6.0(@types/node@20.14.2)(@vitest/browser@1.6.0)(@vitest/ui@1.6.0)
     dev: true
@@ -1845,7 +1845,7 @@ packages:
       pathe: 1.1.2
       picocolors: 1.0.1
       sirv: 2.0.4
-      vitest: 1.6.0(@vitest/browser@1.6.0)(@vitest/ui@1.6.0)
+      vitest: 1.6.0(@types/node@20.14.2)(@vitest/browser@1.6.0)(@vitest/ui@1.6.0)
     dev: true
 
   /@vitest/utils@1.6.0:
@@ -4160,18 +4160,18 @@ packages:
       pathe: 1.1.2
     dev: true
 
-  /playwright-core@1.44.0:
-    resolution: {integrity: sha512-ZTbkNpFfYcGWohvTTl+xewITm7EOuqIqex0c7dNZ+aXsbrLj0qI8XlGKfPpipjm0Wny/4Lt4CJsWJk1stVS5qQ==}
+  /playwright-core@1.44.1:
+    resolution: {integrity: sha512-wh0JWtYTrhv1+OSsLPgFzGzt67Y7BE/ZS3jEqgGBlp2ppp1ZDj8c+9IARNW4dwf1poq5MgHreEM2KV/GuR4cFA==}
     engines: {node: '>=16'}
     hasBin: true
     dev: true
 
-  /playwright@1.44.0:
-    resolution: {integrity: sha512-F9b3GUCLQ3Nffrfb6dunPOkE5Mh68tR7zN32L4jCk4FjQamgesGay7/dAAe1WaMEGV04DkdJfcJzjoCKygUaRQ==}
+  /playwright@1.44.1:
+    resolution: {integrity: sha512-qr/0UJ5CFAtloI3avF95Y0L1xQo6r3LQArLIg/z/PoGJ6xa+EwzrwO5lpNr/09STxdHuUoP2mvuELJS+hLdtgg==}
     engines: {node: '>=16'}
     hasBin: true
     dependencies:
-      playwright-core: 1.44.0
+      playwright-core: 1.44.1
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
@@ -5552,7 +5552,7 @@ packages:
         optional: true
     dependencies:
       '@types/node': 20.14.2
-      '@vitest/browser': 1.6.0(playwright@1.44.0)(vitest@1.6.0)
+      '@vitest/browser': 1.6.0(playwright@1.44.1)(vitest@1.6.0)
       '@vitest/expect': 1.6.0
       '@vitest/runner': 1.6.0
       '@vitest/snapshot': 1.6.0
