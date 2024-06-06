@@ -33,8 +33,8 @@ importers:
         specifier: ^5.1.3
         version: 5.1.3(eslint-config-prettier@9.1.0)(eslint@8.57.0)(prettier@3.2.5)
       eslint-plugin-tailwindcss:
-        specifier: ^3.17.1
-        version: 3.17.1(tailwindcss@3.4.4)
+        specifier: ^3.17.2
+        version: 3.17.2(tailwindcss@3.4.4)
       eslint-plugin-vue:
         specifier: ^9.25.0
         version: 9.26.0(eslint@8.57.0)
@@ -1743,7 +1743,7 @@ packages:
       vite: ^5.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 5.2.12(@types/node@20.12.12)(lightningcss@1.25.0)(sass@1.77.2)
+      vite: 5.2.12
       vue: 3.4.27(typescript@5.4.5)
     dev: true
 
@@ -1845,7 +1845,7 @@ packages:
       pathe: 1.1.2
       picocolors: 1.0.1
       sirv: 2.0.4
-      vitest: 1.6.0(@types/node@20.14.2)(@vitest/browser@1.6.0)(@vitest/ui@1.6.0)
+      vitest: 1.6.0(@vitest/browser@1.6.0)(@vitest/ui@1.6.0)
     dev: true
 
   /@vitest/utils@1.6.0:
@@ -2849,8 +2849,8 @@ packages:
       synckit: 0.8.8
     dev: true
 
-  /eslint-plugin-tailwindcss@3.17.1(tailwindcss@3.4.4):
-    resolution: {integrity: sha512-uHgM2bp2lIDEsW0thwbELfHRkPBRrtz7LrNg8DQ7EngYBBtZ9StJv2HVOKY7B+3zDE8N5G6ygynfJ/sxA6Vk1A==}
+  /eslint-plugin-tailwindcss@3.17.2(tailwindcss@3.4.4):
+    resolution: {integrity: sha512-U0hSG4z+q98e0Mot3n9zTzcTb2XRKy9xwXI36atIsAhJF/Hk7wqXptF8NBLNBaWgZPwmDmvH032Dxk2m0rHSeQ==}
     engines: {node: '>=18.12.0'}
     peerDependencies:
       tailwindcss: ^3.4.0
