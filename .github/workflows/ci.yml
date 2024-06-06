@@ -20,16 +20,14 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
+            - name: Enable Corepack
+              run: corepack enable
+
             - name: Install Node.js
               uses: actions/setup-node@v4
               with:
                   node-version: ${{ matrix.node-version }}
-
-            - name: Install pnpm
-              uses: pnpm/action-setup@v3
-              with:
-                  version: 8 # Last major
-                  run_install: false
+                  cache: 'pnpm'
 
             - name: Get pnpm store directory
               shell: bash
@@ -45,7 +43,7 @@ jobs:
                       ${{ runner.os }}-pnpm-store-
 
             - name: Get installed Playwright version
-              run: echo "PLAYWRIGHT_VERSION=$(cat pnpm-lock.yaml | grep ' playwright@' | sed -r 's/(.*@)([0-9.]*)(:)/\2/' | head -1)" >> $GITHUB_ENV
+              run: echo "PLAYWRIGHT_VERSION=$(cat pnpm-lock.yaml | grep 'playwright@' | sed -r 's/^.*playwright@([0-9.]*)\).*$/\1/' | head -1" >> $GITHUB_ENV
 
             - name: Install dependencies
               run: pnpm install --ignore-scripts
