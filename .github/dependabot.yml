@@ -1,14 +1,23 @@
 version: 2
 updates:
-  - package-ecosystem: "npm"
+  - package-ecosystem: npm
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: weekly
     groups:
+      vue:
+        patterns:
+          - "vue"
+          - "vue-tsc"
+          - "@vue/*"
+          - "@babel/types"
       vueuse:
         patterns:
           - "@vueuse/*"
       eslint:
+        update-types:
+          - "patch"
+          - "minor"
         patterns:
           - "@typescript-eslint/*"
           - "eslint-*"
