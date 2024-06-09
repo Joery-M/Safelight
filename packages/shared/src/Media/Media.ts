@@ -1,5 +1,5 @@
 import type { DateTime } from 'luxon';
-import type { MediaInfoType } from 'mediainfo.js';
+import type { MediaInfoResult } from 'mediainfo.js';
 import { ref } from 'vue';
 import MissingThumbnailUrl from '../../assets/missing_thumbnail.png?url';
 import type { MaybePromiseResult } from '../../types/MaybePromise';
@@ -40,7 +40,7 @@ export default class Media {
      *
      * If possible, don't use this data directly, use track info instead.
      */
-    public fileInfo!: MediaInfoType;
+    public fileInfo!: MediaInfoResult;
 
     videoTracks: VideoTrackInfo[] = [];
     audioTracks: AudioTrackInfo[] = [];

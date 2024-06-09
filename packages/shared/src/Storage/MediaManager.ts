@@ -1,11 +1,11 @@
 import { createMD5 } from 'hash-wasm';
 import { DateTime } from 'luxon';
-import type { MediaInfoType } from 'mediainfo.js';
+import type { MediaInfoResult } from 'mediainfo.js';
 import { Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { Storage } from '../base/Storage';
-import { generateMediaThumbnail } from '../helpers/Video/GenerateMediaThumbnail';
 import { getFileInfo } from '../helpers/Files/GetFileInfo';
+import { generateMediaThumbnail } from '../helpers/Video/GenerateMediaThumbnail';
 import {
     MediaType,
     type AudioTrackInfo,
@@ -120,7 +120,7 @@ export default class MediaManager {
         });
     }
 
-    private static parseFileInfo(info: MediaInfoType) {
+    private static parseFileInfo(info: MediaInfoResult) {
         const videoTracks: VideoTrackInfo[] = [];
         const audioTracks: AudioTrackInfo[] = [];
         const textTracks: TextTrackInfo[] = [];
@@ -148,10 +148,10 @@ export default class MediaManager {
             } else if (track['@type'] == 'Audio') {
                 audioTracks.push({
                     title: track.Title ?? `Audio Track ${audioTracks.length + 1}`,
-                    channels: (track.Channels ?? track.Audio_Channels_Total)!,
-                    codec: (track.CodecID ?? track.Format)!,
-                    sampleRate: track.SamplingRate!,
-                    duration: track.Duration!
+                    channels: track.Channels ?? 1,
+                    codec: track.CodecID ?? track.Format ?? 'Unknown codec',
+                    sampleRate: track.SamplingRate ?? 0,
+                    duration: track.Duration ?? 0
                 });
                 if (track.Duration) {
                     sampledDurations.push(track.Duration);

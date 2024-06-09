@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon';
+import { useConfirm } from 'primevue/useconfirm';
 import type BaseProject from '../base/Project';
 import type {
     SaveResults,
@@ -22,6 +23,7 @@ export default class IndexedDbStorageController extends BaseStorageController {
     private db = new SafelightIndexedDB();
 
     async SaveProject(project: BaseProject, includeTimelines = true): Promise<SaveResults> {
+        await this.checkPersistentStorage();
         const existingProject = await this.db.project.get({ id: project.id });
 
         const storableProject: StoredProject = {
@@ -94,6 +96,7 @@ export default class IndexedDbStorageController extends BaseStorageController {
     async UpdateStoredProject(
         project: Partial<StoredProject> & Pick<StoredProject, 'id'>
     ): Promise<SaveResults> {
+        await this.checkPersistentStorage();
         const existingProject = await this.db.project.get({ id: project.id });
 
         // Remove created so it can't be overridden
@@ -123,6 +126,7 @@ export default class IndexedDbStorageController extends BaseStorageController {
     }
 
     async SaveMedia(media: Media | StoredMedia): Promise<SaveResults> {
+        await this.checkPersistentStorage();
         const storedMedia: StoredMedia =
             'data' in media
                 ? media
@@ -290,11 +294,27 @@ export default class IndexedDbStorageController extends BaseStorageController {
         }
     }
 
-    async checkPersistentStorage() {
-        const persisted = await navigator.storage.persisted();
-        if (!persisted) {
-            useDialog
-            navigator.storage.persist();
-        }
+    private checkPersistentStorage() {
+        return new Promise<void>(async (resolve) => {
+            const persisted = await navigator.storage.persisted();
+            if (!persisted) {
+                useConfirm().require({
+                    group: 'global',
+                    header: 'Projects might get deleted',
+                    message:
+                        'Your browser might delete data when storing projects locally if it thinks you are running out of storage.\n' +
+                        'Do you want to ask the browser to not delete data?',
+                    accept() {
+                        navigator.storage.persist();
+                        resolve();
+                    },
+                    reject() {
+                        resolve();
+                    }
+                });
+            } else {
+                resolve();
+            }
+        });
     }
 }

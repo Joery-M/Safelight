@@ -1,4 +1,4 @@
-import type { MediaInfoType } from 'mediainfo.js';
+import type { MediaInfoResult } from 'mediainfo.js';
 import type {
     AudioTrackInfo,
     ImageInfo,
@@ -72,7 +72,7 @@ export interface StoredMedia {
     name: string;
     type: MediaType;
     contentHash: string;
-    fileInfo?: MediaInfoType;
+    fileInfo?: MediaInfoResult;
     previewImage?: Blob;
     data: Blob;
     duration: number;
