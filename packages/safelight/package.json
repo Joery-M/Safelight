@@ -68,7 +68,7 @@
         "unplugin-vue-router": "^0.8.6",
         "vite": "^5.2.12",
         "vite-plugin-mkcert": "^1.17.5",
-        "vue-tsc": "^2.0.16"
+        "vue-tsc": "^2.0.21"
     },
     "peerDependencies": {
         "mediainfo.js": "~0"
