@@ -1,8 +1,8 @@
-import MediaInfoFactory, { type MediaInfoType, type ReadChunkFunc } from 'mediainfo.js';
+import MediaInfoFactory, { type MediaInfoResult, type ReadChunkFunc } from 'mediainfo.js';
 import MediaInfoWasmUrl from 'mediainfo.js/MediaInfoModule.wasm?url';
 
 export async function getFileInfo(file: File) {
-    return new Promise<MediaInfoType>((resolve, reject) => {
+    return new Promise<MediaInfoResult>((resolve, reject) => {
         const readChunk: ReadChunkFunc = (chunkSize, offset) =>
             new Promise((resolve, reject) => {
                 const reader = new FileReader();

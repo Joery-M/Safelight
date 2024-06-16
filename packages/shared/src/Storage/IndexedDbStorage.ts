@@ -13,6 +13,7 @@ import SimpleProject from '../Project/SimpleProject';
 import SimpleTimeline from '../Timeline/SimpleTimeline';
 import AudioTimelineItem from '../TimelineItem/AudioTimelineItem';
 import VideoTimelineItem from '../TimelineItem/VideoTimelineItem';
+import { NotificationService } from '../UI/Notifications/NotificationService';
 import { SafelightIndexedDB } from './db';
 
 export default class IndexedDbStorageController extends BaseStorageController {
@@ -22,6 +23,7 @@ export default class IndexedDbStorageController extends BaseStorageController {
     private db = new SafelightIndexedDB();
 
     async SaveProject(project: BaseProject, includeTimelines = true): Promise<SaveResults> {
+        this.checkPersistentStorage();
         const existingProject = await this.db.project.get({ id: project.id });
 
         const storableProject: StoredProject = {
@@ -94,6 +96,7 @@ export default class IndexedDbStorageController extends BaseStorageController {
     async UpdateStoredProject(
         project: Partial<StoredProject> & Pick<StoredProject, 'id'>
     ): Promise<SaveResults> {
+        this.checkPersistentStorage();
         const existingProject = await this.db.project.get({ id: project.id });
 
         // Remove created so it can't be overridden
@@ -123,6 +126,7 @@ export default class IndexedDbStorageController extends BaseStorageController {
     }
 
     async SaveMedia(media: Media | StoredMedia): Promise<SaveResults> {
+        this.checkPersistentStorage();
         const storedMedia: StoredMedia =
             'data' in media
                 ? media
@@ -288,5 +292,42 @@ export default class IndexedDbStorageController extends BaseStorageController {
 
             return timeline as unknown as Timeline;
         }
+    }
+
+    private notificationShown = false;
+
+    private checkPersistentStorage() {
+        if (this.notificationShown || __TEST__) {
+            return;
+        }
+        this.notificationShown = true;
+        return new Promise<void>(async (resolve) => {
+            const persisted = await navigator.storage.persisted();
+            if (!persisted) {
+                NotificationService.notify({
+                    severity: 'warning',
+                    title: 'Project might be deleted',
+                    text:
+                        'Your browser might delete data when storing projects locally if it thinks you are running out of storage.\n' +
+                        'Do you want to ask the browser to persist data?',
+                    buttons: [
+                        {
+                            label: 'Persist data',
+                            type: 'filled',
+                            onClick: async (_ev, notif) => {
+                                await navigator.storage.persist();
+                                NotificationService.close(notif);
+                                resolve();
+                            }
+                        }
+                    ],
+                    onClose: () => {
+                        resolve();
+                    }
+                });
+            } else {
+                resolve();
+            }
+        });
     }
 }

@@ -19,7 +19,7 @@
                     v-if="CurrentProject.project.value"
                     :value="CurrentProject.project.value?.name.value"
                     @change="
-                        (newName) => {
+                        (newName: string) => {
                             CurrentProject.project.value!.name.value = newName;
                         }
                     "

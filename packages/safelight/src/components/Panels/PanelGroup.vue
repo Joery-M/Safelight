@@ -1,7 +1,6 @@
 <template>
     <div class="panel-group-menu flex h-full flex-col">
         <div class="flex">
-            <!-- @vue-expect-error Its fine -->
             <TabMenu :model="allTabs">
                 <!-- eslint-disable-next-line vue/no-template-shadow -->
                 <template #item="{ item, props, index }">

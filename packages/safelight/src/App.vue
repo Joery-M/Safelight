@@ -1,12 +1,15 @@
 <template>
-    <RouterView> </RouterView>
+    <RouterView />
+    <NotificationManager />
 </template>
 
 <script setup lang="ts">
-const pageTitle = useTitle();
+import { router } from './main';
 
-watchImmediate(useRouter().currentRoute, (newRoute) => {
-    if (newRoute && newRoute.name) {
+const pageTitle = useTitle();
+watchEffect(() => {
+    const newRoute = router.currentRoute.value;
+    if (newRoute.name) {
         const newName = newRoute.name.toString().replace(/^\//, '').split('/').at(-1);
         if (newName) {
             pageTitle.value = newName + ' | Safelight';
