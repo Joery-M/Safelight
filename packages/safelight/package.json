@@ -37,7 +37,7 @@
         "primevue": "^3.52.0",
         "rxjs": "^7.8.1",
         "uuid": "^9.0.1",
-        "vue": "^3.4.26",
+        "vue": "^3.4.29",
         "vue-markdown-render": "^2.1.1",
         "vue-router": "^4.3.2"
     },
