@@ -1,6 +1,5 @@
-import { ref, shallowReactive, type Component, type Raw } from 'vue';
-import { type ButtonProps } from 'primevue/button';
 import { v4 as uuidv4 } from 'uuid';
+import { ref, shallowReactive } from 'vue';
 
 export class NotificationService {
     static activeNotifications = shallowReactive(new Set<Notification>());
@@ -12,7 +11,7 @@ export class NotificationService {
         return notif;
     }
 
-    static removeNotification(notif: Notification) {
+    static close(notif: Notification) {
         notif.destroy();
 
         this.activeNotifications.delete(notif);
@@ -32,7 +31,7 @@ export class Notification {
 
         if (config.autoHide) {
             this.hideTimeout = setTimeout(() => {
-                NotificationService.removeNotification(this);
+                NotificationService.close(this);
             }, config.autoHideDelay ?? 15000);
         }
     }
@@ -49,6 +48,7 @@ export class Notification {
     }
 
     destroy() {
+        if (this.config.onClose) this.config.onClose();
         clearTimeout(this.hideTimeout);
     }
 }
@@ -89,17 +89,22 @@ export interface NotificationConfig {
      * @default 15000
      */
     autoHideDelay?: number;
+
+    /**
+     * Executed when notification is dismissed.
+     */
+    onClose?: () => any;
 }
 
 export interface NotificationButton {
     label: string;
     /**
-     * Type of button to show
+     * Style of button to show
      *
      * @default 'outlined'
      */
-    type: NotificationButtonType;
-    onClick: (event: MouseEvent) => any;
+    type?: NotificationButtonType;
+    onClick?: (event: MouseEvent, notification: Notification) => any;
 }
 
 export type NotificationButtonType = 'filled' | 'outlined';
