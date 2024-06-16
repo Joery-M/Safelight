@@ -297,7 +297,7 @@ export default class IndexedDbStorageController extends BaseStorageController {
     private notificationShown = false;
 
     private checkPersistentStorage() {
-        if (this.notificationShown) {
+        if (this.notificationShown || __TEST__) {
             return;
         }
         this.notificationShown = true;
