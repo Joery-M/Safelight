@@ -117,7 +117,9 @@ export default defineConfig({
             'primevue/splitterpanel',
             'primevue/tabmenu',
             'primevue/toolbar',
+            'primevue/tree',
             'primevue/useconfirm',
+            'primevue/usedialog',
             'rxjs',
             'uuid'
         ]

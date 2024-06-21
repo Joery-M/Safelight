@@ -68,13 +68,16 @@ const menuItems: MenuItem[] = [
                         props: {
                             header: 'Settings',
                             style: {
-                                width: '75vw'
+                                width: '75vw',
+                                height: '70vh'
                             },
+                            pt: { content: { style: { height: '100%' } } },
                             breakpoints: {
                                 '960px': '80vw',
                                 '640px': '90vw'
                             },
-                            modal: true
+                            modal: true,
+                            maximizable: true
                         }
                     });
                 }
