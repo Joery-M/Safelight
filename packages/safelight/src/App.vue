@@ -1,10 +1,13 @@
 <template>
     <RouterView />
+    <DynamicDialog />
     <NotificationManager />
 </template>
 
 <script setup lang="ts">
+import DynamicDialog from 'primevue/dynamicdialog';
 import { router } from './main';
+import { SettingsManager } from '@safelight/shared/Settings/SettingsManager';
 
 const pageTitle = useTitle();
 watchEffect(() => {
@@ -20,4 +23,6 @@ watchEffect(() => {
         pageTitle.value = 'Safelight';
     }
 });
+
+SettingsManager.createDefaultNamespaces();
 </script>

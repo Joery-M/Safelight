@@ -8,7 +8,10 @@
             }"
         >
             <template #start>
-                <Menubar :pt="{ root: { class: 'border-none' } }" :model="menuItems">
+                <Menubar
+                    :pt="{ root: { class: 'border-none' }, submenu: { class: 'z-50' } }"
+                    :model="menuItems"
+                >
                     <template #itemicon="{ item: { icon } }">
                         <component :is="icon" v-if="icon" class="pr-1" />
                     </template>
@@ -34,10 +37,11 @@
 
 <script setup lang="ts">
 import { router } from '@/main';
-import { PhFile } from '@phosphor-icons/vue';
+import { PhFile, PhGear, PhSignOut } from '@phosphor-icons/vue';
 import ConfirmDialog from 'primevue/confirmdialog';
 import type { MenuItem } from 'primevue/menuitem';
 import { useConfirm } from 'primevue/useconfirm';
+import { useDialog } from 'primevue/usedialog';
 
 const project = useProject();
 const editor = useEditor();
@@ -45,6 +49,7 @@ const editor = useEditor();
 editor.AddDefaultPanels();
 
 const projectErrorDialog = useConfirm();
+const dialog = useDialog();
 
 const menuItems: MenuItem[] = [
     {
@@ -52,7 +57,31 @@ const menuItems: MenuItem[] = [
         icon: PhFile as any,
         items: [
             {
+                label: 'Settings',
+                icon: PhGear as any,
+                disabled: false,
+                command: async () => {
+                    const settingsComponent = defineAsyncComponent(
+                        () => import('@/components/Menu/Settings/Settings.vue')
+                    );
+                    dialog.open(settingsComponent, {
+                        props: {
+                            header: 'Settings',
+                            style: {
+                                width: '75vw'
+                            },
+                            breakpoints: {
+                                '960px': '80vw',
+                                '640px': '90vw'
+                            },
+                            modal: true
+                        }
+                    });
+                }
+            },
+            {
                 label: 'Exit',
+                icon: PhSignOut as any,
                 disabled: false,
                 command: async () => {
                     await CurrentProject.beforeExit();
