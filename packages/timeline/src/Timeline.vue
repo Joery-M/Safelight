@@ -32,12 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-    useElementBounding,
-    useEventListener,
-    useMouseInElement,
-    watchImmediate
-} from '@vueuse/core';
+import { useElementBounding, useEventListener, watchImmediate } from '@vueuse/core';
 import { useWheel } from '@vueuse/gesture';
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
@@ -50,7 +45,13 @@ import TimelineItemComponent from './TimelineItemComponent.vue';
 
 const target = ref<HTMLDivElement>();
 const horizontalScroll = ref<HTMLDivElement>();
-const pointerOut = useMouseInElement(target).isOutside;
+const pointerOut = ref(true);
+
+useEventListener(['mousemove', 'mouseenter', 'mouseover'], (ev) => {
+    if (ev.target) {
+        pointerOut.value = !target.value?.parentNode?.contains(ev.target as Node) ?? true;
+    }
+});
 
 const props = withDefaults(defineProps<TimelineProps>(), {
     alignment: 'bottom',
