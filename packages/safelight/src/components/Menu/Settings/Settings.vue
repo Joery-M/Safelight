@@ -17,8 +17,8 @@
                 border-right-width: 1px;
                 border-right-color: var(--color-border);
             "
-        ></div>
-        <NamespaceSettings :path="selectedPath" />
+        />
+        <NamespaceSettings class="namespace" :path="selectedPath" />
     </div>
 </template>
 
@@ -32,24 +32,43 @@ const expandedKeys = ref({});
 
 function onNodeSelect(data: TreeNode) {
     if (data.key) {
-        selectedPath.value = data.key;
-        if ((data.children ?? []).length > 0) {
-            expandedKeys.value = { ...expandedKeys.value, [data.key]: true };
+        if ((SettingsManager.getNamespace(data.key)?.settings?.length ?? 0) > 0) {
+            selectedPath.value = data.key;
+        }
+        if (data.children && data.children.length > 0) {
+            expandedKeys.value = { [data.key]: true };
         }
     }
 }
 
 const tree = computed(() => {
-    return (Array.from(SettingsManager.settingsDefinition.values()) as SettingsNamespace[])
-        .filter((ns) => ns.path.split('.').length <= 1)
-        .map((ns) => mapSettingsNs(ns));
+    return (Array.from(SettingsManager.settingsDefinition.values()) as SettingsNamespace[]).map(
+        (ns) => mapSettingsNs(ns)
+    );
 });
 
 function mapSettingsNs(ns: SettingsNamespace): TreeNode {
     return {
         key: ns.path,
         label: ns.title,
+        selectable: ns.settings?.length > 0 || ns.childNamespaces?.length > 0,
         children: ns.childNamespaces?.map(mapSettingsNs)
     } as TreeNode;
 }
 </script>
+
+<style lang="scss" scoped>
+.namespace :deep(div[role='listitem']) {
+    @apply ml-2;
+
+    h3 {
+        @apply mb-2 mt-0;
+    }
+    p {
+        @apply m-0;
+    }
+    & > div {
+        @apply ml-2;
+    }
+}
+</style>

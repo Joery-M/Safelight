@@ -69,7 +69,7 @@ const menuItems: MenuItem[] = [
                             header: 'Settings',
                             style: {
                                 width: '75vw',
-                                height: '70vh'
+                                height: '80vh'
                             },
                             pt: { content: { style: { height: '100%' } } },
                             breakpoints: {
@@ -77,7 +77,7 @@ const menuItems: MenuItem[] = [
                                 '640px': '90vw'
                             },
                             modal: true,
-                            maximizable: true
+                            draggable: false
                         }
                     });
                 }

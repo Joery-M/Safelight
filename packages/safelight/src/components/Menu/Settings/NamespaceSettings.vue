@@ -1,5 +1,5 @@
 <template>
-    <div v-if="currentSettings" class="h-full flex-1 overflow-y-scroll">
+    <div v-if="currentSettings" ref="scrollContainer" class="h-full flex-1 overflow-y-scroll">
         <h1 class="mt-0">
             {{ currentSettings.title }}
         </h1>
@@ -8,8 +8,11 @@
             :source="currentSettings.description"
             :html="false"
         />
-        <div>
-            <SettingsGroup :settings="currentSettings.settings" />
+        <div v-if="currentSettings.settings" role="list">
+            <SettingsGroup
+                :settings="currentSettings.settings"
+                :namespace="currentSettings.pathArray"
+            />
         </div>
     </div>
 </template>
@@ -23,5 +26,13 @@ const props = withDefaults(defineProps<{ path: string }>(), {
     path: () => 'general'
 });
 
-const currentSettings = computed(() => SettingsManager.settingsDefinition.get(props.path));
+const scrollContainer = ref<HTMLDivElement>();
+
+const currentSettings = computed(() => SettingsManager.getNamespace(props.path));
+
+watch(currentSettings, () => {
+    if (scrollContainer.value) {
+        scrollContainer.value.scrollTo(0, 0);
+    }
+});
 </script>
