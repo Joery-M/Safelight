@@ -1,4 +1,13 @@
-import { reactive } from 'vue';
+import { getByPath, setByPath } from 'dot-path-value';
+import {
+    computed,
+    defineAsyncComponent,
+    markRaw,
+    reactive,
+    type Component,
+    type ComputedRef,
+    type Raw
+} from 'vue';
 
 export class SettingsManager {
     private static defaultNamespaces: SettingsNamespaceDefinition[] = [
@@ -8,261 +17,26 @@ export class SettingsManager {
             childNamespaces: []
         },
         {
-            name: 'editor1',
+            name: 'editor',
             title: 'Editor',
             childNamespaces: [
                 {
                     name: 'playback',
                     title: 'Playback',
-                    settings: [
-                        {
-                            title: 'Bool 1',
-                            description: 'AAAAAAAAfasf',
-                            name: 'A',
-                            type: 'boolean'
-                        },
-                        {
-                            title: 'Bool 2',
-                            name: 'A',
-                            type: 'boolean'
-                        }
-                    ]
+                    settings: []
                 },
                 {
                     name: 'timeline',
                     title: 'Timeline',
-                    settings: []
-                },
-                {
-                    name: 'media',
-                    title: 'Media',
-                    settings: []
-                }
-            ]
-        },
-        {
-            name: 'editor2',
-            title: 'Editor',
-            childNamespaces: [
-                {
-                    name: 'playback',
-                    title: 'Playback',
                     settings: [
                         {
-                            title: 'Bool 1',
-                            description: 'AAAAAAAAfasf',
-                            name: 'A',
-                            type: 'boolean'
-                        },
-                        {
-                            title: 'Bool 2',
-                            name: 'A',
-                            type: 'boolean'
+                            type: 'boolean',
+                            name: 'useTrackpad',
+                            title: 'Trackpad mode',
+                            description: 'Will inverse the axes on which the timeline will scroll.',
+                            default: false
                         }
                     ]
-                },
-                {
-                    name: 'timeline',
-                    title: 'Timeline',
-                    settings: []
-                },
-                {
-                    name: 'media',
-                    title: 'Media',
-                    settings: []
-                }
-            ]
-        },
-        {
-            name: 'editor3',
-            title: 'Editor',
-            childNamespaces: [
-                {
-                    name: 'playback',
-                    title: 'Playback',
-                    settings: [
-                        {
-                            title: 'Bool 1',
-                            description: 'AAAAAAAAfasf',
-                            name: 'A',
-                            type: 'boolean'
-                        },
-                        {
-                            title: 'Bool 2',
-                            name: 'A',
-                            type: 'boolean'
-                        }
-                    ]
-                },
-                {
-                    name: 'timeline',
-                    title: 'Timeline',
-                    settings: []
-                },
-                {
-                    name: 'media',
-                    title: 'Media',
-                    settings: []
-                }
-            ]
-        },
-        {
-            name: 'editor4',
-            title: 'Editor',
-            childNamespaces: [
-                {
-                    name: 'playback',
-                    title: 'Playback',
-                    settings: [
-                        {
-                            title: 'Bool 1',
-                            description: 'AAAAAAAAfasf',
-                            name: 'A',
-                            type: 'boolean'
-                        },
-                        {
-                            title: 'Bool 2',
-                            name: 'A',
-                            type: 'boolean'
-                        }
-                    ]
-                },
-                {
-                    name: 'timeline',
-                    title: 'Timeline',
-                    settings: []
-                },
-                {
-                    name: 'media',
-                    title: 'Media',
-                    settings: []
-                }
-            ]
-        },
-        {
-            name: 'editor5',
-            title: 'Editor',
-            childNamespaces: [
-                {
-                    name: 'playback',
-                    title: 'Playback',
-                    settings: [
-                        {
-                            title: 'Bool 1',
-                            description: 'AAAAAAAAfasf',
-                            name: 'A',
-                            type: 'boolean'
-                        },
-                        {
-                            title: 'Bool 2',
-                            name: 'A',
-                            type: 'boolean'
-                        }
-                    ]
-                },
-                {
-                    name: 'timeline',
-                    title: 'Timeline',
-                    settings: []
-                },
-                {
-                    name: 'media',
-                    title: 'Media',
-                    settings: []
-                }
-            ]
-        },
-        {
-            name: 'editor6',
-            title: 'Editor',
-            childNamespaces: [
-                {
-                    name: 'playback',
-                    title: 'Playback',
-                    settings: [
-                        {
-                            title: 'Bool 1',
-                            description: 'AAAAAAAAfasf',
-                            name: 'A',
-                            type: 'boolean'
-                        },
-                        {
-                            title: 'Bool 2',
-                            name: 'A',
-                            type: 'boolean'
-                        }
-                    ]
-                },
-                {
-                    name: 'timeline',
-                    title: 'Timeline',
-                    settings: []
-                },
-                {
-                    name: 'media',
-                    title: 'Media',
-                    settings: []
-                }
-            ]
-        },
-        {
-            name: 'editor7',
-            title: 'Editor',
-            childNamespaces: [
-                {
-                    name: 'playback',
-                    title: 'Playback',
-                    settings: [
-                        {
-                            title: 'Bool 1',
-                            description: 'AAAAAAAAfasf',
-                            name: 'A',
-                            type: 'boolean'
-                        },
-                        {
-                            title: 'Bool 2',
-                            name: 'A',
-                            type: 'boolean'
-                        }
-                    ]
-                },
-                {
-                    name: 'timeline',
-                    title: 'Timeline',
-                    settings: []
-                },
-                {
-                    name: 'media',
-                    title: 'Media',
-                    settings: []
-                }
-            ]
-        },
-        {
-            name: 'editor8',
-            title: 'Editor',
-            childNamespaces: [
-                {
-                    name: 'playback',
-                    title: 'Playback',
-                    settings: [
-                        {
-                            title: 'Bool 1',
-                            description: 'AAAAAAAAfasf',
-                            name: 'A',
-                            type: 'boolean'
-                        },
-                        {
-                            title: 'Bool 2',
-                            name: 'A',
-                            type: 'boolean'
-                        }
-                    ]
-                },
-                {
-                    name: 'timeline',
-                    title: 'Timeline',
-                    settings: []
                 },
                 {
                     name: 'media',
@@ -277,7 +51,19 @@ export class SettingsManager {
             childNamespaces: [
                 {
                     name: 'hotkeys',
-                    title: 'Hotkeys'
+                    title: 'Hotkeys',
+                    settings: [
+                        {
+                            type: 'custom',
+                            name: 'keybinds',
+                            title: 'Hotkeys',
+                            component: markRaw(
+                                defineAsyncComponent(
+                                    () => import('../../../safelight/src/views/dev/Packages.vue')
+                                )
+                            )
+                        }
+                    ]
                 }
             ]
         }
@@ -285,9 +71,69 @@ export class SettingsManager {
 
     public static settingsDefinition = reactive(new Map<string, SettingsNamespace>());
 
+    public static defaultSettings = reactive<{ [key: string]: any }>({});
+
+    public static currentSettings = reactive<{ [key: string]: any }>({});
+
     private static defaultsCreated = false;
 
-    public static createDefaultNamespaces(namespace = this.defaultNamespaces, path: string[] = []) {
+    public static setup() {
+        this.createDefaultNamespaces(this.defaultNamespaces, []);
+        this.createDefaultSettings(Array.from(this.settingsDefinition.values()));
+    }
+
+    public static createNamespace(path: string[], namespace: SettingsNamespaceDefinition) {
+        const newNamespace = new SettingsNamespace(path, namespace);
+        if (path.length <= 1) {
+            this.settingsDefinition.set(path.join('.'), newNamespace);
+        }
+
+        return newNamespace;
+    }
+
+    public static getNamespace(path: string[]): SettingsNamespace | undefined;
+    public static getNamespace(path: string): SettingsNamespace | undefined;
+    public static getNamespace(path: string[] | string): SettingsNamespace | undefined {
+        const pathArray = Array.isArray(path) ? path : path.split('.');
+
+        // Loop through path array to find nested namespace
+        return pathArray.reduce((ns, path, curIndex) => {
+            if (!ns) return;
+
+            const childNs = ns?.childNamespaces.find(
+                (ns) => ns.path == pathArray.slice(0, curIndex + 1).join('.')
+            );
+
+            return childNs ?? ns;
+        }, this.settingsDefinition.get(pathArray[0]));
+    }
+
+    public static getSetting(path: string): ComputedRef<any>;
+    public static getSetting(path: string[]): ComputedRef<any>;
+    public static getSetting(path: string | string[]) {
+        const combinedPath = Array.isArray(path) ? path.join('.') : path;
+
+        return computed(() => {
+            const currentValue = getByPath(this.currentSettings, combinedPath);
+            if (currentValue === undefined) {
+                console.log(currentValue);
+                return getByPath(this.defaultSettings, combinedPath);
+            }
+            return currentValue;
+        });
+    }
+
+    public static setSetting(path: string, value: any): void;
+    public static setSetting(path: string[], value: any): void;
+    public static setSetting(path: string | string[], value: any) {
+        const combinedPath = Array.isArray(path) ? path.join('.') : path;
+        setByPath(this.currentSettings, combinedPath, value);
+    }
+
+    private static createDefaultNamespaces(
+        namespace: SettingsNamespaceDefinition[],
+        path: string[]
+    ) {
         if (this.defaultsCreated && path.length == 0) {
             this.defaultsCreated = true;
             return [];
@@ -312,28 +158,51 @@ export class SettingsManager {
         return newNamespaces;
     }
 
-    public static createNamespace(path: string[], namespace: SettingsNamespaceDefinition) {
-        const newNamespace = new SettingsNamespace(path.join('.'), namespace);
-        this.settingsDefinition.set(path.join('.'), newNamespace);
+    /**
+     * Loop over each namespace and child namespaces to set the default settings
+     */
+    private static createDefaultSettings(namespace?: SettingsNamespace[]) {
+        if (!namespace) return;
 
-        return newNamespace;
+        namespace.forEach((ns) => {
+            ns.setDefaultValues();
+            this.createDefaultSettings(ns.childNamespaces);
+        });
     }
 }
 
 export class SettingsNamespace {
-    public childNamespaces!: SettingsNamespace[];
+    public path: string;
     public title: string;
     public description?: string;
     public name: string;
+    public childNamespaces!: SettingsNamespace[];
     public settings: SettingsPropertyDefinition[];
+
     constructor(
-        public path: string,
-        private definition: SettingsNamespaceDefinition
+        public pathArray: string[],
+        definition: SettingsNamespaceDefinition
     ) {
+        this.path = pathArray.join('.');
         this.title = definition.title;
         this.name = definition.name;
         this.description = definition.description;
         this.settings = definition.settings ?? [];
+    }
+
+    /**
+     * Set the default values of each setting in the namespace.
+     */
+    public setDefaultValues() {
+        this.settings.forEach((setting) => {
+            if (setting.type !== 'group' && setting.default !== undefined) {
+                setByPath(
+                    SettingsManager.defaultSettings,
+                    [...this.pathArray, setting.name].join('.'),
+                    setting.default
+                );
+            }
+        });
     }
 }
 
@@ -346,13 +215,14 @@ export interface SettingsNamespaceDefinition {
 }
 
 export type SettingsPropertyDefinition =
-    | SettingsGroup
     | SettingsArrayProperty
-    | SettingsNumberProperty
-    | SettingsStringProperty
+    | SettingsBoolProperty
+    | SettingsCustomProperty
     | SettingsDictionaryProperty
     | SettingsEnumProperty
-    | SettingsBoolProperty;
+    | SettingsGroup
+    | SettingsNumberProperty
+    | SettingsStringProperty;
 
 interface DefaultSettingsProperty {
     type: string;
@@ -401,6 +271,12 @@ export interface SettingsEnumProperty extends DefaultSettingsProperty {
     options: any[];
     valueKey?: string;
     labelKey?: string;
+    default?: any;
+}
+
+export interface SettingsCustomProperty extends DefaultSettingsProperty {
+    type: 'custom';
+    component: Raw<Component>;
     default?: any;
 }
 

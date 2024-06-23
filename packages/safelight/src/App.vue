@@ -24,5 +24,5 @@ watchEffect(() => {
     }
 });
 
-SettingsManager.createDefaultNamespaces();
+SettingsManager.setup();
 </script>
