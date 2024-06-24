@@ -49,7 +49,7 @@ const pointerOut = ref(true);
 
 useEventListener(['mousemove', 'mouseenter', 'mouseover'], (ev) => {
     if (ev.target) {
-        pointerOut.value = !target.value?.parentNode?.contains(ev.target as Node) ?? true;
+        pointerOut.value = !target.value?.parentNode?.contains(ev.target as Node);
     }
 });
 

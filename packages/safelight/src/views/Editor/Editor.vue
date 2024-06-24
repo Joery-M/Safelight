@@ -49,7 +49,7 @@ import type { MenuItem } from 'primevue/menuitem';
 import Toolbar from 'primevue/toolbar';
 import { useConfirm } from 'primevue/useconfirm';
 import { useDialog } from 'primevue/usedialog';
-import { onBeforeUnmount, onMounted, watch } from 'vue';
+import { defineAsyncComponent, onBeforeUnmount, onMounted, watch } from 'vue';
 
 const project = useProject();
 const editor = useEditor();

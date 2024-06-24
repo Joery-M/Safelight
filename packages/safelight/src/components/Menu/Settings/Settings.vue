@@ -26,6 +26,8 @@
 import { SettingsManager, SettingsNamespace } from '@safelight/shared/Settings/SettingsManager';
 import Tree from 'primevue/tree';
 import type { TreeNode } from 'primevue/treenode';
+import { computed, ref } from 'vue';
+import NamespaceSettings from './NamespaceSettings.vue';
 
 const selectedPath = ref<string>('general');
 const expandedKeys = ref({});

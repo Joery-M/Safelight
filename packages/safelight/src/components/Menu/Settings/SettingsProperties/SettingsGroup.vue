@@ -32,6 +32,7 @@ import DictionarySetting from './DictionarySetting.vue';
 import EnumSetting from './EnumSetting.vue';
 import NumberSetting from './NumberSetting.vue';
 import SettingsGroup from './SettingsGroup.vue';
+import StringSetting from './StringSetting.vue';
 
 defineProps<{
     title?: string;

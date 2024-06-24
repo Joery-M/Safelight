@@ -19,8 +19,9 @@
 
 <script setup lang="ts">
 import { SettingsManager } from '@safelight/shared/Settings/SettingsManager';
-import SettingsGroup from './SettingsProperties/SettingsGroup.vue';
+import { computed, ref, watch } from 'vue';
 import VueMarkdown from 'vue-markdown-render';
+import SettingsGroup from './SettingsProperties/SettingsGroup.vue';
 
 const props = withDefaults(defineProps<{ path: string }>(), {
     path: () => 'general'
