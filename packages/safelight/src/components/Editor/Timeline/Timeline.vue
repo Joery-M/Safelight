@@ -9,10 +9,11 @@
 </template>
 
 <script setup lang="ts">
+import { CurrentProject } from '@/stores/currentProject';
 import Timecode from '@safelight/shared/Timecode';
 import { Timeline as SLTimeline, type TimelineItem } from '@safelight/timeline/source';
 import { v4 as uuidv4 } from 'uuid';
-import { reactive } from 'vue';
+import { computed, reactive } from 'vue';
 
 const ids = new Array(17).fill('').map(() => uuidv4());
 

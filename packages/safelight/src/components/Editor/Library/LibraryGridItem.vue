@@ -117,12 +117,25 @@
     </OverlayPanel>
 </template>
 <script setup lang="ts">
+import { CurrentProject } from '@/stores/currentProject';
+import {
+    PhDotsThreeVertical,
+    PhImage,
+    PhSpeakerHigh,
+    PhSubtitles,
+    PhTrash,
+    PhVideoCamera
+} from '@phosphor-icons/vue';
 import { ProjectFeatures } from '@safelight/shared/base/Project';
 import type Media from '@safelight/shared/Media/Media';
 import { MediaType } from '@safelight/shared/Media/Media';
-import type Menu from 'primevue/menu';
+import Button from 'primevue/button';
+import Menu from 'primevue/menu';
 import type { MenuItem } from 'primevue/menuitem';
 import OverlayPanel from 'primevue/overlaypanel';
+import Skeleton from 'primevue/skeleton';
+import Toolbar from 'primevue/toolbar';
+import { computed, ref } from 'vue';
 
 const props = defineProps<{
     item: Media;

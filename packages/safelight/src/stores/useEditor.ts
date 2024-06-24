@@ -2,6 +2,7 @@ import type { PanelViewConfig } from '@/components/Panels/injection';
 import { PhFilmStrip, PhFolders, PhFrameCorners } from '@phosphor-icons/vue';
 import PanelManager from '@safelight/shared/UI/Panels/PanelManager';
 import { defineStore } from 'pinia';
+import { markRaw, reactive } from 'vue';
 
 export const useEditor = defineStore('Editor', () => {
     const activePanels = reactive<PanelViewConfig>([

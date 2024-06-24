@@ -13,6 +13,8 @@
 
 <script setup lang="ts">
 import { NotificationService } from '@safelight/shared/UI/Notifications/NotificationService';
+import { computed } from 'vue';
+import Notification from './Notification.vue';
 
 const firstNotif = computed(() =>
     Array.from(NotificationService.activeNotifications.values()).at(-1)

@@ -15,8 +15,11 @@
 </template>
 
 <script setup lang="ts">
+import { CurrentProject } from '@/stores/currentProject';
 import Timecode from '@safelight/shared/Timecode';
-import type Inplace from 'primevue/inplace';
+import Inplace from 'primevue/inplace';
+import InputMask from 'primevue/inputmask';
+import { computed, ref } from 'vue';
 
 const timeline = CurrentProject.project.value!.timeline;
 const timecodeVal = computed(() =>

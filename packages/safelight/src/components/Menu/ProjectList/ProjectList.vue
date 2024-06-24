@@ -37,9 +37,16 @@
 
 <script setup lang="ts">
 import InplaceRename from '@/components/InplaceRename.vue';
+import { CurrentProject } from '@/stores/currentProject';
+import { PhArrowsClockwise } from '@phosphor-icons/vue';
 import { Storage, type StoredProject } from '@safelight/shared/base/Storage';
 import { DateTime } from 'luxon';
+import Button from 'primevue/button';
+import Column from 'primevue/column';
+import DataTable from 'primevue/datatable';
 import type { MenuItem } from 'primevue/menuitem';
+import SplitButton from 'primevue/splitbutton';
+import { onMounted, ref } from 'vue';
 
 const projectTypes: MenuItem[] = [
     {

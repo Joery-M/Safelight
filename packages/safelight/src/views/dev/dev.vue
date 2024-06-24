@@ -15,9 +15,9 @@
                 :key="route.path"
             >
                 <RouterLink :to="route.path" class="mb-2 block">
-                    <Button>{{
-                        (route.name?.toString() ?? route.path).replace('/dev/', '')
-                    }}</Button>
+                    <Button>
+                        {{ (route.name?.toString() ?? route.path).replace('/dev/', '') }}
+                    </Button>
                 </RouterLink>
             </template>
         </template>
@@ -25,6 +25,8 @@
 </template>
 
 <script setup lang="ts">
+import Button from 'primevue/button';
+import Card from 'primevue/card';
 import { RouterLink } from 'vue-router';
 </script>
 

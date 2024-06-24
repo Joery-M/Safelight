@@ -4,6 +4,10 @@
 </template>
 
 <script setup lang="ts">
+import { useTitle } from '@vueuse/core';
+import { watchEffect } from 'vue';
+import { RouterView } from 'vue-router';
+import NotificationManager from './components/General/Notifications/NotificationManager.vue';
 import { router } from './main';
 
 const pageTitle = useTitle();

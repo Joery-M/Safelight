@@ -143,9 +143,18 @@
 </template>
 
 <script setup lang="ts">
-import { PhArrowLeft, PhArrowSquareOut, PhGitBranch } from '@phosphor-icons/vue';
+import { PhArrowLeft, PhArrowSquareOut, PhGitBranch, PhHouse } from '@phosphor-icons/vue';
+import { useDebounce, useFetch } from '@vueuse/core';
+import Button from 'primevue/button';
+import Card from 'primevue/card';
+import DataView from 'primevue/dataview';
+import Skeleton from 'primevue/skeleton';
+import TabPanel from 'primevue/tabpanel';
+import TabView from 'primevue/tabview';
 import type { Dependency, DependencyWithName, Packages } from 'types/packages';
+import { onMounted, reactive, ref, watch } from 'vue';
 import VueMarkdown from 'vue-markdown-render';
+import { RouterLink } from 'vue-router/auto';
 
 const showDisclaimer = ref(false);
 const showDisclaimerThrottle = useDebounce(showDisclaimer, 1000);
