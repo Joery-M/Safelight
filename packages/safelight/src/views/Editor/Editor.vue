@@ -36,12 +36,20 @@
 </template>
 
 <script setup lang="ts">
+import InplaceRename from '@/components/InplaceRename.vue';
+import PanelContainer from '@/components/Panels/PanelContainer.vue';
 import { router } from '@/main';
+import { CurrentProject } from '@/stores/currentProject';
+import { useEditor } from '@/stores/useEditor';
+import { useProject } from '@/stores/useProject';
 import { PhFile, PhGear, PhSignOut } from '@phosphor-icons/vue';
 import ConfirmDialog from 'primevue/confirmdialog';
+import Menubar from 'primevue/menubar';
 import type { MenuItem } from 'primevue/menuitem';
+import Toolbar from 'primevue/toolbar';
 import { useConfirm } from 'primevue/useconfirm';
 import { useDialog } from 'primevue/usedialog';
+import { onBeforeUnmount, onMounted, watch } from 'vue';
 
 const project = useProject();
 const editor = useEditor();

@@ -76,12 +76,26 @@
 </template>
 
 <script setup lang="ts">
+import { PhPlus, PhX } from '@phosphor-icons/vue';
 import PanelManager from '@safelight/shared/UI/Panels/PanelManager';
-import { createStaticVNode, createTextVNode, type StyleValue } from 'vue';
+import { watchImmediate } from '@vueuse/core';
+import Button from 'primevue/button';
+import Menu from 'primevue/menu';
+import type { MenuItem } from 'primevue/menuitem';
+import OverlayPanel from 'primevue/overlaypanel';
+import TabMenu from 'primevue/tabmenu';
+import {
+    computed,
+    createStaticVNode,
+    createTextVNode,
+    defineAsyncComponent,
+    ref,
+    shallowRef,
+    type Component,
+    type StyleValue
+} from 'vue';
 import { type Panel, type PanelGroupConfig } from './injection';
 import LoadingPanel from './LoadingPanel.vue';
-import type OverlayPanel from 'primevue/overlaypanel';
-import type { MenuItem } from 'primevue/menuitem';
 
 const props = defineProps<{
     config: PanelGroupConfig;
@@ -90,14 +104,14 @@ const props = defineProps<{
 
 const activeIndex = ref(0);
 
-const allTabs = computed<Panel[]>(() => {
+const allTabs = computed<MenuItem[]>(() => {
     const panelGroup = props.config;
     if (!panelGroup) return [];
 
     return panelGroup.panels
         .sort((p1, p2) => p1.order - p2.order)
         .map(({ panelId }) => PanelManager.allPanels.get(panelId))
-        .filter((p) => !!p);
+        .filter((p) => !!p) as unknown as MenuItem[];
 });
 
 const activeTab = computed(() => {

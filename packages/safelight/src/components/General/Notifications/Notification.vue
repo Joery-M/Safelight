@@ -43,10 +43,14 @@
 </template>
 
 <script setup lang="ts">
+import { PhInfo, PhWarning, PhWarningCircle, PhX } from '@phosphor-icons/vue';
 import {
     NotificationService,
     type Notification
 } from '@safelight/shared/UI/Notifications/NotificationService';
+import Button from 'primevue/button';
+import Panel from 'primevue/panel';
+import { computed } from 'vue';
 
 const props = defineProps<{
     notif: Notification;

@@ -3,6 +3,7 @@ import type BaseProject from '@safelight/shared/base/Project';
 import { ProjectFeatures, type ProjectType } from '@safelight/shared/base/Project';
 import BaseStorageController, { Storage, type StoredProject } from '@safelight/shared/base/Storage';
 import { DateTime } from 'luxon';
+import { ref, shallowRef } from 'vue';
 
 export class CurrentProject {
     // see #14 for why

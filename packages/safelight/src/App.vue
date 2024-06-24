@@ -5,9 +5,13 @@
 </template>
 
 <script setup lang="ts">
-import DynamicDialog from 'primevue/dynamicdialog';
-import { router } from './main';
 import { SettingsManager } from '@safelight/shared/Settings/SettingsManager';
+import { useTitle } from '@vueuse/core';
+import DynamicDialog from 'primevue/dynamicdialog';
+import { watchEffect } from 'vue';
+import { RouterView } from 'vue-router';
+import NotificationManager from './components/General/Notifications/NotificationManager.vue';
+import { router } from './main';
 
 const pageTitle = useTitle();
 watchEffect(() => {
