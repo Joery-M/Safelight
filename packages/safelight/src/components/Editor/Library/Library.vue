@@ -192,13 +192,36 @@
 </template>
 
 <script setup lang="ts">
+import { CurrentProject } from '@/stores/currentProject';
+import {
+    PhImage,
+    PhMagnifyingGlass,
+    PhPlus,
+    PhSortAscending,
+    PhSortDescending,
+    PhSpeakerHigh,
+    PhSubtitles,
+    PhVideoCamera
+} from '@phosphor-icons/vue';
 import { ProjectFeatures } from '@safelight/shared/base/Project';
 import Media, { MediaType } from '@safelight/shared/Media/Media';
 import Timecode from '@safelight/shared/Timecode';
+import { useDropZone, useFileDialog, watchDebounced } from '@vueuse/core';
 import fuzzysearch from 'fuzzysearch';
 import MimeMatcher from 'mime-matcher';
+import Button from 'primevue/button';
+import Column from 'primevue/column';
+import DataTable from 'primevue/datatable';
+import DataView from 'primevue/dataview';
+import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions';
+import Dropdown from 'primevue/dropdown';
 import InputGroup from 'primevue/inputgroup';
 import InputGroupAddon from 'primevue/inputgroupaddon';
+import InputText from 'primevue/inputtext';
+import Slider from 'primevue/slider';
+import Toolbar from 'primevue/toolbar';
+import { ref, shallowRef, watchEffect } from 'vue';
+import LibraryGridItem from './LibraryGridItem.vue';
 
 useDropZone(document.body, {
     onDrop(files) {

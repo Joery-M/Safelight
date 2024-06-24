@@ -2,7 +2,9 @@
 <template>
     <RouterLink to="/dev/">
         <Button style="margin: 0.5rem" alt="To dev pages overview">
-            <PhArrowLeft />
+            <template #icon>
+                <PhArrowLeft />
+            </template>
         </Button>
     </RouterLink>
 
@@ -36,8 +38,11 @@
 
 <script setup lang="ts">
 import Button from 'primevue/button';
+import Card from 'primevue/card';
 import Listbox from 'primevue/listbox';
+import Slider from 'primevue/slider';
 import { v4 as uuidv4 } from 'uuid';
+import { onMounted, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 
 const timeline1 = ref();

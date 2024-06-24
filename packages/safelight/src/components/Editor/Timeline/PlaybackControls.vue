@@ -35,7 +35,12 @@
 </template>
 
 <script lang="ts" setup>
+import { CurrentProject } from '@/stores/currentProject';
+import { PhPause, PhPlay, PhSkipBack, PhSkipForward } from '@phosphor-icons/vue';
+import Button from 'primevue/button';
 import ButtonGroup from 'primevue/buttongroup';
+import { computed } from 'vue';
+import Timecode from './Timecode.vue';
 
 const { project } = CurrentProject;
 const timeline = computed(() =>

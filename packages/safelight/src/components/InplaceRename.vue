@@ -17,7 +17,8 @@
 </template>
 
 <script lang="ts" setup>
-import type InputText from 'primevue/inputtext';
+import InputText from 'primevue/inputtext';
+import { ref } from 'vue';
 
 defineSlots<{
     default: [];

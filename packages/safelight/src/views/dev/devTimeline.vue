@@ -20,9 +20,14 @@
 </template>
 
 <script lang="ts" setup>
+import { PhArrowLeft } from '@phosphor-icons/vue';
 import type { TimelineItem } from '@safelight/timeline/source';
 import { Timeline } from '@safelight/timeline/source';
+import Button from 'primevue/button';
+import Card from 'primevue/card';
 import { v4 as uuidv4 } from 'uuid';
+import { reactive, ref } from 'vue';
+import { RouterLink } from 'vue-router/auto';
 
 const invertScrollAxes = ref(true);
 
