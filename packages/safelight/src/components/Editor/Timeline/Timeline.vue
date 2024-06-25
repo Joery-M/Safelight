@@ -3,6 +3,7 @@
         v-model:items="items"
         :playback-position="pbPos"
         :fps="timeline?.framerate.value"
+        :invert-scroll-axes
         class="h-full"
         @update:playback-position="setPbPos"
     />
@@ -10,6 +11,7 @@
 
 <script setup lang="ts">
 import { CurrentProject } from '@/stores/currentProject';
+import { SettingsManager } from '@safelight/shared/Settings/SettingsManager';
 import Timecode from '@safelight/shared/Timecode';
 import { Timeline as SLTimeline, type TimelineItem } from '@safelight/timeline/source';
 import { v4 as uuidv4 } from 'uuid';
@@ -23,6 +25,7 @@ const pbPos = computed(() =>
         ? Timecode.fromFrames(timeline.value.pbPos.value, timeline.value.framerate.value)
         : 0
 );
+const invertScrollAxes = SettingsManager.getSetting<boolean>('editor.timeline.useTrackpad');
 
 function setPbPos(pb?: number) {
     if (pb !== undefined && timeline?.value) {
