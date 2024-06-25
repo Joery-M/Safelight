@@ -3,7 +3,7 @@
         class="timelineItem"
         :style="{
             top: ySmooth + 'px',
-            left: xSmooth + 'px',
+            left: useMax(x, 0).value + 'px',
             width: width + 'px',
             height: height + 'px'
         }"
@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { useRound } from '@vueuse/math';
+import { useMax, useRound } from '@vueuse/math';
 import { computed, inject } from 'vue';
 import type { TimelineItem, TimelineViewport } from '.';
 
@@ -29,10 +29,23 @@ defineEmits<{
     itemChange: [TimelineItem];
 }>();
 
-const width = computed(
-    () =>
-        viewport.getTimePosition(item.start + item.duration) - viewport.getTimePosition(item.start)
-);
+// Calculate width of item, but not larger than the viewport (for CSS reasons)
+// and if the x position is less than 0, subtract it from the width to make the
+// item stick to the left side
+const width = computed(() => {
+    let width =
+        viewport.getTimePosition(item.start + item.duration) - viewport.getTimePosition(item.start);
+
+    if (x.value < 0) {
+        // Already negative
+        width += x.value;
+    }
+
+    // Viewport width without overflowing left side
+    const viewportWidth = viewport.boundingBoxWidth.value + (x.value > 0 ? -x.value : 0);
+
+    return width > viewportWidth ? viewportWidth : width;
+});
 const height = computed(
     () =>
         viewport.LayerToYPosition(item.layer, false, true) -

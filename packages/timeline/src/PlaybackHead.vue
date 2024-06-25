@@ -1,5 +1,6 @@
 <template>
     <div
+        v-if="isVisible"
         id="pbHead"
         role="slider"
         aria-label="Playback head"
@@ -19,6 +20,13 @@ const viewport = inject('viewport') as TimelineViewport;
 
 const left = computed(
     () => viewport.getTimePosition(viewport.pbPos.value ?? 0) - viewport.offsetX.value
+);
+
+const isVisible = computed(() =>
+    viewport.isItemVisible({
+        start: (viewport.pbPos.value ?? 0) - 50,
+        duration: 100
+    })
 );
 
 const lastPos = ref(0);
