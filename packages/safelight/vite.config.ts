@@ -44,6 +44,7 @@ export default defineConfig({
             'primevue/button',
             'primevue/buttongroup',
             'primevue/card',
+            'primevue/checkbox',
             'primevue/column',
             'primevue/confirmdialog',
             'primevue/datatable',

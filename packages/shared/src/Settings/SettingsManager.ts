@@ -4,6 +4,7 @@ import {
     defineAsyncComponent,
     markRaw,
     reactive,
+    toRaw,
     type Component,
     type ComputedRef,
     type Raw
@@ -39,8 +40,8 @@ export class SettingsManager {
                     ]
                 },
                 {
-                    name: 'media',
-                    title: 'Media',
+                    name: 'library',
+                    title: 'Library',
                     settings: []
                 }
             ]
@@ -69,6 +70,8 @@ export class SettingsManager {
         }
     ];
 
+    private static saveTimeout: ReturnType<typeof setTimeout>;
+
     public static settingsDefinition = reactive(new Map<string, SettingsNamespace>());
 
     public static defaultSettings = reactive<{ [key: string]: any }>({});
@@ -80,6 +83,8 @@ export class SettingsManager {
     public static setup() {
         this.createDefaultNamespaces(this.defaultNamespaces, []);
         this.createDefaultSettings(Array.from(this.settingsDefinition.values()));
+
+        this.loadSettings();
     }
 
     public static createNamespace(path: string[], namespace: SettingsNamespaceDefinition) {
@@ -108,17 +113,15 @@ export class SettingsManager {
         }, this.settingsDefinition.get(pathArray[0]));
     }
 
-    public static getSetting(path: string): ComputedRef<any>;
-    public static getSetting(path: string[]): ComputedRef<any>;
+    public static getSetting<T = any>(path: string): ComputedRef<T>;
+    public static getSetting<T = any>(path: string[]): ComputedRef<T>;
     public static getSetting(path: string | string[]) {
         const combinedPath = Array.isArray(path) ? path.join('.') : path;
 
         return computed(() => {
-            const currentValue = getByPath(this.currentSettings, combinedPath);
-            if (currentValue === undefined) {
-                console.log(currentValue);
-                return getByPath(this.defaultSettings, combinedPath);
-            }
+            const currentValue =
+                getByPath(this.currentSettings, combinedPath) ??
+                getByPath(this.defaultSettings, combinedPath);
             return currentValue;
         });
     }
@@ -128,6 +131,26 @@ export class SettingsManager {
     public static setSetting(path: string | string[], value: any) {
         const combinedPath = Array.isArray(path) ? path.join('.') : path;
         setByPath(this.currentSettings, combinedPath, value);
+
+        this.saveSettingsDebounced();
+    }
+
+    private static saveSettingsDebounced() {
+        clearInterval(this.saveTimeout);
+        this.saveTimeout = setTimeout(() => this.saveSettings(), 250);
+    }
+
+    public static saveSettings() {
+        localStorage.setItem('sl-settings', JSON.stringify(toRaw(this.currentSettings)));
+    }
+
+    public static loadSettings() {
+        const storedSettings = localStorage.getItem('sl-settings');
+        if (!storedSettings) return;
+        const newSettings = JSON.parse(storedSettings);
+        if (!newSettings || Object.keys(newSettings).length == 0) return;
+
+        Object.assign(this.currentSettings, newSettings);
     }
 
     private static createDefaultNamespaces(
