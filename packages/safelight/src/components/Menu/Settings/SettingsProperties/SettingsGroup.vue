@@ -1,5 +1,8 @@
 <template>
-    <h2 v-if="title">{{ title }}</h2>
+    <template v-if="title">
+        <hr v-if="!isFirst" />
+        <h2>{{ title }}</h2>
+    </template>
     <vue-markdown v-if="description" :source="description" :html="false" />
     <template v-for="(setting, i) in settings ?? []" :key="i">
         <div role="listitem">
@@ -12,6 +15,7 @@
                 :title="setting.title"
                 :description="setting.description"
                 :settings="setting.settings"
+                :is-first="i == 0"
                 :namespace
             />
             <NumberSetting v-else-if="setting.type === 'number'" :namespace :setting />
@@ -38,6 +42,7 @@ defineProps<{
     title?: string;
     description?: string;
     namespace: string[];
+    isFirst?: boolean;
     settings: SettingsPropertyDefinition[];
 }>();
 </script>

@@ -287,17 +287,20 @@ importers:
   packages/shared:
     dependencies:
       '@phosphor-icons/vue':
-        specifier: ^2.2.1
+        specifier: ~2
         version: 2.2.1(vue@3.4.29)
+      '@safelight/safelight':
+        specifier: workspace:^
+        version: link:../safelight
       '@vueuse/core':
-        specifier: ^10.9.0
-        version: 10.10.0(vue@3.4.29)
+        specifier: ~10
+        version: 10.11.0(vue@3.4.29)
       '@vueuse/rxjs':
-        specifier: ^10.10.0
-        version: 10.10.0(rxjs@7.8.1)(vue@3.4.29)
+        specifier: ~10
+        version: 10.11.0(rxjs@7.8.1)(vue@3.4.29)
       '@vueuse/shared':
-        specifier: ^10.10.0
-        version: 10.10.0(vue@3.4.29)
+        specifier: ~10
+        version: 10.11.0(vue@3.4.29)
       dexie:
         specifier: ^4.0.7
         version: 4.0.7
@@ -317,7 +320,7 @@ importers:
         specifier: ^1.0.5
         version: 1.0.5
       primevue:
-        specifier: ^3.52.0
+        specifier: ~3
         version: 3.52.0(vue@3.4.29)
       rxjs:
         specifier: ^7.8.1
@@ -326,7 +329,7 @@ importers:
         specifier: ^9.0.1
         version: 9.0.1
       vue:
-        specifier: ^3.4.29
+        specifier: ~3
         version: 3.4.29(typescript@5.4.5)
     devDependencies:
       '@tsconfig/node20':
@@ -2190,7 +2193,6 @@ packages:
       - '@vue/composition-api'
       - vue
     dev: false
-    optional: true
 
   /@vueuse/gesture@2.0.0(vue@3.4.29):
     resolution: {integrity: sha512-+F0bhhd8j+gxHaXG4fJgfokrkFfWenQ10MtrWOJk68B5UaTwtJm4EpsZFiVdluA3jpKExG6H+HtroJpvO7Qx0A==}
@@ -2275,7 +2277,6 @@ packages:
     resolution: {integrity: sha512-kQX7l6l8dVWNqlqyN3ePW3KmjCQO3ZMgXuBMddIu83CmucrsBfXlH+JoviYyRBws/yLTQO8g3Pbw+bdIoVm4oQ==}
     requiresBuild: true
     dev: false
-    optional: true
 
   /@vueuse/rxjs@10.10.0(rxjs@7.8.1)(vue@3.4.29):
     resolution: {integrity: sha512-gGziL1ImRb6M6P7BIPIWg9bk0qbZWIdSmXNwUlwlPi/tu6c4bBa4tfz4jqaL3ayQ2jOj8GTYea2Kg/8Afp+/ew==}
@@ -2303,7 +2304,6 @@ packages:
       - '@vue/composition-api'
       - vue
     dev: false
-    optional: true
 
   /@vueuse/shared@10.10.0(vue@3.4.29):
     resolution: {integrity: sha512-2aW33Ac0Uk0U+9yo3Ypg9s5KcR42cuehRWl7vnUHadQyFvCktseyxxEPBi1Eiq4D2yBGACOnqLZpx1eMc7g5Og==}
@@ -2323,7 +2323,6 @@ packages:
       - '@vue/composition-api'
       - vue
     dev: false
-    optional: true
 
   /abbrev@2.0.0:
     resolution: {integrity: sha512-6/mh1E2u2YgEsCHdY0Yx5oW+61gZU+1vXaoiHHrpKeuRNNgFvS+/jrwHiQhB5apAf5oB7UB7E19ol2R2LKH8hQ==}

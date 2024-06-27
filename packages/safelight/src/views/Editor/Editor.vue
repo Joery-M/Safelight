@@ -43,13 +43,14 @@ import { CurrentProject } from '@/stores/currentProject';
 import { useEditor } from '@/stores/useEditor';
 import { useProject } from '@/stores/useProject';
 import { PhFile, PhGear, PhSignOut } from '@phosphor-icons/vue';
+import { SettingsManager } from '@safelight/shared/Settings/SettingsManager';
 import ConfirmDialog from 'primevue/confirmdialog';
 import Menubar from 'primevue/menubar';
 import type { MenuItem } from 'primevue/menuitem';
 import Toolbar from 'primevue/toolbar';
 import { useConfirm } from 'primevue/useconfirm';
 import { useDialog } from 'primevue/usedialog';
-import { defineAsyncComponent, onBeforeUnmount, onMounted, watch } from 'vue';
+import { onBeforeUnmount, onMounted, watch } from 'vue';
 
 const project = useProject();
 const editor = useEditor();
@@ -68,26 +69,8 @@ const menuItems: MenuItem[] = [
                 label: 'Settings',
                 icon: PhGear as any,
                 disabled: false,
-                command: async () => {
-                    const settingsComponent = defineAsyncComponent(
-                        () => import('@/components/Menu/Settings/Settings.vue')
-                    );
-                    dialog.open(settingsComponent, {
-                        props: {
-                            header: 'Settings',
-                            style: {
-                                width: '75vw',
-                                height: '80vh'
-                            },
-                            pt: { content: { style: { height: '100%' } } },
-                            breakpoints: {
-                                '960px': '80vw',
-                                '640px': '90vw'
-                            },
-                            modal: true,
-                            draggable: false
-                        }
-                    });
+                command: () => {
+                    SettingsManager.openSettings(dialog);
                 }
             },
             {
@@ -107,7 +90,6 @@ onMounted(async () => {
     await router.isReady();
     if (!CurrentProject.isLoaded.value) {
         const lastProject = CurrentProject.getSessionProject();
-        console.log(lastProject);
         if (lastProject) {
             if (lastProject) {
                 CurrentProject.openProject(lastProject, false /* Already here */);

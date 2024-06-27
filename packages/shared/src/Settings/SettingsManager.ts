@@ -9,6 +9,7 @@ import {
     type ComputedRef,
     type Raw
 } from 'vue';
+import { useDialog } from 'primevue/usedialog';
 
 export class SettingsManager {
     private static defaultNamespaces: SettingsNamespaceDefinition[] = [
@@ -20,15 +21,22 @@ export class SettingsManager {
         {
             name: 'editor',
             title: 'Editor',
+            icon: defineAsyncComponent(async () => (await import('@phosphor-icons/vue')).PhSidebar),
             childNamespaces: [
                 {
                     name: 'playback',
                     title: 'Playback',
+                    icon: defineAsyncComponent(
+                        async () => (await import('@phosphor-icons/vue')).PhPlayPause
+                    ),
                     settings: []
                 },
                 {
                     name: 'timeline',
                     title: 'Timeline',
+                    icon: defineAsyncComponent(
+                        async () => (await import('@phosphor-icons/vue')).PhFilmStrip
+                    ),
                     settings: [
                         {
                             type: 'boolean',
@@ -42,13 +50,30 @@ export class SettingsManager {
                 {
                     name: 'library',
                     title: 'Library',
-                    settings: []
+                    icon: defineAsyncComponent(
+                        async () => (await import('@phosphor-icons/vue')).PhFolders
+                    ),
+                    settings: [
+                        {
+                            type: 'group',
+                            title: 'Media',
+                            settings: []
+                        },
+                        {
+                            type: 'group',
+                            title: 'Files',
+                            settings: []
+                        }
+                    ]
                 }
             ]
         },
         {
             name: 'keyboard',
             title: 'Keyboard',
+            icon: defineAsyncComponent(
+                async () => (await import('@phosphor-icons/vue')).PhKeyboard
+            ),
             childNamespaces: [
                 {
                     name: 'hotkeys',
@@ -135,6 +160,31 @@ export class SettingsManager {
         this.saveSettingsDebounced();
     }
 
+    public static async openSettings(dialog: ReturnType<typeof useDialog>, namespace?: string) {
+        const settingsComponent = defineAsyncComponent(
+            () => import('@safelight/safelight/src/components/Menu/Settings/Settings.vue')
+        );
+        dialog.open(settingsComponent, {
+            data: {
+                namespace
+            },
+            props: {
+                header: 'Settings',
+                style: {
+                    width: '75vw',
+                    height: '80vh'
+                },
+                pt: { content: { style: { height: '100%' } } },
+                breakpoints: {
+                    '960px': '80vw',
+                    '640px': '90vw'
+                },
+                modal: true,
+                draggable: false
+            }
+        });
+    }
+
     private static saveSettingsDebounced() {
         clearInterval(this.saveTimeout);
         this.saveTimeout = setTimeout(() => this.saveSettings(), 250);
@@ -201,6 +251,7 @@ export class SettingsNamespace {
     public name: string;
     public childNamespaces!: SettingsNamespace[];
     public settings: SettingsPropertyDefinition[];
+    public icon?: Raw<Component>;
 
     constructor(
         public pathArray: string[],
@@ -211,6 +262,7 @@ export class SettingsNamespace {
         this.name = definition.name;
         this.description = definition.description;
         this.settings = definition.settings ?? [];
+        this.icon = definition.icon;
     }
 
     /**
@@ -235,6 +287,7 @@ export interface SettingsNamespaceDefinition {
     description?: string;
     settings?: SettingsPropertyDefinition[];
     childNamespaces?: SettingsNamespaceDefinition[];
+    icon?: Raw<Component>;
 }
 
 export type SettingsPropertyDefinition =

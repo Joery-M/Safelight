@@ -1,5 +1,5 @@
 <template>
-    <div v-if="currentSettings" ref="scrollContainer" class="h-full flex-1 overflow-y-scroll">
+    <div v-if="currentSettings" ref="scrollContainer" class="h-full flex-1 overflow-y-auto">
         <h1 class="mt-0">
             {{ currentSettings.title }}
         </h1>
@@ -12,6 +12,7 @@
             <SettingsGroup
                 :settings="currentSettings.settings"
                 :namespace="currentSettings.pathArray"
+                :is-first="true"
             />
         </div>
     </div>
