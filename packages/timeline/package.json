@@ -32,9 +32,9 @@
     },
     "dependencies": {
         "@safelight/shared": "workspace:*",
-        "@vueuse/core": "^10.9.0",
+        "@vueuse/core": "^10.11.0",
         "@vueuse/gesture": "^2.0.0",
-        "@vueuse/math": "^10.10.0",
+        "@vueuse/math": "^10.11.0",
         "primevue": "^3.52.0",
         "vue": "^3.4.29"
     },

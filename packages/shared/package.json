@@ -12,9 +12,9 @@
     },
     "dependencies": {
         "@phosphor-icons/vue": "^2.2.1",
-        "@vueuse/core": "^10.9.0",
-        "@vueuse/rxjs": "^10.10.0",
-        "@vueuse/shared": "^10.10.0",
+        "@vueuse/core": "^10.11.0",
+        "@vueuse/rxjs": "^10.11.0",
+        "@vueuse/shared": "^10.11.0",
         "dexie": "^4.0.7",
         "hash-wasm": "^4.11.0",
         "luxon": "^3.4.4",
