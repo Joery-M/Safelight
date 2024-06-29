@@ -1,9 +1,11 @@
 <template>
-    <SLButton to="/dev/">
-        <PhArrowLeft />
-    </SLButton>
+    <Button to="/dev/">
+        <template #icon>
+            <PhArrowLeft />
+        </template>
+    </Button>
     <div>
-        <SLButton
+        <Button
             @click="
                 tabs.push({
                     title: uuidv4() + '.ts',
@@ -11,17 +13,21 @@
                 })
             "
         >
-            <PhPlus />
-        </SLButton>
+            <template #icon>
+                <PhPlus />
+            </template>
+        </Button>
     </div>
 
     <br />
 
     <div v-for="(tab, index) in tabs" :key="index">
         <input v-model="tab.title" type="text" />
-        <SLButton v-if="index > 0" @click="tabs.splice(index, 1)">
-            <PhTrash />
-        </SLButton>
+        <Button v-if="index > 0" @click="tabs.splice(index, 1)">
+            <template #icon>
+                <PhTrash />
+            </template>
+        </Button>
         <Lazy>
             <Monaco v-if="showEditors" v-model="tab.content" height="300"></Monaco>
         </Lazy>
@@ -29,12 +35,12 @@
     </div>
 
     <div>
-        <SLButton @click="compile">
+        <Button @click="compile">
             <template #icon>
                 <PhWall></PhWall>
             </template>
             Compile
-        </SLButton>
+        </Button>
         <Lazy>
             <Monaco v-if="showEditors" v-model="result"></Monaco>
         </Lazy>
@@ -42,8 +48,12 @@
 </template>
 
 <script setup lang="ts">
+import Monaco from '@/components/Editor/CodeEditor/Monaco.vue';
+import Lazy from '@/components/Lazy.vue';
 import { PhArrowLeft, PhPlus, PhTrash, PhWall } from '@phosphor-icons/vue';
+import Button from 'primevue/button';
 import { v4 as uuidv4 } from 'uuid';
+import { onMounted, ref } from 'vue';
 
 const showEditors = ref(false);
 

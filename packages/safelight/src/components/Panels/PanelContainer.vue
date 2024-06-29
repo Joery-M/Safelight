@@ -18,7 +18,10 @@
 </template>
 
 <script setup lang="ts">
+import Splitter from 'primevue/splitter';
+import SplitterPanel from 'primevue/splitterpanel';
 import type { PanelSplitConfig } from './injection';
+import PanelGroup from './PanelGroup.vue';
 
 defineProps<{
     config: PanelSplitConfig;

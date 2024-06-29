@@ -5,4 +5,6 @@
     </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import PlaybackControls from '../Timeline/PlaybackControls.vue';
+</script>

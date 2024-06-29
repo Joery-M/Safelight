@@ -10,9 +10,10 @@
 </template>
 
 <script setup lang="ts">
-import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
-import OneMonokai from './themes/OneMonokai-Monaco.json';
 import type { editor } from 'monaco-editor';
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import { onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue';
+import OneMonokai from './themes/OneMonokai-Monaco.json';
 
 const vModel = defineModel<string>({
     default: '',
