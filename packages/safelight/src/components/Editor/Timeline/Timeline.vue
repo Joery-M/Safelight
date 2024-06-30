@@ -4,6 +4,7 @@
         :playback-position="pbPos"
         :fps="timeline?.framerate.value"
         :invert-scroll-axes
+        :zoom-factor
         class="h-full"
         @update:playback-position="setPbPos"
     />
@@ -26,6 +27,7 @@ const pbPos = computed(() =>
         : 0
 );
 const invertScrollAxes = SettingsManager.getSetting<boolean>('editor.timeline.useTrackpad');
+const zoomFactor = SettingsManager.getSetting<number>('editor.timeline.zoomFactor');
 
 function setPbPos(pb?: number) {
     if (pb !== undefined && timeline?.value) {

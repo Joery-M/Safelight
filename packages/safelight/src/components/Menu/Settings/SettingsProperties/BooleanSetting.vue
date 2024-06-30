@@ -3,6 +3,7 @@
     <vue-markdown
         v-if="setting?.description"
         :id="setting.name + '-description'"
+        class="description"
         :source="setting.description"
     />
     <Checkbox
@@ -14,11 +15,27 @@
             }
         }"
         :aria-labelledby="setting.name + '-title'"
-        @change="changeValue()"
+        @change="changeValue(!checkboxValue)"
     />
+    <a
+        v-if="defaultValue !== undefined"
+        :class="{ show: defaultValue !== checkboxValue }"
+        class="default"
+        aria-label="Reset value"
+        tabindex="0"
+        role="button"
+        @click="
+            $event.preventDefault();
+            changeValue(defaultValue);
+        "
+    >
+        (Default: {{ defaultValue }})
+        <PhArrowUDownLeft size="15" />
+    </a>
 </template>
 
 <script lang="ts" setup>
+import { PhArrowUDownLeft } from '@phosphor-icons/vue';
 import {
     SettingsManager,
     type SettingsBoolProperty
@@ -28,9 +45,16 @@ import VueMarkdown from 'vue-markdown-render';
 
 const props = defineProps<{ namespace: string[]; setting: SettingsBoolProperty }>();
 
-const checkboxValue = SettingsManager.getSetting([...props.namespace, props.setting.name]);
+const checkboxValue = SettingsManager.getSetting<boolean>([...props.namespace, props.setting.name]);
+const defaultValue = props.setting.default;
 
-function changeValue() {
-    SettingsManager.setSetting([...props.namespace, props.setting.name], !checkboxValue.value);
+function changeValue(value: boolean) {
+    SettingsManager.setSetting([...props.namespace, props.setting.name], value);
 }
 </script>
+
+<style lang="scss" scoped>
+.description {
+    @apply mb-2;
+}
+</style>

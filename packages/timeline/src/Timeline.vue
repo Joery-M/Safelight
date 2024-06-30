@@ -36,7 +36,7 @@ import { useElementBounding, useEventListener, watchImmediate } from '@vueuse/co
 import { useWheel } from '@vueuse/gesture';
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
-import { computed, provide, ref } from 'vue';
+import { computed, provide, ref, watchEffect } from 'vue';
 import { TimelineViewport, type TimelineItem, type TimelineProps } from './index';
 import LayerControl from './LayerControl.vue';
 import PlaybackHead from './PlaybackHead.vue';
@@ -82,7 +82,7 @@ viewport.pbPos = playbackPosition;
 
 provide('viewport', viewport);
 
-watchImmediate(props, () => {
+watchEffect(() => {
     viewport.alignment.value = props.alignment;
     viewport.zoomFactor.value = props.zoomFactor;
     viewport.fps.value = props.fps ?? Infinity;

@@ -1,6 +1,10 @@
 <template>
-    <h3 v-if="setting?.title">{{ setting.title }}</h3>
-    <vue-markdown v-if="setting?.description" :source="setting.description" />
+    <h3 v-if="setting?.title" :id="setting.name + '-title'">{{ setting.title }}</h3>
+    <vue-markdown
+        v-if="setting?.description"
+        :id="setting.name + '-description'"
+        :source="setting.description"
+    />
 </template>
 
 <script lang="ts" setup>

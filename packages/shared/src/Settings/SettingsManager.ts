@@ -1,4 +1,5 @@
 import { getByPath, setByPath } from 'dot-path-value';
+import { useDialog } from 'primevue/usedialog';
 import {
     computed,
     defineAsyncComponent,
@@ -9,7 +10,6 @@ import {
     type ComputedRef,
     type Raw
 } from 'vue';
-import { useDialog } from 'primevue/usedialog';
 
 export class SettingsManager {
     private static defaultNamespaces: SettingsNamespaceDefinition[] = [
@@ -21,21 +21,27 @@ export class SettingsManager {
         {
             name: 'editor',
             title: 'Editor',
-            icon: defineAsyncComponent(async () => (await import('@phosphor-icons/vue')).PhSidebar),
+            icon: markRaw(
+                defineAsyncComponent(async () => (await import('@phosphor-icons/vue')).PhSidebar)
+            ),
             childNamespaces: [
                 {
                     name: 'playback',
                     title: 'Playback',
-                    icon: defineAsyncComponent(
-                        async () => (await import('@phosphor-icons/vue')).PhPlayPause
+                    icon: markRaw(
+                        defineAsyncComponent(
+                            async () => (await import('@phosphor-icons/vue')).PhPlayPause
+                        )
                     ),
                     settings: []
                 },
                 {
                     name: 'timeline',
                     title: 'Timeline',
-                    icon: defineAsyncComponent(
-                        async () => (await import('@phosphor-icons/vue')).PhFilmStrip
+                    icon: markRaw(
+                        defineAsyncComponent(
+                            async () => (await import('@phosphor-icons/vue')).PhFilmStrip
+                        )
                     ),
                     settings: [
                         {
@@ -44,20 +50,43 @@ export class SettingsManager {
                             title: 'Trackpad mode',
                             description: 'Will inverse the axes on which the timeline will scroll.',
                             default: false
+                        },
+                        {
+                            type: 'number',
+                            name: 'zoomFactor',
+                            title: 'Zoom factor',
+                            description: 'The amount to zoom in and out by when scrolling.',
+                            default: 2,
+                            decimals: false,
+                            range: true,
+                            min: 1,
+                            max: 100
                         }
                     ]
                 },
                 {
                     name: 'library',
                     title: 'Library',
-                    icon: defineAsyncComponent(
-                        async () => (await import('@phosphor-icons/vue')).PhFolders
+                    icon: markRaw(
+                        defineAsyncComponent(
+                            async () => (await import('@phosphor-icons/vue')).PhFolders
+                        )
                     ),
                     settings: [
                         {
                             type: 'group',
                             title: 'Media',
-                            settings: []
+                            settings: [
+                                {
+                                    type: 'string',
+                                    title: 'Test',
+                                    description: 'Test',
+                                    name: 'test',
+                                    pattern: /icle+/,
+                                    maxLength: 10,
+                                    default: 'icle'
+                                }
+                            ]
                         },
                         {
                             type: 'group',
@@ -71,8 +100,8 @@ export class SettingsManager {
         {
             name: 'keyboard',
             title: 'Keyboard',
-            icon: defineAsyncComponent(
-                async () => (await import('@phosphor-icons/vue')).PhKeyboard
+            icon: markRaw(
+                defineAsyncComponent(async () => (await import('@phosphor-icons/vue')).PhKeyboard)
             ),
             childNamespaces: [
                 {
@@ -268,14 +297,16 @@ export class SettingsNamespace {
     /**
      * Set the default values of each setting in the namespace.
      */
-    public setDefaultValues() {
-        this.settings.forEach((setting) => {
+    public setDefaultValues(settings = this.settings) {
+        settings.forEach((setting) => {
             if (setting.type !== 'group' && setting.default !== undefined) {
                 setByPath(
                     SettingsManager.defaultSettings,
                     [...this.pathArray, setting.name].join('.'),
                     setting.default
                 );
+            } else if (setting.type == 'group') {
+                this.setDefaultValues(setting.settings);
             }
         });
     }
@@ -327,6 +358,18 @@ export interface SettingsNumberProperty extends DefaultSettingsProperty {
     default?: number;
     min?: number;
     max?: number;
+    /**
+     * Use a slider along side a number input.
+     *
+     * @requires {@link SettingsNumberProperty.min|min}
+     * @requires {@link SettingsNumberProperty.max|max}
+     */
+    range?: boolean;
+    /**
+     * Max number of decimal digits
+     *
+     * @default Infinity
+     */
     decimals?: number | false;
 }
 

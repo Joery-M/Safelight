@@ -9,11 +9,11 @@
                 selection-mode="single"
                 @node-select="onNodeSelect"
             >
-            <template #nodeicon="{node}">
-                <template v-if="node.data?.icon">
-                    <component :is="node.data.icon" class="mr-2"/>
+                <template #nodeicon="{ node }">
+                    <template v-if="node.data?.icon">
+                        <component :is="node.data.icon" class="mr-2" />
+                    </template>
                 </template>
-            </template>
             </Tree>
         </div>
         <div
@@ -43,14 +43,14 @@ const dialogRef = inject<Ref<DynamicDialogInstance>>('dialogRef');
 
 onMounted(() => {
     if (dialogRef?.value?.data && dialogRef.value.data.namespace) {
-        selectedPath.value = dialogRef.value.data.namespace
-        const namespaces = selectedPath.value.split('.')
-        expandedKeys.value = {}
+        selectedPath.value = dialogRef.value.data.namespace;
+        const namespaces = selectedPath.value.split('.');
+        expandedKeys.value = {};
         namespaces.forEach((ns) => {
-            expandedKeys.value = {...expandedKeys.value, [ns]: true}
-        })
+            expandedKeys.value = { ...expandedKeys.value, [ns]: true };
+        });
     }
-})
+});
 
 const tree = computed(() => {
     return (Array.from(SettingsManager.settingsDefinition.values()) as SettingsNamespace[]).map(
@@ -84,16 +84,27 @@ function mapSettingsNs(ns: SettingsNamespace): TreeNode {
 
 <style lang="scss" scoped>
 .namespace :deep(div[role='listitem']) {
-    @apply ml-2;
+    @apply mb-4 pl-4;
 
     h3 {
-        @apply mb-2 mt-0;
+        @apply -ml-2 mb-3 mt-0;
     }
     p {
         @apply m-0;
     }
-    & > div {
-        @apply ml-2;
+    .description {
+        line-height: normal;
+    }
+
+    a.default {
+        @apply invisible cursor-pointer align-middle text-sm font-extralight italic opacity-0 transition-all;
+
+        &.show {
+            @apply visible opacity-100;
+        }
+        > svg {
+            @apply align-middle;
+        }
     }
 }
 </style>

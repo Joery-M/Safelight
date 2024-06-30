@@ -5,7 +5,7 @@
     </template>
     <vue-markdown v-if="description" :source="description" :html="false" />
     <template v-for="(setting, i) in settings ?? []" :key="i">
-        <div role="listitem">
+        <div role="listitem" :aria-label="setting.title">
             <ArraySetting v-if="setting.type === 'array'" :namespace :setting />
             <BooleanSetting v-else-if="setting.type === 'boolean'" :namespace :setting />
             <DictionarySetting v-else-if="setting.type === 'dictionary'" :namespace :setting />
