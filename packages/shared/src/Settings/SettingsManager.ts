@@ -214,6 +214,20 @@ export class SettingsManager {
         });
     }
 
+    public static downloadSettings() {
+        const a = document.createElement('a');
+        document.body.appendChild(a);
+        a.style.display = 'none';
+        const json = JSON.stringify(toRaw(this.currentSettings));
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = window.URL.createObjectURL(blob);
+        a.href = url;
+        a.download = 'sl-settings.json';
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+    }
+
     private static saveSettingsDebounced() {
         clearInterval(this.saveTimeout);
         this.saveTimeout = setTimeout(() => this.saveSettings(), 250);
