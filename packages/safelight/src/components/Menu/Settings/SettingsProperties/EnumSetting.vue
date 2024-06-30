@@ -18,14 +18,14 @@
             changeValue(defaultValue);
         "
     >
-        (Default: {{ defaultValue }})
+        (Default: {{ setting.labelKey ? getByPath(defaultValue, setting.labelKey) : defaultValue }})
         <PhArrowUDownLeft size="15" />
     </a>
     <Dropdown
         :model-value="enumValue"
         :options="setting.options"
         :option-label="setting.labelKey"
-        class="w-32"
+        class="w-56"
         :aria-labelledby="setting.name + '-title'"
         @update:model-value="changeValue"
     />
@@ -53,7 +53,10 @@ const enumValue = computed(() => {
         (o) => (props.setting.valueKey ? getByPath(o, props.setting.valueKey) : o) == value.value
     );
 });
-const defaultValue = props.setting.default;
+const defaultValue = props.setting.options.find(
+    (o) =>
+        (props.setting.valueKey ? getByPath(o, props.setting.valueKey) : o) == props.setting.default
+);
 
 function changeValue(value: any) {
     SettingsManager.setSetting(
@@ -62,3 +65,9 @@ function changeValue(value: any) {
     );
 }
 </script>
+
+<style lang="scss" scoped>
+.default {
+    display: block;
+}
+</style>
