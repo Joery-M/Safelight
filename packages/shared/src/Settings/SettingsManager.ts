@@ -61,6 +61,18 @@ export class SettingsManager {
                             range: true,
                             min: 1,
                             max: 100
+                        },
+                        {
+                            type: 'enum',
+                            name: 'align',
+                            title: 'Align timeline',
+                            default: 'bottom',
+                            options: [
+                                { value: 'top', label: 'Top' },
+                                { value: 'bottom', label: 'Bottom' }
+                            ],
+                            labelKey: 'label',
+                            valueKey: 'value'
                         }
                     ]
                 },

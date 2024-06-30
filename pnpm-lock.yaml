@@ -168,6 +168,9 @@ importers:
       dexie:
         specifier: ^4.0.7
         version: 4.0.7
+      dot-path-value:
+        specifier: ^0.0.10
+        version: 0.0.10
       fuzzysearch:
         specifier: ^1.0.3
         version: 1.0.3
@@ -1154,7 +1157,7 @@ packages:
     peerDependencies:
       vue: '>=3.2.39'
     dependencies:
-      vue: 3.4.29(typescript@5.5.2)
+      vue: 3.4.29(typescript@5.4.5)
     dev: false
 
   /@pkgjs/parseargs@0.11.0:
@@ -1412,7 +1415,6 @@ packages:
     resolution: {integrity: sha512-xyu6WAMVwv6AKFLB+e/7ySZVr/0zLCzOa7rSpq6jNwpqOrUbcACDWC+53d4n2QHOnDou0fbIsg8wZu/sxrnI4Q==}
     dependencies:
       undici-types: 5.26.5
-    dev: true
 
   /@types/node@20.14.8:
     resolution: {integrity: sha512-DO+2/jZinXfROG7j7WKFn/3C6nFwxy2lLpgLjEXJz+0XKphZlTLJ14mo8Vfg8X5BWN6XjyESXq+LcYdT7tR3bA==}
@@ -1705,8 +1707,8 @@ packages:
       vite: ^5.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 5.3.2
-      vue: 3.4.29(typescript@5.5.2)
+      vite: 5.3.2(@types/node@20.14.2)(lightningcss@1.25.1)(sass@1.77.4)
+      vue: 3.4.29(typescript@5.4.5)
     dev: true
 
   /@vitejs/plugin-vue@5.0.5(vite@5.3.2)(vue@3.4.30):
@@ -2044,7 +2046,7 @@ packages:
     dependencies:
       '@vue/compiler-ssr': 3.4.29
       '@vue/shared': 3.4.29
-      vue: 3.4.29(typescript@5.5.2)
+      vue: 3.4.29(typescript@5.4.5)
 
   /@vue/server-renderer@3.4.30(vue@3.4.30):
     resolution: {integrity: sha512-TBD3eqR1DeDc0cMrXS/vEs/PWzq1uXxnvjoqQuDGFIEHFIwuDTX/KWAQKIBjyMWLFHEeTDGYVsYci85z2UbTDg==}
@@ -2718,7 +2720,6 @@ packages:
     resolution: {integrity: sha512-pGjwhsmsp4kL2RTz08wcOlGN83otlqHeD/Z5T8GXZB+/YcpQ/dgo+lbU8ZsGxV0HIvqqxo9l7mqYwyYMD9bKDg==}
     engines: {node: '>=0.10'}
     hasBin: true
-    dev: true
 
   /dexie@4.0.7:
     resolution: {integrity: sha512-M+Lo6rk4pekIfrc2T0o2tvVJwL6EAAM/B78DNfb8aaxFVoI1f8/rz5KTxuAnApkwqTSuxx7T5t0RKH7qprapGg==}
@@ -3401,7 +3402,6 @@ packages:
 
   /immutable@4.3.6:
     resolution: {integrity: sha512-Ju0+lEMyzMVZarkTn/gqRpdqd5dOPaz1mCZ0SH3JV6iFw81PldE/PEB1hWVEA288HPt4WXW8O7AWxB10M+03QQ==}
-    dev: true
 
   /import-fresh@3.3.0:
     resolution: {integrity: sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw==}
@@ -3643,7 +3643,6 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
-    dev: true
     optional: true
 
   /lightningcss-darwin-x64@1.25.1:
@@ -3652,7 +3651,6 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
-    dev: true
     optional: true
 
   /lightningcss-freebsd-x64@1.25.1:
@@ -3661,7 +3659,6 @@ packages:
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
-    dev: true
     optional: true
 
   /lightningcss-linux-arm-gnueabihf@1.25.1:
@@ -3670,7 +3667,6 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /lightningcss-linux-arm64-gnu@1.25.1:
@@ -3679,7 +3675,6 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /lightningcss-linux-arm64-musl@1.25.1:
@@ -3688,7 +3683,6 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /lightningcss-linux-x64-gnu@1.25.1:
@@ -3697,7 +3691,6 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /lightningcss-linux-x64-musl@1.25.1:
@@ -3706,7 +3699,6 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /lightningcss-win32-x64-msvc@1.25.1:
@@ -3715,7 +3707,6 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
-    dev: true
     optional: true
 
   /lightningcss@1.25.1:
@@ -3733,7 +3724,6 @@ packages:
       lightningcss-linux-x64-gnu: 1.25.1
       lightningcss-linux-x64-musl: 1.25.1
       lightningcss-win32-x64-msvc: 1.25.1
-    dev: true
 
   /lilconfig@2.1.0:
     resolution: {integrity: sha512-utWOt/GHzuUxnLKxB6dk81RoOeoNeHgbrXiuGk4yyF5qlRz+iIVWu56E2fqGHFrXz0QNUhLB/8nKqvRH66JKGQ==}
@@ -4380,7 +4370,7 @@ packages:
     peerDependencies:
       vue: ^3.0.0
     dependencies:
-      vue: 3.4.29(typescript@5.5.2)
+      vue: 3.4.29(typescript@5.4.5)
     dev: false
 
   /proto-list@1.2.4:
@@ -4542,7 +4532,6 @@ packages:
       chokidar: 3.6.0
       immutable: 4.3.6
       source-map-js: 1.2.0
-    dev: true
 
   /scule@1.3.0:
     resolution: {integrity: sha512-6FtHJEvt+pVMIB9IBY+IcCJ6Z5f1iQnytgyfKMhDKgmzYG+TeH/wx1y3l27rshSbLiSanrR9ffZDrEsmjlQF2g==}
@@ -5286,7 +5275,7 @@ packages:
       axios: 1.7.2(debug@4.3.5)
       debug: 4.3.5
       picocolors: 1.0.1
-      vite: 5.3.2(@types/node@20.14.8)
+      vite: 5.3.2(@types/node@20.14.2)(lightningcss@1.25.1)(sass@1.77.4)
     transitivePeerDependencies:
       - supports-color
 
@@ -5397,7 +5386,6 @@ packages:
       sass: 1.77.4
     optionalDependencies:
       fsevents: 2.3.3
-    dev: true
 
   /vite@5.3.2(@types/node@20.14.8):
     resolution: {integrity: sha512-6lA7OBHBlXUxiJxbO5aAY2fsHHzDr1q7DvXYnyZycRs2Dz+dXBWuhpWHvmljTRTpQC2uvGmUFFkSHF2vGo90MA==}
@@ -5644,7 +5632,7 @@ packages:
       '@vue/composition-api':
         optional: true
     dependencies:
-      vue: 3.4.29(typescript@5.5.2)
+      vue: 3.4.29(typescript@5.4.5)
     dev: false
 
   /vue-demi@0.14.8(vue@3.4.30):

@@ -22,6 +22,7 @@
         <PhArrowUDownLeft size="15" />
     </a>
     <InputText
+        v-if="!setting.multiline"
         class="input"
         :model-value="stringValue"
         :invalid="invalid"
@@ -31,6 +32,22 @@
             }
         }"
         :aria-labelledby="setting.name + '-title'"
+        @update:model-value="changeValue($event)"
+    />
+    <TextArea
+        v-else
+        class="input max-w-full"
+        :model-value="stringValue"
+        :invalid="invalid"
+        :pt="{
+            root: {
+                'aria-describedby': setting.name + '-description'
+            }
+        }"
+        :aria-labelledby="setting.name + '-title'"
+        rows="6"
+        cols="40"
+        auto-resize
         @update:model-value="changeValue($event)"
     />
 </template>
@@ -43,6 +60,7 @@ import {
 } from '@safelight/shared/Settings/SettingsManager';
 import { watchImmediate } from '@vueuse/core';
 import InputText from 'primevue/inputtext';
+import TextArea from 'primevue/textarea';
 import { ref } from 'vue';
 import VueMarkdown from 'vue-markdown-render';
 
