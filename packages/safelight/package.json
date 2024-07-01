@@ -19,7 +19,7 @@
     },
     "dependencies": {
         "@phosphor-icons/vue": "^2.2.1",
-        "@quantco/pnpm-licenses": "^2.0.0",
+        "@quantco/pnpm-licenses": "^2.1.0",
         "@safelight/shared": "workspace:*",
         "@safelight/timeline": "workspace:*",
         "@vueuse/core": "^10.11.0",
