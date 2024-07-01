@@ -49,7 +49,7 @@ importers:
         version: 7.15.0(eslint@8.57.0)(typescript@5.5.3)
       vite:
         specifier: ^5.3.2
-        version: 5.3.2
+        version: 5.3.2(@types/node@20.14.9)(lightningcss@1.25.1)(sass@1.77.6)
       vitest:
         specifier: ^1.6.0
         version: 1.6.0(@vitest/browser@1.6.0)(@vitest/ui@1.6.0)
@@ -126,7 +126,7 @@ importers:
         version: 5.4.5
       vite:
         specifier: ^5.3.2
-        version: 5.3.2(@types/node@20.14.9)(lightningcss@1.25.1)(sass@1.77.6)
+        version: 5.3.2(@types/node@20.14.9)
       vite-plugin-dts:
         specifier: ^3.9.1
         version: 3.9.1(@types/node@20.14.9)(typescript@5.4.5)(vite@5.3.2)
@@ -208,8 +208,8 @@ importers:
         specifier: ^2.1.1
         version: 2.2.1(vue@3.4.31)
       vue-router:
-        specifier: ^4.3.2
-        version: 4.3.2(vue@3.4.31)
+        specifier: ^4.4.0
+        version: 4.4.0(vue@3.4.31)
     devDependencies:
       '@babel/types':
         specifier: ^7.24.7
@@ -272,8 +272,8 @@ importers:
         specifier: ^1.8.9
         version: 1.8.9(vite@5.3.2)(vue@3.4.31)
       unplugin-vue-router:
-        specifier: ^0.8.6
-        version: 0.8.8(vue-router@4.3.2)(vue@3.4.31)
+        specifier: ^0.10.0
+        version: 0.10.0(vue-router@4.4.0)(vue@3.4.31)
       vite:
         specifier: ^5.3.2
         version: 5.3.2(@types/node@20.14.9)(lightningcss@1.25.1)(sass@1.77.6)
@@ -392,7 +392,7 @@ importers:
         version: 5.4.5
       vite:
         specifier: ^5.3.2
-        version: 5.3.2(@types/node@20.14.9)(lightningcss@1.25.1)(sass@1.77.6)
+        version: 5.3.2(@types/node@20.14.9)
       vitest:
         specifier: ^1.6.0
         version: 1.6.0(@types/node@20.14.9)(@vitest/browser@1.6.0)(@vitest/ui@1.6.0)(happy-dom@14.12.3)
@@ -1745,8 +1745,8 @@ packages:
       vite: ^5.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 5.3.2
-      vue: 3.4.31(typescript@5.5.3)
+      vite: 5.3.2(@types/node@20.14.9)
+      vue: 3.4.31(typescript@5.4.5)
 
   /@vitest/browser@1.6.0(playwright@1.45.0)(vitest@1.6.0):
     resolution: {integrity: sha512-3Wpp9h1hf++rRVPvoXevkdHybLhJVn7MwIMKMIh08tVaoDMmT6fnNhbP222Z48V9PptpYeA5zvH9Ct/ZcaAzmQ==}
@@ -1833,7 +1833,7 @@ packages:
       pathe: 1.1.2
       picocolors: 1.0.1
       sirv: 2.0.4
-      vitest: 1.6.0(@vitest/browser@1.6.0)(@vitest/ui@1.6.0)
+      vitest: 1.6.0(@types/node@20.14.9)(@vitest/browser@1.6.0)(@vitest/ui@1.6.0)
     dev: true
 
   /@vitest/utils@1.6.0:
@@ -2004,7 +2004,7 @@ packages:
     dependencies:
       '@vue/compiler-ssr': 3.4.31
       '@vue/shared': 3.4.31
-      vue: 3.4.31(typescript@5.5.3)
+      vue: 3.4.31(typescript@5.4.5)
 
   /@vue/shared@3.4.31:
     resolution: {integrity: sha512-Yp3wtJk//8cO4NItOPpi3QkLExAr/aLBGZMmTtW9WpdwBCJpRM6zj9WgWktXAl8IDIozwNMByT45JP3tO3ACWA==}
@@ -3104,6 +3104,7 @@ packages:
 
   /function-bind@1.1.2:
     resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==}
+    requiresBuild: true
 
   /fuzzysearch@1.0.3:
     resolution: {integrity: sha512-s+kNWQuI3mo9OALw0HJ6YGmMbLqEufCh2nX/zzV5CrICQ/y4AwPxM+6TIiF9ItFCHXFCyM/BfCCmN57NTIJuPg==}
@@ -4205,6 +4206,7 @@ packages:
       nanoid: 3.3.7
       picocolors: 1.0.1
       source-map-js: 1.2.0
+    dev: true
 
   /postcss@8.4.39:
     resolution: {integrity: sha512-0vzE+lAiG7hZl1/9I8yzKLx3aR9Xbof3fBHKunvMfOCYAtMhrsnccJY2iTURb9EZd5+pLuiNV9/c/GZJOHsgIw==}
@@ -4922,10 +4924,10 @@ packages:
       - uWebSockets.js
     dev: true
 
-  /unplugin-vue-router@0.8.8(vue-router@4.3.2)(vue@3.4.31):
-    resolution: {integrity: sha512-8fKHzIF8+Suc1DhoBHmGxLhXUjhzIKvdTwngAybJ+3UrhNLv7KsGrNjaBVnQmlS9VNpxlwHRJzZ2Vc7IDlDm+A==}
+  /unplugin-vue-router@0.10.0(vue-router@4.4.0)(vue@3.4.31):
+    resolution: {integrity: sha512-t9cwRvNONcrh7CZLUYrd4kGOH4xZRhsHeT+exaAuYFn7z87pkTHiHh3wBnGerfKGs22SnmJIIjcKyEa62CO+4w==}
     peerDependencies:
-      vue-router: ^4.3.0
+      vue-router: ^4.4.0
     peerDependenciesMeta:
       vue-router:
         optional: true
@@ -4942,7 +4944,7 @@ packages:
       pathe: 1.1.2
       scule: 1.3.0
       unplugin: 1.10.1
-      vue-router: 4.3.2(vue@3.4.31)
+      vue-router: 4.4.0(vue@3.4.31)
       yaml: 2.4.5
     transitivePeerDependencies:
       - rollup
@@ -5121,6 +5123,7 @@ packages:
       rollup: 4.18.0
     optionalDependencies:
       fsevents: 2.3.3
+    dev: true
 
   /vite@5.3.2(@types/node@20.14.9):
     resolution: {integrity: sha512-6lA7OBHBlXUxiJxbO5aAY2fsHHzDr1q7DvXYnyZycRs2Dz+dXBWuhpWHvmljTRTpQC2uvGmUFFkSHF2vGo90MA==}
@@ -5188,7 +5191,7 @@ packages:
       '@types/node': 20.14.9
       esbuild: 0.21.4
       lightningcss: 1.25.1
-      postcss: 8.4.39
+      postcss: 8.4.38
       rollup: 4.18.0
       sass: 1.77.6
     optionalDependencies:
@@ -5435,8 +5438,8 @@ packages:
       vue: 3.4.31(typescript@5.4.5)
     dev: false
 
-  /vue-router@4.3.2(vue@3.4.31):
-    resolution: {integrity: sha512-hKQJ1vDAZ5LVkKEnHhmm1f9pMiWIBNGF5AwU67PdH7TyXCj/a4hTccuUuYCAMgJK6rO/NVYtQIEN3yL8CECa7Q==}
+  /vue-router@4.4.0(vue@3.4.31):
+    resolution: {integrity: sha512-HB+t2p611aIZraV2aPSRNXf0Z/oLZFrlygJm+sZbdJaW6lcFqEDQwnzUBXn+DApw+/QzDU/I9TeWx9izEjTmsA==}
     peerDependencies:
       vue: ^3.2.0
     dependencies:
