@@ -272,8 +272,8 @@ importers:
         specifier: ^1.8.6
         version: 1.8.6(vite@5.3.2)(vue@3.4.31)
       unplugin-vue-router:
-        specifier: ^0.8.6
-        version: 0.8.8(vue-router@4.3.2)(vue@3.4.31)
+        specifier: ^0.10.0
+        version: 0.10.0(vue-router@4.3.2)(vue@3.4.31)
       vite:
         specifier: ^5.3.2
         version: 5.3.2(@types/node@20.14.2)(lightningcss@1.25.1)(sass@1.77.4)
@@ -4966,10 +4966,10 @@ packages:
       - uWebSockets.js
     dev: true
 
-  /unplugin-vue-router@0.8.8(vue-router@4.3.2)(vue@3.4.31):
-    resolution: {integrity: sha512-8fKHzIF8+Suc1DhoBHmGxLhXUjhzIKvdTwngAybJ+3UrhNLv7KsGrNjaBVnQmlS9VNpxlwHRJzZ2Vc7IDlDm+A==}
+  /unplugin-vue-router@0.10.0(vue-router@4.3.2)(vue@3.4.31):
+    resolution: {integrity: sha512-t9cwRvNONcrh7CZLUYrd4kGOH4xZRhsHeT+exaAuYFn7z87pkTHiHh3wBnGerfKGs22SnmJIIjcKyEa62CO+4w==}
     peerDependencies:
-      vue-router: ^4.3.0
+      vue-router: ^4.4.0
     peerDependenciesMeta:
       vue-router:
         optional: true
