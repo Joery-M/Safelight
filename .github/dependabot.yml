@@ -11,6 +11,7 @@ updates:
           - "@endo/static-module-record"
           - "@quantco/pnpm-licenses"
           - "@tsconfig/node20"
+          - "dot-path-value"
           - "fuzzysearch"
           - "luxon"
           - "mediainfo.js"
