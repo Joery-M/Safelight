@@ -32,16 +32,11 @@
 </template>
 
 <script setup lang="ts">
-import {
-    useElementBounding,
-    useEventListener,
-    useMouseInElement,
-    watchImmediate
-} from '@vueuse/core';
+import { useElementBounding, useEventListener, watchImmediate } from '@vueuse/core';
 import { useWheel } from '@vueuse/gesture';
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
-import { computed, provide, ref } from 'vue';
+import { computed, provide, ref, watchEffect } from 'vue';
 import { TimelineViewport, type TimelineItem, type TimelineProps } from './index';
 import LayerControl from './LayerControl.vue';
 import PlaybackHead from './PlaybackHead.vue';
@@ -50,7 +45,13 @@ import TimelineItemComponent from './TimelineItemComponent.vue';
 
 const target = ref<HTMLDivElement>();
 const horizontalScroll = ref<HTMLDivElement>();
-const pointerOut = useMouseInElement(target).isOutside;
+const pointerOut = ref(true);
+
+useEventListener(['mousemove', 'mouseenter', 'mouseover'], (ev) => {
+    if (ev.target) {
+        pointerOut.value = !target.value?.parentNode?.contains(ev.target as Node);
+    }
+});
 
 const props = withDefaults(defineProps<TimelineProps>(), {
     alignment: 'bottom',
@@ -81,7 +82,7 @@ viewport.pbPos = playbackPosition;
 
 provide('viewport', viewport);
 
-watchImmediate(props, () => {
+watchEffect(() => {
     viewport.alignment.value = props.alignment;
     viewport.zoomFactor.value = props.zoomFactor;
     viewport.fps.value = props.fps ?? Infinity;

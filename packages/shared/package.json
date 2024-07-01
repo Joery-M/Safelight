@@ -11,19 +11,14 @@
         "test:run": "vitest run --ui false"
     },
     "dependencies": {
-        "@phosphor-icons/vue": "^2.2.1",
-        "@vueuse/core": "^10.11.0",
-        "@vueuse/rxjs": "^10.11.0",
-        "@vueuse/shared": "^10.11.0",
         "dexie": "^4.0.7",
+        "dot-path-value": "^0.0.10",
         "hash-wasm": "^4.11.0",
         "luxon": "^3.4.4",
         "mediainfo.js": "^0.3.1",
         "mime-matcher": "^1.0.5",
         "rxjs": "^7.8.1",
-        "uuid": "^10.0.0",
-        "vue": "^3.4.31",
-        "primevue": "^3.52.0"
+        "uuid": "^10.0.0"
     },
     "devDependencies": {
         "@tsconfig/node20": "^20.1.4",
@@ -32,5 +27,14 @@
         "@vue/tsconfig": "^0.5.1",
         "fake-indexeddb": "^6.0.0",
         "happy-dom": "^14.12.3"
+    },
+    "peerDependencies": {
+        "@phosphor-icons/vue": "~2",
+        "@vueuse/core": "~10",
+        "@vueuse/rxjs": "~10",
+        "@vueuse/shared": "~10",
+        "primevue": "~3",
+        "vue": "~3",
+        "@safelight/safelight": "workspace:^"
     }
 }

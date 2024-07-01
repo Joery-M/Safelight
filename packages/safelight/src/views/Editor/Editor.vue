@@ -8,7 +8,10 @@
             }"
         >
             <template #start>
-                <Menubar :pt="{ root: { class: 'border-none' } }" :model="menuItems">
+                <Menubar
+                    :pt="{ root: { class: 'border-none' }, submenu: { class: 'z-50' } }"
+                    :model="menuItems"
+                >
                     <template #itemicon="{ item: { icon } }">
                         <component :is="icon" v-if="icon" class="pr-1" />
                     </template>
@@ -39,12 +42,14 @@ import { router } from '@/main';
 import { CurrentProject } from '@/stores/currentProject';
 import { useEditor } from '@/stores/useEditor';
 import { useProject } from '@/stores/useProject';
-import { PhFile } from '@phosphor-icons/vue';
+import { PhFile, PhGear, PhSignOut } from '@phosphor-icons/vue';
+import { SettingsManager } from '@safelight/shared/Settings/SettingsManager';
 import ConfirmDialog from 'primevue/confirmdialog';
 import Menubar from 'primevue/menubar';
 import type { MenuItem } from 'primevue/menuitem';
 import Toolbar from 'primevue/toolbar';
 import { useConfirm } from 'primevue/useconfirm';
+import { useDialog } from 'primevue/usedialog';
 import { onBeforeUnmount, onMounted, watch } from 'vue';
 
 const project = useProject();
@@ -53,6 +58,7 @@ const editor = useEditor();
 editor.AddDefaultPanels();
 
 const projectErrorDialog = useConfirm();
+const dialog = useDialog();
 
 const menuItems: MenuItem[] = [
     {
@@ -60,7 +66,16 @@ const menuItems: MenuItem[] = [
         icon: PhFile as any,
         items: [
             {
+                label: 'Settings',
+                icon: PhGear as any,
+                disabled: false,
+                command: () => {
+                    SettingsManager.openSettings(dialog);
+                }
+            },
+            {
                 label: 'Exit',
+                icon: PhSignOut as any,
                 disabled: false,
                 command: async () => {
                     await CurrentProject.beforeExit();
@@ -75,7 +90,6 @@ onMounted(async () => {
     await router.isReady();
     if (!CurrentProject.isLoaded.value) {
         const lastProject = CurrentProject.getSessionProject();
-        console.log(lastProject);
         if (lastProject) {
             if (lastProject) {
                 CurrentProject.openProject(lastProject, false /* Already here */);

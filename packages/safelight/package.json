@@ -28,6 +28,7 @@
         "@vueuse/math": "^10.11.0",
         "@vueuse/rxjs": "^10.11.0",
         "dexie": "^4.0.7",
+        "dot-path-value": "^0.0.10",
         "fuzzysearch": "^1.0.3",
         "hash-wasm": "^4.11.0",
         "luxon": "^3.4.4",

@@ -5,6 +5,7 @@ import App from './App.vue';
 
 import PrimeVue, { type PrimeVueConfiguration } from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
+import DialogService from 'primevue/dialogservice';
 import 'primevue/resources/primevue.min.css';
 import 'primevue/resources/themes/aura-dark-amber/theme.css';
 import Tooltip from 'primevue/tooltip';
@@ -27,6 +28,7 @@ app.use(PrimeVue, {
     ripple: false
 } as PrimeVueConfiguration);
 app.use(ConfirmationService);
+app.use(DialogService);
 
 // Phosphor icons
 app.provide('size', 18);

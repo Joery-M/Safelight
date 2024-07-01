@@ -44,6 +44,7 @@ export default defineConfig({
             'primevue/button',
             'primevue/buttongroup',
             'primevue/card',
+            'primevue/checkbox',
             'primevue/column',
             'primevue/confirmdialog',
             'primevue/datatable',
@@ -65,7 +66,9 @@ export default defineConfig({
             'primevue/splitterpanel',
             'primevue/tabmenu',
             'primevue/toolbar',
+            'primevue/tree',
             'primevue/useconfirm',
+            'primevue/usedialog',
             'rxjs',
             'uuid'
         ]

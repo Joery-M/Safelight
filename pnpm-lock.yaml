@@ -168,6 +168,9 @@ importers:
       dexie:
         specifier: ^4.0.7
         version: 4.0.7
+      dot-path-value:
+        specifier: ^0.0.10
+        version: 0.0.10
       fuzzysearch:
         specifier: ^1.0.3
         version: 1.0.3
@@ -284,20 +287,26 @@ importers:
   packages/shared:
     dependencies:
       '@phosphor-icons/vue':
-        specifier: ^2.2.1
+        specifier: ~2
         version: 2.2.1(vue@3.4.31)
+      '@safelight/safelight':
+        specifier: workspace:^
+        version: link:../safelight
       '@vueuse/core':
-        specifier: ^10.11.0
+        specifier: ~10
         version: 10.11.0(vue@3.4.31)
       '@vueuse/rxjs':
-        specifier: ^10.11.0
+        specifier: ~10
         version: 10.11.0(rxjs@7.8.1)(vue@3.4.31)
       '@vueuse/shared':
-        specifier: ^10.11.0
+        specifier: ~10
         version: 10.11.0(vue@3.4.31)
       dexie:
         specifier: ^4.0.7
         version: 4.0.7
+      dot-path-value:
+        specifier: ^0.0.10
+        version: 0.0.10
       hash-wasm:
         specifier: ^4.11.0
         version: 4.11.0
@@ -311,7 +320,7 @@ importers:
         specifier: ^1.0.5
         version: 1.0.5
       primevue:
-        specifier: ^3.52.0
+        specifier: ~3
         version: 3.52.0(vue@3.4.31)
       rxjs:
         specifier: ^7.8.1
@@ -320,7 +329,7 @@ importers:
         specifier: ^10.0.0
         version: 10.0.0
       vue:
-        specifier: ^3.4.31
+        specifier: ~3
         version: 3.4.31(typescript@5.5.3)
     devDependencies:
       '@tsconfig/node20':
@@ -1583,7 +1592,6 @@ packages:
 
   /@types/node@20.14.9:
     resolution: {integrity: sha512-06OCtnTXtWOZBJlRApleWndH4JsRVs1pDCc8dLSQp+7PpUpX3ePdHyeNSFTeSe7FtKyQkrlPvHwJOW3SLd8Oyg==}
-    requiresBuild: true
     dependencies:
       undici-types: 5.26.5
 
@@ -2013,7 +2021,6 @@ packages:
 
   /@vueuse/core@10.11.0(vue@3.4.31):
     resolution: {integrity: sha512-x3sD4Mkm7PJ+pcq3HX8PLPBadXCAlSDR/waK87dz0gQE+qJnaaFhc/dZVfJz+IUYzTMVGum2QlR7ImiJQN4s6g==}
-    requiresBuild: true
     dependencies:
       '@types/web-bluetooth': 0.0.20
       '@vueuse/metadata': 10.11.0
@@ -2106,7 +2113,6 @@ packages:
 
   /@vueuse/rxjs@10.11.0(rxjs@7.8.1)(vue@3.4.31):
     resolution: {integrity: sha512-ei/47hCccONYo4NpkVyT+MuKtq/dGkc4Gy9E25/yr5kKStMXM8UuC4c/BRsvEvv8pXBWmWel1XqxDHpOAR9twg==}
-    requiresBuild: true
     peerDependencies:
       rxjs: '>=6.0.0'
     dependencies:
@@ -2639,6 +2645,10 @@ packages:
     dependencies:
       esutils: 2.0.3
     dev: true
+
+  /dot-path-value@0.0.10:
+    resolution: {integrity: sha512-MrVpDoFwk1xjeM0sGRuei7N3LQOylJ9iamgfxAQwPY0hPnDHL981hM/KpoQwFHMckgjZvJA0MyH7VN//ernFFA==}
+    dev: false
 
   /eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}

@@ -269,7 +269,7 @@ export class TimelineViewport {
      *
      * I hope no one needs to have like 10000 items stacked vertically.
      */
-    isItemVisible(item: TimelineItem) {
+    isItemVisible(item: { start: number; duration: number }) {
         const isHorizontalVisible =
             item.start + item.duration >= this.startTime.value && item.start <= this.endTime.value;
         return isHorizontalVisible;
