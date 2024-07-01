@@ -269,8 +269,8 @@ importers:
         specifier: ^5.4.5
         version: 5.4.5
       unplugin-turbo-console:
-        specifier: ^1.8.6
-        version: 1.8.6(vite@5.3.2)(vue@3.4.29)
+        specifier: ^1.8.9
+        version: 1.8.9(vite@5.3.2)(vue@3.4.29)
       unplugin-vue-router:
         specifier: ^0.8.6
         version: 0.8.8(vue-router@4.3.2)(vue@3.4.29)
@@ -1148,7 +1148,7 @@ packages:
     peerDependencies:
       vue: '>=3.2.39'
     dependencies:
-      vue: 3.4.29(typescript@5.5.2)
+      vue: 3.4.29(typescript@5.4.5)
     dev: false
 
   /@pkgjs/parseargs@0.11.0:
@@ -1699,8 +1699,8 @@ packages:
       vite: ^5.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 5.3.2
-      vue: 3.4.29(typescript@5.5.2)
+      vite: 5.3.2(@types/node@20.14.2)(lightningcss@1.25.1)(sass@1.77.4)
+      vue: 3.4.29(typescript@5.4.5)
     dev: true
 
   /@vitejs/plugin-vue@5.0.5(vite@5.3.2)(vue@3.4.30):
@@ -1799,7 +1799,7 @@ packages:
       pathe: 1.1.2
       picocolors: 1.0.1
       sirv: 2.0.4
-      vitest: 1.6.0(@vitest/browser@1.6.0)(@vitest/ui@1.6.0)
+      vitest: 1.6.0(@types/node@20.14.8)(@vitest/browser@1.6.0)(@vitest/ui@1.6.0)
     dev: true
 
   /@vitest/utils@1.6.0:
@@ -2038,7 +2038,7 @@ packages:
     dependencies:
       '@vue/compiler-ssr': 3.4.29
       '@vue/shared': 3.4.29
-      vue: 3.4.29(typescript@5.5.2)
+      vue: 3.4.29(typescript@5.4.5)
 
   /@vue/server-renderer@3.4.30(vue@3.4.30):
     resolution: {integrity: sha512-TBD3eqR1DeDc0cMrXS/vEs/PWzq1uXxnvjoqQuDGFIEHFIwuDTX/KWAQKIBjyMWLFHEeTDGYVsYci85z2UbTDg==}
@@ -2071,6 +2071,7 @@ packages:
 
   /@vueuse/core@10.11.0(vue@3.4.29):
     resolution: {integrity: sha512-x3sD4Mkm7PJ+pcq3HX8PLPBadXCAlSDR/waK87dz0gQE+qJnaaFhc/dZVfJz+IUYzTMVGum2QlR7ImiJQN4s6g==}
+    requiresBuild: true
     dependencies:
       '@types/web-bluetooth': 0.0.20
       '@vueuse/metadata': 10.11.0
@@ -2177,6 +2178,7 @@ packages:
 
   /@vueuse/rxjs@10.11.0(rxjs@7.8.1)(vue@3.4.29):
     resolution: {integrity: sha512-ei/47hCccONYo4NpkVyT+MuKtq/dGkc4Gy9E25/yr5kKStMXM8UuC4c/BRsvEvv8pXBWmWel1XqxDHpOAR9twg==}
+    requiresBuild: true
     peerDependencies:
       rxjs: '>=6.0.0'
     dependencies:
@@ -2214,7 +2216,6 @@ packages:
 
   /@vueuse/shared@10.11.0(vue@3.4.30):
     resolution: {integrity: sha512-fyNoIXEq3PfX1L3NkNhtVQUSRtqYwJtJg+Bp9rIzculIZWHTkKSysujrOk2J+NrRulLTQH9+3gGSfYLWSEWU1A==}
-    requiresBuild: true
     dependencies:
       vue-demi: 0.14.8(vue@3.4.30)
     transitivePeerDependencies:
@@ -3615,8 +3616,8 @@ packages:
     resolution: {integrity: sha512-Y+60/zizpJ3HRH8DCss+q95yr6145JXZo46OTpFvDZWLfRCE4qChOyk1b26nMaNpfHHgxagk9dXT5OP0Tfe+dQ==}
     dev: true
 
-  /launch-editor@2.6.1:
-    resolution: {integrity: sha512-eB/uXmFVpY4zezmGp5XtU21kwo7GBbKB+EQ+UZeWtGb9yAM5xt/Evk+lYH3eRNAtId+ej4u7TYPFZ07w4s7rRw==}
+  /launch-editor@2.8.0:
+    resolution: {integrity: sha512-vJranOAJrI/llyWGRQqiDM+adrw+k83fvmmx3+nV47g3+36xM15jE+zyZ6Ffel02+xSvuM0b2GDRosXZkbb6wA==}
     dependencies:
       picocolors: 1.0.1
       shell-quote: 1.8.1
@@ -4373,7 +4374,7 @@ packages:
     peerDependencies:
       vue: ^3.0.0
     dependencies:
-      vue: 3.4.29(typescript@5.5.2)
+      vue: 3.4.29(typescript@5.4.5)
     dev: false
 
   /proto-list@1.2.4:
@@ -5049,8 +5050,8 @@ packages:
     engines: {node: '>= 4.0.0'}
     dev: true
 
-  /unplugin-turbo-console@1.8.6(vite@5.3.2)(vue@3.4.29):
-    resolution: {integrity: sha512-lCNizYO4/nsM0eIZ6Nx+IyLQoewWJ9dF5HrO4hK8dvTBETbU/iptJ2sYjCHUQd1/40u8ZtdMxgK97tFvoB8Ptw==}
+  /unplugin-turbo-console@1.8.9(vite@5.3.2)(vue@3.4.29):
+    resolution: {integrity: sha512-SeE8Nm7wBDeBXssVNvz4qxs0LFJ3pIjCs+g6uwr4UwjuiZuMKdUAk9HMyuOOMcG4w+kMnjWHAEMycXD8hSzAhg==}
     peerDependencies:
       '@nuxt/kit': '>=3'
       '@nuxt/schema': '>=3'
@@ -5082,7 +5083,7 @@ packages:
       ast-kit: 0.12.2
       get-port-please: 3.1.2
       h3: 1.11.1
-      launch-editor: 2.6.1
+      launch-editor: 2.8.0
       magic-string: 0.30.10
       pathe: 1.1.2
       unplugin: 1.10.1
@@ -5637,7 +5638,7 @@ packages:
       '@vue/composition-api':
         optional: true
     dependencies:
-      vue: 3.4.29(typescript@5.5.2)
+      vue: 3.4.29(typescript@5.4.5)
     dev: false
 
   /vue-demi@0.14.8(vue@3.4.30):
