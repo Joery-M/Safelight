@@ -3,7 +3,6 @@ import { useDialog } from 'primevue/usedialog';
 import {
     computed,
     defineAsyncComponent,
-    markRaw,
     reactive,
     toRaw,
     type Component,
@@ -12,129 +11,7 @@ import {
 } from 'vue';
 
 export class SettingsManager {
-    private static defaultNamespaces: SettingsNamespaceDefinition[] = [
-        {
-            name: 'general',
-            title: 'General',
-            childNamespaces: []
-        },
-        {
-            name: 'editor',
-            title: 'Editor',
-            icon: markRaw(
-                defineAsyncComponent(async () => (await import('@phosphor-icons/vue')).PhSidebar)
-            ),
-            childNamespaces: [
-                {
-                    name: 'playback',
-                    title: 'Playback',
-                    icon: markRaw(
-                        defineAsyncComponent(
-                            async () => (await import('@phosphor-icons/vue')).PhPlayPause
-                        )
-                    ),
-                    settings: []
-                },
-                {
-                    name: 'timeline',
-                    title: 'Timeline',
-                    icon: markRaw(
-                        defineAsyncComponent(
-                            async () => (await import('@phosphor-icons/vue')).PhFilmStrip
-                        )
-                    ),
-                    settings: [
-                        {
-                            type: 'boolean',
-                            name: 'useTrackpad',
-                            title: 'Trackpad mode',
-                            description: 'Will inverse the axes on which the timeline will scroll.',
-                            default: false
-                        },
-                        {
-                            type: 'number',
-                            name: 'zoomFactor',
-                            title: 'Zoom factor',
-                            description: 'The amount to zoom in and out by when scrolling.',
-                            default: 2,
-                            decimals: false,
-                            range: true,
-                            min: 1,
-                            max: 100
-                        },
-                        {
-                            type: 'enum',
-                            name: 'align',
-                            title: 'Align timeline',
-                            default: 'bottom',
-                            options: [
-                                { value: 'top', label: 'Top' },
-                                { value: 'bottom', label: 'Bottom' }
-                            ],
-                            labelKey: 'label',
-                            valueKey: 'value'
-                        }
-                    ]
-                },
-                {
-                    name: 'library',
-                    title: 'Library',
-                    icon: markRaw(
-                        defineAsyncComponent(
-                            async () => (await import('@phosphor-icons/vue')).PhFolders
-                        )
-                    ),
-                    settings: [
-                        {
-                            type: 'group',
-                            title: 'Media',
-                            settings: [
-                                {
-                                    type: 'string',
-                                    title: 'Test',
-                                    description: 'Test',
-                                    name: 'test',
-                                    pattern: /icle+/,
-                                    maxLength: 10,
-                                    default: 'icle'
-                                }
-                            ]
-                        },
-                        {
-                            type: 'group',
-                            title: 'Files',
-                            settings: []
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            name: 'keyboard',
-            title: 'Keyboard',
-            icon: markRaw(
-                defineAsyncComponent(async () => (await import('@phosphor-icons/vue')).PhKeyboard)
-            ),
-            childNamespaces: [
-                {
-                    name: 'hotkeys',
-                    title: 'Hotkeys',
-                    settings: [
-                        {
-                            type: 'custom',
-                            name: 'keybinds',
-                            title: 'Hotkeys',
-                            component: markRaw(
-                                defineAsyncComponent(
-                                    () => import('../../../safelight/src/views/dev/Packages.vue')
-                                )
-                            )
-                        }
-                    ]
-                }
-            ]
-        }
-    ];
+    private static defaultNamespaces: SettingsNamespaceDefinition[] = [];
 
     private static saveTimeout: ReturnType<typeof setTimeout>;
 
@@ -146,7 +23,15 @@ export class SettingsManager {
 
     private static defaultsCreated = false;
 
-    public static setup() {
+    public static setup(defaultNamespaces: SettingsNamespaceDefinition[]) {
+        this.defaultNamespaces = defaultNamespaces;
+
+        Object.assign(this.currentSettings, {});
+        Object.assign(this.defaultSettings, {});
+        this.settingsDefinition.clear();
+        this.defaultsCreated = false;
+        clearTimeout(this.saveTimeout);
+
         this.createDefaultNamespaces(this.defaultNamespaces, []);
         this.createDefaultSettings(Array.from(this.settingsDefinition.values()));
 
@@ -171,7 +56,7 @@ export class SettingsManager {
         return pathArray.reduce((ns, path, curIndex) => {
             if (!ns) return;
 
-            const childNs = ns?.childNamespaces.find(
+            const childNs = ns?.childNamespaces?.find(
                 (ns) => ns.path == pathArray.slice(0, curIndex + 1).join('.')
             );
 
@@ -246,6 +131,7 @@ export class SettingsManager {
     }
 
     public static saveSettings() {
+        clearInterval(this.saveTimeout);
         localStorage.setItem('sl-settings', JSON.stringify(toRaw(this.currentSettings)));
     }
 
