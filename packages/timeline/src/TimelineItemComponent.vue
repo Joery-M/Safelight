@@ -2,7 +2,7 @@
     <div
         class="timelineItem"
         :style="{
-            top: ySmooth + 'px',
+            top: y + 'px',
             left: useMax(x, 0).value + 'px',
             width: width + 'px',
             height: height + 'px'
@@ -54,8 +54,6 @@ const height = computed(
 
 const x = computed(() => viewport.getTimePosition(item.start) - viewport.offsetX.value);
 const y = computed(() => viewport.LayerToYPosition(item.layer, true, true));
-const xSmooth = x;
-const ySmooth = y;
 </script>
 
 <style lang="scss" scoped>
