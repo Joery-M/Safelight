@@ -4,7 +4,7 @@
     "private": "true",
     "type": "module",
     "exports": {
-        "./*": "./src/*.ts"
+        "./*": "./src/*"
     },
     "scripts": {
         "test": "vitest",
@@ -35,6 +35,7 @@
         "@vueuse/shared": "~10",
         "primevue": "~3",
         "vue": "~3",
+        "vue-i18n": "^9.13.1",
         "@safelight/safelight": "workspace:^"
     }
 }
