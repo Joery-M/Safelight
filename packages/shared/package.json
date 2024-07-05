@@ -17,6 +17,7 @@
         "luxon": "^3.4.4",
         "mediainfo.js": "^0.3.1",
         "mime-matcher": "^1.0.5",
+        "mp4box": "^0.5.2",
         "rxjs": "^7.8.1",
         "uuid": "^10.0.0"
     },
@@ -30,11 +31,11 @@
     },
     "peerDependencies": {
         "@phosphor-icons/vue": "~2",
+        "@safelight/safelight": "workspace:^",
         "@vueuse/core": "~10",
         "@vueuse/rxjs": "~10",
         "@vueuse/shared": "~10",
         "primevue": "~3",
-        "vue": "~3",
-        "@safelight/safelight": "workspace:^"
+        "vue": "~3"
     }
 }
