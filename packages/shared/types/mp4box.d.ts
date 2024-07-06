@@ -71,6 +71,7 @@ declare module 'mp4box' {
         flush(): void;
 
         setExtractionOptions(id: number, user?: any, options?: ExtractionOptions): void;
+        getTrackById(id: number): any;
 
         moov: any;
     }

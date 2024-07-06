@@ -157,14 +157,7 @@ class Mp4Demuxer implements BaseDemuxer {
         for (const track of info.videoTracks) {
             if (!track) continue;
 
-            let avccBox: any;
-            for (const trak of file.moov.traks) {
-                console.log(trak);
-                if (trak.mdia.minf.stbl.stsd.entries[0].avcC) {
-                    avccBox = trak.mdia.minf.stbl.stsd.entries[0].avcC;
-                    break;
-                }
-            }
+            const box = file.getTrackById(track.id).mdia.minf.stbl.stsd.entries;
 
             // const frameDuration = track.samples_duration / track.nb_samples;
             // const fps = Math.round(track.timescale / frameDuration);
@@ -175,7 +168,7 @@ class Mp4Demuxer implements BaseDemuxer {
                 width: track.video.width,
                 id: track.id,
                 sampleCount: track.nb_samples,
-                description: this.getExtradata(avccBox),
+                description: this.getExtradata(box),
                 chunks: []
             });
         }
@@ -212,79 +205,17 @@ class Mp4Demuxer implements BaseDemuxer {
         return keyFrames;
     }
 
-    private getExtradata(avccBox: any) {
-        let i;
-        let size = 7;
-        for (i = 0; i < avccBox.SPS.length; i++) {
-            // nalu length is encoded as a uint16.
-            size += 2 + avccBox.SPS[i].length;
+    private getExtradata(entries: any) {
+        for (const entry of entries) {
+            const box = entry.avcC || entry.hvcC || entry.vpcC || entry.av1C;
+            if (box) {
+                const stream = new MP4Box.DataStream(undefined, 0, MP4Box.DataStream.BIG_ENDIAN);
+                box.write(stream);
+                return new Uint8Array(stream.buffer, 8); // Remove the box header.
+            }
         }
-        for (i = 0; i < avccBox.PPS.length; i++) {
-            // nalu length is encoded as a uint16.
-            size += 2 + avccBox.PPS[i].length;
-        }
-
-        const writer = new Writer(size);
-
-        writer.writeUint8(avccBox.configurationVersion);
-        writer.writeUint8(avccBox.AVCProfileIndication);
-        writer.writeUint8(avccBox.profile_compatibility);
-        writer.writeUint8(avccBox.AVCLevelIndication);
-        writer.writeUint8(avccBox.lengthSizeMinusOne + (63 << 2));
-
-        writer.writeUint8(avccBox.nb_SPS_nalus + (7 << 5));
-        for (i = 0; i < avccBox.SPS.length; i++) {
-            writer.writeUint16(avccBox.SPS[i].length);
-            writer.writeUint8Array(avccBox.SPS[i].nalu);
-        }
-
-        writer.writeUint8(avccBox.nb_PPS_nalus);
-        for (i = 0; i < avccBox.PPS.length; i++) {
-            writer.writeUint16(avccBox.PPS[i].length);
-            writer.writeUint8Array(avccBox.PPS[i].nalu);
-        }
-
-        return writer.getData();
     }
 }
 
 // Only possible because this file is dynamically imported after VideoDemuxer is defined
 VideoDemuxer.RegisterDemuxer(new Mp4Demuxer());
-
-// Taken from https://codesandbox.io/p/sandbox/director-mz1n8t?file=%2Fsrc%2Fengine%2Fdemuxer%2FMP4Demuxer.ts%3A157%2C1-193%2C2
-class Writer {
-    data: Uint8Array;
-    idx: number;
-    size: number;
-
-    constructor(size: number) {
-        this.data = new Uint8Array(size);
-        this.idx = 0;
-        this.size = size;
-    }
-
-    getData() {
-        if (this.idx != this.size) throw 'Mismatch between size reserved and sized used';
-
-        return this.data.slice(0, this.idx);
-    }
-
-    writeUint8(value: number) {
-        this.data.set([value], this.idx);
-        this.idx++;
-    }
-
-    writeUint16(value: number) {
-        // TODO: find a more elegant solution to endianess.
-        const arr = new Uint16Array(1);
-        arr[0] = value;
-        const buffer = new Uint8Array(arr.buffer);
-        this.data.set([buffer[1], buffer[0]], this.idx);
-        this.idx += 2;
-    }
-
-    writeUint8Array(value: Uint8Array) {
-        this.data.set(value, this.idx);
-        this.idx += value.length;
-    }
-}
