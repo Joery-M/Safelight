@@ -21,6 +21,7 @@
             Demux
         </Button>
         <p>Progress: {{ progress }}</p>
+        <p>{{ clock }}</p>
         <template v-if="tracks">
             <ol>
                 <li v-for="track in tracks" :key="track.id">
@@ -35,7 +36,7 @@
 <script lang="ts" setup>
 import { PhArrowLeft, PhUpload } from '@phosphor-icons/vue';
 import { VideoDemuxer, type DemuxedVideoTrack } from '@safelight/shared/Decoder/Video/VideoDemuxer';
-import { useFileDialog } from '@vueuse/core';
+import { useFileDialog, useIntervalFn } from '@vueuse/core';
 import Button from 'primevue/button';
 import Panel from 'primevue/panel';
 import { ref } from 'vue';
@@ -46,6 +47,10 @@ const fileDialog = useFileDialog({
 });
 
 const progress = ref('No file');
+const clock = ref(0);
+useIntervalFn(() => {
+    clock.value++;
+}, 100);
 const tracks = ref<DemuxedVideoTrack[]>();
 
 fileDialog.onChange((fileList) => {
