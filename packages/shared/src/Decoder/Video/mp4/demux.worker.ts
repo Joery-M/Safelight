@@ -1,16 +1,28 @@
-import '../../../../../worker-types/mp4box.d.ts';
+import {
+    createFile,
+    DataStream,
+    type BoxParser,
+    type MP4ArrayBuffer,
+    type MP4File,
+    type MP4Info,
+    type Sample
+} from 'mp4box';
+// import '../../../../worker-types/mp4box.d.ts';
 
-import type { DemuxedVideoSegment, DemuxedVideoTrack } from '../../VideoDemuxer';
+import type { DemuxedVideoSegment, DemuxedVideoTrack } from '../VideoDemuxer';
 
-export default function (source: File) {
-    return new Promise<DemuxedVideoTrack[] | undefined>((resolve) => {
-        const file = MP4Box.createFile();
+export function demux(source: File) {
+    return new Promise<DemuxedVideoTrack[] | undefined>((resolve, reject) => {
+        const file = createFile();
 
         const reader = source.stream().getReader();
 
         const result: DemuxedVideoTrack[] = [];
 
-        file.onError = (e: string) => console.error(e);
+        file.onError = (e: string) => {
+            console.error(e);
+            reject(e);
+        };
         file.onReady = (info: MP4Info) => {
             result.push(...onReady(info, file));
 
@@ -19,7 +31,6 @@ export default function (source: File) {
                 file.start();
             }
         };
-        file.onMoovStart = () => console.log('Moov Start');
 
         readChunk(reader, file, 0).then(() => {
             file.flush();
@@ -32,17 +43,31 @@ export default function (source: File) {
          */
         const trackSampleLengths: { [track: string]: number } = {};
 
+        /**
+         * Its possible for tracks to report the wrong sample count, so this is just a safeguard
+         */
+        let doneTimeout: ReturnType<typeof setTimeout>;
         function checkDone() {
+            clearTimeout(doneTimeout);
+            let completeAmount = 0;
             for (const trackId in trackSampleLengths) {
                 if (Object.prototype.hasOwnProperty.call(trackSampleLengths, trackId)) {
                     const samples = trackSampleLengths[trackId];
 
                     const track = result.find((t) => t.id.toString() == trackId.toString());
 
+                    console.log(track?.sampleCount, samples);
                     if (track && track.sampleCount == samples) {
-                        resolve(result);
+                        completeAmount++;
                     }
                 }
+            }
+            if (completeAmount == Object.keys(trackSampleLengths).length) {
+                resolve(result);
+            } else {
+                doneTimeout = setTimeout(() => {
+                    resolve(result);
+                }, 2500);
             }
         }
 
@@ -143,6 +168,7 @@ export default function (source: File) {
                 timestampEnd: keyFrameChunks.at(-1)!.timestamp + keyFrameChunks.at(-1)!.duration!
             });
         }
+        console.log('A');
         return keyFrames;
     }
 
@@ -150,7 +176,6 @@ export default function (source: File) {
         for (const entry of entries) {
             const box: BoxParser.Box = entry.avcC || entry.hvcC || entry.vpcC || entry.av1C;
             if (box) {
-                console.log(box);
                 const stream = new DataStream(undefined, 0, DataStream.BIG_ENDIAN);
                 box.write(stream);
                 return new Uint8Array(stream.buffer, 8); // Remove the box header.
@@ -158,3 +183,15 @@ export default function (source: File) {
         }
     }
 }
+
+self.addEventListener('message', (ev) => {
+    if ('source' in ev.data) {
+        demux(ev.data.source as File)
+            .then((result) => {
+                self.postMessage({ type: 'success', result });
+            })
+            .catch((error) => {
+                self.postMessage({ type: 'error', error });
+            });
+    }
+});

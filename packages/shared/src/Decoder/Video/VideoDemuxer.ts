@@ -1,18 +1,23 @@
 export class VideoDemuxer {
-    private static demuxers: BaseDemuxer[] = [];
+    private static demuxers: { [mime: string]: (() => Promise<BaseDemuxer | undefined>)[] } = {};
 
-    static RegisterDemuxer(demuxer: BaseDemuxer) {
-        this.demuxers.push(demuxer);
+    static RegisterDemuxer(mimeType: string, demuxer: () => Promise<BaseDemuxer | undefined>) {
+        this.demuxers[mimeType] ||= [];
+        this.demuxers[mimeType].push(demuxer);
     }
 
     static async GetDemuxer(file: File): Promise<BaseDemuxer | undefined> {
-        for await (const demuxer of this.demuxers) {
-            const res = await demuxer.TestFile(file);
-
-            // Just get first demuxer that matches
-            // This might need to be reworked in the future
-            if (res === true) {
-                return demuxer;
+        console.log(file.type);
+        if (file.type in this.demuxers) {
+            for await (const demuxerProm of this.demuxers[file.type]) {
+                try {
+                    const demuxer = await demuxerProm();
+                    if (demuxer) {
+                        return demuxer;
+                    }
+                } catch (error) {
+                    console.error('Error loading demuxer for type ' + file.type, error);
+                }
             }
         }
     }
@@ -51,20 +56,28 @@ export interface DemuxedVideoTrack {
  */
 export interface DemuxedVideoSegment {
     samples: EncodedVideoChunk[];
+    /**
+     * @unit microseconds
+     */
     timestamp: number;
     /**
      * End of this segment including duration of last chunk
+     *
+     * @unit microseconds
      */
     timestampEnd: number;
 }
 
 export interface BaseDemuxer {
-    /**
-     * Test whether this file matches this demuxer.
-     */
-    TestFile: (file: File) => Promise<boolean>;
-
     DemuxFile: (file: File) => Promise<DemuxedVideoTrack[] | undefined>;
 }
 
-import('./mp4/Mp4Demuxer');
+// Load default demuxers
+VideoDemuxer.RegisterDemuxer(
+    'video/mp4',
+    async () => new (await import('./mp4/Mp4Demuxer')).Mp4Demuxer()
+);
+VideoDemuxer.RegisterDemuxer(
+    'video/quicktime',
+    async () => new (await import('./mp4/Mp4Demuxer')).Mp4Demuxer()
+);
