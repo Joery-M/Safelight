@@ -37,52 +37,22 @@ export function demux(source: File) {
         });
 
         /**
-         * Number of samples found per track
-         *
-         * Used to figure out when track is done demuxing
-         */
-        const trackSampleLengths: { [track: string]: number } = {};
-
-        /**
          * Its possible for tracks to report the wrong sample count, so this is just a safeguard
          */
         let doneTimeout: ReturnType<typeof setTimeout>;
-        function checkDone() {
-            clearTimeout(doneTimeout);
-            let completeAmount = 0;
-            for (const trackId in trackSampleLengths) {
-                if (Object.prototype.hasOwnProperty.call(trackSampleLengths, trackId)) {
-                    const samples = trackSampleLengths[trackId];
-
-                    const track = result.find((t) => t.id.toString() == trackId.toString());
-
-                    console.log(track?.sampleCount, samples);
-                    if (track && track.sampleCount == samples) {
-                        completeAmount++;
-                    }
-                }
-            }
-            if (completeAmount == Object.keys(trackSampleLengths).length) {
-                resolve(result);
-            } else {
-                doneTimeout = setTimeout(() => {
-                    resolve(result);
-                }, 2500);
-            }
-        }
 
         file.onSamples = (id: number, _user: any, samples: Sample[]) => {
             const keyframes = handleVideoSamples(samples);
-
-            trackSampleLengths[id.toString()] ||= 0;
-            trackSampleLengths[id.toString()] += samples.length;
 
             const track = result.find((t) => t.id == id);
             if (track) {
                 track.segments.push(...keyframes);
             }
 
-            checkDone();
+            clearTimeout(doneTimeout);
+            doneTimeout = setTimeout(() => {
+                resolve(result);
+            }, 2500);
         };
     });
 

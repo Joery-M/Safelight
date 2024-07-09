@@ -36,7 +36,19 @@
             <ol>
                 <li v-for="track in tracks" :key="track.id">
                     {{ track.codec }}, {{ track.width }}x{{ track.height }}
-                    <pre>{{ track.segments }}</pre>
+                    <ul>
+                        <li v-for="segment in track.segments" :key="segment.timestamp">
+                            {{ segment.timestamp }} - {{ segment.timestampEnd }}
+                            <ol>
+                                <li v-for="chunk in segment.samples" :key="chunk.timestamp">
+                                    {{ chunk.type }}:
+                                    <template v-if="chunk.duration">
+                                        {{ chunk.duration / 1000 }}ms
+                                    </template>
+                                </li>
+                            </ol>
+                        </li>
+                    </ul>
                 </li>
             </ol>
         </template>
