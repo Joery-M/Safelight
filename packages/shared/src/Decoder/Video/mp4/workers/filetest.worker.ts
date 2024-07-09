@@ -1,5 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/triple-slash-reference
-/// <reference path="../../../../../worker-types/mp4box.d.ts" />
+import '../../../../../worker-types/mp4box.d.ts';
 
 export default function (sourceFile: File) {
     const file = MP4Box.createFile();

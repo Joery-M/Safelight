@@ -43,7 +43,19 @@ export interface DemuxedVideoTrack {
     codec: string;
     sampleCount: number;
     description?: AllowSharedBufferSource;
-    chunks: EncodedVideoChunk[][];
+    segments: DemuxedVideoSegment[];
+}
+
+/**
+ * A segment representing a range of video chunks that starts with an keyframe
+ */
+export interface DemuxedVideoSegment {
+    samples: EncodedVideoChunk[];
+    timestamp: number;
+    /**
+     * End of this segment including duration of last chunk
+     */
+    timestampEnd: number;
 }
 
 export interface BaseDemuxer {

@@ -26,7 +26,7 @@
             <ol>
                 <li v-for="track in tracks" :key="track.id">
                     {{ track.codec }}, {{ track.width }}x{{ track.height }}
-                    <pre>{{ track.chunks }}</pre>
+                    <pre>{{ track.segments }}</pre>
                 </li>
             </ol>
         </template>

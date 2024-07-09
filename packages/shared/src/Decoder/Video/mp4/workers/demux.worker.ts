@@ -1,7 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/triple-slash-reference
-/// <reference path="../../../../../worker-types/mp4box.d.ts" />
+import '../../../../../worker-types/mp4box.d.ts';
 
-import type { DemuxedVideoTrack } from '../../VideoDemuxer';
+import type { DemuxedVideoSegment, DemuxedVideoTrack } from '../../VideoDemuxer';
 
 export default function (source: File) {
     return new Promise<DemuxedVideoTrack[] | undefined>((resolve) => {
@@ -55,7 +54,7 @@ export default function (source: File) {
 
             const track = result.find((t) => t.id == id);
             if (track) {
-                track.chunks.push(...keyframes);
+                track.segments.push(...keyframes);
             }
 
             checkDone();
@@ -103,14 +102,14 @@ export default function (source: File) {
                 id: track.id,
                 sampleCount: track.nb_samples,
                 description: getExtradata(box),
-                chunks: []
+                segments: []
             });
         }
         return trackInfo;
     }
 
     function handleVideoSamples(samples: Sample[]) {
-        const keyFrames: EncodedVideoChunk[][] = [];
+        const keyFrames: DemuxedVideoSegment[] = [];
         let keyFrameChunks: EncodedVideoChunk[] | null = null;
 
         for (const sample of samples) {
@@ -118,15 +117,19 @@ export default function (source: File) {
 
             if (type === 'key') {
                 if (keyFrameChunks) {
-                    keyFrames.push(keyFrameChunks);
+                    keyFrames.push({
+                        samples: keyFrameChunks,
+                        timestamp: keyFrameChunks.at(0)!.timestamp,
+                        timestampEnd: (1e6 * sample.cts) / sample.timescale
+                    });
                 }
                 keyFrameChunks = [];
             }
 
             const chunk = new EncodedVideoChunk({
                 type: type,
-                timestamp: sample.cts,
-                duration: sample.duration,
+                timestamp: (1e6 * sample.cts) / sample.timescale,
+                duration: (1e6 * sample.duration) / sample.timescale,
                 data: sample.data
             });
 
@@ -134,7 +137,11 @@ export default function (source: File) {
         }
 
         if (keyFrameChunks) {
-            keyFrames.push(keyFrameChunks);
+            keyFrames.push({
+                samples: keyFrameChunks,
+                timestamp: keyFrameChunks.at(0)!.timestamp,
+                timestampEnd: keyFrameChunks.at(-1)!.timestamp + keyFrameChunks.at(-1)!.duration!
+            });
         }
         return keyFrames;
     }
