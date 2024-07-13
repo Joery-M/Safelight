@@ -1,0 +1,41 @@
+{
+    "name": "@safelight/jswebm",
+    "version": "0.0.1",
+    "author": "Joery Münninghoff",
+    "keywords": [
+        "webm",
+        "matroska"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Joery-M/Safelight"
+    },
+    "contributors": [],
+    "license": "MIT",
+    "main": "dist/jswebm.cjs",
+    "module": "dist/jswebm.js",
+    "types": "dist/JsWebm.d.ts",
+    "exports": {
+        "./*": {
+            "types": "./dist/*.d.ts"
+        },
+        ".": {
+            "require": "./dist/jswebm.cjs",
+            "import": "./dist/jswebm.js",
+            "types": "./dist/JsWebm.d.ts"
+        }
+    },
+    "type": "module",
+    "scripts": {
+        "dev": "vite build --mode=development --watch",
+        "build": "rimraf ./dist/ && vite build && tsc --emitDeclarationOnly",
+        "build:vite": "vite build",
+        "build:tsc": "tsc --emitDeclarationOnly"
+    },
+    "devDependencies": {
+        "rimraf": "^5.0.5",
+        "typescript": "^5.5.3",
+        "vite": "^5.3.2",
+        "vite-plugin-dts": "^3.9.1"
+    }
+}
