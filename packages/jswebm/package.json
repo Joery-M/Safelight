@@ -30,10 +30,14 @@
         "dev": "vite build --mode=development --watch",
         "build": "rimraf ./dist/ && vite build && tsc --emitDeclarationOnly",
         "build:vite": "vite build",
-        "build:tsc": "tsc --emitDeclarationOnly"
+        "build:tsc": "tsc --emitDeclarationOnly",
+        "generate:elements": "cd ./tools/ && tsx ./SchemaParser.ts https://raw.githubusercontent.com/ietf-wg-cellar/matroska-specification/master/ebml_matroska.xml && prettier ../src/elements.ts --write"
     },
     "devDependencies": {
+        "@types/node": "^20.14.10",
+        "fast-xml-parser": "^4.4.0",
         "rimraf": "^5.0.5",
+        "tsx": "^4.16.0",
         "typescript": "^5.5.3",
         "vite": "^5.3.2",
         "vite-plugin-dts": "^3.9.1"

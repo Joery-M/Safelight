@@ -9,7 +9,7 @@
         "outDir": "dist",
         "declaration": true,
         "sourceMap": true,
-        "strict": false,
+        "strict": true,
         "types": ["vite/client"],
         "rootDir": "./src/"
     },
