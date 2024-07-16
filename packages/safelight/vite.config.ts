@@ -3,7 +3,6 @@ import { fileURLToPath, URL } from 'node:url';
 import vue from '@vitejs/plugin-vue';
 import path from 'node:path';
 import { visualizer } from 'rollup-plugin-visualizer';
-import TurboConsole from 'unplugin-turbo-console/vite';
 import VueRouter from 'unplugin-vue-router/vite';
 import { defineConfig } from 'vite';
 import mkcert from 'vite-plugin-mkcert';
@@ -16,11 +15,10 @@ export default defineConfig({
     plugins: [
         VueRouter({
             routesFolder: {
-                src: path.join(__dirname, './src/views')
+                src: path.join(import.meta.dirname, './src/views')
             }
         }),
         vue(),
-        TurboConsole(),
         mkcert(),
         visualizer()
     ],

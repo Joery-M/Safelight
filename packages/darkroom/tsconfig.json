@@ -1,11 +1,11 @@
 {
     "compilerOptions": {
         "composite": true,
-        "target": "esnext",
-        "moduleResolution": "node",
+        "target": "ESNext",
+        "moduleResolution": "Bundler",
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
-        "module": "esnext",
+        "module": "ESNext",
         "outDir": "dist",
         "declaration": true,
         "sourceMap": true,
@@ -15,5 +15,13 @@
     },
     "files": ["lib/main.ts"],
     "include": ["lib/*.ts", "tsconfig.shim.json", "../../globals.d.ts"],
-    "exclude": ["dist"]
+    "exclude": ["dist", "vite.config.ts"],
+    "references": [
+        {
+            "path": "./tsconfig.node.json"
+        },
+        {
+            "path": "./tsconfig.shim.json"
+        }
+    ]
 }

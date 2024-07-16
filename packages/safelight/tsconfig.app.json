@@ -27,6 +27,7 @@
         },
         "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
+        "strict": true,
         "types": ["unplugin-vue-router/client"]
     }
 }
