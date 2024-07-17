@@ -54,21 +54,14 @@ updates:
           - "unplugin-vue-router"
           - "vue-*"
           - "vue"
-      vueuse:
-        patterns:
           - "@vueuse/*"
-      eslint:
+      lint:
         patterns:
           - "@eslint*"
           - "@typescript-eslint/*"
           - "eslint-*"
           - "eslint"
           - "typescript-eslint"
-        update-types:
-          - "patch"
-          - "minor"
-      prettier:
-        patterns:
           - "prettier*"
         update-types:
           - "patch"
