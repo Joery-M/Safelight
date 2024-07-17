@@ -43,12 +43,12 @@
         "vue-router": "^4.4.0"
     },
     "devDependencies": {
-        "@babel/types": "^7.24.7",
+        "@babel/types": "^7.24.9",
         "@tsconfig/node20": "^20.1.4",
         "@types/dom-webcodecs": "^0.1.11",
         "@types/fuzzysearch": "^1.0.2",
         "@types/luxon": "^3.4.2",
-        "@types/node": "^20.14.9",
+        "@types/node": "^20.14.11",
         "@types/uuid": "^10.0.0",
         "@vitejs/plugin-vue": "^5.0.5",
         "@vue/tsconfig": "^0.5.1",
