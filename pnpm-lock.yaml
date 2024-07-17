@@ -196,8 +196,8 @@ importers:
         specifier: ^2.1.7
         version: 2.1.7(typescript@5.5.3)(vue@3.4.31)
       primevue:
-        specifier: ^3.53.0
-        version: 3.53.0(vue@3.4.31)
+        specifier: ^4.0.0
+        version: 4.0.0(@primeuix/utils@0.0.5)(vue@3.4.31)
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -366,8 +366,8 @@ importers:
         specifier: ^10.11.0
         version: 10.11.0(vue@3.4.31)
       primevue:
-        specifier: ^3.53.0
-        version: 3.53.0(vue@3.4.31)
+        specifier: ^4.0.0
+        version: 4.0.0(@primeuix/utils@0.0.5)(vue@3.4.31)
       vue:
         specifier: ^3.4.31
         version: 3.4.31(typescript@5.5.3)
@@ -1261,6 +1261,40 @@ packages:
   /@polka/url@1.0.0-next.25:
     resolution: {integrity: sha512-j7P6Rgr3mmtdkeDGTe0E/aYyWEWVtc5yFXtHCRHs28/jptDEWfaVOc5T7cblqy1XKPPfCxJc/8DwQ5YgLOZOVQ==}
     dev: true
+
+  /@primeuix/styled@0.0.5:
+    resolution: {integrity: sha512-pVoGn/uPkVm/DyF3TR3EmH/pL/dP4nR42FcYbVduFq9VfO3KVeOEqvcCULHXos66RZO9MCbCFUoLy6ctf9GUGQ==}
+    engines: {node: '>=12.11.0'}
+    dependencies:
+      '@primeuix/utils': 0.0.5
+    dev: false
+
+  /@primeuix/utils@0.0.5:
+    resolution: {integrity: sha512-ntUiUgtRtkF8KuaxHffzhYxQxoXk6LAPHm7CVlFjdqS8Rx8xRkLkZVyo84E+pO2hcNFkOGVP/GxHhQ2s94O8zA==}
+    engines: {node: '>=12.11.0'}
+    dev: false
+
+  /@primevue/core@4.0.0(@primeuix/utils@0.0.5)(vue@3.4.31):
+    resolution: {integrity: sha512-M+GF1HYnl/x5J6uevXh1k42J0XnFhp0XHce+cHddWg7v3bVwgsn7LD3AKKcf0A/iQQPXVKX9nY/4/9eFVct67w==}
+    engines: {node: '>=12.11.0'}
+    peerDependencies:
+      '@primeuix/utils': ^0.0.5
+      vue: ^3.0.0
+    dependencies:
+      '@primeuix/styled': 0.0.5
+      '@primeuix/utils': 0.0.5
+      vue: 3.4.31(typescript@5.5.3)
+    dev: false
+
+  /@primevue/icons@4.0.0(@primeuix/utils@0.0.5)(vue@3.4.31):
+    resolution: {integrity: sha512-gv9pbj7JjCuW59tW2csIJgg6btTJpkr/mjlfqscEIrYzDGqzCrbfxLur48gA2dyhYsiQPPTbIHFwL944piFgIg==}
+    engines: {node: '>=12.11.0'}
+    dependencies:
+      '@primevue/core': 4.0.0(@primeuix/utils@0.0.5)(vue@3.4.31)
+    transitivePeerDependencies:
+      - '@primeuix/utils'
+      - vue
+    dev: false
 
   /@quantco/pnpm-licenses@2.1.0:
     resolution: {integrity: sha512-86HWUTOJ23Gz2aeLRIl5m5IECA6gmEdCvT9ArN4y/JqhTVDOkq0w0OpDBf/FpKelkheatI6PcaGMMwV8mUuyDw==}
@@ -4403,12 +4437,15 @@ packages:
       vue: 3.4.31(typescript@5.5.3)
     dev: false
 
-  /primevue@3.53.0(vue@3.4.31):
-    resolution: {integrity: sha512-mRqTPGGZX+3AQokaCCjxLVSNEjGEA7LaPdBT4qSpGEdMstK6vhUBCxgLH7IPjHudbaSi4Xo3CIO62pXQxbz8dQ==}
-    peerDependencies:
-      vue: ^3.0.0
+  /primevue@4.0.0(@primeuix/utils@0.0.5)(vue@3.4.31):
+    resolution: {integrity: sha512-2PFmmJqyXpOcKOdF+gbps5fpSXfoXZp2LwX+hya/b5SDseMt3UNboyEgVI6B+DNbJRrib35EbDiMw+7RIANQ1w==}
+    engines: {node: '>=12.11.0'}
     dependencies:
-      vue: 3.4.31(typescript@5.5.3)
+      '@primevue/core': 4.0.0(@primeuix/utils@0.0.5)(vue@3.4.31)
+      '@primevue/icons': 4.0.0(@primeuix/utils@0.0.5)(vue@3.4.31)
+    transitivePeerDependencies:
+      - '@primeuix/utils'
+      - vue
     dev: false
 
   /proto-list@1.2.4:
