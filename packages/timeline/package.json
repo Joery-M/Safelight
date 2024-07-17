@@ -1,52 +1,52 @@
 {
-    "name": "@safelight/timeline",
-    "version": "1.0.0",
-    "description": "A Vue component for timelines",
-    "author": "Joery Münninghoff",
-    "license": "MIT",
-    "type": "module",
-    "files": [
-        "dist"
-    ],
-    "main": "./dist/index.cjs",
-    "module": "./dist/index.mjs",
-    "exports": {
-        "./style.css": "./dist/style.css",
-        ".": {
-            "import": "./dist/index.mjs",
-            "require": "./dist/index.cjs",
-            "types": "./dist/index.d.ts"
-        },
-        "./source": {
-            "import": "./src/index.ts"
-        }
+  "name": "@safelight/timeline",
+  "version": "1.0.0",
+  "description": "A Vue component for timelines",
+  "author": "Joery Münninghoff",
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "exports": {
+    "./style.css": "./dist/style.css",
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
     },
-    "types": "./dist/index.d.ts",
-    "scripts": {
-        "dev": "pnpm \"/build:/\" --watch",
-        "build": "pnpm \"/build:/\"",
-        "build:vite": "vite build",
-        "build:tsc": "vue-tsc --emitDeclarationOnly",
-        "test": "vitest",
-        "test:run": "vitest run --ui false"
-    },
-    "dependencies": {
-        "@safelight/shared": "workspace:*",
-        "@vueuse/core": "^10.11.0",
-        "@vueuse/gesture": "^2.0.0",
-        "@vueuse/math": "^10.11.0",
-        "primevue": "^3.53.0",
-        "vue": "^3.4.31"
-    },
-    "devDependencies": {
-        "@types/node": "^20.14.9",
-        "@vitejs/plugin-vue": "^5.0.4",
-        "@vue/test-utils": "^2.4.5",
-        "@vue/tsconfig": "^0.5.1",
-        "happy-dom": "^14.12.3",
-        "typescript": "^5.5.3",
-        "vite": "^5.3.2",
-        "vitest": "^1.6.0",
-        "vue-tsc": "^2.0.24"
+    "./source": {
+      "import": "./src/index.ts"
     }
+  },
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "dev": "pnpm \"/build:/\" --watch",
+    "build": "pnpm \"/build:/\"",
+    "build:vite": "vite build",
+    "build:tsc": "vue-tsc --emitDeclarationOnly",
+    "test": "vitest",
+    "test:run": "vitest run --ui false"
+  },
+  "dependencies": {
+    "@safelight/shared": "workspace:*",
+    "@vueuse/core": "^10.11.0",
+    "@vueuse/gesture": "^2.0.0",
+    "@vueuse/math": "^10.11.0",
+    "primevue": "^3.53.0",
+    "vue": "^3.4.31"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.9",
+    "@vitejs/plugin-vue": "^5.0.5",
+    "@vue/test-utils": "^2.4.5",
+    "@vue/tsconfig": "^0.5.1",
+    "happy-dom": "^14.12.3",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.4",
+    "vitest": "^1.6.0",
+    "vue-tsc": "^2.0.26"
+  }
 }

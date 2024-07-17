@@ -11,7 +11,7 @@ export default defineConfig({
     build: {
         lib: {
             formats: ['es'],
-            entry: resolve(__dirname, 'lib/main.ts'),
+            entry: resolve(import.meta.dirname, 'lib/main.ts'),
             name: 'darkroom'
         },
         sourcemap: true
