@@ -39,7 +39,7 @@
     "vue": "^3.4.31"
   },
   "devDependencies": {
-    "@types/node": "^20.14.9",
+    "@types/node": "^20.14.11",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vue/test-utils": "^2.4.5",
     "@vue/tsconfig": "^0.5.1",
