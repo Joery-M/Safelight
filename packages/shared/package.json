@@ -11,7 +11,7 @@
         "test:run": "vitest run --ui false"
     },
     "dependencies": {
-        "dexie": "^4.0.7",
+        "dexie": "^4.0.8",
         "dot-path-value": "^0.0.10",
         "hash-wasm": "^4.11.0",
         "luxon": "^3.4.4",

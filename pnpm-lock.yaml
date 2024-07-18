@@ -175,8 +175,8 @@ importers:
         specifier: ^10.11.0
         version: 10.11.0(rxjs@7.8.1)(vue@3.4.32)
       dexie:
-        specifier: ^4.0.7
-        version: 4.0.7
+        specifier: ^4.0.8
+        version: 4.0.8
       dot-path-value:
         specifier: ^0.0.10
         version: 0.0.10
@@ -308,8 +308,8 @@ importers:
         specifier: ~10
         version: 10.11.0(vue@3.4.31)
       dexie:
-        specifier: ^4.0.7
-        version: 4.0.7
+        specifier: ^4.0.8
+        version: 4.0.8
       dot-path-value:
         specifier: ^0.0.10
         version: 0.0.10
@@ -2755,8 +2755,8 @@ packages:
     engines: {node: '>=0.10'}
     hasBin: true
 
-  /dexie@4.0.7:
-    resolution: {integrity: sha512-M+Lo6rk4pekIfrc2T0o2tvVJwL6EAAM/B78DNfb8aaxFVoI1f8/rz5KTxuAnApkwqTSuxx7T5t0RKH7qprapGg==}
+  /dexie@4.0.8:
+    resolution: {integrity: sha512-1G6cJevS17KMDK847V3OHvK2zei899GwpDiqfEXHP1ASvme6eWJmAp9AU4s1son2TeGkWmC0g3y8ezOBPnalgQ==}
     dev: false
 
   /didyoumean@1.2.2:
