@@ -22,9 +22,9 @@
     "scripts": {
         "dev": "vite build --watch",
         "dev:web": "vite ./dev/",
-        "build": "rimraf ./dist/ && vite build && tsc --emitDeclarationOnly",
+        "build": "rimraf ./dist/ && pnpm build:vite && pnpm build:tsc",
         "build:vite": "vite build",
-        "build:tsc": "tsc --emitDeclarationOnly",
+        "build:tsc": "tsc --emitDeclarationOnly --project tsconfig.lib.json",
         "test": "vitest",
         "test-firefox": "vitest -c ./vitest.config.firefox.ts --test-timeout=10000",
         "test:run": "vitest run --ui false",
@@ -39,19 +39,20 @@
         "ses": "^1.4.1"
     },
     "devDependencies": {
+        "@tsconfig/node20": "^20.1.4",
         "@types/path-browserify": "^1.0.2",
-        "@vitest/browser": "^1.6.0",
-        "@vitest/ui": "^1.6.0",
-        "playwright": "^1.45.1",
-        "rimraf": "^5.0.5",
+        "@vitest/browser": "^2.0.3",
+        "@vitest/ui": "^2.0.3",
+        "playwright": "^1.45.2",
+        "rimraf": "^6.0.1",
         "typescript": "^5.5.3",
-        "vite": "^5.3.2",
+        "vite": "^5.3.4",
         "vite-plugin-dts": "^3.9.1",
-        "vitest": "^1.6.0"
+        "vitest": "^2.0.3"
     },
     "optionalDependencies": {
         "@codemirror/lang-javascript": "^6.2.2",
-        "@types/node": "^20.14.9",
+        "@types/node": "^20.14.11",
         "@vitejs/plugin-vue": "^5.0.4",
         "@vue/tsconfig": "^0.5.1",
         "@vueuse/core": "^10.11.0",

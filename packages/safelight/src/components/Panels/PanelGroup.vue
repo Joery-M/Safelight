@@ -14,7 +14,7 @@
                         <Button
                             rounded
                             text
-                            severity="contrast"
+                            severity="secondary"
                             :aria-label="'Close panel ' + item.name"
                             style="width: 20px; height: 20px; padding: 0"
                             @click="removePanel(item as unknown as Panel)"
@@ -28,11 +28,11 @@
             </TabMenu>
             <div
                 class="flex flex-1 items-center justify-start"
-                style="border-bottom: 1px var(--surface-100) solid"
+                style="border-bottom: 1px var(--p-tabmenu-tablist-border-color) solid"
             >
                 <Button
                     rounded
-                    severity="contrast"
+                    severity="secondary"
                     text
                     aria-haspopup="true"
                     aria-controls="panel_add_menu"
@@ -51,7 +51,7 @@
             </Suspense>
         </div>
     </div>
-    <OverlayPanel
+    <Popover
         id="panel_add_menu"
         ref="addOverlay"
         :pt="{
@@ -72,7 +72,7 @@
                 <component :is="item.icon" class="mr-2" />
             </template>
         </Menu>
-    </OverlayPanel>
+    </Popover>
 </template>
 
 <script setup lang="ts">
@@ -82,7 +82,7 @@ import { watchImmediate } from '@vueuse/core';
 import Button from 'primevue/button';
 import Menu from 'primevue/menu';
 import type { MenuItem } from 'primevue/menuitem';
-import OverlayPanel from 'primevue/overlaypanel';
+import Popover from 'primevue/popover';
 import TabMenu from 'primevue/tabmenu';
 import {
     computed,
@@ -149,7 +149,7 @@ const allAvailablePanels = computed<MenuItem[]>(() =>
     }))
 );
 
-const addOverlay = ref<OverlayPanel>();
+const addOverlay = ref<typeof Popover>();
 
 // TODO: Be able to send a signal to the top level to remove a panel from the group
 // OR, be able to modify the local config to affect the top config.
@@ -163,7 +163,7 @@ function addPanel(panel: Panel) {
 
 <style lang="scss">
 .panel-group-menu {
-    .p-menuitem-link {
+    .p-tabmenu-item-link {
         .p-button {
             opacity: 0;
             visibility: hidden;
