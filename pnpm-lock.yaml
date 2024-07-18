@@ -320,8 +320,8 @@ importers:
         specifier: ^3.4.4
         version: 3.4.4
       mediainfo.js:
-        specifier: ^0.3.1
-        version: 0.3.1
+        specifier: ^0.3.2
+        version: 0.3.2
       mime-matcher:
         specifier: ^1.0.5
         version: 1.0.5
@@ -3864,6 +3864,14 @@ packages:
 
   /mediainfo.js@0.3.1:
     resolution: {integrity: sha512-qUehPOCsqmEn0SmTaEOTgyaIiN9LZrDFYyDibsx2rpe8QaxWA+Dzr/fPMTMaHDt5L6J4Jm7pmcEhREN0N0ewrA==}
+    engines: {node: '>=18.0.0'}
+    hasBin: true
+    dependencies:
+      yargs: 17.7.2
+    dev: false
+
+  /mediainfo.js@0.3.2:
+    resolution: {integrity: sha512-SC8z72ESV1z2lq2zfheoo9zgcoqjeBn0mzq6MhIn3aqlkh3RV84FwOiMtYA0HWY7mi1igM89Jcll4r2sk/yyZA==}
     engines: {node: '>=18.0.0'}
     hasBin: true
     dependencies:
