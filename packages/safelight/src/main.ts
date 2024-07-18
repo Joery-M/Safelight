@@ -4,16 +4,17 @@ import { createRouter, createWebHistory } from 'vue-router/auto';
 import { routes } from 'vue-router/auto-routes';
 import App from './App.vue';
 
+import { definePreset } from '@primevue/themes';
+import Aura from '@primevue/themes/aura';
+import { LocaleManager } from '@safelight/shared/Localization/LocaleManager';
 import PrimeVue, { type PrimeVueConfiguration } from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
 import DialogService from 'primevue/dialogservice';
-import { LocaleManager } from '@safelight/shared/Localization/LocaleManager.js';
-import { definePreset } from '@primevue/themes';
-import Aura from '@primevue/themes/aura';
-import Tooltip from 'primevue/tooltip';
-import Ripple from 'primevue/ripple';
 import FocusTrap from 'primevue/focustrap';
+import Ripple from 'primevue/ripple';
+import Tooltip from 'primevue/tooltip';
 
+import { createI18n } from 'vue-i18n';
 import './style.scss';
 
 export const router = createRouter({
@@ -91,7 +92,16 @@ app.use(PrimeVue, {
 } as PrimeVueConfiguration);
 app.use(ConfirmationService);
 app.use(DialogService);
-app.use(LocaleManager.i18n);
+
+// i18n
+const i18n = createI18n<false>({
+    locale: 'en-US',
+    legacy: false,
+    fallbackLocale: 'en-US',
+    messages: {}
+});
+LocaleManager.init(i18n as any);
+app.use(i18n);
 
 // Phosphor icons
 app.provide('size', 18);

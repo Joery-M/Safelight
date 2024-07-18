@@ -5,23 +5,23 @@
             "search": "zoeken"
         },
         "descriptions": {
-            "untitled": "untitled",
-            "name": "name | names",
+            "untitled": "naamloos",
+            "name": "naam | namen",
             "type": "type",
-            "project": "project | projects",
-            "duration": "duration",
-            "fileType": "file type"
+            "project": "project | projecten",
+            "duration": "duur",
+            "fileType": "bestandstype"
         }
     },
     "project": {
-        "new": "new project"
+        "new": "nieuw project"
     },
     "panels": {
         "library": {
-            "title": "library"
+            "title": "bibliotheek"
         },
         "timeline": {
-            "title": "timeline"
+            "title": "tijdlijn"
         },
         "monitor": {
             "title": "monitor"

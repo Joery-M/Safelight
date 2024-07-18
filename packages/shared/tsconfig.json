@@ -18,6 +18,6 @@
         "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
 
-        "types": ["vite/client"]
+        "types": ["vite/client", "vue-i18n"]
     }
 }
