@@ -15,7 +15,7 @@
         "dot-path-value": "^0.0.10",
         "hash-wasm": "^4.11.0",
         "luxon": "^3.4.4",
-        "mediainfo.js": "^0.3.1",
+        "mediainfo.js": "^0.3.2",
         "mime-matcher": "^1.0.5",
         "rxjs": "^7.8.1",
         "uuid": "^10.0.0"
