@@ -25,7 +25,7 @@
             style="
                 border-width: 0;
                 border-right-width: 1px;
-                border-right-color: var(--color-border);
+                border-right-color: var(--p-surface-700);
             "
         />
         <NamespaceSettings class="namespace" :path="selectedPath" />

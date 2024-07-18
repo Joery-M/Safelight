@@ -6,7 +6,7 @@
         :invert-scroll-axes
         :zoom-factor
         :alignment
-        class="h-full"
+        class="timeline h-full"
         @update:playback-position="setPbPos"
     />
 </template>
@@ -103,3 +103,9 @@ const items = reactive<{ [key: string]: TimelineItem }>({
     }
 });
 </script>
+<style lang="scss" scoped>
+.timeline {
+    --surface-100: var(--p-splitter-gutter-background);
+    --red-600: var(--p-red-600);
+}
+</style>

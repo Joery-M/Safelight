@@ -23,7 +23,17 @@
         <template #header>
             <Toolbar class="border-none p-0">
                 <template #start>
-                    <DataViewLayoutOptions v-model="layout" class="mr-2 min-w-fit" />
+                    <SelectButton
+                        v-model="layout"
+                        :options="['list', 'grid']"
+                        :allow-empty="false"
+                        class="mr-2 min-w-fit"
+                    >
+                        <template #option="{ option }">
+                            <PhList v-if="option === 'list'" />
+                            <PhSquaresFour v-else />
+                        </template>
+                    </SelectButton>
                     <InputGroup class="mr-2">
                         <InputGroupAddon class="p-0">
                             <PhMagnifyingGlass />
@@ -44,7 +54,7 @@
                                 <PhSortDescending v-else />
                             </template>
                         </Button>
-                        <Dropdown
+                        <Select
                             v-model="sortBy"
                             style="line-height: 1.2"
                             aria-label="Sort by"
@@ -160,7 +170,17 @@
         <template #header>
             <Toolbar class="border-none p-0">
                 <template #start>
-                    <DataViewLayoutOptions v-model="layout" class="mr-2 min-w-fit" />
+                    <SelectButton
+                        v-model="layout"
+                        :options="['list', 'grid']"
+                        :allow-empty="false"
+                        class="mr-2 min-w-fit"
+                    >
+                        <template #option="{ option }">
+                            <PhList v-if="option === 'list'" />
+                            <PhSquaresFour v-else />
+                        </template>
+                    </SelectButton>
                     <InputGroup class="mr-2">
                         <InputGroupAddon class="p-0">
                             <PhMagnifyingGlass />
@@ -195,11 +215,13 @@
 import { CurrentProject } from '@/stores/currentProject';
 import {
     PhImage,
+    PhList,
     PhMagnifyingGlass,
     PhPlus,
     PhSortAscending,
     PhSortDescending,
     PhSpeakerHigh,
+    PhSquaresFour,
     PhSubtitles,
     PhVideoCamera
 } from '@phosphor-icons/vue';
@@ -213,11 +235,11 @@ import Button from 'primevue/button';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 import DataView from 'primevue/dataview';
-import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions';
-import Dropdown from 'primevue/dropdown';
 import InputGroup from 'primevue/inputgroup';
 import InputGroupAddon from 'primevue/inputgroupaddon';
 import InputText from 'primevue/inputtext';
+import Select from 'primevue/select';
+import SelectButton from 'primevue/selectbutton';
 import Slider from 'primevue/slider';
 import Toolbar from 'primevue/toolbar';
 import { ref, shallowRef, watchEffect } from 'vue';

@@ -18,7 +18,9 @@
         "type-check": "vue-tsc --noEmit"
     },
     "dependencies": {
+        "@fontsource-variable/inter": "^5.0.19",
         "@phosphor-icons/vue": "^2.2.1",
+        "@primevue/themes": "^4.0.0",
         "@quantco/pnpm-licenses": "^2.1.0",
         "@safelight/shared": "workspace:*",
         "@safelight/timeline": "workspace:*",
@@ -35,7 +37,7 @@
         "mime-matcher": "^1.0.5",
         "monaco-editor": "^0.50.0",
         "pinia": "^2.1.7",
-        "primevue": "^3.53.0",
+        "primevue": "^4.0.0",
         "rxjs": "^7.8.1",
         "uuid": "^10.0.0",
         "vue": "^3.4.31",

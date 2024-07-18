@@ -13,7 +13,7 @@
                     :model="menuItems"
                 >
                     <template #itemicon="{ item: { icon } }">
-                        <component :is="icon" v-if="icon" class="pr-1" />
+                        <component :is="icon" v-if="icon" />
                     </template>
                 </Menubar>
             </template>

@@ -10,134 +10,159 @@
             </RouterLink>
         </template>
         <template #content>
-            <TabView
-                lazy
-                @tab-change="
+            <Tabs
+                value="Safelight"
+                @update:value="
                     (e) => {
                         // Give some time to the animation of the tabview and to show the skeleton
-                        showDisclaimer = e.index == Object.keys(allPackagesPerProject).length;
+                        showDisclaimer = e == 'disclaimer';
                     }
                 "
             >
-                <TabPanel
-                    v-for="(deps, project) in allPackagesPerProject"
-                    :key="project"
-                    :header="project.toString()"
-                >
-                    <DataView
-                        :value="deps"
-                        data-key="name"
-                        layout="grid"
-                        lazy
-                        style="max-height: 72vh; overflow-y: scroll"
+                <TabList>
+                    <Tab
+                        v-for="(_deps, project) in allPackagesPerProject"
+                        :key="project"
+                        :value="project"
                     >
-                        <template #grid="slotProps: { items: DependencyWithName[] }">
-                            <div
-                                class="grid-nogutter grid"
-                                style="grid-template-columns: repeat(auto-fill, minmax(325px, 1fr))"
-                            >
+                        {{ project }}
+                    </Tab>
+                    <Tab value="disclaimer">Disclaimer</Tab>
+                </TabList>
+                <TabPanels>
+                    <TabPanel
+                        v-for="(deps, project) in allPackagesPerProject"
+                        :key="project"
+                        :header="project.toString()"
+                        :value="project"
+                    >
+                        <DataView
+                            :value="deps"
+                            data-key="name"
+                            layout="grid"
+                            lazy
+                            style="max-height: 72vh; overflow-y: scroll"
+                        >
+                            <template #grid="slotProps: { items: DependencyWithName[] }">
                                 <div
-                                    v-for="item in slotProps.items"
-                                    :key="item.name"
-                                    class="border-round m-2 flex min-h-48 flex-col rounded-md border-solid border-white/10 p-4"
-                                    style="border-width: 1px"
+                                    class="grid-nogutter grid"
+                                    style="
+                                        grid-template-columns: repeat(
+                                            auto-fill,
+                                            minmax(325px, 1fr)
+                                        );
+                                    "
                                 >
-                                    <a
-                                        :href="item.homepage"
-                                        target="_blank"
-                                        class="text-xl font-semibold text-white"
-                                        style="text-decoration: none; text-decoration-line: none"
+                                    <div
+                                        v-for="item in slotProps.items"
+                                        :key="item.name"
+                                        class="border-round m-2 flex min-h-48 flex-col rounded-md border-solid border-white/10 p-4"
+                                        style="border-width: 1px"
                                     >
-                                        {{ item.from }}
-                                        <PhArrowSquareOut class="align-text-top" />
-                                    </a>
-                                    <span
-                                        v-if="item.author || item.license"
-                                        class="text-secondary text-sm font-medium"
-                                    >
-                                        <template v-if="item.author">
-                                            {{ item.author?.name }} -
-                                        </template>
                                         <a
-                                            :href="
-                                                'https://opensource.org/license/' +
-                                                (typeof item.license === 'string'
-                                                    ? item.license
-                                                    : item.license.type)
-                                            "
+                                            :href="item.homepage"
                                             target="_blank"
-                                            class="text-secondary"
+                                            class="text-xl font-semibold text-white"
+                                            style="
+                                                text-decoration: none;
+                                                text-decoration-line: none;
+                                            "
                                         >
-                                            {{
-                                                typeof item.license === 'string'
-                                                    ? item.license
-                                                    : item.license.type
-                                            }}
+                                            {{ item.from }}
+                                            <PhArrowSquareOut class="align-text-top" />
                                         </a>
-                                    </span>
-                                    <div class="mt-2 line-clamp-3 flex-grow">
-                                        {{ item.description }}
-                                    </div>
-                                    <div class="flex-column mt-4 flex gap-4">
-                                        <div class="flex gap-2">
-                                            <Button
-                                                v-if="item.homepage"
-                                                role="link"
-                                                @click="openUrl(item.homepage)"
-                                            >
-                                                <template #icon>
-                                                    <PhHouse />
-                                                </template>
-                                            </Button>
-                                            <Button
-                                                v-if="item.repository"
-                                                outlined
-                                                :title="'Open code repository for ' + item.from"
-                                                role="link"
-                                                @click="
-                                                    openUrl(item.repository!.replace('git+', ''))
+                                        <span
+                                            v-if="item.author || item.license"
+                                            class="subtext text-sm font-medium"
+                                        >
+                                            <template v-if="item.author">
+                                                {{ item.author?.name }} -
+                                            </template>
+                                            <a
+                                                :href="
+                                                    'https://opensource.org/license/' +
+                                                    (typeof item.license === 'string'
+                                                        ? item.license
+                                                        : item.license.type)
                                                 "
+                                                target="_blank"
+                                                class="subtext"
                                             >
-                                                <template #icon>
-                                                    <PhGitBranch />
-                                                </template>
-                                            </Button>
+                                                {{
+                                                    typeof item.license === 'string'
+                                                        ? item.license
+                                                        : item.license.type
+                                                }}
+                                            </a>
+                                        </span>
+                                        <div class="mt-2 line-clamp-3 flex-grow">
+                                            {{ item.description }}
+                                        </div>
+                                        <div class="flex-column mt-4 flex gap-4">
+                                            <div class="flex gap-2">
+                                                <Button
+                                                    v-if="item.homepage"
+                                                    role="link"
+                                                    @click="openUrl(item.homepage)"
+                                                >
+                                                    <template #icon>
+                                                        <PhHouse />
+                                                    </template>
+                                                </Button>
+                                                <Button
+                                                    v-if="item.repository"
+                                                    outlined
+                                                    :title="'Open code repository for ' + item.from"
+                                                    role="link"
+                                                    @click="
+                                                        openUrl(
+                                                            item.repository!.replace('git+', '')
+                                                        )
+                                                    "
+                                                >
+                                                    <template #icon>
+                                                        <PhGitBranch />
+                                                    </template>
+                                                </Button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </template>
-                    </DataView>
-                </TabPanel>
-                <TabPanel header="Disclaimer">
-                    <div
-                        :class="{
-                            'overflow-y-auto': disclaimer.data.value,
-                            'overflow-y-clip': !disclaimer.data.value
-                        }"
-                        style="max-height: 72vh"
-                    >
-                        <template v-if="!disclaimer.data.value">
-                            <template v-for="i in 100" :key="i">
-                                <Skeleton
-                                    shape="rectangle"
-                                    :width="Math.random() * 100 + '%'"
-                                    :class="{ ['mb-' + (Math.random() > 0.5 ? '2' : '4')]: true }"
-                                />
                             </template>
-                        </template>
-                        <vue-markdown
-                            v-else
-                            :options="{
-                                linkify: true
+                        </DataView>
+                    </TabPanel>
+                    <TabPanel header="Disclaimer" value="disclaimer">
+                        <div
+                            :class="{
+                                'overflow-y-auto': disclaimer.data.value,
+                                'overflow-y-clip': !disclaimer.data.value
                             }"
-                            :source="disclaimer.data.value"
-                            class="m-2"
+                            style="max-height: 72vh"
                         >
-                        </vue-markdown>
-                    </div>
-                </TabPanel>
-            </TabView>
+                            <template v-if="!disclaimer.data.value">
+                                <template v-for="i in 100" :key="i">
+                                    <Skeleton
+                                        shape="rectangle"
+                                        :width="Math.random() * 100 + '%'"
+                                        :class="{
+                                            ['mb-' + (Math.random() > 0.5 ? '2' : '4')]: true
+                                        }"
+                                    />
+                                </template>
+                            </template>
+                            <vue-markdown
+                                v-else
+                                :options="{
+                                    linkify: true
+                                }"
+                                :source="disclaimer.data.value"
+                                class="m-2"
+                            >
+                            </vue-markdown>
+                        </div>
+                    </TabPanel>
+                </TabPanels>
+            </Tabs>
         </template>
     </Card>
 </template>
@@ -149,8 +174,11 @@ import Button from 'primevue/button';
 import Card from 'primevue/card';
 import DataView from 'primevue/dataview';
 import Skeleton from 'primevue/skeleton';
+import Tab from 'primevue/tab';
+import TabList from 'primevue/tablist';
 import TabPanel from 'primevue/tabpanel';
-import TabView from 'primevue/tabview';
+import TabPanels from 'primevue/tabpanels';
+import Tabs from 'primevue/tabs';
 import type { Dependency, DependencyWithName, Packages } from 'types/packages';
 import { onMounted, reactive, ref, watch } from 'vue';
 import VueMarkdown from 'vue-markdown-render';
@@ -237,3 +265,9 @@ function convertDepsToDepsWithNames(
         .filter((dep) => !dep.name.includes('safelight'));
 }
 </script>
+
+<style lang="scss" scoped>
+.subtext {
+    color: var(--p-primary-color);
+}
+</style>
