@@ -10,23 +10,39 @@
             </RouterLink>
         </template>
         <template #content>
-            <p>
-                {{ $t('general.actions.open') }}
-            </p>
+            <div>
+                <Select
+                    :model-value="$i18n.locale"
+                    :options="Object.keys(LocaleManager.locales)"
+                    @update:model-value="LocaleManager.switchLocale($event)"
+                ></Select>
+                <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
+                <p><span>general.actions.search:</span> {{ $t('general.actions.search') }}</p>
+            </div>
+            <div>
+                <InputText v-model="testPath" />
+                <InputNumber v-model="testAmount" input-class="w-10" />
+                <p>
+                    {{ $t(testPath, testAmount) }}
+                </p>
+            </div>
         </template>
     </Card>
 </template>
 
 <script lang="ts" setup>
 import { PhArrowLeft } from '@phosphor-icons/vue';
+import { LocaleManager } from '@safelight/shared/Localization/LocaleManager';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
-import { useI18n } from 'vue-i18n';
-import { RouterLink } from 'vue-router/auto';
+import InputNumber from 'primevue/inputnumber';
+import InputText from 'primevue/inputtext';
+import Select from 'primevue/select';
+import { ref } from 'vue';
+import { RouterLink } from 'vue-router';
 
-const { t, d, n } = useI18n({
-    inheritLocale: true
-});
+const testPath = ref('general.descriptions.name');
+const testAmount = ref(1);
 </script>
 
 <route lang="json">

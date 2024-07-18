@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  vue-i18n@9.13.1:
+    hash: 6er45pvqbpeuoa26lo25zyyvmm
+    path: patches/vue-i18n@9.13.1.patch
+
 importers:
 
   .:
@@ -215,7 +220,7 @@ importers:
         version: 3.4.32(typescript@5.5.3)
       vue-i18n:
         specifier: ^9.13.1
-        version: 9.13.1(vue@3.4.32)
+        version: 9.13.1(patch_hash=6er45pvqbpeuoa26lo25zyyvmm)(vue@3.4.32)
       vue-markdown-render:
         specifier: ^2.1.1
         version: 2.2.1(vue@3.4.32)
@@ -345,7 +350,7 @@ importers:
         version: 3.4.31(typescript@5.5.3)
       vue-i18n:
         specifier: ^9.13.1
-        version: 9.13.1(vue@3.4.31)
+        version: 9.13.1(patch_hash=6er45pvqbpeuoa26lo25zyyvmm)(vue@3.4.31)
     devDependencies:
       '@tsconfig/node20':
         specifier: ^20.1.4
@@ -5578,7 +5583,7 @@ packages:
       - supports-color
     dev: true
 
-  /vue-i18n@9.13.1(vue@3.4.31):
+  /vue-i18n@9.13.1(patch_hash=6er45pvqbpeuoa26lo25zyyvmm)(vue@3.4.31):
     resolution: {integrity: sha512-mh0GIxx0wPtPlcB1q4k277y0iKgo25xmDPWioVVYanjPufDBpvu5ySTjP5wOrSvlYQ2m1xI+CFhGdauv/61uQg==}
     engines: {node: '>= 16'}
     peerDependencies:
@@ -5589,8 +5594,9 @@ packages:
       '@vue/devtools-api': 6.6.3
       vue: 3.4.31(typescript@5.5.3)
     dev: false
+    patched: true
 
-  /vue-i18n@9.13.1(vue@3.4.32):
+  /vue-i18n@9.13.1(patch_hash=6er45pvqbpeuoa26lo25zyyvmm)(vue@3.4.32):
     resolution: {integrity: sha512-mh0GIxx0wPtPlcB1q4k277y0iKgo25xmDPWioVVYanjPufDBpvu5ySTjP5wOrSvlYQ2m1xI+CFhGdauv/61uQg==}
     engines: {node: '>= 16'}
     peerDependencies:
@@ -5601,6 +5607,7 @@ packages:
       '@vue/devtools-api': 6.6.3
       vue: 3.4.32(typescript@5.5.3)
     dev: false
+    patched: true
 
   /vue-markdown-render@2.2.1(vue@3.4.32):
     resolution: {integrity: sha512-XkYnC0PMdbs6Vy6j/gZXSvCuOS0787Se5COwXlepRqiqPiunyCIeTPQAO2XnB4Yl04EOHXwLx5y6IuszMWSgyQ==}

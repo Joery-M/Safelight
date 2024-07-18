@@ -1,0 +1,41 @@
+diff --git a/dist/vue-i18n.d.ts b/dist/vue-i18n.d.ts
+index 50c8d8dc1fad7ec35842a89794b2856561652d98..7630b88eab6d37fbba2710c6583c4d82258af836 100644
+--- a/dist/vue-i18n.d.ts
++++ b/dist/vue-i18n.d.ts
+@@ -3125,13 +3125,13 @@ export declare type WarnHtmlInMessageLevel = 'off' | 'warn' | 'error';
+ 
+ export { }
+ 
+-declare module '@vue/runtime-core' {
++declare module 'vue' {
+   /**
+    * Component Custom Options for Vue I18n
+    *
+    * @VueI18nInjection
+    */
+-  export interface ComponentCustomOptions {
++  interface ComponentCustomOptions {
+     /**
+      * VueI18n options
+      *
+@@ -3156,7 +3156,7 @@ declare module '@vue/runtime-core' {
+    *
+    * @VueI18nInjection
+    */
+-  export interface ComponentCustomProperties {
++  interface ComponentCustomProperties {
+     /**
+      * Exported Global Composer instance, or global VueI18n instance.
+      *
+@@ -4354,10 +4354,8 @@ declare module '@vue/runtime-core' {
+       key: Key | ResourceKeys
+     ): LocaleMessageValue<VueMessageType> | {}
+   }
+-}
+ 
+-declare module 'vue' {
+-  export interface GlobalComponents {
++  interface GlobalComponents {
+     ['i18n-t']: typeof Translation
+     ['i18n-d']: typeof DatetimeFormat
+     ['i18n-n']: typeof NumberFormat

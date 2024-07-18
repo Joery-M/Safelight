@@ -1,30 +1,30 @@
 {
     "general": {
         "actions": {
-            "open": "open",
-            "search": "zoeken"
+            "open": "Open",
+            "search": "Search"
         },
         "descriptions": {
-            "untitled": "untitled",
-            "name": "name | names",
-            "type": "type",
-            "project": "project | projects",
-            "duration": "duration",
-            "fileType": "file type"
+            "untitled": "Untitled",
+            "name": "Name | Names",
+            "type": "Type",
+            "project": "Project | Projects",
+            "duration": "Duration",
+            "fileType": "File type"
         }
     },
     "project": {
-        "new": "new project"
+        "new": "New project"
     },
     "panels": {
         "library": {
-            "title": "library"
+            "title": "Library"
         },
         "timeline": {
-            "title": "timeline"
+            "title": "Timeline"
         },
         "monitor": {
-            "title": "monitor"
+            "title": "Monitor"
         }
     }
 }

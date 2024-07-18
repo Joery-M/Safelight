@@ -22,6 +22,7 @@
                 "ignoreNodes": ["md-icon", "v-icon"],
                 "ignorePattern": "^[-#:()&]+$"
             }
-        ]
+        ],
+        "@intlify/vue-i18n/no-missing-keys": "off"
     }
 }
