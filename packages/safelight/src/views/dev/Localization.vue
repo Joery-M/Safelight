@@ -16,15 +16,19 @@
                     :options="Object.keys(LocaleManager.locales)"
                     @update:model-value="LocaleManager.switchLocale($event)"
                 ></Select>
-                <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
                 <p><span>general.actions.search:</span> {{ $t('general.actions.search') }}</p>
             </div>
             <div>
-                <InputText v-model="testPath" />
-                <InputNumber v-model="testAmount" input-class="w-10" />
+                <h2>All translations</h2>
                 <p>
-                    {{ $t(testPath, testAmount) }}
+                    {{ $t(Object.keys(previewPath)[0], previewAmount) }}
                 </p>
+                <TreeSelect v-model="previewPath" :options="allPaths" class="w-80 leading-normal">
+                    <template #value="{ value }">
+                        <template v-if="value[0]"> {{ value[0].key }}</template>
+                    </template>
+                </TreeSelect>
+                <InputNumber v-model="previewAmount" input-class="w-10" />
             </div>
         </template>
     </Card>
@@ -36,13 +40,81 @@ import { LocaleManager } from '@safelight/shared/Localization/LocaleManager';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import InputNumber from 'primevue/inputnumber';
-import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
-import { ref } from 'vue';
+import type { TreeNode } from 'primevue/treenode';
+import TreeSelect from 'primevue/treeselect';
+import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { RouterLink } from 'vue-router';
 
-const testPath = ref('general.descriptions.name');
-const testAmount = ref(1);
+const previewPath = ref<{ [path: string]: any }>({ 'general.descriptions.name': true });
+const previewAmount = ref(1);
+const i18n = useI18n();
+
+const allPaths = computed(() => {
+    if (i18n.locale.value == i18n.fallbackLocale.value.toString()) {
+        return groupMessages(i18n.messages.value[i18n.locale.value]);
+    }
+
+    // Merge main and fallback
+    const merged = mergeDeep(
+        {},
+        i18n.messages.value[i18n.locale.value],
+        i18n.messages.value[i18n.fallbackLocale.value.toString()]
+    );
+    return groupMessages(merged);
+});
+
+// Modified from: https://gist.github.com/nombrekeff/7cc1711b20b6738b7d5e47b9acef32b5
+function groupMessages(obj?: Record<string, any>, path: string[] = []) {
+    if (typeof obj !== 'object') {
+        return [];
+    }
+
+    const result: TreeNode[] = [];
+
+    for (const key in obj) {
+        const message = obj[key];
+        if (typeof message === 'object') {
+            const subMsgs = groupMessages(message, [...path, key]);
+            const newItem: TreeNode = {
+                label: key,
+                key: [...path, key].join('.'),
+                selectable: false,
+                children: subMsgs
+            };
+            result.push(newItem);
+        } else {
+            result.push({
+                label: key,
+                key: [...path, key].join('.')
+            });
+        }
+    }
+    return result;
+}
+
+// Source: https://stackoverflow.com/a/34749873
+function isObject(item: any) {
+    return item && typeof item === 'object' && !Array.isArray(item);
+}
+function mergeDeep(target: Record<string, any>, ...sources: Record<string, any>[]) {
+    if (!sources.length) return target;
+    const source = sources.shift();
+
+    if (isObject(target) && isObject(source)) {
+        for (const key in source) {
+            if (isObject(source[key])) {
+                if (!target[key]) Object.assign(target, { [key]: {} });
+                mergeDeep(target[key], source[key]);
+            } else {
+                Object.assign(target, { [key]: source[key] });
+            }
+        }
+    }
+
+    return mergeDeep(target, ...sources);
+}
 </script>
 
 <route lang="json">
