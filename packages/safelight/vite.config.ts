@@ -6,6 +6,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import VueRouter from 'unplugin-vue-router/vite';
 import { defineConfig } from 'vite';
 import mkcert from 'vite-plugin-mkcert';
+import generateI18n from './buildscripts/vite-plugin-generate-i18n';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -20,7 +21,11 @@ export default defineConfig({
         }),
         vue(),
         mkcert(),
-        visualizer()
+        visualizer(),
+        generateI18n({
+            localesDir: path.join(import.meta.dirname, '../shared/src/Localization/i18n/'),
+            outputFile: path.join(import.meta.dirname, './types/i18n.d.ts')
+        })
     ],
     resolve: {
         alias: {

@@ -47,10 +47,5 @@
     "vitest": "^2.0.3",
     "vue": "^3.4.32"
   },
-  "packageManager": "pnpm@8.15.8+sha256.691fe176eea9a8a80df20e4976f3dfb44a04841ceb885638fe2a26174f81e65e",
-  "pnpm": {
-    "patchedDependencies": {
-      "vue-i18n@9.13.1": "patches/vue-i18n@9.13.1.patch"
-    }
-  }
+  "packageManager": "pnpm@8.15.8+sha256.691fe176eea9a8a80df20e4976f3dfb44a04841ceb885638fe2a26174f81e65e"
 }
