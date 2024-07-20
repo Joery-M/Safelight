@@ -13,11 +13,26 @@
             <div>
                 <Select
                     :model-value="$i18n.locale"
-                    :options="Object.keys(LocaleManager.locales)"
-                    @update:model-value="LocaleManager.switchLocale($event)"
-                ></Select>
+                    :options="
+                        Object.entries(LocaleManager.locales).map(([name, reg]) => ({
+                            name,
+                            reg
+                        }))
+                    "
+                    @update:model-value="LocaleManager.switchLocale($event.name)"
+                >
+                    <template #value="{ value }">
+                        <div v-if="value">
+                            {{ LocaleManager.locales[value].localeName }} - {{ value }}
+                        </div>
+                    </template>
+                    <template #option="{ option }">
+                        <div>{{ option.reg.localeName }} - {{ option.name }}</div>
+                    </template>
+                </Select>
                 <p><span>general.actions.search:</span> {{ $t('general.actions.search') }}</p>
             </div>
+            <hr />
             <div>
                 <h2>All translations</h2>
                 <p>
@@ -30,6 +45,24 @@
                 </TreeSelect>
                 <InputNumber v-model="previewAmount" input-class="w-10" />
             </div>
+            <hr />
+            <div>
+                <h2>Datetime</h2>
+                <DatePicker
+                    v-model="previewDt"
+                    :disabled="dateTimeFormats.length == 0"
+                    show-time
+                    input-class="leading-normal"
+                />
+                <Select
+                    v-model="previewDtFormat"
+                    :disabled="dateTimeFormats.length == 0"
+                    :options="dateTimeFormats"
+                />
+                <p v-if="previewDt && dateTimeFormats.length > 0">
+                    {{ $d(previewDt, previewDtFormat) }}
+                </p>
+            </div>
         </template>
     </Card>
 </template>
@@ -39,6 +72,7 @@ import { PhArrowLeft } from '@phosphor-icons/vue';
 import { LocaleManager } from '@safelight/shared/Localization/LocaleManager';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
+import DatePicker from 'primevue/datepicker';
 import InputNumber from 'primevue/inputnumber';
 import Select from 'primevue/select';
 import type { TreeNode } from 'primevue/treenode';
@@ -49,6 +83,10 @@ import { RouterLink } from 'vue-router';
 
 const previewPath = ref<{ [path: string]: any }>({ 'general.descriptions.name': true });
 const previewAmount = ref(1);
+
+const previewDt = ref<Date>(new Date());
+const previewDtFormat = ref<string>('long');
+
 const i18n = useI18n();
 
 const allPaths = computed(() => {
@@ -63,6 +101,13 @@ const allPaths = computed(() => {
         i18n.messages.value[i18n.fallbackLocale.value.toString()]
     );
     return groupMessages(merged);
+});
+const dateTimeFormats = computed(() => {
+    if (i18n.datetimeFormats.value[LocaleManager.activeLocale.value]) {
+        return Object.keys(i18n.datetimeFormats.value[LocaleManager.activeLocale.value]);
+    } else {
+        return [];
+    }
 });
 
 // Modified from: https://gist.github.com/nombrekeff/7cc1711b20b6738b7d5e47b9acef32b5

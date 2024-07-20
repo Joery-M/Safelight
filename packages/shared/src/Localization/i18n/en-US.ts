@@ -10,14 +10,19 @@ export default {
             descriptions: {
                 untitled: 'Untitled',
                 name: 'Name | Names',
-                type: 'Type',
+                type: 'Type | Types',
                 project: 'Project | Projects',
                 duration: 'Duration',
-                fileType: 'File type'
+                modified: 'Modified',
+                fileType: 'File type | File types',
+                refresh: 'Refresh'
             }
         },
         project: {
-            new: 'New project'
+            new: 'New project',
+            types: {
+                simple: 'Simple'
+            }
         },
         panels: {
             library: {
@@ -29,6 +34,41 @@ export default {
             monitor: {
                 title: 'Monitor'
             }
+        }
+    },
+    dateTimeFormat: {
+        short: {
+            dateStyle: 'short'
+        },
+        medium: {
+            day: 'numeric',
+            month: 'numeric',
+            year: 'numeric'
+        },
+        long: {
+            dateStyle: 'long'
+        },
+        dateTime: {
+            day: 'numeric',
+            month: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric'
+        },
+        time: {
+            hour: 'numeric',
+            minute: 'numeric'
+        },
+        timeLong: {
+            hour: 'numeric',
+            minute: '2-digit',
+            second: '2-digit'
+        },
+        timeFull: {
+            hour: 'numeric',
+            minute: '2-digit',
+            second: '2-digit',
+            fractionalSecondDigits: 3
         }
     }
 } as LocalizationFile;
