@@ -6,6 +6,12 @@ declare module 'vue-i18n' {
         actions: {
             open: string;
             search: string;
+            skipBackFrame: string;
+            skipForwardFrame: string;
+            sortAscending: string;
+            sortDescending: string;
+            sortBy: string;
+            loadFile: string;
         },
         descriptions: {
             untitled: string;
@@ -16,7 +22,8 @@ declare module 'vue-i18n' {
             modified: string;
             fileType: string;
             refresh: string;
-        }
+        },
+        default: string;
     },
     project: {
         new: string;
@@ -24,9 +31,20 @@ declare module 'vue-i18n' {
             simple: string;
         }
     },
+    media: {
+        properties: string;
+        attrs: {
+            video: string;
+            audio: string;
+            subtitles: string;
+            image: string;
+        }
+    },
     panels: {
         library: {
             title: string;
+            noMediaLoaded: string;
+            noMediaFound: string;
         },
         timeline: {
             title: string;

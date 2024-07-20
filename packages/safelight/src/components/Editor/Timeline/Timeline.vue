@@ -2,10 +2,10 @@
     <SLTimeline
         v-model:items="items"
         :playback-position="pbPos"
-        :fps="timeline?.framerate.value"
-        :invert-scroll-axes
-        :zoom-factor
-        :alignment
+        :fps="timeline?.value?.framerate.value"
+        :invert-scroll-axes="invertScrollAxes.value"
+        :zoom-factor="zoomFactor.value"
+        :alignment="alignment.value"
         class="timeline h-full"
         @update:playback-position="setPbPos"
     />

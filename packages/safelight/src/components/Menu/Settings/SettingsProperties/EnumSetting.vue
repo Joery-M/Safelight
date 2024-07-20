@@ -18,7 +18,8 @@
             changeValue(defaultValue);
         "
     >
-        (Default: {{ setting.labelKey ? getByPath(defaultValue, setting.labelKey) : defaultValue }})
+        ({{ $t('general.default') }}:
+        {{ setting.labelKey ? getByPath(defaultValue, setting.labelKey) : defaultValue }})
         <PhArrowUDownLeft size="15" />
     </a>
     <Dropdown

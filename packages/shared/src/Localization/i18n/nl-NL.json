@@ -1,9 +1,16 @@
 {
     "messages": {
         "general": {
+            "default": "Standaard",
             "actions": {
                 "open": "Open",
-                "search": "Zoeken"
+                "search": "Zoeken",
+                "skipBackFrame": "Ga {n} beeld terug | Ga {n} beelden terug",
+                "skipForwardFrame": "Ga {n} beeld verder | Ga {n} beelden verder",
+                "sortAscending": "Sorteer oplopend",
+                "sortDescending": "Sorteer aflopend",
+                "sortBy": "Sorteer op",
+                "loadFile": "Importeer bestand"
             },
             "descriptions": {
                 "untitled": "Naamloos",
@@ -22,9 +29,20 @@
                 "simple": "Simpel"
             }
         },
+        "media": {
+            "properties": "Eigenschappen",
+            "attrs": {
+                "video": "Media heeft video",
+                "audio": "Media heeft audio",
+                "subtitles": "Media heeft ondertiteling",
+                "image": "Media is een afbeelding"
+            }
+        },
         "panels": {
             "library": {
-                "title": "Bibliotheek"
+                "title": "Bibliotheek",
+                "noMediaLoaded": "Geen media geïmporteerd",
+                "noMediaFound": "Geen media gevonden"
             },
             "timeline": {
                 "title": "Tijdlijn"

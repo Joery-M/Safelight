@@ -2,34 +2,36 @@
     <DataTable :value="projects" :loading>
         <template #header>
             <div class="align-items-center justify-content-between flex flex-wrap gap-2">
-                <h2 class="m-0 flex-1">Projects</h2>
-                <Button rounded title="Refresh list" @click="loadList()">
+                <h2 class="m-0 flex-1">{{ $t('general.descriptions.project', 2) }}</h2>
+                <Button rounded :title="$t('general.descriptions.refresh')" @click="loadList()">
                     <template #icon>
                         <PhArrowsClockwise />
                     </template>
                 </Button>
                 <SplitButton
-                    label="New project"
+                    :label="$t('project.new')"
                     rounded
                     :model="projectTypes"
                     @click="CurrentProject.newSimpleProject()"
                 />
             </div>
         </template>
-        <Column field="name" header="Project">
+        <Column field="name" :header="$t('general.descriptions.project')">
             <template #body="{ data }: { data: StoredProject }">
                 <InplaceRename :value="data.name" @change="(ev) => setProjectName(ev, data)" />
             </template>
         </Column>
-        <Column field="type" header="Type" />
-        <Column header="Modified">
+        <Column field="type" :header="$t('general.descriptions.type')" />
+        <Column :header="$t('general.descriptions.modified')">
             <template #body="slotProps">
                 {{ formatDateTime((slotProps.data as StoredProject).updated) }}
             </template>
         </Column>
         <Column>
             <template #body="slotProps">
-                <Button @click="CurrentProject.openProject(slotProps.data)">Open</Button>
+                <Button @click="CurrentProject.openProject(slotProps.data)">
+                    {{ $t('general.actions.open') }}
+                </Button>
             </template>
         </Column>
     </DataTable>

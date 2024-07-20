@@ -18,7 +18,7 @@
             changeValue(defaultValue);
         "
     >
-        (Default: {{ defaultValue }})
+        ({{ $t('general.default') }}: {{ defaultValue }})
         <PhArrowUDownLeft size="15" />
     </a>
     <InputText

@@ -33,22 +33,22 @@
                 <PhVideoCamera
                     v-if="item.isOfType(MediaType.Video)"
                     weight="bold"
-                    aria-label="Media has video"
+                    :aria-label="$t('media.attrs.video')"
                 />
                 <PhSpeakerHigh
                     v-if="item.isOfType(MediaType.Audio)"
                     weight="bold"
-                    aria-label="Media has audio"
+                    :aria-label="$t('media.attrs.audio')"
                 />
                 <PhSubtitles
                     v-if="item.isOfType(MediaType.Text)"
                     weight="bold"
-                    aria-label="Media has subtitles"
+                    :aria-label="$t('media.attrs.subtitles')"
                 />
                 <PhImage
                     v-if="item.isOfType(MediaType.Image)"
                     weight="bold"
-                    aria-label="Media is an image"
+                    :aria-label="$t('media.attrs.image')"
                 />
             </div>
         </div>
@@ -61,7 +61,7 @@
             </p>
             <Button
                 v-if="size >= 96"
-                title="Options"
+                :title="$t('media.properties')"
                 text
                 rounded
                 severity="secondary"

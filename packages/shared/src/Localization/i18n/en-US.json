@@ -1,9 +1,16 @@
 {
     "messages": {
         "general": {
+            "default": "Default",
             "actions": {
                 "open": "Open",
-                "search": "Search"
+                "search": "Search",
+                "skipBackFrame": "Skip back {n} frame | Skip back {n} frames",
+                "skipForwardFrame": "Skip forward {n} frame | Skip forward {n} frames",
+                "sortAscending": "Sort ascending",
+                "sortDescending": "Sort descending",
+                "sortBy": "Sort by",
+                "loadFile": "Import file"
             },
             "descriptions": {
                 "untitled": "Untitled",
@@ -22,9 +29,20 @@
                 "simple": "Simple"
             }
         },
+        "media": {
+            "properties": "Properties",
+            "attrs": {
+                "video": "Media has video",
+                "audio": "Media has audio",
+                "subtitles": "Media has subtitles",
+                "image": "Media is an image"
+            }
+        },
         "panels": {
             "library": {
-                "title": "Library"
+                "title": "Library",
+                "noMediaLoaded": "No media imported",
+                "noMediaFound": "No media found"
             },
             "timeline": {
                 "title": "Timeline"
