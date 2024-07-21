@@ -28,7 +28,7 @@ const timecodeVal = computed(() =>
         : 0
 );
 
-const inplace = ref<Inplace>();
+const inplace = ref<typeof Inplace>();
 
 function onChange(ev: Event) {
     const val = (ev.target as HTMLInputElement)?.value;

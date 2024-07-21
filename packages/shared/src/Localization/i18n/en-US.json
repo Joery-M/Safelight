@@ -1,0 +1,95 @@
+{
+    "messages": {
+        "general": {
+            "default": "Default",
+            "loading": "Loading",
+            "actions": {
+                "open": "Open",
+                "search": "Search",
+                "skipBackFrame": "Skip back {n} frame | Skip back {n} frames",
+                "skipForwardFrame": "Skip forward {n} frame | Skip forward {n} frames",
+                "sortAscending": "Sort ascending",
+                "sortDescending": "Sort descending",
+                "sortBy": "Sort by",
+                "loadFile": "Import file",
+                "resetValue": "Reset value"
+            },
+            "descriptions": {
+                "untitled": "Untitled",
+                "name": "Name | Names",
+                "type": "Type | Types",
+                "project": "Project | Projects",
+                "duration": "Duration",
+                "modified": "Modified",
+                "created": "Created",
+                "fileType": "File type | File types",
+                "refresh": "Refresh"
+            }
+        },
+        "project": {
+            "new": "New project",
+            "types": {
+                "simple": "Simple"
+            }
+        },
+        "media": {
+            "properties": "Properties",
+            "attrs": {
+                "video": "Media has video",
+                "audio": "Media has audio",
+                "subtitles": "Media has subtitles",
+                "image": "Media is an image"
+            }
+        },
+        "panels": {
+            "noPanel": "No panel",
+            "library": {
+                "title": "Library",
+                "noMediaLoaded": "No media imported",
+                "noMediaFound": "No media found"
+            },
+            "timeline": {
+                "title": "Timeline"
+            },
+            "monitor": {
+                "title": "Monitor",
+                "upload": ""
+            }
+        }
+    },
+    "dateTimeFormat": {
+        "short": {
+            "dateStyle": "short"
+        },
+        "medium": {
+            "day": "numeric",
+            "month": "numeric",
+            "year": "numeric"
+        },
+        "long": {
+            "dateStyle": "long"
+        },
+        "dateTime": {
+            "day": "numeric",
+            "month": "numeric",
+            "year": "numeric",
+            "hour": "numeric",
+            "minute": "numeric"
+        },
+        "time": {
+            "hour": "numeric",
+            "minute": "numeric"
+        },
+        "timeLong": {
+            "hour": "numeric",
+            "minute": "2-digit",
+            "second": "2-digit"
+        },
+        "timeFull": {
+            "hour": "numeric",
+            "minute": "2-digit",
+            "second": "2-digit",
+            "fractionalSecondDigits": 3
+        }
+    }
+}

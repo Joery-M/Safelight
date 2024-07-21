@@ -8,9 +8,9 @@
     />
     <a
         v-if="defaultValue !== undefined"
-        :class="{ show: defaultValue !== numberValue }"
+        :class="{ show: defaultValue !== numberValue.value }"
         class="default"
-        aria-label="Reset value"
+        :aria-label="$t('general.actions.resetValue')"
         tabindex="0"
         role="button"
         @click="
@@ -18,7 +18,7 @@
             changeValue(defaultValue);
         "
     >
-        (Default: {{ defaultValue }})
+        ({{ $t('general.default') }}: {{ defaultValue }})
         <PhArrowUDownLeft size="15" />
     </a>
     <div class="number-slider-combo">
@@ -26,7 +26,7 @@
             :model-value="numberValue"
             :min="setting.min"
             :max="setting.max"
-            :max-fraction-digits="setting.decimals == false ? 0 : setting.decimals ?? 20"
+            :max-fraction-digits="setting.decimals == false ? 0 : (setting.decimals ?? 20)"
             show-buttons
             class="w-32"
             input-class="w-32"

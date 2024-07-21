@@ -6,6 +6,7 @@
         "types/*.d.ts",
         "src/**/*.vue",
         "src/**/*.json",
+        "test/**/*.spec.ts",
         "../../globals.d.ts"
     ],
     "compilerOptions": {
@@ -18,6 +19,6 @@
         "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
 
-        "types": ["vite/client"]
+        "types": ["vite/client", "vue-i18n"]
     }
 }

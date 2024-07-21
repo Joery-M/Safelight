@@ -1,0 +1,96 @@
+{
+    "messages": {
+        "general": {
+            "default": "Standaard",
+            "loading": "Laden",
+            "actions": {
+                "open": "Open",
+                "search": "Zoeken",
+                "skipBackFrame": "Ga {n} beeld terug | Ga {n} beelden terug",
+                "skipForwardFrame": "Ga {n} beeld verder | Ga {n} beelden verder",
+                "sortAscending": "Sorteer oplopend",
+                "sortDescending": "Sorteer aflopend",
+                "sortBy": "Sorteer op",
+                "loadFile": "Importeer bestand",
+                "resetValue": "Zet waarde terug"
+            },
+            "descriptions": {
+                "untitled": "Naamloos",
+                "name": "Naam | Namen",
+                "type": "Type | Types",
+                "project": "Project | Projecten",
+                "duration": "Duur",
+                "modified": "Aangepast",
+                "created": "Aangemaakt",
+                "fileType": "Bestandstype | Bestandstypen",
+                "refresh": "Herladen"
+            }
+        },
+        "project": {
+            "new": "Nieuw project",
+            "types": {
+                "simple": "Simpel"
+            }
+        },
+        "media": {
+            "properties": "Eigenschappen",
+            "attrs": {
+                "video": "Media heeft video",
+                "audio": "Media heeft audio",
+                "subtitles": "Media heeft ondertiteling",
+                "image": "Media is een afbeelding"
+            }
+        },
+        "panels": {
+            "noPanel": "Geen paneel",
+            "library": {
+                "title": "Bibliotheek",
+                "noMediaLoaded": "Geen media geïmporteerd",
+                "noMediaFound": "Geen media gevonden"
+            },
+            "timeline": {
+                "title": "Tijdlijn"
+            },
+            "monitor": {
+                "title": "Monitor"
+            }
+        }
+    },
+    "dateTimeFormat": {
+        "short": {
+            "day": "numeric",
+            "month": "numeric",
+            "year": "2-digit"
+        },
+        "medium": {
+            "day": "numeric",
+            "month": "numeric",
+            "year": "numeric"
+        },
+        "long": {
+            "dateStyle": "long"
+        },
+        "dateTime": {
+            "day": "numeric",
+            "month": "numeric",
+            "year": "numeric",
+            "hour": "numeric",
+            "minute": "numeric"
+        },
+        "time": {
+            "hour": "numeric",
+            "minute": "numeric"
+        },
+        "timeLong": {
+            "hour": "numeric",
+            "minute": "2-digit",
+            "second": "2-digit"
+        },
+        "timeFull": {
+            "hour": "numeric",
+            "minute": "2-digit",
+            "second": "2-digit",
+            "fractionalSecondDigits": 3
+        }
+    }
+}

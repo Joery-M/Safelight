@@ -1,4 +1,28 @@
 {
     "root": false,
-    "ignorePatterns": ["dist", "generated", "**/*.scss"]
+    "extends": ["plugin:@intlify/vue-i18n/recommended"],
+    "plugins": ["@intlify/vue-i18n"],
+    "ignorePatterns": ["dist", "generated", "**/*.scss"],
+    "rules": {
+        "@intlify/vue-i18n/no-raw-text": [
+            "warn",
+            {
+                "attributes": {
+                    "/.+/": [
+                        "title",
+                        "aria-label",
+                        "aria-describedby",
+                        "aria-placeholder",
+                        "aria-roledescription",
+                        "aria-valuetext"
+                    ],
+                    "input": ["placeholder"],
+                    "img": ["alt"]
+                },
+                "ignoreNodes": ["md-icon", "v-icon"],
+                "ignorePattern": "^[-#:()&]+$"
+            }
+        ],
+        "@intlify/vue-i18n/no-missing-keys": "off"
+    }
 }

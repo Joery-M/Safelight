@@ -2,18 +2,20 @@ import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router/auto';
 import { routes } from 'vue-router/auto-routes';
+import App from './App.vue';
 
+import { definePreset } from '@primevue/themes';
+import Aura from '@primevue/themes/aura';
+import { LocaleManager } from '@safelight/shared/Localization/LocaleManager';
 import PrimeVue, { type PrimeVueConfiguration } from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
 import DialogService from 'primevue/dialogservice';
 import FocusTrap from 'primevue/focustrap';
-import { definePreset } from '@primevue/themes';
-import Aura from '@primevue/themes/aura';
+import Ripple from 'primevue/ripple';
 import Tooltip from 'primevue/tooltip';
 
-import App from './App.vue';
+import { createI18n } from 'vue-i18n';
 import './style.scss';
-import Ripple from 'primevue/ripple';
 
 export const router = createRouter({
     history: createWebHistory('/'),
@@ -90,6 +92,16 @@ app.use(PrimeVue, {
 } as PrimeVueConfiguration);
 app.use(ConfirmationService);
 app.use(DialogService);
+
+// i18n
+const i18n = createI18n<false>({
+    locale: 'en-US',
+    legacy: false,
+    fallbackLocale: 'en-US',
+    messages: {}
+});
+LocaleManager.init(i18n as any);
+app.use(i18n);
 
 // Phosphor icons
 app.provide('size', 18);

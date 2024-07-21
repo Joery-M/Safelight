@@ -60,6 +60,7 @@ updates:
           - "@eslint*"
           - "@typescript-eslint/*"
           - "eslint-*"
+          - "@intlify/eslint-plugin-vue-i18n"
           - "eslint"
           - "typescript-eslint"
           - "prettier*"

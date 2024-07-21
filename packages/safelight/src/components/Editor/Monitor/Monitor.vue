@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col items-center justify-center">
-        <p>Monitor</p>
+        <p>{{ $t('panels.monitor.title') }}</p>
         <PlaybackControls />
     </div>
 </template>
