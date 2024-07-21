@@ -10,7 +10,7 @@
         v-if="defaultValue !== undefined"
         :class="{ show: defaultValue !== stringValue }"
         class="default"
-        aria-label="Reset value"
+        :aria-label="$t('general.actions.resetValue')"
         tabindex="0"
         role="button"
         @click="
@@ -106,7 +106,7 @@ function changeValue(value?: string) {
 }
 
 watchImmediate(storedStringValue, (val) => {
-    stringValue.value = val;
+    stringValue.value = val.value;
 });
 </script>
 

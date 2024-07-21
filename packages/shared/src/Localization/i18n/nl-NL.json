@@ -2,6 +2,7 @@
     "messages": {
         "general": {
             "default": "Standaard",
+            "loading": "Laden",
             "actions": {
                 "open": "Open",
                 "search": "Zoeken",
@@ -10,7 +11,8 @@
                 "sortAscending": "Sorteer oplopend",
                 "sortDescending": "Sorteer aflopend",
                 "sortBy": "Sorteer op",
-                "loadFile": "Importeer bestand"
+                "loadFile": "Importeer bestand",
+                "resetValue": "Zet waarde terug"
             },
             "descriptions": {
                 "untitled": "Naamloos",
@@ -39,6 +41,7 @@
             }
         },
         "panels": {
+            "noPanel": "Geen paneel",
             "library": {
                 "title": "Bibliotheek",
                 "noMediaLoaded": "Geen media geïmporteerd",

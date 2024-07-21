@@ -37,7 +37,6 @@ interface Options {
 }
 
 async function compileTypes({ localesDir: dir, outputFile: output }: Options) {
-    const start = Date.now();
     const files = await glob(dir + '/*.json', {
         signal: AbortSignal.timeout(1000)
     });
@@ -55,8 +54,7 @@ async function compileTypes({ localesDir: dir, outputFile: output }: Options) {
     }
 
     // Start of file
-    let outputFile = `
-import 'vue-i18n';
+    let outputFile = `import 'vue-i18n';
 declare module 'vue-i18n' {
     export interface DefineLocaleMessage `;
 
@@ -71,9 +69,27 @@ declare module 'vue-i18n' {
     jsonRes = jsonRes.replace(/"([^"]*)"(?=:)/g, '$1');
     // Convert "string" to string
     jsonRes = jsonRes.replace(/(?<=: )"([^"]*)",?/g, '$1;');
+
+    // Format to not get complaints from prettier
+    jsonRes = jsonRes
+        .split('\n')
+        .map((line, i) => {
+            if (i == 0) {
+                return line;
+            } else {
+                if (line.endsWith(' }')) {
+                    line = line.replace(' }', ' };');
+                }
+                if (line.endsWith(' },')) {
+                    line = line.replace(' },', ' };');
+                }
+                return '    ' + line;
+            }
+        })
+        .join('\n');
     outputFile += jsonRes;
     // Finishing touches
-    outputFile += `\n}`;
+    outputFile += `\n}\n`;
 
     // No need to wait for finishing writing, if it does take long, skip it
     writeFile(output, outputFile, { signal: AbortSignal.timeout(100) });

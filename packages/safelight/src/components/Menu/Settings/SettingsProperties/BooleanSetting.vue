@@ -21,7 +21,7 @@
         v-if="defaultValue !== undefined"
         :class="{ show: defaultValue !== checkboxValue.value }"
         class="default"
-        aria-label="Reset value"
+        :aria-label="$t('general.actions.resetValue')"
         tabindex="0"
         role="button"
         @click="

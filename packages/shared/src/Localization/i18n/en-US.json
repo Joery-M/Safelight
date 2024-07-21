@@ -2,6 +2,7 @@
     "messages": {
         "general": {
             "default": "Default",
+            "loading": "Loading",
             "actions": {
                 "open": "Open",
                 "search": "Search",
@@ -10,7 +11,8 @@
                 "sortAscending": "Sort ascending",
                 "sortDescending": "Sort descending",
                 "sortBy": "Sort by",
-                "loadFile": "Import file"
+                "loadFile": "Import file",
+                "resetValue": "Reset value"
             },
             "descriptions": {
                 "untitled": "Untitled",
@@ -39,6 +41,7 @@
             }
         },
         "panels": {
+            "noPanel": "No panel",
             "library": {
                 "title": "Library",
                 "noMediaLoaded": "No media imported",
