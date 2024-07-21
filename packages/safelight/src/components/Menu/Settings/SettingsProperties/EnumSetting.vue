@@ -10,7 +10,7 @@
         v-if="defaultValue !== undefined"
         :class="{ show: defaultValue !== enumValue }"
         class="default"
-        aria-label="Reset value"
+        :aria-label="$t('general.actions.resetValue')"
         tabindex="0"
         role="button"
         @click="
@@ -18,7 +18,8 @@
             changeValue(defaultValue);
         "
     >
-        (Default: {{ setting.labelKey ? getByPath(defaultValue, setting.labelKey) : defaultValue }})
+        ({{ $t('general.default') }}:
+        {{ setting.labelKey ? getByPath(defaultValue, setting.labelKey) : defaultValue }})
         <PhArrowUDownLeft size="15" />
     </a>
     <Dropdown

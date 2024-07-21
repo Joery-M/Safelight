@@ -3,10 +3,10 @@ import { fileURLToPath, URL } from 'node:url';
 import vue from '@vitejs/plugin-vue';
 import path from 'node:path';
 import { visualizer } from 'rollup-plugin-visualizer';
-import TurboConsole from 'unplugin-turbo-console/vite';
 import VueRouter from 'unplugin-vue-router/vite';
 import { defineConfig } from 'vite';
 import mkcert from 'vite-plugin-mkcert';
+import generateI18n from './buildscripts/vite-plugin-generate-i18n';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -16,13 +16,16 @@ export default defineConfig({
     plugins: [
         VueRouter({
             routesFolder: {
-                src: path.join(__dirname, './src/views')
+                src: path.join(import.meta.dirname, './src/views')
             }
         }),
         vue(),
-        TurboConsole(),
         mkcert(),
-        visualizer()
+        visualizer(),
+        generateI18n({
+            localesDir: path.join(import.meta.dirname, '../shared/src/Localization/i18n/'),
+            outputFile: path.join(import.meta.dirname, './types/i18n.d.ts')
+        })
     ],
     resolve: {
         alias: {
@@ -49,8 +52,6 @@ export default defineConfig({
             'primevue/confirmdialog',
             'primevue/datatable',
             'primevue/dataview',
-            'primevue/dataviewlayoutoptions',
-            'primevue/dropdown',
             'primevue/inplace',
             'primevue/inputgroup',
             'primevue/inputgroupaddon',
@@ -59,6 +60,9 @@ export default defineConfig({
             'primevue/menu',
             'primevue/menubar',
             'primevue/overlaypanel',
+            'primevue/popover',
+            'primevue/select',
+            'primevue/selectbutton',
             'primevue/skeleton',
             'primevue/slider',
             'primevue/splitbutton',

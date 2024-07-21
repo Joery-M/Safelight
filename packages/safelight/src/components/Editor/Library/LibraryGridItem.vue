@@ -33,22 +33,22 @@
                 <PhVideoCamera
                     v-if="item.isOfType(MediaType.Video)"
                     weight="bold"
-                    aria-label="Media has video"
+                    :aria-label="$t('media.attrs.video')"
                 />
                 <PhSpeakerHigh
                     v-if="item.isOfType(MediaType.Audio)"
                     weight="bold"
-                    aria-label="Media has audio"
+                    :aria-label="$t('media.attrs.audio')"
                 />
                 <PhSubtitles
                     v-if="item.isOfType(MediaType.Text)"
                     weight="bold"
-                    aria-label="Media has subtitles"
+                    :aria-label="$t('media.attrs.subtitles')"
                 />
                 <PhImage
                     v-if="item.isOfType(MediaType.Image)"
                     weight="bold"
-                    aria-label="Media is an image"
+                    :aria-label="$t('media.attrs.image')"
                 />
             </div>
         </div>
@@ -61,7 +61,7 @@
             </p>
             <Button
                 v-if="size >= 96"
-                title="Options"
+                :title="$t('media.properties')"
                 text
                 rounded
                 severity="secondary"
@@ -75,7 +75,7 @@
             </Button>
         </div>
     </div>
-    <OverlayPanel
+    <Popover
         id="library_item_menu"
         ref="overlay"
         :pt="{
@@ -95,7 +95,7 @@
             <template #center>
                 <Button
                     v-tooltip.bottom="{ value: 'Delete', showDelay: 500 }"
-                    severity="contrast"
+                    severity="secondary"
                     text
                     :disabled="hasItemInTimeline"
                     @click="alertt('yea no')"
@@ -114,7 +114,7 @@
                 }
             }"
         />
-    </OverlayPanel>
+    </Popover>
 </template>
 <script setup lang="ts">
 import { CurrentProject } from '@/stores/currentProject';
@@ -132,7 +132,7 @@ import { MediaType } from '@safelight/shared/Media/Media';
 import Button from 'primevue/button';
 import Menu from 'primevue/menu';
 import type { MenuItem } from 'primevue/menuitem';
-import OverlayPanel from 'primevue/overlaypanel';
+import Popover from 'primevue/popover';
 import Skeleton from 'primevue/skeleton';
 import Toolbar from 'primevue/toolbar';
 import { computed, ref } from 'vue';
@@ -157,7 +157,7 @@ const hasItemInTimeline = computed(
 
 const alertt = (text: string) => window.alert(text);
 
-const overlay = ref<OverlayPanel>();
+const overlay = ref<typeof Popover>();
 
 function closeOtherOverlays() {
     if (document.activeElement && 'blur' in document.activeElement) {

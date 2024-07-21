@@ -48,7 +48,7 @@ test('Saving settings to localStorage', () => {
 
     SettingsManager.saveSettings();
     // Get value from localstorage
-    const storedVal = JSON.parse(localStorage.getItem('sl-settings'));
+    const storedVal = JSON.parse(localStorage.getItem('sl-settings')!);
     expect(storedVal).toMatchObject({
         test: {
             onOff: true

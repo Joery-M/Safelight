@@ -4,7 +4,8 @@
         <ButtonGroup>
             <Button
                 severity="secondary"
-                aria-label="Skip back 1 frame"
+                :aria-label="$t('general.actions.skipBackFrame', 1)"
+                :title="$t('general.actions.skipBackFrame', 1)"
                 @click="if (!timeline.isPlaying.value) timeline.stepPlayback(true);"
             >
                 <template #icon>
@@ -23,7 +24,8 @@
             </Button>
             <Button
                 severity="secondary"
-                aria-label="Skip forward 1 frame"
+                :aria-label="$t('general.actions.skipForwardFrame', 1)"
+                :title="$t('general.actions.skipForwardFrame', 1)"
                 @click="if (!timeline.isPlaying.value) timeline.stepPlayback();"
             >
                 <template #icon>

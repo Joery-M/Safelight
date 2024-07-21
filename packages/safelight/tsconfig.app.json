@@ -27,6 +27,7 @@
         },
         "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
-        "types": ["unplugin-vue-router/client"]
+        "strict": true,
+        "types": ["unplugin-vue-router/client", "vite/client"]
     }
 }

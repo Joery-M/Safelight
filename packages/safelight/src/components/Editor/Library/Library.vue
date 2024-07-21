@@ -23,7 +23,17 @@
         <template #header>
             <Toolbar class="border-none p-0">
                 <template #start>
-                    <DataViewLayoutOptions v-model="layout" class="mr-2 min-w-fit" />
+                    <SelectButton
+                        v-model="layout"
+                        :options="['list', 'grid']"
+                        :allow-empty="false"
+                        class="mr-2 min-w-fit"
+                    >
+                        <template #option="{ option }">
+                            <PhList v-if="option === 'list'" />
+                            <PhSquaresFour v-else />
+                        </template>
+                    </SelectButton>
                     <InputGroup class="mr-2">
                         <InputGroupAddon class="p-0">
                             <PhMagnifyingGlass />
@@ -36,7 +46,20 @@
                             class="p-0"
                             outlined
                             severity="secondary"
-                            :aria-label="'Sort ' + (sortDescending ? 'ascending' : 'descending')"
+                            :title="
+                                $t(
+                                    sortDescending
+                                        ? 'general.actions.sortAscending'
+                                        : 'general.actions.sortDescending'
+                                )
+                            "
+                            :aria-label="
+                                $t(
+                                    sortDescending
+                                        ? 'general.actions.sortAscending'
+                                        : 'general.actions.sortDescending'
+                                )
+                            "
                             @click="sortDescending = !sortDescending"
                         >
                             <template #icon>
@@ -44,16 +67,20 @@
                                 <PhSortDescending v-else />
                             </template>
                         </Button>
-                        <Dropdown
+                        <Select
                             v-model="sortBy"
                             style="line-height: 1.2"
-                            aria-label="Sort by"
+                            :aria-label="$t('general.actions.sortBy')"
                             :options="['Name', 'Duration', 'File type']"
                         />
                     </InputGroup>
                 </template>
                 <template #end>
-                    <Button title="Load file" rounded @click="fileDialog.open()">
+                    <Button
+                        :title="$t('general.actions.loadFile')"
+                        rounded
+                        @click="fileDialog.open()"
+                    >
                         <template #icon>
                             <PhPlus />
                         </template>
@@ -78,9 +105,11 @@
                 @dblclick="fileDialogOpenDblClick"
             >
                 <label v-if="CurrentProject.project.value?.media.length == 0">
-                    No media imported
+                    {{ $t('panels.library.noMediaLoaded') }}
                 </label>
-                <label v-else>No media found</label>
+                <label v-else>
+                    {{ $t('panels.library.noMediaFound') }}
+                </label>
             </div>
         </template>
         <template #footer>
@@ -126,28 +155,28 @@
                     <PhVideoCamera
                         v-if="data.isOfType(MediaType.Video)"
                         weight="bold"
-                        aria-label="Media has video"
+                        :aria-label="$t('media.attrs.video')"
                     />
                     <PhSpeakerHigh
                         v-if="data.isOfType(MediaType.Audio)"
                         weight="bold"
-                        aria-label="Media has audio"
+                        :aria-label="$t('media.attrs.audio')"
                     />
                     <PhSubtitles
                         v-if="data.isOfType(MediaType.Text)"
                         weight="bold"
-                        aria-label="Media has subtitles"
+                        :aria-label="$t('media.attrs.subtitles')"
                     />
                     <PhImage
                         v-if="data.isOfType(MediaType.Image)"
                         weight="bold"
-                        aria-label="Media is an image"
+                        :aria-label="$t('media.attrs.image')"
                     />
                 </div>
             </template>
         </Column>
-        <Column field="name.value" header="Name" sortable />
-        <Column field="duration.value" header="Duration" sortable>
+        <Column field="name.value" :header="$t('general.descriptions.name')" sortable />
+        <Column field="duration.value" :header="$t('general.descriptions.duration')" sortable>
             <template #body="{ data }: { data: Media }">
                 <template v-if="data.isOfType(MediaType.Image)">
                     {{ Timecode.toFormattedTimecode(5000) }}
@@ -160,7 +189,17 @@
         <template #header>
             <Toolbar class="border-none p-0">
                 <template #start>
-                    <DataViewLayoutOptions v-model="layout" class="mr-2 min-w-fit" />
+                    <SelectButton
+                        v-model="layout"
+                        :options="['list', 'grid']"
+                        :allow-empty="false"
+                        class="mr-2 min-w-fit"
+                    >
+                        <template #option="{ option }">
+                            <PhList v-if="option === 'list'" />
+                            <PhSquaresFour v-else />
+                        </template>
+                    </SelectButton>
                     <InputGroup class="mr-2">
                         <InputGroupAddon class="p-0">
                             <PhMagnifyingGlass />
@@ -169,7 +208,11 @@
                     </InputGroup>
                 </template>
                 <template #end>
-                    <Button title="Load file" rounded @click="fileDialog.open()">
+                    <Button
+                        :title="$t('general.actions.loadFile')"
+                        rounded
+                        @click="fileDialog.open()"
+                    >
                         <template #icon>
                             <PhPlus />
                         </template>
@@ -183,9 +226,11 @@
                 @dblclick="fileDialogOpenDblClick"
             >
                 <label v-if="CurrentProject.project.value?.media.length == 0">
-                    No media imported
+                    {{ $t('panels.library.noMediaLoaded') }}
                 </label>
-                <label v-else>No media found</label>
+                <label v-else>
+                    {{ $t('panels.library.noMediaFound') }}
+                </label>
             </div>
         </template>
     </DataTable>
@@ -195,11 +240,13 @@
 import { CurrentProject } from '@/stores/currentProject';
 import {
     PhImage,
+    PhList,
     PhMagnifyingGlass,
     PhPlus,
     PhSortAscending,
     PhSortDescending,
     PhSpeakerHigh,
+    PhSquaresFour,
     PhSubtitles,
     PhVideoCamera
 } from '@phosphor-icons/vue';
@@ -213,11 +260,11 @@ import Button from 'primevue/button';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 import DataView from 'primevue/dataview';
-import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions';
-import Dropdown from 'primevue/dropdown';
 import InputGroup from 'primevue/inputgroup';
 import InputGroupAddon from 'primevue/inputgroupaddon';
 import InputText from 'primevue/inputtext';
+import Select from 'primevue/select';
+import SelectButton from 'primevue/selectbutton';
 import Slider from 'primevue/slider';
 import Toolbar from 'primevue/toolbar';
 import { ref, shallowRef, watchEffect } from 'vue';

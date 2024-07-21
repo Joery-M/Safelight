@@ -35,6 +35,6 @@ test('Getting namespaces', () => {
     ]);
 
     expect(SettingsManager.getNamespace('test')).toBeDefined();
-    expect(SettingsManager.getNamespace('test').title).toBe('Test');
-    expect(SettingsManager.getNamespace('test').settings).toHaveLength(1);
+    expect(SettingsManager.getNamespace('test')?.title).toBe('Test');
+    expect(SettingsManager.getNamespace('test')?.settings).toHaveLength(1);
 });

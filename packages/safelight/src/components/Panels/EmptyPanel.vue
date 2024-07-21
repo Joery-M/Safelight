@@ -1,5 +1,5 @@
 <template>
     <div style="flex: 1; display: grid; place-items: center">
-        <p>No page</p>
+        <p>{{ $t('panels.noPanel') }}</p>
     </div>
 </template>
