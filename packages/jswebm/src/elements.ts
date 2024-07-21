@@ -338,7 +338,72 @@ export const MasterElements = [
     MatroskaElements.Targets,
     MatroskaElements.SimpleTag
 ];
+
+export enum ElementType {
+    Binary = 'binary',
+    Date = 'date',
+    Float = 'float',
+    Integer = 'integer',
+    Master = 'master',
+    String = 'string',
+    UTF8 = 'utf-8',
+    Uinteger = 'uinteger'
+}
+
+export interface Element {
+    name: string;
+    path: string;
+    id: string;
+    type: ElementType;
+    maxOccurs?: string;
+    recurring?: string;
+    minOccurs?: string;
+    unknownsizeallowed?: string;
+    default?: string;
+    minver?: string;
+    maxver?: string;
+    range?: string;
+    length?: string;
+    recursive?: string;
+}
+
 export const ElementInfo = {
+    [EbmlElements.EBMLHead]: {
+        name: 'EBML',
+        path: 'EBML',
+        id: '0x1a45dfa3',
+        type: ElementType.Master
+    },
+    [EbmlElements.EBMLVersion]: {
+        name: 'EBMLVersion',
+        path: 'EBMLEBMLVersion',
+        id: '0x4286',
+        type: ElementType.Uinteger
+    },
+    [EbmlElements.EBMLReadVersion]: {
+        name: 'EBMLReadVersion',
+        path: 'EBMLEBMLReadVersion',
+        id: '0x42F7',
+        type: ElementType.Uinteger
+    },
+    [EbmlElements.DocType]: {
+        name: 'DocType',
+        path: 'EBMLDocType',
+        id: '0x4282',
+        type: ElementType.String
+    },
+    [EbmlElements.DocTypeVersion]: {
+        name: 'DocTypeVersion',
+        path: 'EBMLDocTypeVersion',
+        id: '0x4287',
+        type: ElementType.Uinteger
+    },
+    [EbmlElements.DocTypeReadVersion]: {
+        name: 'DocTypeReadVersion',
+        path: 'EBMLDocTypeReadVersion',
+        id: '0x4285',
+        type: ElementType.Uinteger
+    },
     /**
      * @type MatroskaElements.EBMLMaxIDLength
      */
@@ -346,7 +411,7 @@ export const ElementInfo = {
         name: 'EBMLMaxIDLength',
         path: '\\EBML\\EBMLMaxIDLength',
         id: '0x42F2',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: '4',
         default: '4',
         minOccurs: '1',
@@ -359,7 +424,7 @@ export const ElementInfo = {
         name: 'EBMLMaxSizeLength',
         path: '\\EBML\\EBMLMaxSizeLength',
         id: '0x42F3',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: '1-8',
         default: '8',
         minOccurs: '1',
@@ -375,7 +440,7 @@ export const ElementInfo = {
         name: 'Segment',
         path: '\\Segment',
         id: '0x18538067',
-        type: 'master',
+        type: ElementType.Master,
         minOccurs: '1',
         maxOccurs: '1',
         unknownsizeallowed: '1'
@@ -390,7 +455,7 @@ export const ElementInfo = {
         name: 'SeekHead',
         path: '\\Segment\\SeekHead',
         id: '0x114D9B74',
-        type: 'master',
+        type: ElementType.Master,
         maxOccurs: '2'
     },
     /**
@@ -403,7 +468,7 @@ export const ElementInfo = {
         name: 'Seek',
         path: '\\Segment\\SeekHead\\Seek',
         id: '0x4DBB',
-        type: 'master',
+        type: ElementType.Master,
         minOccurs: '1'
     },
     /**
@@ -416,7 +481,7 @@ export const ElementInfo = {
         name: 'SeekID',
         path: '\\Segment\\SeekHead\\Seek\\SeekID',
         id: '0x53AB',
-        type: 'binary',
+        type: ElementType.Binary,
         length: '4',
         minOccurs: '1',
         maxOccurs: '1'
@@ -431,7 +496,7 @@ export const ElementInfo = {
         name: 'SeekPosition',
         path: '\\Segment\\SeekHead\\Seek\\SeekPosition',
         id: '0x53AC',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minOccurs: '1',
         maxOccurs: '1'
     },
@@ -445,7 +510,7 @@ export const ElementInfo = {
         name: 'Info',
         path: '\\Segment\\Info',
         id: '0x1549A966',
-        type: 'master',
+        type: ElementType.Master,
         minOccurs: '1',
         maxOccurs: '1',
         recurring: '1'
@@ -464,7 +529,7 @@ The value of the UID **MUST** contain at least one bit set to 1.
         name: 'SegmentUUID',
         path: '\\Segment\\Info\\SegmentUUID',
         id: '0x73A4',
-        type: 'binary',
+        type: ElementType.Binary,
         length: '16',
         maxOccurs: '1'
     },
@@ -478,7 +543,7 @@ The value of the UID **MUST** contain at least one bit set to 1.
         name: 'SegmentFilename',
         path: '\\Segment\\Info\\SegmentFilename',
         id: '0x7384',
-        type: 'utf-8',
+        type: ElementType.UTF8,
         maxOccurs: '1'
     },
     /**
@@ -496,7 +561,7 @@ then it **MAY** be considered as the last Segment of the Linked Segment. The Pre
         name: 'PrevUUID',
         path: '\\Segment\\Info\\PrevUUID',
         id: '0x3CB923',
-        type: 'binary',
+        type: ElementType.Binary,
         length: '16',
         maxOccurs: '1'
     },
@@ -514,7 +579,7 @@ but PrevUUID **SHOULD** be considered authoritative for identifying the previous
         name: 'PrevFilename',
         path: '\\Segment\\Info\\PrevFilename',
         id: '0x3C83AB',
-        type: 'utf-8',
+        type: ElementType.UTF8,
         maxOccurs: '1'
     },
     /**
@@ -532,7 +597,7 @@ then it **MAY** be considered as the first Segment of the Linked Segment. The Ne
         name: 'NextUUID',
         path: '\\Segment\\Info\\NextUUID',
         id: '0x3EB923',
-        type: 'binary',
+        type: ElementType.Binary,
         length: '16',
         maxOccurs: '1'
     },
@@ -550,7 +615,7 @@ but NextUUID **SHOULD** be considered authoritative for identifying the Next Seg
         name: 'NextFilename',
         path: '\\Segment\\Info\\NextFilename',
         id: '0x3E83BB',
-        type: 'utf-8',
+        type: ElementType.UTF8,
         maxOccurs: '1'
     },
     /**
@@ -566,7 +631,7 @@ but NextUUID **SHOULD** be considered authoritative for identifying the Next Seg
         name: 'SegmentFamily',
         path: '\\Segment\\Info\\SegmentFamily',
         id: '0x4444',
-        type: 'binary',
+        type: ElementType.Binary,
         length: '16'
     },
     /**
@@ -584,7 +649,7 @@ This allows remuxing a file with Chapter Codec without changing the content of t
         name: 'ChapterTranslate',
         path: '\\Segment\\Info\\ChapterTranslate',
         id: '0x6924',
-        type: 'master'
+        type: ElementType.Master
     },
     /**
      * @type MatroskaElements.ChapterTranslateID
@@ -597,7 +662,7 @@ The format depends on the ChapProcessCodecID used; see (#chapprocesscodecid-elem
         name: 'ChapterTranslateID',
         path: '\\Segment\\Info\\ChapterTranslate\\ChapterTranslateID',
         id: '0x69A5',
-        type: 'binary',
+        type: ElementType.Binary,
         minOccurs: '1',
         maxOccurs: '1'
     },
@@ -611,7 +676,7 @@ The format depends on the ChapProcessCodecID used; see (#chapprocesscodecid-elem
         name: 'ChapterTranslateCodec',
         path: '\\Segment\\Info\\ChapterTranslate\\ChapterTranslateCodec',
         id: '0x69BF',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minOccurs: '1',
         maxOccurs: '1'
     },
@@ -628,7 +693,7 @@ The format depends on the ChapProcessCodecID used; see (#chapprocesscodecid-elem
         name: 'ChapterTranslateEditionUID',
         path: '\\Segment\\Info\\ChapterTranslate\\ChapterTranslateEditionUID',
         id: '0x69FC',
-        type: 'uinteger'
+        type: ElementType.Uinteger
     },
     /**
      * @type MatroskaElements.TimestampScale
@@ -640,7 +705,7 @@ The format depends on the ChapProcessCodecID used; see (#chapprocesscodecid-elem
         name: 'TimestampScale',
         path: '\\Segment\\Info\\TimestampScale',
         id: '0x2AD7B1',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: 'not 0',
         default: '1000000',
         minOccurs: '1',
@@ -656,7 +721,7 @@ The format depends on the ChapProcessCodecID used; see (#chapprocesscodecid-elem
         name: 'Duration',
         path: '\\Segment\\Info\\Duration',
         id: '0x4489',
-        type: 'float',
+        type: ElementType.Float,
         range: '> 0x0p+0',
         maxOccurs: '1'
     },
@@ -670,7 +735,7 @@ The format depends on the ChapProcessCodecID used; see (#chapprocesscodecid-elem
         name: 'DateUTC',
         path: '\\Segment\\Info\\DateUTC',
         id: '0x4461',
-        type: 'date',
+        type: ElementType.Date,
         maxOccurs: '1'
     },
     /**
@@ -683,7 +748,7 @@ The format depends on the ChapProcessCodecID used; see (#chapprocesscodecid-elem
         name: 'Title',
         path: '\\Segment\\Info\\Title',
         id: '0x7BA9',
-        type: 'utf-8',
+        type: ElementType.UTF8,
         maxOccurs: '1'
     },
     /**
@@ -699,7 +764,7 @@ The format depends on the ChapProcessCodecID used; see (#chapprocesscodecid-elem
         name: 'MuxingApp',
         path: '\\Segment\\Info\\MuxingApp',
         id: '0x4D80',
-        type: 'utf-8',
+        type: ElementType.UTF8,
         minOccurs: '1',
         maxOccurs: '1'
     },
@@ -716,7 +781,7 @@ The format depends on the ChapProcessCodecID used; see (#chapprocesscodecid-elem
         name: 'WritingApp',
         path: '\\Segment\\Info\\WritingApp',
         id: '0x5741',
-        type: 'utf-8',
+        type: ElementType.UTF8,
         minOccurs: '1',
         maxOccurs: '1'
     },
@@ -730,7 +795,7 @@ The format depends on the ChapProcessCodecID used; see (#chapprocesscodecid-elem
         name: 'Cluster',
         path: '\\Segment\\Cluster',
         id: '0x1F43B675',
-        type: 'master',
+        type: ElementType.Master,
         unknownsizeallowed: '1'
     },
     /**
@@ -747,7 +812,7 @@ or the second if that Cluster contains a CRC-32 element ((#crc-32)).
         name: 'Timestamp',
         path: '\\Segment\\Cluster\\Timestamp',
         id: '0xE7',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minOccurs: '1',
         maxOccurs: '1'
     },
@@ -762,7 +827,7 @@ It is useful when using overlay tracks for seeking or deciding what track to use
         name: 'SilentTracks',
         path: '\\Segment\\Cluster\\SilentTracks',
         id: '0x5854',
-        type: 'master',
+        type: ElementType.Master,
         minver: '0',
         maxver: '0',
         maxOccurs: '1'
@@ -778,7 +843,7 @@ It could change later if not specified as silent in a further Cluster.
         name: 'SilentTrackNumber',
         path: '\\Segment\\Cluster\\SilentTracks\\SilentTrackNumber',
         id: '0x58D7',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '0',
         maxver: '0'
     },
@@ -793,7 +858,7 @@ It might help to resynchronize the offset on damaged streams.
         name: 'Position',
         path: '\\Segment\\Cluster\\Position',
         id: '0xA7',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         maxver: '4',
         maxOccurs: '1'
     },
@@ -807,7 +872,7 @@ It might help to resynchronize the offset on damaged streams.
         name: 'PrevSize',
         path: '\\Segment\\Cluster\\PrevSize',
         id: '0xAB',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         maxOccurs: '1'
     },
     /**
@@ -821,7 +886,7 @@ Mostly used to reduce overhead when no extra feature is needed; see (#simplebloc
         name: 'SimpleBlock',
         path: '\\Segment\\Cluster\\SimpleBlock',
         id: '0xA3',
-        type: 'binary',
+        type: ElementType.Binary,
         minver: '2'
     },
     /**
@@ -834,7 +899,7 @@ Mostly used to reduce overhead when no extra feature is needed; see (#simplebloc
         name: 'BlockGroup',
         path: '\\Segment\\Cluster\\BlockGroup',
         id: '0xA0',
-        type: 'master'
+        type: ElementType.Master
     },
     /**
      * @type MatroskaElements.Block
@@ -847,7 +912,7 @@ see (#block-structure) on Block Structure.
         name: 'Block',
         path: '\\Segment\\Cluster\\BlockGroup\\Block',
         id: '0xA1',
-        type: 'binary',
+        type: ElementType.Binary,
         minOccurs: '1',
         maxOccurs: '1'
     },
@@ -861,7 +926,7 @@ see (#block-structure) on Block Structure.
         name: 'BlockVirtual',
         path: '\\Segment\\Cluster\\BlockGroup\\BlockVirtual',
         id: '0xA2',
-        type: 'binary',
+        type: ElementType.Binary,
         minver: '0',
         maxver: '0',
         maxOccurs: '1'
@@ -877,7 +942,7 @@ An EBML parser that has no knowledge of the Block structure could still see and 
         name: 'BlockAdditions',
         path: '\\Segment\\Cluster\\BlockGroup\\BlockAdditions',
         id: '0x75A1',
-        type: 'master',
+        type: ElementType.Master,
         maxOccurs: '1'
     },
     /**
@@ -890,7 +955,7 @@ An EBML parser that has no knowledge of the Block structure could still see and 
         name: 'BlockMore',
         path: '\\Segment\\Cluster\\BlockGroup\\BlockAdditions\\BlockMore',
         id: '0xA6',
-        type: 'master',
+        type: ElementType.Master,
         minOccurs: '1'
     },
     /**
@@ -903,7 +968,7 @@ An EBML parser that has no knowledge of the Block structure could still see and 
         name: 'BlockAdditional',
         path: '\\Segment\\Cluster\\BlockGroup\\BlockAdditions\\BlockMore\\BlockAdditional',
         id: '0xA5',
-        type: 'binary',
+        type: ElementType.Binary,
         minOccurs: '1',
         maxOccurs: '1'
     },
@@ -925,7 +990,7 @@ Any other value indicates the meaning of the BlockAdditional data is found in th
         name: 'BlockAddID',
         path: '\\Segment\\Cluster\\BlockGroup\\BlockAdditions\\BlockMore\\BlockAddID',
         id: '0xEE',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: 'not 0',
         default: '1',
         minOccurs: '1',
@@ -943,7 +1008,7 @@ or when there is a break in a track like for subtitle tracks.
         name: 'BlockDuration',
         path: '\\Segment\\Cluster\\BlockGroup\\BlockDuration',
         id: '0x9B',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         maxOccurs: '1'
     },
     /**
@@ -957,7 +1022,7 @@ In the cache, only a frame of the same or higher priority can replace this frame
         name: 'ReferencePriority',
         path: '\\Segment\\Cluster\\BlockGroup\\ReferencePriority',
         id: '0xFA',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
         maxOccurs: '1'
@@ -979,7 +1044,7 @@ If the `BlockGroup` doesn't have a `ReferenceBlock` element, then the `Block` it
         name: 'ReferenceBlock',
         path: '\\Segment\\Cluster\\BlockGroup\\ReferenceBlock',
         id: '0xFB',
-        type: 'integer'
+        type: ElementType.Integer
     },
     /**
      * @type MatroskaElements.ReferenceVirtual
@@ -991,7 +1056,7 @@ If the `BlockGroup` doesn't have a `ReferenceBlock` element, then the `Block` it
         name: 'ReferenceVirtual',
         path: '\\Segment\\Cluster\\BlockGroup\\ReferenceVirtual',
         id: '0xFD',
-        type: 'integer',
+        type: ElementType.Integer,
         minver: '0',
         maxver: '0',
         maxOccurs: '1'
@@ -1007,7 +1072,7 @@ This information **SHOULD** always be referenced by a seek entry.
         name: 'CodecState',
         path: '\\Segment\\Cluster\\BlockGroup\\CodecState',
         id: '0xA4',
-        type: 'binary',
+        type: ElementType.Binary,
         minver: '2',
         maxOccurs: '1'
     },
@@ -1023,7 +1088,7 @@ The duration of DiscardPadding is not calculated in the duration of the TrackEnt
         name: 'DiscardPadding',
         path: '\\Segment\\Cluster\\BlockGroup\\DiscardPadding',
         id: '0x75A2',
-        type: 'integer',
+        type: ElementType.Integer,
         minver: '4',
         maxOccurs: '1'
     },
@@ -1037,7 +1102,7 @@ The duration of DiscardPadding is not calculated in the duration of the TrackEnt
         name: 'Slices',
         path: '\\Segment\\Cluster\\BlockGroup\\Slices',
         id: '0x8E',
-        type: 'master',
+        type: ElementType.Master,
         minver: '0',
         maxver: '0',
         maxOccurs: '1'
@@ -1053,7 +1118,7 @@ Being able to interpret this Element is not required for playback.
         name: 'TimeSlice',
         path: '\\Segment\\Cluster\\BlockGroup\\Slices\\TimeSlice',
         id: '0xE8',
-        type: 'master',
+        type: ElementType.Master,
         minver: '0',
         maxver: '0'
     },
@@ -1068,7 +1133,7 @@ Being able to interpret this Element is not required for playback.
         name: 'LaceNumber',
         path: '\\Segment\\Cluster\\BlockGroup\\Slices\\TimeSlice\\LaceNumber',
         id: '0xCC',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
         maxOccurs: '1'
@@ -1084,7 +1149,7 @@ Being able to interpret this Element is not required for playback.
         name: 'FrameNumber',
         path: '\\Segment\\Cluster\\BlockGroup\\Slices\\TimeSlice\\FrameNumber',
         id: '0xCD',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
         default: '0',
@@ -1100,7 +1165,7 @@ Being able to interpret this Element is not required for playback.
         name: 'BlockAdditionID',
         path: '\\Segment\\Cluster\\BlockGroup\\Slices\\TimeSlice\\BlockAdditionID',
         id: '0xCB',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
         default: '0',
@@ -1116,7 +1181,7 @@ Being able to interpret this Element is not required for playback.
         name: 'Delay',
         path: '\\Segment\\Cluster\\BlockGroup\\Slices\\TimeSlice\\Delay',
         id: '0xCE',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
         default: '0',
@@ -1132,7 +1197,7 @@ Being able to interpret this Element is not required for playback.
         name: 'SliceDuration',
         path: '\\Segment\\Cluster\\BlockGroup\\Slices\\TimeSlice\\SliceDuration',
         id: '0xCF',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
         default: '0',
@@ -1148,7 +1213,7 @@ Being able to interpret this Element is not required for playback.
         name: 'ReferenceFrame',
         path: '\\Segment\\Cluster\\BlockGroup\\ReferenceFrame',
         id: '0xC8',
-        type: 'master',
+        type: ElementType.Master,
         minver: '0',
         maxver: '0',
         maxOccurs: '1'
@@ -1163,7 +1228,7 @@ Being able to interpret this Element is not required for playback.
         name: 'ReferenceOffset',
         path: '\\Segment\\Cluster\\BlockGroup\\ReferenceFrame\\ReferenceOffset',
         id: '0xC9',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
         minOccurs: '1',
@@ -1179,7 +1244,7 @@ Being able to interpret this Element is not required for playback.
         name: 'ReferenceTimestamp',
         path: '\\Segment\\Cluster\\BlockGroup\\ReferenceFrame\\ReferenceTimestamp',
         id: '0xCA',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
         minOccurs: '1',
@@ -1196,7 +1261,7 @@ but the data inside the Block are Transformed (encrypted and/or signed).
         name: 'EncryptedBlock',
         path: '\\Segment\\Cluster\\EncryptedBlock',
         id: '0xAF',
-        type: 'binary',
+        type: ElementType.Binary,
         minver: '0',
         maxver: '0'
     },
@@ -1210,7 +1275,7 @@ but the data inside the Block are Transformed (encrypted and/or signed).
         name: 'Tracks',
         path: '\\Segment\\Tracks',
         id: '0x1654AE6B',
-        type: 'master',
+        type: ElementType.Master,
         maxOccurs: '1',
         recurring: '1'
     },
@@ -1224,7 +1289,7 @@ but the data inside the Block are Transformed (encrypted and/or signed).
         name: 'TrackEntry',
         path: '\\Segment\\Tracks\\TrackEntry',
         id: '0xAE',
-        type: 'master',
+        type: ElementType.Master,
         minOccurs: '1'
     },
     /**
@@ -1237,7 +1302,7 @@ but the data inside the Block are Transformed (encrypted and/or signed).
         name: 'TrackNumber',
         path: '\\Segment\\Tracks\\TrackEntry\\TrackNumber',
         id: '0xD7',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: 'not 0',
         minOccurs: '1',
         maxOccurs: '1'
@@ -1252,7 +1317,7 @@ but the data inside the Block are Transformed (encrypted and/or signed).
         name: 'TrackUID',
         path: '\\Segment\\Tracks\\TrackEntry\\TrackUID',
         id: '0x73C5',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: 'not 0',
         minOccurs: '1',
         maxOccurs: '1'
@@ -1268,7 +1333,7 @@ The value **SHOULD** be stored on 1 octet.
         name: 'TrackType',
         path: '\\Segment\\Tracks\\TrackEntry\\TrackType',
         id: '0x83',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minOccurs: '1',
         maxOccurs: '1'
     },
@@ -1282,7 +1347,7 @@ The value **SHOULD** be stored on 1 octet.
         name: 'FlagEnabled',
         path: '\\Segment\\Tracks\\TrackEntry\\FlagEnabled',
         id: '0xB9',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '2',
         range: '0-1',
         default: '1',
@@ -1299,7 +1364,7 @@ The value **SHOULD** be stored on 1 octet.
         name: 'FlagDefault',
         path: '\\Segment\\Tracks\\TrackEntry\\FlagDefault',
         id: '0x88',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: '0-1',
         default: '1',
         minOccurs: '1',
@@ -1318,7 +1383,7 @@ See (#default-track-selection) for more details.
         name: 'FlagForced',
         path: '\\Segment\\Tracks\\TrackEntry\\FlagForced',
         id: '0x55AA',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: '0-1',
         default: '0',
         minOccurs: '1',
@@ -1334,7 +1399,7 @@ See (#default-track-selection) for more details.
         name: 'FlagHearingImpaired',
         path: '\\Segment\\Tracks\\TrackEntry\\FlagHearingImpaired',
         id: '0x55AB',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         range: '0-1',
         maxOccurs: '1'
@@ -1349,7 +1414,7 @@ See (#default-track-selection) for more details.
         name: 'FlagVisualImpaired',
         path: '\\Segment\\Tracks\\TrackEntry\\FlagVisualImpaired',
         id: '0x55AC',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         range: '0-1',
         maxOccurs: '1'
@@ -1364,7 +1429,7 @@ See (#default-track-selection) for more details.
         name: 'FlagTextDescriptions',
         path: '\\Segment\\Tracks\\TrackEntry\\FlagTextDescriptions',
         id: '0x55AD',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         range: '0-1',
         maxOccurs: '1'
@@ -1379,7 +1444,7 @@ See (#default-track-selection) for more details.
         name: 'FlagOriginal',
         path: '\\Segment\\Tracks\\TrackEntry\\FlagOriginal',
         id: '0x55AE',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         range: '0-1',
         maxOccurs: '1'
@@ -1394,7 +1459,7 @@ See (#default-track-selection) for more details.
         name: 'FlagCommentary',
         path: '\\Segment\\Tracks\\TrackEntry\\FlagCommentary',
         id: '0x55AF',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         range: '0-1',
         maxOccurs: '1'
@@ -1409,7 +1474,7 @@ See (#default-track-selection) for more details.
         name: 'FlagLacing',
         path: '\\Segment\\Tracks\\TrackEntry\\FlagLacing',
         id: '0x9C',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: '0-1',
         default: '1',
         minOccurs: '1',
@@ -1426,7 +1491,7 @@ If set to 0, the reference pseudo-cache system is not used.
         name: 'MinCache',
         path: '\\Segment\\Tracks\\TrackEntry\\MinCache',
         id: '0x6DE7',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
         default: '0',
@@ -1444,7 +1509,7 @@ If set to 0, the reference pseudo-cache system is not used.
         name: 'MaxCache',
         path: '\\Segment\\Tracks\\TrackEntry\\MaxCache',
         id: '0x6DF8',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
         maxOccurs: '1'
@@ -1460,7 +1525,7 @@ If set to 0, the reference pseudo-cache system is not used.
         name: 'DefaultDuration',
         path: '\\Segment\\Tracks\\TrackEntry\\DefaultDuration',
         id: '0x23E383',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: 'not 0',
         maxOccurs: '1'
     },
@@ -1475,7 +1540,7 @@ See (#defaultdecodedfieldduration) for more information.
         name: 'DefaultDecodedFieldDuration',
         path: '\\Segment\\Tracks\\TrackEntry\\DefaultDecodedFieldDuration',
         id: '0x234E7A',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         range: 'not 0',
         maxOccurs: '1'
@@ -1491,7 +1556,7 @@ See (#defaultdecodedfieldduration) for more information.
         name: 'TrackTimestampScale',
         path: '\\Segment\\Tracks\\TrackEntry\\TrackTimestampScale',
         id: '0x23314F',
-        type: 'float',
+        type: ElementType.Float,
         maxver: '3',
         range: '> 0x0p+0',
         default: '0x1p+0',
@@ -1509,7 +1574,7 @@ This can be used to adjust the playback offset of a track.
         name: 'TrackOffset',
         path: '\\Segment\\Tracks\\TrackEntry\\TrackOffset',
         id: '0x537F',
-        type: 'integer',
+        type: ElementType.Integer,
         minver: '0',
         maxver: '0',
         default: '0',
@@ -1526,7 +1591,7 @@ A value of 0 means there is no BlockAdditions ((#blockadditions-element)) for th
         name: 'MaxBlockAdditionID',
         path: '\\Segment\\Tracks\\TrackEntry\\MaxBlockAdditionID',
         id: '0x55EE',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
         maxOccurs: '1'
@@ -1543,7 +1608,7 @@ with BlockAddIDExtraData.
         name: 'BlockAdditionMapping',
         path: '\\Segment\\Tracks\\TrackEntry\\BlockAdditionMapping',
         id: '0x41E4',
-        type: 'master',
+        type: ElementType.Master,
         minver: '4'
     },
     /**
@@ -1560,7 +1625,7 @@ the value refers to the BlockAddID ((#blockaddid-element)) value being described
         name: 'BlockAddIDValue',
         path: '\\Segment\\Tracks\\TrackEntry\\BlockAdditionMapping\\BlockAddIDValue',
         id: '0x41F0',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         range: '>=2',
         maxOccurs: '1'
@@ -1576,7 +1641,7 @@ as defined by the associated Block Additional Mapping.
         name: 'BlockAddIDName',
         path: '\\Segment\\Tracks\\TrackEntry\\BlockAdditionMapping\\BlockAddIDName',
         id: '0x41A4',
-        type: 'string',
+        type: ElementType.String,
         minver: '4',
         maxOccurs: '1'
     },
@@ -1594,7 +1659,7 @@ to define how the BlockAdditional data should be handled.
         name: 'BlockAddIDType',
         path: '\\Segment\\Tracks\\TrackEntry\\BlockAdditionMapping\\BlockAddIDType',
         id: '0x41E7',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         default: '0',
         minOccurs: '1',
@@ -1611,7 +1676,7 @@ The interpretation of the binary data depends on the BlockAddIDType value and th
         name: 'BlockAddIDExtraData',
         path: '\\Segment\\Tracks\\TrackEntry\\BlockAdditionMapping\\BlockAddIDExtraData',
         id: '0x41ED',
-        type: 'binary',
+        type: ElementType.Binary,
         minver: '4',
         maxOccurs: '1'
     },
@@ -1625,7 +1690,7 @@ The interpretation of the binary data depends on the BlockAddIDType value and th
         name: 'Name',
         path: '\\Segment\\Tracks\\TrackEntry\\Name',
         id: '0x536E',
-        type: 'utf-8',
+        type: ElementType.UTF8,
         maxOccurs: '1'
     },
     /**
@@ -1640,7 +1705,7 @@ This Element **MUST** be ignored if the LanguageBCP47 Element is used in the sam
         name: 'Language',
         path: '\\Segment\\Tracks\\TrackEntry\\Language',
         id: '0x22B59C',
-        type: 'string',
+        type: ElementType.String,
         default: 'eng',
         minOccurs: '1',
         maxOccurs: '1'
@@ -1657,7 +1722,7 @@ If this Element is used, then any Language Elements used in the same TrackEntry 
         name: 'LanguageBCP47',
         path: '\\Segment\\Tracks\\TrackEntry\\LanguageBCP47',
         id: '0x22B59D',
-        type: 'string',
+        type: ElementType.String,
         minver: '4',
         maxOccurs: '1'
     },
@@ -1672,7 +1737,7 @@ see [@?I-D.ietf-cellar-codec] for more info.
         name: 'CodecID',
         path: '\\Segment\\Tracks\\TrackEntry\\CodecID',
         id: '0x86',
-        type: 'string',
+        type: ElementType.String,
         minOccurs: '1',
         maxOccurs: '1'
     },
@@ -1686,7 +1751,7 @@ see [@?I-D.ietf-cellar-codec] for more info.
         name: 'CodecPrivate',
         path: '\\Segment\\Tracks\\TrackEntry\\CodecPrivate',
         id: '0x63A2',
-        type: 'binary',
+        type: ElementType.Binary,
         maxOccurs: '1'
     },
     /**
@@ -1699,7 +1764,7 @@ see [@?I-D.ietf-cellar-codec] for more info.
         name: 'CodecName',
         path: '\\Segment\\Tracks\\TrackEntry\\CodecName',
         id: '0x258688',
-        type: 'utf-8',
+        type: ElementType.UTF8,
         maxOccurs: '1'
     },
     /**
@@ -1715,7 +1780,7 @@ see [@?I-D.ietf-cellar-codec] for more info.
         name: 'AttachmentLink',
         path: '\\Segment\\Tracks\\TrackEntry\\AttachmentLink',
         id: '0x7446',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         maxver: '3',
         range: 'not 0',
         maxOccurs: '1'
@@ -1730,7 +1795,7 @@ see [@?I-D.ietf-cellar-codec] for more info.
         name: 'CodecSettings',
         path: '\\Segment\\Tracks\\TrackEntry\\CodecSettings',
         id: '0x3A9697',
-        type: 'utf-8',
+        type: ElementType.UTF8,
         minver: '0',
         maxver: '0',
         maxOccurs: '1'
@@ -1745,7 +1810,7 @@ see [@?I-D.ietf-cellar-codec] for more info.
         name: 'CodecInfoURL',
         path: '\\Segment\\Tracks\\TrackEntry\\CodecInfoURL',
         id: '0x3B4040',
-        type: 'string',
+        type: ElementType.String,
         minver: '0',
         maxver: '0'
     },
@@ -1759,7 +1824,7 @@ see [@?I-D.ietf-cellar-codec] for more info.
         name: 'CodecDownloadURL',
         path: '\\Segment\\Tracks\\TrackEntry\\CodecDownloadURL',
         id: '0x26B240',
-        type: 'string',
+        type: ElementType.String,
         minver: '0',
         maxver: '0'
     },
@@ -1773,7 +1838,7 @@ see [@?I-D.ietf-cellar-codec] for more info.
         name: 'CodecDecodeAll',
         path: '\\Segment\\Tracks\\TrackEntry\\CodecDecodeAll',
         id: '0xAA',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         maxver: '0',
         range: '0-1',
         default: '1',
@@ -1793,7 +1858,7 @@ If the first one is not found, it should be the second, etc.
         name: 'TrackOverlay',
         path: '\\Segment\\Tracks\\TrackEntry\\TrackOverlay',
         id: '0x6FAB',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         maxver: '0'
     },
     /**
@@ -1809,7 +1874,7 @@ The value **SHOULD** be small so the muxing of tracks with the same actual times
         name: 'CodecDelay',
         path: '\\Segment\\Tracks\\TrackEntry\\CodecDelay',
         id: '0x56AA',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         default: '0',
         minOccurs: '1',
@@ -1826,7 +1891,7 @@ that the decoder **MUST** decode before the decoded data is valid, expressed in 
         name: 'SeekPreRoll',
         path: '\\Segment\\Tracks\\TrackEntry\\SeekPreRoll',
         id: '0x56BB',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         default: '0',
         minOccurs: '1',
@@ -1847,7 +1912,7 @@ This allows remuxing a file with Chapter Codec without changing the content of t
         name: 'TrackTranslate',
         path: '\\Segment\\Tracks\\TrackEntry\\TrackTranslate',
         id: '0x6624',
-        type: 'master'
+        type: ElementType.Master
     },
     /**
      * @type MatroskaElements.TrackTranslateTrackID
@@ -1860,7 +1925,7 @@ The format depends on the `ChapProcessCodecID` used; see (#chapprocesscodecid-el
         name: 'TrackTranslateTrackID',
         path: '\\Segment\\Tracks\\TrackEntry\\TrackTranslate\\TrackTranslateTrackID',
         id: '0x66A5',
-        type: 'binary',
+        type: ElementType.Binary,
         minOccurs: '1',
         maxOccurs: '1'
     },
@@ -1874,7 +1939,7 @@ The format depends on the `ChapProcessCodecID` used; see (#chapprocesscodecid-el
         name: 'TrackTranslateCodec',
         path: '\\Segment\\Tracks\\TrackEntry\\TrackTranslate\\TrackTranslateCodec',
         id: '0x66BF',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minOccurs: '1',
         maxOccurs: '1'
     },
@@ -1891,7 +1956,7 @@ The format depends on the `ChapProcessCodecID` used; see (#chapprocesscodecid-el
         name: 'TrackTranslateEditionUID',
         path: '\\Segment\\Tracks\\TrackEntry\\TrackTranslate\\TrackTranslateEditionUID',
         id: '0x66FC',
-        type: 'uinteger'
+        type: ElementType.Uinteger
     },
     /**
      * @type MatroskaElements.Video
@@ -1903,7 +1968,7 @@ The format depends on the `ChapProcessCodecID` used; see (#chapprocesscodecid-el
         name: 'Video',
         path: '\\Segment\\Tracks\\TrackEntry\\Video',
         id: '0xE0',
-        type: 'master',
+        type: ElementType.Master,
         maxOccurs: '1'
     },
     /**
@@ -1916,7 +1981,7 @@ The format depends on the `ChapProcessCodecID` used; see (#chapprocesscodecid-el
         name: 'FlagInterlaced',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\FlagInterlaced',
         id: '0x9A',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '2',
         default: '0',
         minOccurs: '1',
@@ -1935,7 +2000,7 @@ The format depends on the `ChapProcessCodecID` used; see (#chapprocesscodecid-el
         name: 'FieldOrder',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\FieldOrder',
         id: '0x9D',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         default: '2',
         minOccurs: '1',
@@ -1951,7 +2016,7 @@ The format depends on the `ChapProcessCodecID` used; see (#chapprocesscodecid-el
         name: 'StereoMode',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\StereoMode',
         id: '0x53B8',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '3',
         default: '0',
         minOccurs: '1',
@@ -1968,7 +2033,7 @@ Undefined values **SHOULD NOT** be used, as the behavior of known implementation
         name: 'AlphaMode',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\AlphaMode',
         id: '0x53C0',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '3',
         default: '0',
         minOccurs: '1',
@@ -1987,7 +2052,7 @@ Undefined values **SHOULD NOT** be used, as the behavior of known implementation
         name: 'OldStereoMode',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\OldStereoMode',
         id: '0x53B9',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         maxver: '2',
         maxOccurs: '1'
     },
@@ -2001,7 +2066,7 @@ Undefined values **SHOULD NOT** be used, as the behavior of known implementation
         name: 'PixelWidth',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\PixelWidth',
         id: '0xB0',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: 'not 0',
         minOccurs: '1',
         maxOccurs: '1'
@@ -2016,7 +2081,7 @@ Undefined values **SHOULD NOT** be used, as the behavior of known implementation
         name: 'PixelHeight',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\PixelHeight',
         id: '0xBA',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: 'not 0',
         minOccurs: '1',
         maxOccurs: '1'
@@ -2031,7 +2096,7 @@ Undefined values **SHOULD NOT** be used, as the behavior of known implementation
         name: 'PixelCropBottom',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\PixelCropBottom',
         id: '0x54AA',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
         maxOccurs: '1'
@@ -2046,7 +2111,7 @@ Undefined values **SHOULD NOT** be used, as the behavior of known implementation
         name: 'PixelCropTop',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\PixelCropTop',
         id: '0x54BB',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
         maxOccurs: '1'
@@ -2061,7 +2126,7 @@ Undefined values **SHOULD NOT** be used, as the behavior of known implementation
         name: 'PixelCropLeft',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\PixelCropLeft',
         id: '0x54CC',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
         maxOccurs: '1'
@@ -2076,7 +2141,7 @@ Undefined values **SHOULD NOT** be used, as the behavior of known implementation
         name: 'PixelCropRight',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\PixelCropRight',
         id: '0x54DD',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
         maxOccurs: '1'
@@ -2091,7 +2156,7 @@ Undefined values **SHOULD NOT** be used, as the behavior of known implementation
         name: 'DisplayWidth',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\DisplayWidth',
         id: '0x54B0',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: 'not 0',
         maxOccurs: '1'
     },
@@ -2105,7 +2170,7 @@ Undefined values **SHOULD NOT** be used, as the behavior of known implementation
         name: 'DisplayHeight',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\DisplayHeight',
         id: '0x54BA',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: 'not 0',
         maxOccurs: '1'
     },
@@ -2119,7 +2184,7 @@ Undefined values **SHOULD NOT** be used, as the behavior of known implementation
         name: 'DisplayUnit',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\DisplayUnit',
         id: '0x54B2',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
         maxOccurs: '1'
@@ -2134,7 +2199,7 @@ Undefined values **SHOULD NOT** be used, as the behavior of known implementation
         name: 'AspectRatioType',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\AspectRatioType',
         id: '0x54B3',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
         default: '0',
@@ -2151,7 +2216,7 @@ This value is similar in scope to the biCompression value of AVI's `BITMAPINFO` 
         name: 'UncompressedFourCC',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\UncompressedFourCC',
         id: '0x2EB524',
-        type: 'binary',
+        type: ElementType.Binary,
         length: '4',
         maxOccurs: '1'
     },
@@ -2165,7 +2230,7 @@ This value is similar in scope to the biCompression value of AVI's `BITMAPINFO` 
         name: 'GammaValue',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\GammaValue',
         id: '0x2FB523',
-        type: 'float',
+        type: ElementType.Float,
         minver: '0',
         maxver: '0',
         range: '> 0x0p+0',
@@ -2181,7 +2246,7 @@ This value is similar in scope to the biCompression value of AVI's `BITMAPINFO` 
         name: 'FrameRate',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\FrameRate',
         id: '0x2383E3',
-        type: 'float',
+        type: ElementType.Float,
         minver: '0',
         maxver: '0',
         range: '> 0x0p+0',
@@ -2197,7 +2262,7 @@ This value is similar in scope to the biCompression value of AVI's `BITMAPINFO` 
         name: 'Colour',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour',
         id: '0x55B0',
-        type: 'master',
+        type: ElementType.Master,
         minver: '4',
         maxOccurs: '1'
     },
@@ -2212,7 +2277,7 @@ For clarity, the value and meanings for MatrixCoefficients are adopted from Tabl
         name: 'MatrixCoefficients',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\MatrixCoefficients',
         id: '0x55B1',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         default: '2',
         minOccurs: '1',
@@ -2228,7 +2293,7 @@ For clarity, the value and meanings for MatrixCoefficients are adopted from Tabl
         name: 'BitsPerChannel',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\BitsPerChannel',
         id: '0x55B2',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         default: '0',
         minOccurs: '1',
@@ -2245,7 +2310,7 @@ Example: For video with 4:2:0 chroma subsampling, the ChromaSubsamplingHorz **SH
         name: 'ChromaSubsamplingHorz',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\ChromaSubsamplingHorz',
         id: '0x55B3',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         maxOccurs: '1'
     },
@@ -2260,7 +2325,7 @@ Example: For video with 4:2:0 chroma subsampling, the ChromaSubsamplingVert **SH
         name: 'ChromaSubsamplingVert',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\ChromaSubsamplingVert',
         id: '0x55B4',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         maxOccurs: '1'
     },
@@ -2276,7 +2341,7 @@ the ChromaSubsamplingHorz **SHOULD** be set to 1, and CbSubsamplingHorz **SHOULD
         name: 'CbSubsamplingHorz',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\CbSubsamplingHorz',
         id: '0x55B5',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         maxOccurs: '1'
     },
@@ -2291,7 +2356,7 @@ This is additive with ChromaSubsamplingVert.
         name: 'CbSubsamplingVert',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\CbSubsamplingVert',
         id: '0x55B6',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         maxOccurs: '1'
     },
@@ -2305,7 +2370,7 @@ This is additive with ChromaSubsamplingVert.
         name: 'ChromaSitingHorz',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\ChromaSitingHorz',
         id: '0x55B7',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         default: '0',
         minOccurs: '1',
@@ -2321,7 +2386,7 @@ This is additive with ChromaSubsamplingVert.
         name: 'ChromaSitingVert',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\ChromaSitingVert',
         id: '0x55B8',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         default: '0',
         minOccurs: '1',
@@ -2337,7 +2402,7 @@ This is additive with ChromaSubsamplingVert.
         name: 'Range',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\Range',
         id: '0x55B9',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         default: '0',
         minOccurs: '1',
@@ -2354,7 +2419,7 @@ the value and meanings for TransferCharacteristics are adopted from Table 3 of [
         name: 'TransferCharacteristics',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\TransferCharacteristics',
         id: '0x55BA',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         default: '2',
         minOccurs: '1',
@@ -2371,7 +2436,7 @@ the value and meanings for Primaries are adopted from Table 2 of [@!ITU-H.273].
         name: 'Primaries',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\Primaries',
         id: '0x55BB',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         default: '2',
         minOccurs: '1',
@@ -2388,7 +2453,7 @@ in candelas per square meter (cd/m^2^).
         name: 'MaxCLL',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\MaxCLL',
         id: '0x55BC',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         maxOccurs: '1'
     },
@@ -2403,7 +2468,7 @@ in candelas per square meter (cd/m^2^).
         name: 'MaxFALL',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\MaxFALL',
         id: '0x55BD',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         maxOccurs: '1'
     },
@@ -2417,7 +2482,7 @@ in candelas per square meter (cd/m^2^).
         name: 'MasteringMetadata',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\MasteringMetadata',
         id: '0x55D0',
-        type: 'master',
+        type: ElementType.Master,
         minver: '4',
         maxOccurs: '1'
     },
@@ -2431,7 +2496,7 @@ in candelas per square meter (cd/m^2^).
         name: 'PrimaryRChromaticityX',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\MasteringMetadata\\PrimaryRChromaticityX',
         id: '0x55D1',
-        type: 'float',
+        type: ElementType.Float,
         minver: '4',
         range: '0x0p+0-0x1p+0',
         maxOccurs: '1'
@@ -2446,7 +2511,7 @@ in candelas per square meter (cd/m^2^).
         name: 'PrimaryRChromaticityY',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\MasteringMetadata\\PrimaryRChromaticityY',
         id: '0x55D2',
-        type: 'float',
+        type: ElementType.Float,
         minver: '4',
         range: '0x0p+0-0x1p+0',
         maxOccurs: '1'
@@ -2461,7 +2526,7 @@ in candelas per square meter (cd/m^2^).
         name: 'PrimaryGChromaticityX',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\MasteringMetadata\\PrimaryGChromaticityX',
         id: '0x55D3',
-        type: 'float',
+        type: ElementType.Float,
         minver: '4',
         range: '0x0p+0-0x1p+0',
         maxOccurs: '1'
@@ -2476,7 +2541,7 @@ in candelas per square meter (cd/m^2^).
         name: 'PrimaryGChromaticityY',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\MasteringMetadata\\PrimaryGChromaticityY',
         id: '0x55D4',
-        type: 'float',
+        type: ElementType.Float,
         minver: '4',
         range: '0x0p+0-0x1p+0',
         maxOccurs: '1'
@@ -2491,7 +2556,7 @@ in candelas per square meter (cd/m^2^).
         name: 'PrimaryBChromaticityX',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\MasteringMetadata\\PrimaryBChromaticityX',
         id: '0x55D5',
-        type: 'float',
+        type: ElementType.Float,
         minver: '4',
         range: '0x0p+0-0x1p+0',
         maxOccurs: '1'
@@ -2506,7 +2571,7 @@ in candelas per square meter (cd/m^2^).
         name: 'PrimaryBChromaticityY',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\MasteringMetadata\\PrimaryBChromaticityY',
         id: '0x55D6',
-        type: 'float',
+        type: ElementType.Float,
         minver: '4',
         range: '0x0p+0-0x1p+0',
         maxOccurs: '1'
@@ -2521,7 +2586,7 @@ in candelas per square meter (cd/m^2^).
         name: 'WhitePointChromaticityX',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\MasteringMetadata\\WhitePointChromaticityX',
         id: '0x55D7',
-        type: 'float',
+        type: ElementType.Float,
         minver: '4',
         range: '0x0p+0-0x1p+0',
         maxOccurs: '1'
@@ -2536,7 +2601,7 @@ in candelas per square meter (cd/m^2^).
         name: 'WhitePointChromaticityY',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\MasteringMetadata\\WhitePointChromaticityY',
         id: '0x55D8',
-        type: 'float',
+        type: ElementType.Float,
         minver: '4',
         range: '0x0p+0-0x1p+0',
         maxOccurs: '1'
@@ -2551,7 +2616,7 @@ in candelas per square meter (cd/m^2^).
         name: 'LuminanceMax',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\MasteringMetadata\\LuminanceMax',
         id: '0x55D9',
-        type: 'float',
+        type: ElementType.Float,
         minver: '4',
         range: '>= 0x0p+0',
         maxOccurs: '1'
@@ -2566,7 +2631,7 @@ in candelas per square meter (cd/m^2^).
         name: 'LuminanceMin',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Colour\\MasteringMetadata\\LuminanceMin',
         id: '0x55DA',
-        type: 'float',
+        type: ElementType.Float,
         minver: '4',
         range: '>= 0x0p+0',
         maxOccurs: '1'
@@ -2581,7 +2646,7 @@ in candelas per square meter (cd/m^2^).
         name: 'Projection',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Projection',
         id: '0x7670',
-        type: 'master',
+        type: ElementType.Master,
         minver: '4',
         maxOccurs: '1'
     },
@@ -2595,7 +2660,7 @@ in candelas per square meter (cd/m^2^).
         name: 'ProjectionType',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Projection\\ProjectionType',
         id: '0x7671',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         default: '0',
         minOccurs: '1',
@@ -2624,7 +2689,7 @@ redundant framing information while preserving versioning and semantics between 
         name: 'ProjectionPrivate',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Projection\\ProjectionPrivate',
         id: '0x7672',
-        type: 'binary',
+        type: ElementType.Binary,
         minver: '4',
         maxOccurs: '1'
     },
@@ -2644,7 +2709,7 @@ Setting `ProjectionPoseYaw` to 180 or -180 degrees with `ProjectionPoseRoll` and
         name: 'ProjectionPoseYaw',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Projection\\ProjectionPoseYaw',
         id: '0x7673',
-        type: 'float',
+        type: ElementType.Float,
         range: '>= -0xB4p+0, <= 0xB4p+0',
         minver: '4',
         default: '0x0p+0',
@@ -2665,7 +2730,7 @@ The value of this element **MUST** be in the -90 to 90 degree range, both includ
         name: 'ProjectionPosePitch',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Projection\\ProjectionPosePitch',
         id: '0x7674',
-        type: 'float',
+        type: ElementType.Float,
         minver: '4',
         range: '>= -0x5Ap+0, <= 0x5Ap+0',
         default: '0x0p+0',
@@ -2690,7 +2755,7 @@ Setting `ProjectionPoseRoll` to 180 or -180 degrees with `ProjectionPoseYaw` and
         name: 'ProjectionPoseRoll',
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Projection\\ProjectionPoseRoll',
         id: '0x7675',
-        type: 'float',
+        type: ElementType.Float,
         minver: '4',
         range: '>= -0xB4p+0, <= 0xB4p+0',
         default: '0x0p+0',
@@ -2707,7 +2772,7 @@ Setting `ProjectionPoseRoll` to 180 or -180 degrees with `ProjectionPoseYaw` and
         name: 'Audio',
         path: '\\Segment\\Tracks\\TrackEntry\\Audio',
         id: '0xE1',
-        type: 'master',
+        type: ElementType.Master,
         maxOccurs: '1'
     },
     /**
@@ -2720,7 +2785,7 @@ Setting `ProjectionPoseRoll` to 180 or -180 degrees with `ProjectionPoseYaw` and
         name: 'SamplingFrequency',
         path: '\\Segment\\Tracks\\TrackEntry\\Audio\\SamplingFrequency',
         id: '0xB5',
-        type: 'float',
+        type: ElementType.Float,
         range: '> 0x0p+0',
         default: '0x1.f4p+12',
         minOccurs: '1',
@@ -2736,7 +2801,7 @@ Setting `ProjectionPoseRoll` to 180 or -180 degrees with `ProjectionPoseYaw` and
         name: 'OutputSamplingFrequency',
         path: '\\Segment\\Tracks\\TrackEntry\\Audio\\OutputSamplingFrequency',
         id: '0x78B5',
-        type: 'float',
+        type: ElementType.Float,
         range: '> 0x0p+0',
         maxOccurs: '1'
     },
@@ -2750,7 +2815,7 @@ Setting `ProjectionPoseRoll` to 180 or -180 degrees with `ProjectionPoseYaw` and
         name: 'Channels',
         path: '\\Segment\\Tracks\\TrackEntry\\Audio\\Channels',
         id: '0x9F',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: 'not 0',
         default: '1',
         minOccurs: '1',
@@ -2766,7 +2831,7 @@ Setting `ProjectionPoseRoll` to 180 or -180 degrees with `ProjectionPoseYaw` and
         name: 'ChannelPositions',
         path: '\\Segment\\Tracks\\TrackEntry\\Audio\\ChannelPositions',
         id: '0x7D7B',
-        type: 'binary',
+        type: ElementType.Binary,
         minver: '0',
         maxver: '0',
         maxOccurs: '1'
@@ -2781,7 +2846,7 @@ Setting `ProjectionPoseRoll` to 180 or -180 degrees with `ProjectionPoseYaw` and
         name: 'BitDepth',
         path: '\\Segment\\Tracks\\TrackEntry\\Audio\\BitDepth',
         id: '0x6264',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: 'not 0',
         maxOccurs: '1'
     },
@@ -2795,7 +2860,7 @@ Setting `ProjectionPoseRoll` to 180 or -180 degrees with `ProjectionPoseYaw` and
         name: 'Emphasis',
         path: '\\Segment\\Tracks\\TrackEntry\\Audio\\Emphasis',
         id: '0x52F1',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '5',
         default: '0',
         minOccurs: '1',
@@ -2812,7 +2877,7 @@ For more details, see (#track-operation).
         name: 'TrackOperation',
         path: '\\Segment\\Tracks\\TrackEntry\\TrackOperation',
         id: '0xE2',
-        type: 'master',
+        type: ElementType.Master,
         minver: '3',
         maxOccurs: '1'
     },
@@ -2826,7 +2891,7 @@ For more details, see (#track-operation).
         name: 'TrackCombinePlanes',
         path: '\\Segment\\Tracks\\TrackEntry\\TrackOperation\\TrackCombinePlanes',
         id: '0xE3',
-        type: 'master',
+        type: ElementType.Master,
         minver: '3',
         maxOccurs: '1'
     },
@@ -2840,7 +2905,7 @@ For more details, see (#track-operation).
         name: 'TrackPlane',
         path: '\\Segment\\Tracks\\TrackEntry\\TrackOperation\\TrackCombinePlanes\\TrackPlane',
         id: '0xE4',
-        type: 'master',
+        type: ElementType.Master,
         minver: '3',
         minOccurs: '1'
     },
@@ -2854,7 +2919,7 @@ For more details, see (#track-operation).
         name: 'TrackPlaneUID',
         path: '\\Segment\\Tracks\\TrackEntry\\TrackOperation\\TrackCombinePlanes\\TrackPlane\\TrackPlaneUID',
         id: '0xE5',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '3',
         range: 'not 0',
         minOccurs: '1',
@@ -2870,7 +2935,7 @@ For more details, see (#track-operation).
         name: 'TrackPlaneType',
         path: '\\Segment\\Tracks\\TrackEntry\\TrackOperation\\TrackCombinePlanes\\TrackPlane\\TrackPlaneType',
         id: '0xE6',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '3',
         minOccurs: '1',
         maxOccurs: '1'
@@ -2885,7 +2950,7 @@ For more details, see (#track-operation).
         name: 'TrackJoinBlocks',
         path: '\\Segment\\Tracks\\TrackEntry\\TrackOperation\\TrackJoinBlocks',
         id: '0xE9',
-        type: 'master',
+        type: ElementType.Master,
         minver: '3',
         maxOccurs: '1'
     },
@@ -2899,7 +2964,7 @@ For more details, see (#track-operation).
         name: 'TrackJoinUID',
         path: '\\Segment\\Tracks\\TrackEntry\\TrackOperation\\TrackJoinBlocks\\TrackJoinUID',
         id: '0xED',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '3',
         range: 'not 0',
         minOccurs: '1'
@@ -2914,7 +2979,7 @@ For more details, see (#track-operation).
         name: 'TrickTrackUID',
         path: '\\Segment\\Tracks\\TrackEntry\\TrickTrackUID',
         id: '0xC0',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
         maxOccurs: '1'
@@ -2929,7 +2994,7 @@ For more details, see (#track-operation).
         name: 'TrickTrackSegmentUID',
         path: '\\Segment\\Tracks\\TrackEntry\\TrickTrackSegmentUID',
         id: '0xC1',
-        type: 'binary',
+        type: ElementType.Binary,
         minver: '0',
         maxver: '0',
         length: '16',
@@ -2946,7 +3011,7 @@ Otherwise, TrickTrackUID and TrickTrackSegUID must be present if this track has 
         name: 'TrickTrackFlag',
         path: '\\Segment\\Tracks\\TrackEntry\\TrickTrackFlag',
         id: '0xC6',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
         default: '0',
@@ -2962,7 +3027,7 @@ Otherwise, TrickTrackUID and TrickTrackSegUID must be present if this track has 
         name: 'TrickMasterTrackUID',
         path: '\\Segment\\Tracks\\TrackEntry\\TrickMasterTrackUID',
         id: '0xC7',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
         maxOccurs: '1'
@@ -2977,7 +3042,7 @@ Otherwise, TrickTrackUID and TrickTrackSegUID must be present if this track has 
         name: 'TrickMasterTrackSegmentUID',
         path: '\\Segment\\Tracks\\TrackEntry\\TrickMasterTrackSegmentUID',
         id: '0xC4',
-        type: 'binary',
+        type: ElementType.Binary,
         minver: '0',
         maxver: '0',
         length: '16',
@@ -2993,7 +3058,7 @@ Otherwise, TrickTrackUID and TrickTrackSegUID must be present if this track has 
         name: 'ContentEncodings',
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings',
         id: '0x6D80',
-        type: 'master',
+        type: ElementType.Master,
         maxOccurs: '1'
     },
     /**
@@ -3006,7 +3071,7 @@ Otherwise, TrickTrackUID and TrickTrackSegUID must be present if this track has 
         name: 'ContentEncoding',
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings\\ContentEncoding',
         id: '0x6240',
-        type: 'master',
+        type: ElementType.Master,
         minOccurs: '1'
     },
     /**
@@ -3021,7 +3086,7 @@ This value **MUST** be unique for each `ContentEncoding` found in the `ContentEn
         name: 'ContentEncodingOrder',
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings\\ContentEncoding\\ContentEncodingOrder',
         id: '0x5031',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
         maxOccurs: '1'
@@ -3037,7 +3102,7 @@ Values (big-endian) can be OR'ed.
         name: 'ContentEncodingScope',
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings\\ContentEncoding\\ContentEncodingScope',
         id: '0x5032',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         default: '1',
         minOccurs: '1',
         maxOccurs: '1'
@@ -3052,7 +3117,7 @@ Values (big-endian) can be OR'ed.
         name: 'ContentEncodingType',
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings\\ContentEncoding\\ContentEncodingType',
         id: '0x5033',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
         maxOccurs: '1'
@@ -3069,7 +3134,7 @@ Each block **MUST** be decompressable, even if no previous block is available in
         name: 'ContentCompression',
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings\\ContentEncoding\\ContentCompression',
         id: '0x5034',
-        type: 'master',
+        type: ElementType.Master,
         maxOccurs: '1'
     },
     /**
@@ -3088,7 +3153,7 @@ A Matroska Reader **MAY** support methods "1" and "2" as possible and **SHOULD**
         name: 'ContentCompAlgo',
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings\\ContentEncoding\\ContentCompression\\ContentCompAlgo',
         id: '0x4254',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
         maxOccurs: '1'
@@ -3104,7 +3169,7 @@ the bytes that were removed from the beginning of each frame of the track.
         name: 'ContentCompSettings',
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings\\ContentEncoding\\ContentCompression\\ContentCompSettings',
         id: '0x4255',
-        type: 'binary',
+        type: ElementType.Binary,
         maxOccurs: '1'
     },
     /**
@@ -3119,7 +3184,7 @@ A Matroska Player **MAY** support encryption.
         name: 'ContentEncryption',
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings\\ContentEncoding\\ContentEncryption',
         id: '0x5035',
-        type: 'master',
+        type: ElementType.Master,
         maxOccurs: '1'
     },
     /**
@@ -3132,7 +3197,7 @@ A Matroska Player **MAY** support encryption.
         name: 'ContentEncAlgo',
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings\\ContentEncoding\\ContentEncryption\\ContentEncAlgo',
         id: '0x47E1',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
         maxOccurs: '1'
@@ -3147,7 +3212,7 @@ A Matroska Player **MAY** support encryption.
         name: 'ContentEncKeyID',
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings\\ContentEncoding\\ContentEncryption\\ContentEncKeyID',
         id: '0x47E2',
-        type: 'binary',
+        type: ElementType.Binary,
         maxOccurs: '1'
     },
     /**
@@ -3160,7 +3225,7 @@ A Matroska Player **MAY** support encryption.
         name: 'ContentEncAESSettings',
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings\\ContentEncoding\\ContentEncryption\\ContentEncAESSettings',
         id: '0x47E7',
-        type: 'master',
+        type: ElementType.Master,
         minver: '4',
         maxOccurs: '1'
     },
@@ -3174,7 +3239,7 @@ A Matroska Player **MAY** support encryption.
         name: 'AESSettingsCipherMode',
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings\\ContentEncoding\\ContentEncryption\\ContentEncAESSettings\\AESSettingsCipherMode',
         id: '0x47E8',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         minOccurs: '1',
         maxOccurs: '1'
@@ -3189,7 +3254,7 @@ A Matroska Player **MAY** support encryption.
         name: 'ContentSignature',
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings\\ContentEncoding\\ContentEncryption\\ContentSignature',
         id: '0x47E3',
-        type: 'binary',
+        type: ElementType.Binary,
         maxver: '0',
         maxOccurs: '1'
     },
@@ -3203,7 +3268,7 @@ A Matroska Player **MAY** support encryption.
         name: 'ContentSigKeyID',
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings\\ContentEncoding\\ContentEncryption\\ContentSigKeyID',
         id: '0x47E4',
-        type: 'binary',
+        type: ElementType.Binary,
         maxver: '0',
         maxOccurs: '1'
     },
@@ -3217,7 +3282,7 @@ A Matroska Player **MAY** support encryption.
         name: 'ContentSigAlgo',
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings\\ContentEncoding\\ContentEncryption\\ContentSigAlgo',
         id: '0x47E5',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         maxver: '0',
         default: '0',
         maxOccurs: '1'
@@ -3232,7 +3297,7 @@ A Matroska Player **MAY** support encryption.
         name: 'ContentSigHashAlgo',
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings\\ContentEncoding\\ContentEncryption\\ContentSigHashAlgo',
         id: '0x47E6',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         maxver: '0',
         default: '0',
         maxOccurs: '1'
@@ -3248,7 +3313,7 @@ All entries are local to the Segment.
         name: 'Cues',
         path: '\\Segment\\Cues',
         id: '0x1C53BB6B',
-        type: 'master',
+        type: ElementType.Master,
         maxOccurs: '1'
     },
     /**
@@ -3261,7 +3326,7 @@ All entries are local to the Segment.
         name: 'CuePoint',
         path: '\\Segment\\Cues\\CuePoint',
         id: '0xBB',
-        type: 'master',
+        type: ElementType.Master,
         minOccurs: '1'
     },
     /**
@@ -3274,7 +3339,7 @@ All entries are local to the Segment.
         name: 'CueTime',
         path: '\\Segment\\Cues\\CuePoint\\CueTime',
         id: '0xB3',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minOccurs: '1',
         maxOccurs: '1'
     },
@@ -3288,7 +3353,7 @@ All entries are local to the Segment.
         name: 'CueTrackPositions',
         path: '\\Segment\\Cues\\CuePoint\\CueTrackPositions',
         id: '0xB7',
-        type: 'master',
+        type: ElementType.Master,
         minOccurs: '1'
     },
     /**
@@ -3301,7 +3366,7 @@ All entries are local to the Segment.
         name: 'CueTrack',
         path: '\\Segment\\Cues\\CuePoint\\CueTrackPositions\\CueTrack',
         id: '0xF7',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: 'not 0',
         minOccurs: '1',
         maxOccurs: '1'
@@ -3316,7 +3381,7 @@ All entries are local to the Segment.
         name: 'CueClusterPosition',
         path: '\\Segment\\Cues\\CuePoint\\CueTrackPositions\\CueClusterPosition',
         id: '0xF1',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minOccurs: '1',
         maxOccurs: '1'
     },
@@ -3331,7 +3396,7 @@ with 0 being the first possible position for an Element inside that Cluster.
         name: 'CueRelativePosition',
         path: '\\Segment\\Cues\\CuePoint\\CueTrackPositions\\CueRelativePosition',
         id: '0xF0',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         maxOccurs: '1'
     },
@@ -3346,7 +3411,7 @@ If missing, the track's DefaultDuration does not apply and no duration informati
         name: 'CueDuration',
         path: '\\Segment\\Cues\\CuePoint\\CueTrackPositions\\CueDuration',
         id: '0xB2',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '4',
         maxOccurs: '1'
     },
@@ -3360,7 +3425,7 @@ If missing, the track's DefaultDuration does not apply and no duration informati
         name: 'CueBlockNumber',
         path: '\\Segment\\Cues\\CuePoint\\CueTrackPositions\\CueBlockNumber',
         id: '0x5378',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: 'not 0',
         maxOccurs: '1'
     },
@@ -3375,7 +3440,7 @@ If missing, the track's DefaultDuration does not apply and no duration informati
         name: 'CueCodecState',
         path: '\\Segment\\Cues\\CuePoint\\CueTrackPositions\\CueCodecState',
         id: '0xEA',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '2',
         default: '0',
         minOccurs: '1',
@@ -3391,7 +3456,7 @@ If missing, the track's DefaultDuration does not apply and no duration informati
         name: 'CueReference',
         path: '\\Segment\\Cues\\CuePoint\\CueTrackPositions\\CueReference',
         id: '0xDB',
-        type: 'master',
+        type: ElementType.Master,
         minver: '2'
     },
     /**
@@ -3404,7 +3469,7 @@ If missing, the track's DefaultDuration does not apply and no duration informati
         name: 'CueRefTime',
         path: '\\Segment\\Cues\\CuePoint\\CueTrackPositions\\CueReference\\CueRefTime',
         id: '0x96',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '2',
         minOccurs: '1',
         maxOccurs: '1'
@@ -3419,7 +3484,7 @@ If missing, the track's DefaultDuration does not apply and no duration informati
         name: 'CueRefCluster',
         path: '\\Segment\\Cues\\CuePoint\\CueTrackPositions\\CueReference\\CueRefCluster',
         id: '0x97',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
         minOccurs: '1',
@@ -3435,7 +3500,7 @@ If missing, the track's DefaultDuration does not apply and no duration informati
         name: 'CueRefNumber',
         path: '\\Segment\\Cues\\CuePoint\\CueTrackPositions\\CueReference\\CueRefNumber',
         id: '0x535F',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
         range: 'not 0',
@@ -3453,7 +3518,7 @@ If missing, the track's DefaultDuration does not apply and no duration informati
         name: 'CueRefCodecState',
         path: '\\Segment\\Cues\\CuePoint\\CueTrackPositions\\CueReference\\CueRefCodecState',
         id: '0xEB',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
         default: '0',
@@ -3469,7 +3534,7 @@ If missing, the track's DefaultDuration does not apply and no duration informati
         name: 'Attachments',
         path: '\\Segment\\Attachments',
         id: '0x1941A469',
-        type: 'master',
+        type: ElementType.Master,
         maxOccurs: '1'
     },
     /**
@@ -3482,7 +3547,7 @@ If missing, the track's DefaultDuration does not apply and no duration informati
         name: 'AttachedFile',
         path: '\\Segment\\Attachments\\AttachedFile',
         id: '0x61A7',
-        type: 'master',
+        type: ElementType.Master,
         minOccurs: '1'
     },
     /**
@@ -3495,7 +3560,7 @@ If missing, the track's DefaultDuration does not apply and no duration informati
         name: 'FileDescription',
         path: '\\Segment\\Attachments\\AttachedFile\\FileDescription',
         id: '0x467E',
-        type: 'utf-8',
+        type: ElementType.UTF8,
         maxOccurs: '1'
     },
     /**
@@ -3508,7 +3573,7 @@ If missing, the track's DefaultDuration does not apply and no duration informati
         name: 'FileName',
         path: '\\Segment\\Attachments\\AttachedFile\\FileName',
         id: '0x466E',
-        type: 'utf-8',
+        type: ElementType.UTF8,
         minOccurs: '1',
         maxOccurs: '1'
     },
@@ -3522,7 +3587,7 @@ If missing, the track's DefaultDuration does not apply and no duration informati
         name: 'FileMediaType',
         path: '\\Segment\\Attachments\\AttachedFile\\FileMediaType',
         id: '0x4660',
-        type: 'string',
+        type: ElementType.String,
         minOccurs: '1',
         maxOccurs: '1'
     },
@@ -3536,7 +3601,7 @@ If missing, the track's DefaultDuration does not apply and no duration informati
         name: 'FileData',
         path: '\\Segment\\Attachments\\AttachedFile\\FileData',
         id: '0x465C',
-        type: 'binary',
+        type: ElementType.Binary,
         minOccurs: '1',
         maxOccurs: '1'
     },
@@ -3550,7 +3615,7 @@ If missing, the track's DefaultDuration does not apply and no duration informati
         name: 'FileUID',
         path: '\\Segment\\Attachments\\AttachedFile\\FileUID',
         id: '0x46AE',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: 'not 0',
         minOccurs: '1',
         maxOccurs: '1'
@@ -3565,7 +3630,7 @@ If missing, the track's DefaultDuration does not apply and no duration informati
         name: 'FileReferral',
         path: '\\Segment\\Attachments\\AttachedFile\\FileReferral',
         id: '0x4675',
-        type: 'binary',
+        type: ElementType.Binary,
         minver: '0',
         maxver: '0',
         maxOccurs: '1'
@@ -3583,7 +3648,7 @@ If missing, the track's DefaultDuration does not apply and no duration informati
         name: 'FileUsedStartTime',
         path: '\\Segment\\Attachments\\AttachedFile\\FileUsedStartTime',
         id: '0x4661',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
         maxOccurs: '1'
@@ -3601,7 +3666,7 @@ If missing, the track's DefaultDuration does not apply and no duration informati
         name: 'FileUsedEndTime',
         path: '\\Segment\\Attachments\\AttachedFile\\FileUsedEndTime',
         id: '0x4662',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
         maxOccurs: '1'
@@ -3617,7 +3682,7 @@ For more detailed information, see (#chapters).
         name: 'Chapters',
         path: '\\Segment\\Chapters',
         id: '0x1043A770',
-        type: 'master',
+        type: ElementType.Master,
         maxOccurs: '1',
         recurring: '1'
     },
@@ -3631,7 +3696,7 @@ For more detailed information, see (#chapters).
         name: 'EditionEntry',
         path: '\\Segment\\Chapters\\EditionEntry',
         id: '0x45B9',
-        type: 'master',
+        type: ElementType.Master,
         minOccurs: '1'
     },
     /**
@@ -3644,7 +3709,7 @@ For more detailed information, see (#chapters).
         name: 'EditionUID',
         path: '\\Segment\\Chapters\\EditionEntry\\EditionUID',
         id: '0x45BC',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: 'not 0',
         maxOccurs: '1'
     },
@@ -3659,7 +3724,7 @@ For more detailed information, see (#chapters).
         name: 'EditionFlagHidden',
         path: '\\Segment\\Chapters\\EditionEntry\\EditionFlagHidden',
         id: '0x45BD',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: '0-1',
         default: '0',
         minOccurs: '1',
@@ -3675,7 +3740,7 @@ For more detailed information, see (#chapters).
         name: 'EditionFlagDefault',
         path: '\\Segment\\Chapters\\EditionEntry\\EditionFlagDefault',
         id: '0x45DB',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: '0-1',
         default: '0',
         minOccurs: '1',
@@ -3691,7 +3756,7 @@ For more detailed information, see (#chapters).
         name: 'EditionFlagOrdered',
         path: '\\Segment\\Chapters\\EditionEntry\\EditionFlagOrdered',
         id: '0x45DD',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: '0-1',
         default: '0',
         minOccurs: '1',
@@ -3707,7 +3772,7 @@ For more detailed information, see (#chapters).
         name: 'EditionDisplay',
         path: '\\Segment\\Chapters\\EditionEntry\\EditionDisplay',
         id: '0x4520',
-        type: 'master',
+        type: ElementType.Master,
         minver: '5'
     },
     /**
@@ -3720,7 +3785,7 @@ For more detailed information, see (#chapters).
         name: 'EditionString',
         path: '\\Segment\\Chapters\\EditionEntry\\EditionDisplay\\EditionString',
         id: '0x4521',
-        type: 'utf-8',
+        type: ElementType.UTF8,
         minver: '5',
         minOccurs: '1',
         maxOccurs: '1'
@@ -3736,7 +3801,7 @@ in the form defined in [@!RFC5646]; see (#language-codes) on language codes.
         name: 'EditionLanguageIETF',
         path: '\\Segment\\Chapters\\EditionEntry\\EditionDisplay\\EditionLanguageIETF',
         id: '0x45E4',
-        type: 'string',
+        type: ElementType.String,
         minver: '5'
     },
     /**
@@ -3749,7 +3814,7 @@ in the form defined in [@!RFC5646]; see (#language-codes) on language codes.
         name: 'ChapterAtom',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom',
         id: '0xB6',
-        type: 'master',
+        type: ElementType.Master,
         minOccurs: '1',
         recursive: '1'
     },
@@ -3763,7 +3828,7 @@ in the form defined in [@!RFC5646]; see (#language-codes) on language codes.
         name: 'ChapterUID',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterUID',
         id: '0x73C4',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: 'not 0',
         minOccurs: '1',
         maxOccurs: '1'
@@ -3779,7 +3844,7 @@ For example, it is used as the storage for cue identifier values [@?WebVTT].
         name: 'ChapterStringUID',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterStringUID',
         id: '0x5654',
-        type: 'utf-8',
+        type: ElementType.UTF8,
         minver: '3',
         maxOccurs: '1'
     },
@@ -3793,7 +3858,7 @@ For example, it is used as the storage for cue identifier values [@?WebVTT].
         name: 'ChapterTimeStart',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterTimeStart',
         id: '0x91',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minOccurs: '1',
         maxOccurs: '1'
     },
@@ -3812,7 +3877,7 @@ the last frame it includes, especially for the `ChapterAtom` using the last fram
         name: 'ChapterTimeEnd',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterTimeEnd',
         id: '0x92',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         maxOccurs: '1'
     },
     /**
@@ -3826,7 +3891,7 @@ the last frame it includes, especially for the `ChapterAtom` using the last fram
         name: 'ChapterFlagHidden',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterFlagHidden',
         id: '0x98',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: '0-1',
         default: '0',
         minOccurs: '1',
@@ -3843,7 +3908,7 @@ When disabled, the movie **SHOULD** skip all the content between the TimeStart a
         name: 'ChapterFlagEnabled',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterFlagEnabled',
         id: '0x4598',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: '0-1',
         default: '1',
         minOccurs: '1',
@@ -3862,7 +3927,7 @@ When disabled, the movie **SHOULD** skip all the content between the TimeStart a
         name: 'ChapterSegmentUUID',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterSegmentUUID',
         id: '0x6E67',
-        type: 'binary',
+        type: ElementType.Binary,
         length: '16',
         maxOccurs: '1'
     },
@@ -3878,7 +3943,7 @@ If the `ChapterAtom` doesn't contain a `ChapterTimeEnd`, the value of the `Chapt
         name: 'ChapterSkipType',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterSkipType',
         id: '0x4588',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         maxOccurs: '1',
         minver: '5'
     },
@@ -3893,7 +3958,7 @@ If ChapterSegmentEditionUID is undeclared, then no Edition of the linked Segment
         name: 'ChapterSegmentEditionUID',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterSegmentEditionUID',
         id: '0x6EBC',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: 'not 0',
         maxOccurs: '1'
     },
@@ -3908,7 +3973,7 @@ see (#physical-types) for a complete list of values.
         name: 'ChapterPhysicalEquiv',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterPhysicalEquiv',
         id: '0x63C3',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         maxOccurs: '1'
     },
     /**
@@ -3921,7 +3986,7 @@ see (#physical-types) for a complete list of values.
         name: 'ChapterTrack',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterTrack',
         id: '0x8F',
-        type: 'master',
+        type: ElementType.Master,
         maxOccurs: '1'
     },
     /**
@@ -3936,7 +4001,7 @@ Absence of this Element indicates that the Chapter **SHOULD** be applied to any 
         name: 'ChapterTrackUID',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterTrack\\ChapterTrackUID',
         id: '0x89',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: 'not 0',
         minOccurs: '1'
     },
@@ -3950,7 +4015,7 @@ Absence of this Element indicates that the Chapter **SHOULD** be applied to any 
         name: 'ChapterDisplay',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterDisplay',
         id: '0x80',
-        type: 'master'
+        type: ElementType.Master
     },
     /**
      * @type MatroskaElements.ChapString
@@ -3962,7 +4027,7 @@ Absence of this Element indicates that the Chapter **SHOULD** be applied to any 
         name: 'ChapString',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterDisplay\\ChapString',
         id: '0x85',
-        type: 'utf-8',
+        type: ElementType.UTF8,
         minOccurs: '1',
         maxOccurs: '1'
     },
@@ -3978,7 +4043,7 @@ This Element **MUST** be ignored if a ChapLanguageBCP47 Element is used within t
         name: 'ChapLanguage',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterDisplay\\ChapLanguage',
         id: '0x437C',
-        type: 'string',
+        type: ElementType.String,
         default: 'eng',
         minOccurs: '1'
     },
@@ -3994,7 +4059,7 @@ If a ChapLanguageBCP47 Element is used, then any ChapLanguage and ChapCountry El
         name: 'ChapLanguageBCP47',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterDisplay\\ChapLanguageBCP47',
         id: '0x437D',
-        type: 'string',
+        type: ElementType.String,
         minver: '4'
     },
     /**
@@ -4009,7 +4074,7 @@ This Element **MUST** be ignored if a ChapLanguageBCP47 Element is used within t
         name: 'ChapCountry',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterDisplay\\ChapCountry',
         id: '0x437E',
-        type: 'string'
+        type: ElementType.String
     },
     /**
      * @type MatroskaElements.ChapProcess
@@ -4021,7 +4086,7 @@ This Element **MUST** be ignored if a ChapLanguageBCP47 Element is used within t
         name: 'ChapProcess',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapProcess',
         id: '0x6944',
-        type: 'master'
+        type: ElementType.Master
     },
     /**
      * @type MatroskaElements.ChapProcessCodecID
@@ -4035,7 +4100,7 @@ More codec IDs can be added later.
         name: 'ChapProcessCodecID',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapProcess\\ChapProcessCodecID',
         id: '0x6955',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
         maxOccurs: '1'
@@ -4051,7 +4116,7 @@ More codec IDs can be added later.
         name: 'ChapProcessPrivate',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapProcess\\ChapProcessPrivate',
         id: '0x450D',
-        type: 'binary',
+        type: ElementType.Binary,
         maxOccurs: '1'
     },
     /**
@@ -4064,7 +4129,7 @@ More codec IDs can be added later.
         name: 'ChapProcessCommand',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapProcess\\ChapProcessCommand',
         id: '0x6911',
-        type: 'master'
+        type: ElementType.Master
     },
     /**
      * @type MatroskaElements.ChapProcessTime
@@ -4076,7 +4141,7 @@ More codec IDs can be added later.
         name: 'ChapProcessTime',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapProcess\\ChapProcessCommand\\ChapProcessTime',
         id: '0x6922',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minOccurs: '1',
         maxOccurs: '1'
     },
@@ -4092,7 +4157,7 @@ the data correspond to the binary DVD cell pre/post commands; see (#menu-feature
         name: 'ChapProcessData',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapProcess\\ChapProcessCommand\\ChapProcessData',
         id: '0x6933',
-        type: 'binary',
+        type: ElementType.Binary,
         minOccurs: '1',
         maxOccurs: '1'
     },
@@ -4103,7 +4168,12 @@ the data correspond to the binary DVD cell pre/post commands; see (#menu-feature
 A list of valid tags can be found in [@?I-D.ietf-cellar-tags].
      *
      */
-    0x1254c367: { name: 'Tags', path: '\\Segment\\Tags', id: '0x1254C367', type: 'master' },
+    0x1254c367: {
+        name: 'Tags',
+        path: '\\Segment\\Tags',
+        id: '0x1254C367',
+        type: ElementType.Master
+    },
     /**
      * @type MatroskaElements.Tag
      * @definition
@@ -4114,7 +4184,7 @@ A list of valid tags can be found in [@?I-D.ietf-cellar-tags].
         name: 'Tag',
         path: '\\Segment\\Tags\\Tag',
         id: '0x7373',
-        type: 'master',
+        type: ElementType.Master,
         minOccurs: '1'
     },
     /**
@@ -4128,7 +4198,7 @@ If empty or omitted, then the Tag describes everything in the Segment.
         name: 'Targets',
         path: '\\Segment\\Tags\\Tag\\Targets',
         id: '0x63C0',
-        type: 'master',
+        type: ElementType.Master,
         minOccurs: '1',
         maxOccurs: '1'
     },
@@ -4142,7 +4212,7 @@ If empty or omitted, then the Tag describes everything in the Segment.
         name: 'TargetTypeValue',
         path: '\\Segment\\Tags\\Tag\\Targets\\TargetTypeValue',
         id: '0x68CA',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         default: '50',
         minOccurs: '1',
         maxOccurs: '1'
@@ -4157,7 +4227,7 @@ If empty or omitted, then the Tag describes everything in the Segment.
         name: 'TargetType',
         path: '\\Segment\\Tags\\Tag\\Targets\\TargetType',
         id: '0x63CA',
-        type: 'string',
+        type: ElementType.String,
         maxOccurs: '1'
     },
     /**
@@ -4174,7 +4244,7 @@ If set to any other value, it **MUST** match the `TrackUID` value of a track fou
         name: 'TagTrackUID',
         path: '\\Segment\\Tags\\Tag\\Targets\\TagTrackUID',
         id: '0x63C5',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         default: '0'
     },
     /**
@@ -4191,7 +4261,7 @@ If set to any other value, it **MUST** match the `EditionUID` value of an editio
         name: 'TagEditionUID',
         path: '\\Segment\\Tags\\Tag\\Targets\\TagEditionUID',
         id: '0x63C9',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         default: '0'
     },
     /**
@@ -4208,7 +4278,7 @@ If set to any other value, it **MUST** match the `ChapterUID` value of a chapter
         name: 'TagChapterUID',
         path: '\\Segment\\Tags\\Tag\\Targets\\TagChapterUID',
         id: '0x63C4',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         default: '0'
     },
     /**
@@ -4225,7 +4295,7 @@ If set to any other value, it **MUST** match the `FileUID` value of an attachmen
         name: 'TagAttachmentUID',
         path: '\\Segment\\Tags\\Tag\\Targets\\TagAttachmentUID',
         id: '0x63C6',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         default: '0'
     },
     /**
@@ -4238,7 +4308,7 @@ If set to any other value, it **MUST** match the `FileUID` value of an attachmen
         name: 'SimpleTag',
         path: '\\Segment\\Tags\\Tag\\+SimpleTag',
         id: '0x67C8',
-        type: 'master',
+        type: ElementType.Master,
         minOccurs: '1',
         recursive: '1'
     },
@@ -4252,7 +4322,7 @@ If set to any other value, it **MUST** match the `FileUID` value of an attachmen
         name: 'TagName',
         path: '\\Segment\\Tags\\Tag\\+SimpleTag\\TagName',
         id: '0x45A3',
-        type: 'utf-8',
+        type: ElementType.UTF8,
         minOccurs: '1',
         maxOccurs: '1'
     },
@@ -4268,7 +4338,7 @@ This Element **MUST** be ignored if the TagLanguageBCP47 Element is used within 
         name: 'TagLanguage',
         path: '\\Segment\\Tags\\Tag\\+SimpleTag\\TagLanguage',
         id: '0x447A',
-        type: 'string',
+        type: ElementType.String,
         default: 'und',
         minOccurs: '1',
         maxOccurs: '1'
@@ -4285,7 +4355,7 @@ If this Element is used, then any TagLanguage Elements used in the same SimpleTa
         name: 'TagLanguageBCP47',
         path: '\\Segment\\Tags\\Tag\\+SimpleTag\\TagLanguageBCP47',
         id: '0x447B',
-        type: 'string',
+        type: ElementType.String,
         minver: '4',
         maxOccurs: '1'
     },
@@ -4299,7 +4369,7 @@ If this Element is used, then any TagLanguage Elements used in the same SimpleTa
         name: 'TagDefault',
         path: '\\Segment\\Tags\\Tag\\+SimpleTag\\TagDefault',
         id: '0x4484',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         range: '0-1',
         default: '1',
         minOccurs: '1',
@@ -4315,7 +4385,7 @@ If this Element is used, then any TagLanguage Elements used in the same SimpleTa
         name: 'TagDefaultBogus',
         path: '\\Segment\\Tags\\Tag\\+SimpleTag\\TagDefaultBogus',
         id: '0x44B4',
-        type: 'uinteger',
+        type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
         range: '0-1',
@@ -4333,7 +4403,7 @@ If this Element is used, then any TagLanguage Elements used in the same SimpleTa
         name: 'TagString',
         path: '\\Segment\\Tags\\Tag\\+SimpleTag\\TagString',
         id: '0x4487',
-        type: 'utf-8',
+        type: ElementType.UTF8,
         maxOccurs: '1'
     },
     /**
@@ -4346,7 +4416,7 @@ If this Element is used, then any TagLanguage Elements used in the same SimpleTa
         name: 'TagBinary',
         path: '\\Segment\\Tags\\Tag\\+SimpleTag\\TagBinary',
         id: '0x4485',
-        type: 'binary',
+        type: ElementType.Binary,
         maxOccurs: '1'
     }
 };

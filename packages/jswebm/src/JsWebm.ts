@@ -1,5 +1,5 @@
 import { DataReader, EbmlElementTag } from './DataReader';
-import { EbmlElements, MasterElements, MatroskaElements } from './elements';
+import { EbmlElements, MatroskaElements } from './elements';
 
 export class JsWebm {
     private reader = new DataReader();
@@ -20,7 +20,8 @@ export class JsWebm {
                 break;
             }
 
-            const isMasterElement = !element ? false : MasterElements.includes(element?.elementId);
+            const isMasterElement = element?.isMaster;
+            console.log(element);
             if (
                 !element ||
                 this.reader.buffer.byteLength <
@@ -34,6 +35,9 @@ export class JsWebm {
             switch (element.elementId) {
                 case EbmlElements.void:
                     // Void the void
+                    break;
+                case EbmlElements.EBMLHead:
+                    this.reader.elementToJson(element);
                     break;
                 case EbmlElements.EBMLVersion:
                     console.log(
@@ -79,17 +83,19 @@ export class JsWebm {
                     break;
 
                 case MatroskaElements.SimpleBlock:
-                    console.log('WE PLAYING MINECRAFT IN HERE');
+                    // console.log('WE PLAYING MINECRAFT IN HERE');
                     break;
                 default:
-                    console.log(
-                        'Unknown element:',
-                        element.elementId.toString(16),
-                        ', size:',
-                        element.totalLength,
-                        ', is master element:',
-                        isMasterElement
-                    );
+                    // console.log(
+                    //     'Unknown element:',
+                    //     element.elementId.toString(16),
+                    //     ', size:',
+                    //     element.totalLength,
+                    //     ', is master element:',
+                    //     isMasterElement,
+                    //     'Name:',
+                    //     ElementInfo[element.elementId].name
+                    // );
                     break;
             }
             // Always slice

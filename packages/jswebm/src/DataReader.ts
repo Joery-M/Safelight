@@ -1,4 +1,4 @@
-import { EbmlElements } from './elements';
+import { EbmlElements, ElementInfo, ElementType, MasterElements } from './elements';
 
 export class DataReader {
     private _totalBuffer = new ArrayBuffer(0);
@@ -45,7 +45,6 @@ export class DataReader {
                 throw new Error('Provided file is not an EBML-compatible file');
             }
             this.hasCheckedValidEbml = true;
-            this.sliceBuffer(EbmlHead.elementTagLength);
         }
     }
 
@@ -90,38 +89,43 @@ export class DataReader {
 
         return data;
     }
-    readElementTag(
-        offset = 0,
-        readContentSize = true,
-        bytes = this.buffer
-    ): undefined | EbmlElementTag {
-        let index = offset && offset > 0 ? offset : 0;
-        let count = 1;
-        let length = bytes.getUint8(index);
-        let bytesRead = 1;
-        let lengthMask = 0x80;
-
-        if (!length) {
-            return;
+    readHexString(start: number = 0, size = 1, buffer = this.buffer) {
+        let res = '';
+        for (let i = 0; i < size; i++) {
+            res += buffer
+                .getUint8(i + start)
+                .toString(16)
+                .padStart(2, '0');
         }
+        return res;
+    }
 
-        while (!(length & lengthMask)) {
-            bytesRead++;
-            lengthMask >>= 1;
+    readDate(size: number, start: number = 0, buffer = this.buffer) {
+        switch (size) {
+            case 1:
+                return new Date(buffer.getUint8(start));
+            case 2:
+                return new Date(buffer.getUint16(start));
+            case 4:
+                return new Date(buffer.getUint32(start));
+            case 8:
+                return new Date(Number.parseInt(this.readHexString(0, size, buffer), 16));
+            default:
+                return new Date(0);
         }
+    }
 
-        while (count++ < bytesRead) {
-            length = (length << 8) | bytes.getUint8(++index);
-        }
-
-        const content = readContentSize ? this.readElementSize(bytesRead) : undefined;
+    readElementTag(offset = 0, bytes = this.buffer): undefined | EbmlElementTag {
+        const tag = this.readVint(true, bytes, offset);
+        if (!tag || bytes.byteLength < offset + tag.length) return;
+        const size = this.readVint(false, bytes, offset + tag.length);
 
         return {
-            elementIdSize: bytesRead,
-            elementId: length,
-            contentLength: content?.value,
-            elementTagLength: (content?.elementIdSize ?? 0) + bytesRead,
-            totalLength: bytesRead + (content?.value ?? 0) + (content?.elementIdSize ?? 0)
+            elementId: tag.value,
+            contentLength: size.value ?? 0,
+            elementTagLength: size.length,
+            totalLength: size.value + size.length,
+            isMaster: MasterElements.includes(tag.value)
         };
     }
     readElementSize(offset = 0, bytes = this.buffer) {
@@ -150,13 +154,131 @@ export class DataReader {
             value: length
         };
     }
+    readVint2(buffer = this.buffer, start = 0) {
+        const length = 8 - Math.floor(Math.log2(buffer.getUint8(start)));
+        if (length > 8) {
+            throw new Error(`Unrepresentable length: ${length}`);
+        }
+
+        if (start + length > buffer.byteLength) {
+            return null;
+        }
+
+        let value = buffer.getUint8(start) & ((1 << (8 - length)) - 1);
+        for (let i = 1; i < length; i += 1) {
+            if (i === 7) {
+                if (value >= 2 ** 45 && buffer.getUint8(start + 7) > 0) {
+                    return { length, value: -1 };
+                }
+            }
+            value *= 2 ** 8;
+            value += buffer.getUint8(start + i);
+        }
+
+        return { length, value };
+    }
+    readVint(id = false, buffer = this.buffer, start = 0) {
+        const startByte = buffer.getUint8(start);
+
+        if (startByte == 0) throw new Error('Variable int is too large to parse');
+
+        let width = 0;
+        for (; width < 8; width++) {
+            if (startByte >= Math.pow(2, 7 - width)) break;
+        }
+
+        if (start + width + 1 > buffer.byteLength)
+            throw new Error('Missing bytes, not enough data to parse variable int');
+
+        // remove the mark bit for non-id values
+        let value = startByte;
+        if (!id) value -= Math.pow(2, 7 - width);
+
+        // for each trailing byte: shift the existing bits left by a byte, and
+        // add the new byte to the value. again, we don't use bit operations
+        // for speed, but also because << is performed on 32bits.
+        for (let i = 1; i <= width; i++) {
+            value *= Math.pow(2, 8);
+            value += buffer.getUint8(start + i);
+        }
+
+        start += width + 1;
+        return { value, length: start };
+    }
+
+    elementToJson(element: EbmlElementTag) {
+        if (!MasterElements.includes(element.elementId)) {
+            return;
+        }
+
+        const elementJson: { [key: string]: any } = {};
+        let offset = 0;
+        console.log('START READING JSON');
+
+        const data = new DataView(
+            this.buffer.buffer,
+            this.offset + element.elementTagLength,
+            element.totalLength
+        );
+        console.log(data.byteLength);
+        while (offset < element.totalLength) {
+            const elem = this.readElementTag(offset, data);
+            console.log(elem);
+            if (!elem) break;
+
+            const elemInfo = ElementInfo[elem.elementId as keyof typeof ElementInfo];
+            console.log(elemInfo, elem.elementId);
+            if (elemInfo) {
+                let result: any;
+
+                switch (elemInfo.type) {
+                    case ElementType.Binary:
+                        result = data.buffer.slice(
+                            offset + elem.elementTagLength,
+                            offset + elem.totalLength
+                        );
+                        break;
+                    case ElementType.Date:
+                        result = this.readDate(
+                            elem.contentLength!,
+                            elem.elementTagLength + offset,
+                            data
+                        );
+                        break;
+                    case ElementType.Float:
+                        result =
+                            elem.contentLength == 4
+                                ? data.getFloat32(elem.elementTagLength + offset)
+                                : data.getFloat64(elem.elementTagLength + offset);
+                        break;
+                    case ElementType.Integer:
+                        break;
+                    case ElementType.Uinteger:
+                        result = this.readUInt8(
+                            elem.elementTagLength + offset,
+                            elem.contentLength,
+                            data
+                        );
+                        break;
+                    case ElementType.String:
+                        // FIX
+                        console.log(elem.contentLength);
+                        result = this.readString(elem.elementTagLength, elem.contentLength, data);
+                        break;
+
+                    default:
+                        break;
+                }
+                elementJson[elemInfo.name] = result;
+            }
+
+            offset += elem.totalLength;
+        }
+        console.log('STOP READING JSON', elementJson);
+    }
 }
 
 export interface EbmlElementTag {
-    /**
-     * Size of the element ID in bytes
-     */
-    elementIdSize: number;
     /**
      * Element ID
      */
@@ -166,11 +288,13 @@ export interface EbmlElementTag {
      */
     elementTagLength: number;
     /**
-     * Length of the content inside this element in bytes
-     */
-    contentLength?: number;
-    /**
      * Length of this entire element, including content, in bytes
      */
     totalLength: number;
+    /**
+     * Length of the content inside this element in bytes
+     */
+    contentLength?: number;
+
+    isMaster: boolean;
 }

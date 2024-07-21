@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "composite": true,
+        "target": "esnext",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "module": "esnext",
+        "outDir": "dist",
+        "declaration": true,
+        "sourceMap": true,
+        "strict": true,
+        "types": ["vite/client"],
+        "rootDir": "./src/"
+    },
+    "include": ["./src/**/*.ts", "./types/**/*.d.ts"],
+    "exclude": ["dist"]
+}
