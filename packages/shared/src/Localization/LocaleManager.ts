@@ -14,10 +14,11 @@ export class LocaleManager {
 
     public static locales = reactive<{ [locale: string]: RegisteredLocale }>({});
 
-    private static i18n: I18n<{}, {}, {}, string, false>;
+    public static i18n: I18n<{}, {}, {}, string, false>;
 
-    static init(i18n: I18n<{}, {}, {}, string, false>) {
+    static async init(i18n: I18n<{}, {}, {}, string, false>) {
         this.i18n = i18n;
+        for (const member in this.locales) delete this.locales[member];
 
         const globImport = import.meta.glob<LocalizationFile>('./i18n/*.json', {
             import: 'default'
@@ -37,7 +38,7 @@ export class LocaleManager {
             setupHmr();
         }
 
-        this.switchLocale(this.activeLocale.value);
+        await this.switchLocale(this.activeLocale.value);
     }
 
     static async switchLocale(locale: string) {

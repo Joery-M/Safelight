@@ -6,6 +6,7 @@
         "types/*.d.ts",
         "src/**/*.vue",
         "src/**/*.json",
+        "test/**/*.spec.ts",
         "../../globals.d.ts"
     ],
     "compilerOptions": {
