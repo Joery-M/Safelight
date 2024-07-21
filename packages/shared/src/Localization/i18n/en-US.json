@@ -21,6 +21,7 @@
                 "project": "Project | Projects",
                 "duration": "Duration",
                 "modified": "Modified",
+                "created": "Created",
                 "fileType": "File type | File types",
                 "refresh": "Refresh"
             }

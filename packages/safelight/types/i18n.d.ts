@@ -22,6 +22,7 @@ declare module 'vue-i18n' {
                 project: string;
                 duration: string;
                 modified: string;
+                created: string;
                 fileType: string;
                 refresh: string;
             };

@@ -35,7 +35,19 @@ html {
 body {
     --p-togglebutton-padding: 0.5em;
 }
+
 .p-tab {
     font-family: "Inter Variable" !important;
     font-weight: 600;
+}
+
+// Sorted datatable columns should not appear highlighted
+.p-datatable-column-sorted {
+    background: var(--p-datatable-header-cell-background);
+    color: var(--p-datatable-header-cell-color);
+
+    &:hover {
+        background: var(--p-datatable-header-cell-hover-background);
+        color: var(--p-datatable-header-cell-hover-color);
+    }
 }

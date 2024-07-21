@@ -1,8 +1,9 @@
 <template>
     <SLTimeline
+        v-if="timeline"
         v-model:items="items"
         :playback-position="pbPos"
-        :fps="timeline?.value?.framerate.value"
+        :fps="timeline.framerate.value"
         :invert-scroll-axes="invertScrollAxes.value"
         :zoom-factor="zoomFactor.value"
         :alignment="alignment.value"
@@ -21,7 +22,7 @@ import { computed, reactive } from 'vue';
 
 const ids = new Array(17).fill('').map(() => uuidv4());
 
-const timeline = CurrentProject.project.value?.timeline;
+const timeline = computed(() => CurrentProject.project.value?.timeline?.value);
 const pbPos = computed(() =>
     timeline?.value
         ? Timecode.fromFrames(timeline.value.pbPos.value, timeline.value.framerate.value)
@@ -32,7 +33,7 @@ const zoomFactor = SettingsManager.getSetting<number>('editor.timeline.zoomFacto
 const alignment = SettingsManager.getSetting<'top' | 'bottom'>('editor.timeline.align');
 
 function setPbPos(pb?: number) {
-    if (pb !== undefined && timeline?.value) {
+    if (pb !== undefined && !Number.isNaN(pb) && timeline?.value) {
         timeline.value.pbPos.value = Timecode.toFrames(pb, timeline.value.framerate.value);
     }
 }
