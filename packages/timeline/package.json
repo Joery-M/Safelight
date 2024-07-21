@@ -36,7 +36,7 @@
     "@vueuse/gesture": "^2.0.0",
     "@vueuse/math": "^10.11.0",
     "primevue": "^4.0.0",
-    "vue": "^3.4.32"
+    "vue": "^3.4.33"
   },
   "devDependencies": {
     "@types/node": "^20.14.11",
