@@ -19,7 +19,7 @@
     "dev": "cd packages/safelight && pnpm dev",
     "dev:darkroom": "pnpm build:packages && cd packages/darkroom && pnpm dev:web",
     "lint": "pnpm run \"/lint:\"/",
-    "lint:prettier": "prettier . --write --ignore-path .gitignore --ignore-path .prettierignore",
+    "lint:prettier": "prettier . --write --ignore-path .gitignore --ignore-path ./packages/safelight/.gitignore --ignore-path .prettierignore",
     "lint:eslint": "eslint ./packages/**/*{.ts,.js,.vue}"
   },
   "workspaces": [
@@ -30,8 +30,8 @@
     "packages/plugin-types"
   ],
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^7.16.1",
-    "@typescript-eslint/parser": "^7.16.1",
+    "@typescript-eslint/eslint-plugin": "^7.17.0",
+    "@typescript-eslint/parser": "^7.17.0",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vitest/browser": "^2.0.4",
     "@vitest/ui": "^2.0.4",
@@ -42,7 +42,7 @@
     "eslint-plugin-vue": "^9.27.0",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.5",
-    "typescript-eslint": "^7.16.1",
+    "typescript-eslint": "^7.17.0",
     "vite": "^5.3.4",
     "vitest": "^2.0.4",
     "vue": "^3.4.32"
