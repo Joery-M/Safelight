@@ -148,8 +148,8 @@ importers:
         specifier: ^2.2.1
         version: 2.2.1(vue@3.4.32)
       '@primevue/themes':
-        specifier: ^4.0.0
-        version: 4.0.0(@primeuix/styled@0.0.5)
+        specifier: ^4.0.1
+        version: 4.0.1
       '@quantco/pnpm-licenses':
         specifier: ^2.1.0
         version: 2.1.0
@@ -1427,11 +1427,9 @@ packages:
       - vue
     dev: false
 
-  /@primevue/themes@4.0.0(@primeuix/styled@0.0.5):
-    resolution: {integrity: sha512-y1HKYTuWma3T8NM9xVsLeJJeFWMxLIdJqNvQ+l8CnASgU+GH+KxMXOpPXqTAiJ2zpPmBL5VwpCCJWX93DjjvMQ==}
+  /@primevue/themes@4.0.1:
+    resolution: {integrity: sha512-DIfQTH/SMY5/ekZM3wnAaC2Te69X9fwVmyxjyAf6yS3e8V9l/jj1BGjinHPlDE0n1G6daHC6qruX4QIR6Jtpwg==}
     engines: {node: '>=12.11.0'}
-    peerDependencies:
-      '@primeuix/styled': ^0.0.5
     dependencies:
       '@primeuix/styled': 0.0.5
     dev: false
