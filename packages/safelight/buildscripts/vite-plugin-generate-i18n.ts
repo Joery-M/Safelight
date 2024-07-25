@@ -92,7 +92,7 @@ declare module 'vue-i18n' {
     outputFile += `\n}\n`;
 
     // No need to wait for finishing writing, if it does take long, skip it
-    writeFile(output, outputFile, { signal: AbortSignal.timeout(100) });
+    writeFile(output, outputFile.replaceAll('\n', '\r\n'), { signal: AbortSignal.timeout(100) });
 }
 
 // Source: https://stackoverflow.com/a/34749873
