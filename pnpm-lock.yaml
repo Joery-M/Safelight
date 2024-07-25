@@ -202,8 +202,8 @@ importers:
         specifier: ^2.1.7
         version: 2.1.7(typescript@5.5.3)(vue@3.4.32)
       primevue:
-        specifier: ^4.0.0
-        version: 4.0.0(@primeuix/utils@0.0.5)(vue@3.4.32)
+        specifier: ^4.0.1
+        version: 4.0.1(vue@3.4.32)
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -384,8 +384,8 @@ importers:
         specifier: ^10.11.0
         version: 10.11.0(vue@3.4.32)
       primevue:
-        specifier: ^4.0.0
-        version: 4.0.0(@primeuix/utils@0.0.5)(vue@3.4.32)
+        specifier: ^4.0.1
+        version: 4.0.1(vue@3.4.32)
       vue:
         specifier: ^3.4.32
         version: 3.4.32(typescript@5.5.3)
@@ -1405,11 +1405,10 @@ packages:
     engines: {node: '>=12.11.0'}
     dev: false
 
-  /@primevue/core@4.0.0(@primeuix/utils@0.0.5)(vue@3.4.32):
-    resolution: {integrity: sha512-M+GF1HYnl/x5J6uevXh1k42J0XnFhp0XHce+cHddWg7v3bVwgsn7LD3AKKcf0A/iQQPXVKX9nY/4/9eFVct67w==}
+  /@primevue/core@4.0.1(vue@3.4.32):
+    resolution: {integrity: sha512-BreY1LybcRmzI8zXktqKVoq1eMeH//Ab4NUpzyFMdRKq4QoTvVuYMrlS9PGlQi+c9RmAcb6rzIIpcczqEGEAaw==}
     engines: {node: '>=12.11.0'}
     peerDependencies:
-      '@primeuix/utils': ^0.0.5
       vue: ^3.0.0
     dependencies:
       '@primeuix/styled': 0.0.5
@@ -1417,13 +1416,13 @@ packages:
       vue: 3.4.32(typescript@5.5.3)
     dev: false
 
-  /@primevue/icons@4.0.0(@primeuix/utils@0.0.5)(vue@3.4.32):
-    resolution: {integrity: sha512-gv9pbj7JjCuW59tW2csIJgg6btTJpkr/mjlfqscEIrYzDGqzCrbfxLur48gA2dyhYsiQPPTbIHFwL944piFgIg==}
+  /@primevue/icons@4.0.1(vue@3.4.32):
+    resolution: {integrity: sha512-tK3cYOSabRiSmAMuivw2QM/oG1ER5RGL9k7Vua7arQiwBghyPg04J/XllJ9SjORyNIY+dwbLuNyUwLKty4S0Hg==}
     engines: {node: '>=12.11.0'}
     dependencies:
-      '@primevue/core': 4.0.0(@primeuix/utils@0.0.5)(vue@3.4.32)
+      '@primeuix/utils': 0.0.5
+      '@primevue/core': 4.0.1(vue@3.4.32)
     transitivePeerDependencies:
-      - '@primeuix/utils'
       - vue
     dev: false
 
@@ -1971,7 +1970,7 @@ packages:
       pathe: 1.1.2
       sirv: 2.0.4
       tinyrainbow: 1.2.0
-      vitest: 2.0.4(@vitest/browser@2.0.4)(@vitest/ui@2.0.4)
+      vitest: 2.0.4(@types/node@20.14.11)(@vitest/browser@2.0.4)(@vitest/ui@2.0.4)
     dev: true
 
   /@vitest/utils@2.0.4:
@@ -4741,14 +4740,15 @@ packages:
       vue: 3.4.31(typescript@5.5.3)
     dev: false
 
-  /primevue@4.0.0(@primeuix/utils@0.0.5)(vue@3.4.32):
-    resolution: {integrity: sha512-2PFmmJqyXpOcKOdF+gbps5fpSXfoXZp2LwX+hya/b5SDseMt3UNboyEgVI6B+DNbJRrib35EbDiMw+7RIANQ1w==}
+  /primevue@4.0.1(vue@3.4.32):
+    resolution: {integrity: sha512-mAIoOcx7pnqPOhohw+JYyuVO46R4hUMComFTNzjHabEIsUIyIgTXNtWqiSwbn7zE4hEhnPwNa9XX97XE4Cz+1g==}
     engines: {node: '>=12.11.0'}
     dependencies:
-      '@primevue/core': 4.0.0(@primeuix/utils@0.0.5)(vue@3.4.32)
-      '@primevue/icons': 4.0.0(@primeuix/utils@0.0.5)(vue@3.4.32)
+      '@primeuix/styled': 0.0.5
+      '@primeuix/utils': 0.0.5
+      '@primevue/core': 4.0.1(vue@3.4.32)
+      '@primevue/icons': 4.0.1(vue@3.4.32)
     transitivePeerDependencies:
-      - '@primeuix/utils'
       - vue
     dev: false
 
