@@ -36,7 +36,7 @@
     "@vueuse/gesture": "^2.0.0",
     "@vueuse/math": "^10.11.0",
     "primevue": "^4.0.1",
-    "vue": "^3.4.32"
+    "vue": "^3.4.34"
   },
   "devDependencies": {
     "@types/node": "^20.14.11",
@@ -47,6 +47,6 @@
     "typescript": "^5.5.3",
     "vite": "^5.3.4",
     "vitest": "^2.0.4",
-    "vue-tsc": "^2.0.26"
+    "vue-tsc": "^2.0.28"
   }
 }
