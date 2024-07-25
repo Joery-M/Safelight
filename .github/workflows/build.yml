@@ -1,7 +1,7 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: Test
+name: Build
 
 on:
     pull_request:
@@ -27,24 +27,8 @@ jobs:
                   node-version: ${{ matrix.node-version }}
                   cache: 'pnpm'
 
-            - name: Get installed Playwright version
-              run: echo "PLAYWRIGHT_VERSION=$(cat pnpm-lock.yaml | grep 'playwright@' | sed -r 's/^.*playwright@([0-9.]*)\).*/\1/' | head -1)" >> $GITHUB_ENV
-
             - name: Install dependencies
               run: pnpm install --ignore-scripts --frozen-lockfile
-
-            - uses: actions/cache@v3
-              name: Setup playwright cache
-              id: playwright-cache
-              with:
-                  path: '~/.cache/ms-playwright'
-                  key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
-                  restore-keys: |
-                      ${{ runner.os }}-playwright-
-
-            - name: Install dependencies
-              if: steps.playwright-cache.outputs.cache-hit != 'true'
-              run: pnpm install --frozen-lockfile
 
             - name: Build Darkroom
               run: pnpm build:darkroom
@@ -54,15 +38,3 @@ jobs:
 
             - name: Build safelight
               run: pnpm build:safelight
-
-            - name: Test darkroom on Chromium
-              run: pnpm test:darkroom
-
-            - name: Test darkroom on Firefox
-              run: pnpm test:darkroom-firefox
-
-            - name: Test shared
-              run: pnpm test:shared
-
-            - name: Test timeline
-              run: pnpm test:timeline
