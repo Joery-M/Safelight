@@ -70,7 +70,7 @@
         "unplugin-vue-router": "^0.10.1",
         "vite": "^5.3.4",
         "vite-plugin-mkcert": "^1.17.5",
-        "vue-tsc": "^2.0.28"
+        "vue-tsc": "^2.0.29"
     },
     "peerDependencies": {
         "mediainfo.js": "~0"
