@@ -81,13 +81,11 @@ export class DataReader {
         return data;
     }
     readString(start: number = 0, size = 1, buffer = this.buffer) {
-        let data = '';
-
-        for (let offset = 0; offset < size; offset++) {
-            data += String.fromCharCode(buffer.getInt8(start + offset));
+        let res = '';
+        for (let i = 0; i < size; i++) {
+            res += String.fromCharCode(buffer.getInt8(i + start));
         }
-
-        return data;
+        return res;
     }
     readHexString(start: number = 0, size = 1, buffer = this.buffer) {
         let res = '';
@@ -116,94 +114,116 @@ export class DataReader {
     }
 
     readElementTag(offset = 0, bytes = this.buffer): undefined | EbmlElementTag {
-        const tag = this.readVint(true, bytes, offset);
-        if (!tag || bytes.byteLength < offset + tag.length) return;
-        const size = this.readVint(false, bytes, offset + tag.length);
+        if (offset == bytes.byteLength) {
+            return;
+        }
+        const tag = this.readElementId(offset, bytes);
+
+        if (!tag || bytes.byteLength < offset + tag.length) {
+            console.log('No tag');
+            return;
+        }
+        const size = this.readElementSize(offset + tag.length, bytes);
+        if (!size) {
+            console.log('No size');
+            return;
+        }
+        console.log(tag, size);
 
         return {
             elementId: tag.value,
-            contentLength: size.value ?? 0,
-            elementTagLength: size.length,
-            totalLength: size.value + size.length,
+            contentLength: size.size ?? 0,
+            elementTagLength: tag.length + size.length,
+            totalLength: (size.size ?? 0) + size.length + tag.length,
             isMaster: MasterElements.includes(tag.value)
         };
     }
-    readElementSize(offset = 0, bytes = this.buffer) {
-        let index = offset && offset > 0 ? offset : 0;
-        let count = 1;
-        let length = bytes.getUint8(index);
-        let bytesRead = 1;
-        let lengthMask = 0x80;
+    decodeIntLength(offset = 0, bytes = this.buffer) {
+        const index = offset || 0;
+        const byte = bytes.getUint8(index);
 
-        if (!length) {
-            return;
-        }
+        let size = 0;
+        let rest = 0;
 
-        while (!(length & lengthMask)) {
-            bytesRead++;
-            lengthMask >>= 1;
-        }
-
-        length &= ~lengthMask;
-        while (count++ < bytesRead) {
-            length = (length << 8) | bytes.getUint8(++index);
+        if (byte >= 128) {
+            size = 1;
+            rest = byte & 0b1111111;
+        } else if (byte >= 64) {
+            size = 2;
+            rest = byte & 0b111111;
+        } else if (byte >= 32) {
+            size = 3;
+            rest = byte & 0b11111;
+        } else if (byte >= 16) {
+            size = 4;
+            rest = byte & 0b1111;
+        } else if (byte >= 8) {
+            size = 5;
+            rest = byte & 0b111;
+        } else if (byte >= 4) {
+            size = 6;
+            rest = byte & 0b11;
+        } else if (byte >= 2) {
+            size = 7;
+            rest = byte & 0b1;
         }
 
         return {
-            elementIdSize: bytesRead,
-            value: length
+            size,
+            rest
         };
     }
-    readVint2(buffer = this.buffer, start = 0) {
-        const length = 8 - Math.floor(Math.log2(buffer.getUint8(start)));
-        if (length > 8) {
-            throw new Error(`Unrepresentable length: ${length}`);
+    decodeIDLength(offset = 0, bytes = this.buffer) {
+        const index = offset || 0;
+        const byte = bytes.getUint8(index);
+
+        if (byte >= 128) return 1;
+        else if (byte >= 64) return 2;
+        else if (byte >= 32) return 3;
+        else if (byte >= 16) return 4;
+        else if (byte >= 8) return 5;
+
+        const length = this.decodeIntLength(byte);
+        console.log('Invalid length for ID:', length);
+    }
+    readElementId(offset = 0, buffer = this.buffer) {
+        const start = offset || 0;
+
+        const length = this.decodeIDLength(start, buffer) ?? 0;
+
+        if (length > 4) {
+            console.log('Length too long:', length);
+            return;
+        } else if (length == 0) {
+            console.log('Element length not found');
+            return;
         }
 
-        if (start + length > buffer.byteLength) {
-            return null;
-        }
+        let value = 0;
 
-        let value = buffer.getUint8(start) & ((1 << (8 - length)) - 1);
-        for (let i = 1; i < length; i += 1) {
-            if (i === 7) {
-                if (value >= 2 ** 45 && buffer.getUint8(start + 7) > 0) {
-                    return { length, value: -1 };
-                }
-            }
+        for (let i = 0; i < length; i++) {
             value *= 2 ** 8;
             value += buffer.getUint8(start + i);
         }
-
-        return { length, value };
+        return { value, length };
     }
-    readVint(id = false, buffer = this.buffer, start = 0) {
-        const startByte = buffer.getUint8(start);
+    readElementSize(offset = 0, buffer = this.buffer) {
+        const start = offset || 0;
+        const { rest, size } = this.decodeIntLength(start, buffer);
+        let value: number | null = rest;
 
-        if (startByte == 0) throw new Error('Variable int is too large to parse');
-
-        let width = 0;
-        for (; width < 8; width++) {
-            if (startByte >= Math.pow(2, 7 - width)) break;
+        if (size > 1) {
+            value = Number(buffer.getBigUint64(start));
         }
 
-        if (start + width + 1 > buffer.byteLength)
-            throw new Error('Missing bytes, not enough data to parse variable int');
-
-        // remove the mark bit for non-id values
-        let value = startByte;
-        if (!id) value -= Math.pow(2, 7 - width);
-
-        // for each trailing byte: shift the existing bits left by a byte, and
-        // add the new byte to the value. again, we don't use bit operations
-        // for speed, but also because << is performed on 32bits.
-        for (let i = 1; i <= width; i++) {
-            value *= Math.pow(2, 8);
-            value += buffer.getUint8(start + i);
+        if (value == 2 ** (7 * size) - 1) {
+            value = null;
         }
 
-        start += width + 1;
-        return { value, length: start };
+        return {
+            size: value,
+            length: size
+        };
     }
 
     elementToJson(element: EbmlElementTag) {
@@ -215,19 +235,23 @@ export class DataReader {
         let offset = 0;
         console.log('START READING JSON');
 
+        console.log(element);
         const data = new DataView(
             this.buffer.buffer,
             this.offset + element.elementTagLength,
-            element.totalLength
+            element.contentLength
         );
         console.log(data.byteLength);
-        while (offset < element.totalLength) {
+
+        if (!element) {
+            return;
+        }
+
+        while (offset < element.contentLength) {
             const elem = this.readElementTag(offset, data);
-            console.log(elem);
             if (!elem) break;
 
             const elemInfo = ElementInfo[elem.elementId as keyof typeof ElementInfo];
-            console.log(elemInfo, elem.elementId);
             if (elemInfo) {
                 let result: any;
 
@@ -261,9 +285,11 @@ export class DataReader {
                         );
                         break;
                     case ElementType.String:
-                        // FIX
-                        console.log(elem.contentLength);
-                        result = this.readString(elem.elementTagLength, elem.contentLength, data);
+                        result = this.readString(
+                            elem.elementTagLength + offset,
+                            elem.contentLength ?? 1,
+                            data
+                        );
                         break;
 
                     default:
@@ -274,7 +300,6 @@ export class DataReader {
 
             offset += elem.totalLength;
         }
-        console.log('STOP READING JSON', elementJson);
     }
 }
 
@@ -294,7 +319,7 @@ export interface EbmlElementTag {
     /**
      * Length of the content inside this element in bytes
      */
-    contentLength?: number;
+    contentLength: number;
 
     isMaster: boolean;
 }

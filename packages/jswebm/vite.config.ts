@@ -8,11 +8,15 @@ export default defineConfig((config) => {
         // since pnpm doesn't wait for it to finish when
         // running 'build' in workspace root.
         // Use tsc instead.
-        plugins: [config.mode == 'development' ? dts() : undefined],
+        plugins: [
+            config.mode == 'development'
+                ? dts({ tsconfigPath: resolve(import.meta.dirname, './tsconfig.lib.json') })
+                : undefined
+        ],
         build: {
             lib: {
                 formats: ['es', 'cjs'],
-                entry: resolve(__dirname, 'src/JsWebm.ts'),
+                entry: resolve(import.meta.dirname, 'src/JsWebm.ts'),
                 name: 'jswebm'
             },
             sourcemap: config.mode == 'development'

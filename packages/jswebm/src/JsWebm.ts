@@ -21,7 +21,6 @@ export class JsWebm {
             }
 
             const isMasterElement = element?.isMaster;
-            console.log(element);
             if (
                 !element ||
                 this.reader.buffer.byteLength <
@@ -36,50 +35,14 @@ export class JsWebm {
                 case EbmlElements.void:
                     // Void the void
                     break;
+                case MatroskaElements.Tag: {
+                    console.log('Tag');
+                    const res = this.reader.elementToJson(element);
+                    console.log(res);
+                    break;
+                }
                 case EbmlElements.EBMLHead:
-                    this.reader.elementToJson(element);
-                    break;
-                case EbmlElements.EBMLVersion:
-                    console.log(
-                        'EBML version:',
-                        this.reader.readUInt8(element.elementTagLength, element.contentLength)
-                    );
-                    break;
-                case EbmlElements.DocType:
-                    console.log(
-                        'DocType:',
-                        this.reader.readString(element.elementTagLength, element.contentLength)
-                    );
-                    break;
-                case EbmlElements.DocTypeReadVersion:
-                    console.log(
-                        'DocTypeReadVersion:',
-                        this.reader.readUInt8(element.elementTagLength, element.contentLength)
-                    );
-                    break;
-                case EbmlElements.EBMLMaxIDLength:
-                    console.log(
-                        'EBMLMaxIDLength:',
-                        this.reader.readUInt8(element.elementTagLength, element.contentLength)
-                    );
-                    break;
-                case EbmlElements.EBMLReadVersion:
-                    console.log(
-                        'EBMLReadVersion:',
-                        this.reader.readUInt8(element.elementTagLength, element.contentLength)
-                    );
-                    break;
-                case EbmlElements.DocTypeVersion:
-                    console.log(
-                        'DocTypeVersion:',
-                        this.reader.readUInt8(element.elementTagLength, element.contentLength)
-                    );
-                    break;
-                case EbmlElements.EBMLMaxSizeLength:
-                    console.log(
-                        'EBMLMaxSizeLength:',
-                        this.reader.readUInt8(element.elementTagLength, element.contentLength)
-                    );
+                    console.log('Head', this.reader.elementToJson(element));
                     break;
 
                 case MatroskaElements.SimpleBlock:
