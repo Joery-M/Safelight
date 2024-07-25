@@ -4,8 +4,6 @@
 name: Test
 
 on:
-    push:
-        branches: ['main']
     pull_request:
         branches: ['main']
 
@@ -50,12 +48,6 @@ jobs:
 
             - name: Build Darkroom
               run: pnpm build:darkroom
-
-            - name: Build Timeline
-              run: pnpm build:timeline
-
-            - name: Build safelight
-              run: pnpm build:safelight
 
             - name: Test darkroom on Chromium
               run: pnpm test:darkroom
