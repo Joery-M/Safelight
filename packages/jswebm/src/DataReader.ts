@@ -17,6 +17,8 @@ export class DataReader {
     private hasCheckedValidEbml = false;
     private sliceRes = 0;
 
+    public stack: { id: number; size: number; start: number }[] = [];
+
     appendBuffer(buffer: ArrayBufferLike) {
         // Transfer is faster, but not widely supported
         if (this.totalBuffer.transfer) {
@@ -58,36 +60,138 @@ export class DataReader {
         }
         this.offset += Math.min(size, this.totalBuffer.byteLength);
         this.totalBuffer = this.totalBuffer.slice(size);
+
+        // Check if outside latest stack item
+        this.stack = this.stack.filter((stackItem) => {
+            return (
+                this.offset >= stackItem.start && this.offset <= stackItem.size + stackItem.start
+            );
+        });
     }
 
-    readUInt8(start: number = 0, size = 1, buffer = this.buffer) {
-        let data = 0;
+    pushStack(stackItem: { id: number; size: number; start: number }) {
+        this.stack.push(stackItem);
+    }
 
-        for (let offset = 0; offset < size; offset++) {
-            data <<= 8;
-            data += buffer.getUint8(start + offset);
+    //#region Data reading
+
+    private readElementInt(element: EbmlElementTag, offset = 0, buffer = this.buffer) {
+        const size = element.contentLength;
+
+        let value: number | bigint;
+        switch (size) {
+            case 1: {
+                value = buffer.getInt8(offset);
+                break;
+            }
+            case 2: {
+                value = buffer.getInt16(offset);
+                break;
+            }
+            case 3: {
+                value = buffer.getInt16(offset);
+                value <<= 8;
+                value += buffer.getInt8(offset + 2);
+                break;
+            }
+            case 4: {
+                value = buffer.getInt32(offset);
+                break;
+            }
+            case 5: {
+                value = BigInt(buffer.getInt32(offset));
+                value <<= 8n;
+                value += BigInt(buffer.getInt8(offset + 4));
+                break;
+            }
+            case 6: {
+                value = BigInt(buffer.getInt32(offset));
+                value <<= 16n;
+                value += BigInt(buffer.getInt16(offset + 4));
+                break;
+            }
+            case 7: {
+                value = BigInt(buffer.getInt32(offset));
+                value <<= 16n;
+                value += BigInt(buffer.getInt16(offset + 4));
+                value <<= 8n;
+                value += BigInt(buffer.getInt8(offset + 6));
+                break;
+            }
+
+            default: {
+                value = buffer.getBigInt64(offset);
+                break;
+            }
         }
 
-        return data;
+        return value;
     }
-    readInt8(start: number = 0, size = 1, buffer = this.buffer) {
-        let data = 0;
 
-        for (let offset = 0; offset < size; offset++) {
-            data <<= 8;
-            data += buffer.getInt8(start + offset);
+    private readElementUint(element: EbmlElementTag, offset = 0, buffer = this.buffer) {
+        const size = element.contentLength;
+
+        let value: number | bigint;
+        switch (size) {
+            case 1: {
+                value = buffer.getUint8(offset);
+                break;
+            }
+            case 2: {
+                value = buffer.getUint16(offset);
+                break;
+            }
+            case 3: {
+                value = buffer.getUint16(offset);
+                value <<= 8;
+                value += buffer.getUint8(offset + 2);
+                break;
+            }
+            case 4: {
+                value = buffer.getUint32(offset);
+                break;
+            }
+            case 5: {
+                value = BigInt(buffer.getUint32(offset));
+                value <<= 8n;
+                value += BigInt(buffer.getUint8(offset + 4));
+                break;
+            }
+            case 6: {
+                value = BigInt(buffer.getUint32(offset));
+                value <<= 16n;
+                value += BigInt(buffer.getUint16(offset + 4));
+                break;
+            }
+            case 7: {
+                value = BigInt(buffer.getUint32(offset));
+                value <<= 16n;
+                value += BigInt(buffer.getUint16(offset + 4));
+                value <<= 8n;
+                value += BigInt(buffer.getUint8(offset + 6));
+                break;
+            }
+
+            default: {
+                value = buffer.getBigUint64(offset);
+                break;
+            }
         }
 
-        return data;
+        return value;
     }
-    readString(start: number = 0, size = 1, buffer = this.buffer) {
+
+    private readString(start: number = 0, size = 1, buffer = this.buffer) {
         let res = '';
         for (let i = 0; i < size; i++) {
-            res += String.fromCharCode(buffer.getInt8(i + start));
+            const byte = buffer.getInt8(i + start);
+            if (byte !== 0x00) {
+                res += String.fromCharCode(byte);
+            }
         }
         return res;
     }
-    readHexString(start: number = 0, size = 1, buffer = this.buffer) {
+    private readHexString(start: number = 0, size = 1, buffer = this.buffer) {
         let res = '';
         for (let i = 0; i < size; i++) {
             res += buffer
@@ -98,7 +202,7 @@ export class DataReader {
         return res;
     }
 
-    readDate(size: number, start: number = 0, buffer = this.buffer) {
+    private readDate(size: number, start: number = 0, buffer = this.buffer) {
         switch (size) {
             case 1:
                 return new Date(buffer.getUint8(start));
@@ -112,7 +216,9 @@ export class DataReader {
                 return new Date(0);
         }
     }
+    //#endregion Data reading
 
+    //#region Element decoding
     readElementTag(offset = 0, bytes = this.buffer): undefined | EbmlElementTag {
         if (offset == bytes.byteLength) {
             return;
@@ -128,7 +234,6 @@ export class DataReader {
             console.log('No size');
             return;
         }
-        console.log(tag, size);
 
         return {
             elementId: tag.value,
@@ -138,7 +243,8 @@ export class DataReader {
             isMaster: MasterElements.includes(tag.value)
         };
     }
-    decodeIntLength(offset = 0, bytes = this.buffer) {
+
+    private decodeIntLength(offset = 0, bytes = this.buffer) {
         const index = offset || 0;
         const byte = bytes.getUint8(index);
 
@@ -166,6 +272,9 @@ export class DataReader {
         } else if (byte >= 2) {
             size = 7;
             rest = byte & 0b1;
+        } else {
+            size = 8;
+            rest = 0;
         }
 
         return {
@@ -173,7 +282,7 @@ export class DataReader {
             rest
         };
     }
-    decodeIDLength(offset = 0, bytes = this.buffer) {
+    private decodeIDLength(offset = 0, bytes = this.buffer) {
         const index = offset || 0;
         const byte = bytes.getUint8(index);
 
@@ -181,12 +290,11 @@ export class DataReader {
         else if (byte >= 64) return 2;
         else if (byte >= 32) return 3;
         else if (byte >= 16) return 4;
-        else if (byte >= 8) return 5;
 
         const length = this.decodeIntLength(byte);
         console.log('Invalid length for ID:', length);
     }
-    readElementId(offset = 0, buffer = this.buffer) {
+    private readElementId(offset = 0, buffer = this.buffer) {
         const start = offset || 0;
 
         const length = this.decodeIDLength(start, buffer) ?? 0;
@@ -207,13 +315,44 @@ export class DataReader {
         }
         return { value, length };
     }
-    readElementSize(offset = 0, buffer = this.buffer) {
+    private readElementSize(offset = 0, buffer = this.buffer) {
         const start = offset || 0;
         const { rest, size } = this.decodeIntLength(start, buffer);
         let value: number | null = rest;
 
         if (size > 1) {
-            value = Number(buffer.getBigUint64(start));
+            // Get UInt for each possible size
+            switch (size) {
+                case 1: {
+                    const mask = 1 << (size * 7);
+                    value = buffer.getUint8(start) & ~mask;
+                    break;
+                }
+                case 2: {
+                    const mask = 1 << (size * 7);
+                    value = buffer.getUint16(start) & ~mask;
+                    break;
+                }
+                case 3: {
+                    const mask = 1 << (size * 7);
+                    value = buffer.getUint16(start);
+                    value <<= 8;
+                    value += buffer.getUint8(start + 2);
+                    value &= ~mask;
+                    break;
+                }
+                case 4: {
+                    const mask = 1 << (size * 7);
+                    value = buffer.getUint32(start) & ~mask;
+                    break;
+                }
+
+                default: {
+                    const mask = BigInt(1) << BigInt(size * 7);
+                    value = Number(buffer.getBigUint64(start) & ~mask);
+                    break;
+                }
+            }
         }
 
         if (value == 2 ** (7 * size) - 1) {
@@ -225,81 +364,121 @@ export class DataReader {
             length: size
         };
     }
+    //#endregion Element decoding
 
-    elementToJson(element: EbmlElementTag) {
-        if (!MasterElements.includes(element.elementId)) {
-            return;
+    /**
+     * Convert an element to a JSON representation
+     */
+    elementToJson(element: EbmlElementTag, extraOffset = 0) {
+        const elementInfo = ElementInfo[element.elementId];
+        if (elementInfo?.type !== ElementType.Master) {
+            return this.readElement(element, extraOffset);
         }
 
         const elementJson: { [key: string]: any } = {};
-        let offset = 0;
-        console.log('START READING JSON');
-
-        console.log(element);
-        const data = new DataView(
-            this.buffer.buffer,
-            this.offset + element.elementTagLength,
-            element.contentLength
-        );
-        console.log(data.byteLength);
-
+        let offset = element.elementTagLength + extraOffset;
+        if (extraOffset > 0) {
+            console.log(offset, this.readElementTag(offset, this.buffer));
+        }
         if (!element) {
             return;
         }
 
-        while (offset < element.contentLength) {
-            const elem = this.readElementTag(offset, data);
+        while (offset < element.totalLength + extraOffset) {
+            const elem = this.readElementTag(offset, this.buffer);
+            if (extraOffset > 0) {
+                console.log(elem);
+            }
             if (!elem) break;
 
-            const elemInfo = ElementInfo[elem.elementId as keyof typeof ElementInfo];
+            const elemInfo = ElementInfo[elem.elementId];
             if (elemInfo) {
-                let result: any;
+                const result = this.elementToJson(elem, offset);
 
-                switch (elemInfo.type) {
-                    case ElementType.Binary:
-                        result = data.buffer.slice(
-                            offset + elem.elementTagLength,
-                            offset + elem.totalLength
-                        );
-                        break;
-                    case ElementType.Date:
-                        result = this.readDate(
-                            elem.contentLength!,
-                            elem.elementTagLength + offset,
-                            data
-                        );
-                        break;
-                    case ElementType.Float:
-                        result =
-                            elem.contentLength == 4
-                                ? data.getFloat32(elem.elementTagLength + offset)
-                                : data.getFloat64(elem.elementTagLength + offset);
-                        break;
-                    case ElementType.Integer:
-                        break;
-                    case ElementType.Uinteger:
-                        result = this.readUInt8(
-                            elem.elementTagLength + offset,
-                            elem.contentLength,
-                            data
-                        );
-                        break;
-                    case ElementType.String:
-                        result = this.readString(
-                            elem.elementTagLength + offset,
-                            elem.contentLength ?? 1,
-                            data
-                        );
-                        break;
-
-                    default:
-                        break;
+                const maxOccurs = parseInt(elemInfo.maxOccurs ?? '1');
+                if (maxOccurs > 1) {
+                    if (!(elemInfo.name in elementJson)) {
+                        elementJson[elemInfo.name] = [result];
+                    } else {
+                        elementJson[elemInfo.name].push(result);
+                    }
+                } else {
+                    elementJson[elemInfo.name] = result;
                 }
-                elementJson[elemInfo.name] = result;
             }
 
             offset += elem.totalLength;
         }
+
+        return elementJson;
+    }
+
+    private readElement(elem: EbmlElementTag, offset = 0) {
+        const elemInfo = ElementInfo[elem.elementId];
+        if (elemInfo) {
+            let result: any;
+
+            switch (elemInfo.type) {
+                case ElementType.Binary:
+                    result = this.buffer.buffer.slice(
+                        offset + elem.elementTagLength,
+                        offset + elem.totalLength
+                    );
+                    break;
+                case ElementType.Date:
+                    result = this.readDate(
+                        elem.contentLength!,
+                        elem.elementTagLength + offset,
+                        this.buffer
+                    );
+                    break;
+                case ElementType.Float:
+                    result =
+                        elem.contentLength == 4
+                            ? this.buffer.getFloat32(elem.elementTagLength + offset)
+                            : this.buffer.getFloat64(elem.elementTagLength + offset);
+                    break;
+                case ElementType.Integer:
+                    result = this.readElementInt(elem, elem.elementTagLength + offset, this.buffer);
+                    break;
+                case ElementType.Uinteger: {
+                    result = this.readElementUint(
+                        elem,
+                        offset + elem.elementTagLength,
+                        this.buffer
+                    );
+                    break;
+                }
+                case ElementType.UTF8:
+                case ElementType.String:
+                    result = this.readString(
+                        elem.elementTagLength + offset,
+                        elem.contentLength ?? 1,
+                        this.buffer
+                    );
+                    break;
+                case ElementType.Master:
+                    result = this.elementToJson(elem, offset);
+                    break;
+
+                default:
+                    break;
+            }
+
+            return result;
+        }
+    }
+
+    private debugReadHex(start = 0, length = 16, buffer = this.buffer) {
+        return new Array(length)
+            .fill('')
+            .map((_, i) =>
+                buffer
+                    .getUint8(i + start)
+                    .toString(16)
+                    .padStart(2, '0')
+            )
+            .join(' ');
     }
 }
 

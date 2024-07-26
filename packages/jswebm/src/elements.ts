@@ -367,7 +367,7 @@ export interface Element {
     recursive?: string;
 }
 
-export const ElementInfo = {
+export const ElementInfo: { [key: number]: Element | undefined } = {
     [EbmlElements.EBMLHead]: {
         name: 'EBML',
         path: 'EBML',

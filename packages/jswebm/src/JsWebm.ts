@@ -1,5 +1,5 @@
 import { DataReader, EbmlElementTag } from './DataReader';
-import { EbmlElements, MatroskaElements } from './elements';
+import { EbmlElements, ElementInfo, MatroskaElements } from './elements';
 
 export class JsWebm {
     private reader = new DataReader();
@@ -30,6 +30,21 @@ export class JsWebm {
                 // Come back later when more data has been loaded
                 break whileLoop;
             }
+            // if (element.elementId !== EbmlElements.void) {
+            //     if (element.elementId in ElementInfo) {
+            //         console.log(
+            //             this.reader.stack.map((item) => ElementInfo[item.id].name).join(' > '),
+            //             '>',
+            //             ElementInfo[element.elementId].name
+            //         );
+            //     } else {
+            //         console.log(
+            //             'Could not find element info for',
+            //             element.elementId.toString(16),
+            //             this.reader.debugReadHex()
+            //         );
+            //     }
+            // }
 
             switch (element.elementId) {
                 case EbmlElements.void:
@@ -37,16 +52,18 @@ export class JsWebm {
                     break;
                 case MatroskaElements.Tag: {
                     console.log('Tag');
-                    const res = this.reader.elementToJson(element);
-                    console.log(res);
+                    // const res = this.reader.elementToJson(element);
+                    // console.log(res);
                     break;
                 }
                 case EbmlElements.EBMLHead:
-                    console.log('Head', this.reader.elementToJson(element));
+                    // console.log('Head', this.reader.elementToJson(element));
                     break;
 
-                case MatroskaElements.SimpleBlock:
-                    // console.log('WE PLAYING MINECRAFT IN HERE');
+                case MatroskaElements.TrackEntry:
+                    console.log('%cStart trackentry read', 'color: red');
+                    console.log('TrackEntry', this.reader.elementToJson(element));
+                    console.log('%cStop trackentry read', 'color: red');
                     break;
                 default:
                     // console.log(
@@ -64,6 +81,11 @@ export class JsWebm {
             // Always slice
             if (isMasterElement) {
                 this.reader.sliceBuffer(element.elementTagLength);
+                this.reader.pushStack({
+                    id: element.elementId,
+                    size: element.totalLength,
+                    start: this.reader.offset
+                });
             } else {
                 this.reader.sliceBuffer(element.totalLength);
             }

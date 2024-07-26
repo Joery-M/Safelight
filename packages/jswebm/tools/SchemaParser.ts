@@ -1,13 +1,44 @@
 import { XMLParser } from 'fast-xml-parser';
 import fs from 'fs';
 import { join } from 'path';
+import { fileURLToPath } from 'url';
 const url = process.argv[2];
 
 fetch(url)
     .then((res) => res.text())
     .then((data) => {
-        // Base
-        let result = `export enum EbmlElements {
+        const parser = new XMLParser({ ignoreAttributes: false });
+        const EBML = parser.parse(data).EBMLSchema.element;
+
+        // Hex lookup
+        let result = GenerateElementHexLookup(EBML);
+
+        // Lookup of master elements
+        result += GenerateMasterElementLookup(EBML);
+
+        // Info for each element type
+        result += GenerateElementInfo(EBML);
+
+        const __dirname = fileURLToPath(new URL('.', import.meta.url));
+        fs.writeFileSync(join(__dirname, '../src/elements.ts'), result.replaceAll('\n', '\r\n'));
+    });
+
+function getEnumFromType(type: string): string {
+    const map: { [key: string]: string } = {
+        binary: 'ElementType.Binary',
+        date: 'ElementType.Date',
+        float: 'ElementType.Float',
+        integer: 'ElementType.Integer',
+        master: 'ElementType.Master',
+        string: 'ElementType.String',
+        'utf-8': 'ElementType.UTF8',
+        uinteger: 'ElementType.Uinteger'
+    };
+    return map[type] ?? 'unknown';
+}
+
+function GenerateElementHexLookup(EBML: any) {
+    let result = `export enum EbmlElements {
     EBMLHead = 0x1a45dfa3,
     EBMLVersion = 0x4286,
     EBMLReadVersion = 0x42f7,
@@ -28,28 +59,34 @@ fetch(url)
     SignedElement = 0x6532
 }\n\n`;
 
-        const parser = new XMLParser({ ignoreAttributes: false });
-        result += `export enum MatroskaElements {\n`;
-        for (const element of parser.parse(data).EBMLSchema.element) {
-            result += `    ${element['@_name']} = ${element['@_id']},\n`;
+    result += `export enum MatroskaElements {\n`;
+    for (const element of EBML) {
+        result += `    ${element['@_name']} = ${element['@_id']},\n`;
+    }
+    result += `}\n\n`;
+
+    return result;
+}
+
+function GenerateMasterElementLookup(EBML: any) {
+    let result = `export const MasterElements = [\n`;
+    result += `    EbmlElements.EBMLHead,\n`;
+    result += `    EbmlElements.SignatureSlot,\n`;
+    result += `    EbmlElements.SignatureElements,\n`;
+    result += `    EbmlElements.SignatureElementList,\n`;
+
+    for (const element of EBML) {
+        if (element['@_type'] == 'master') {
+            result += `    MatroskaElements.${element['@_name']},\n`;
         }
-        result += `}\n\n`;
+    }
+    result += `];\n`;
 
-        // Lookup of master elements
-        result += `export const MasterElements = [\n`;
-        result += `    EbmlElements.EBMLHead,\n`;
-        result += `    EbmlElements.SignatureSlot,\n`;
-        result += `    EbmlElements.SignatureElements,\n`;
-        result += `    EbmlElements.SignatureElementList,\n`;
+    return result;
+}
 
-        for (const element of parser.parse(data).EBMLSchema.element) {
-            if (element['@_type'] == 'master') {
-                result += `    MatroskaElements.${element['@_name']},\n`;
-            }
-        }
-        result += `];\n`;
-
-        result += `
+function GenerateElementInfo(EBML: any) {
+    let result = `
 export enum ElementType {
     Binary = 'binary',
     Date = 'date',
@@ -78,7 +115,7 @@ export interface Element {
     recursive?: string;
 }
 
-export const ElementInfo = {
+export const ElementInfo: {[key: number]: Element | undefined} = {
     ${/* Need to add types that dont exist in the matroska spec */ ''}
     [EbmlElements.EBMLHead]: {
         name: 'EBML',
@@ -117,58 +154,46 @@ export const ElementInfo = {
         type: ElementType.Uinteger,
     },
 `;
-        for (const element of parser.parse(data).EBMLSchema.element) {
-            const elementType: { [key: string]: any } = {};
-            for (const key in element) {
-                if (!key.startsWith('@_')) {
-                    continue;
-                }
-
-                if (Object.prototype.hasOwnProperty.call(element, key)) {
-                    let value = element[key];
-                    if (key == '@_type') {
-                        value = getEnumFromType(value);
-                    }
-                    elementType[key.replace('@_', '')] = value;
-                }
+    for (const element of EBML) {
+        const elementType: { [key: string]: any } = {};
+        for (const key in element) {
+            if (!key.startsWith('@_')) {
+                continue;
             }
-            result += `    /**\n`;
-            result += `     * @type MatroskaElements.${element['@_name']}\n`;
 
-            if (element.documentation) {
-                if (Array.isArray(element.documentation)) {
-                    element.documentation.forEach((doc: any) => {
-                        result += `     * @${doc['@_purpose']}\n`;
-                        result += `     * ${doc['#text']}\n`;
-                        result += `     *\n`;
-                    });
-                } else {
-                    const doc = element.documentation;
+            if (Object.prototype.hasOwnProperty.call(element, key)) {
+                let value = element[key];
+                if (key == '@_type') {
+                    value = getEnumFromType(value);
+                }
+                elementType[key.replace('@_', '')] = value;
+            }
+        }
+        result += `    /**\n`;
+        result += `     * @type MatroskaElements.${element['@_name']}\n`;
+
+        if (element.documentation) {
+            if (Array.isArray(element.documentation)) {
+                element.documentation.forEach((doc: any) => {
                     result += `     * @${doc['@_purpose']}\n`;
                     result += `     * ${doc['#text']}\n`;
                     result += `     *\n`;
-                }
+                });
+            } else {
+                const doc = element.documentation;
+                result += `     * @${doc['@_purpose']}\n`;
+                result += `     * ${doc['#text']}\n`;
+                result += `     *\n`;
             }
-
-            result += `     */\n`;
-            result += `    ${element['@_id']}: ${JSON.stringify(elementType)},\n`;
         }
-        result += `};\n`;
-        result = result.replace(/('|")ElementType\.([A-z0-9]*)('|")/g, 'ElementType.$2');
 
-        fs.writeFileSync(join(import.meta.dirname, '../src/elements.ts'), result);
-    });
+        result += `     */\n`;
+        result += `    ${element['@_id']}: ${JSON.stringify(elementType)},\n`;
+    }
+    result += `};\n`;
+    result = result.replace(/('|")ElementType\.([A-z0-9]*)('|")/g, 'ElementType.$2');
 
-function getEnumFromType(type: string): string {
-    const map: { [key: string]: string } = {
-        binary: 'ElementType.Binary',
-        date: 'ElementType.Date',
-        float: 'ElementType.Float',
-        integer: 'ElementType.Integer',
-        master: 'ElementType.Master',
-        string: 'ElementType.String',
-        'utf-8': 'ElementType.UTF8',
-        uinteger: 'ElementType.Uinteger'
-    };
-    return map[type] ?? 'unknown';
+    return result;
 }
+
+function GenerateTypeTree(EBML: any) {}
