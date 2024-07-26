@@ -1,5 +1,8 @@
+import { Block, BlockFlags } from './Block';
 import { DataReader, EbmlElementTag } from './DataReader';
 import { EbmlElements, ElementInfo, MatroskaElements } from './elements';
+
+export { Block } from './Block';
 
 export class JsWebm {
     private reader = new DataReader();
@@ -47,10 +50,17 @@ export class JsWebm {
                 case EbmlElements.void:
                     // Void the void
                     break;
-                case MatroskaElements.Tag: {
-                    console.log('Tag');
-                    // const res = this.reader.elementToJson(element);
-                    // console.log(res);
+                case EbmlElements.EBMLHead:
+                    console.log('Head', this.reader.elementToJson(element));
+                    break;
+                case MatroskaElements.SimpleBlock: {
+                    const data = this.reader.elementToJson(element);
+                    console.log('SimpleBlock', data);
+                    const block = new Block(data);
+                    console.log(
+                        block.Flags.toString(2).padStart(8, '0'),
+                        block.hasFlag(BlockFlags.XiphLacing)
+                    );
                     break;
                 }
 
