@@ -14,7 +14,7 @@ export class JsWebm {
         whileLoop: while (true) {
             let element: EbmlElementTag | undefined;
             try {
-                element = this.reader.readElementTag();
+                element = this.reader.readElementTag(this.reader.offset);
             } catch (error) {
                 console.log(error);
                 break;
@@ -33,16 +33,13 @@ export class JsWebm {
             // if (element.elementId !== EbmlElements.void) {
             //     if (element.elementId in ElementInfo) {
             //         console.log(
-            //             this.reader.stack.map((item) => ElementInfo[item.id].name).join(' > '),
+            //             this.reader.stack.map((item) => ElementInfo[item.id]?.name).join(' > '),
             //             '>',
-            //             ElementInfo[element.elementId].name
+            //             ElementInfo[element.elementId]?.name
             //         );
             //     } else {
-            //         console.log(
-            //             'Could not find element info for',
-            //             element.elementId.toString(16),
-            //             this.reader.debugReadHex()
-            //         );
+            //         console.log(`Could not find element info for '${element.elementId.toString(16)}' at position ${this.reader.totalOffset}`);
+            //         console.log('%c' + this.reader.debugReadHex(), '');
             //     }
             // }
 
@@ -56,14 +53,9 @@ export class JsWebm {
                     // console.log(res);
                     break;
                 }
-                case EbmlElements.EBMLHead:
-                    // console.log('Head', this.reader.elementToJson(element));
-                    break;
 
                 case MatroskaElements.TrackEntry:
-                    console.log('%cStart trackentry read', 'color: red');
                     console.log('TrackEntry', this.reader.elementToJson(element));
-                    console.log('%cStop trackentry read', 'color: red');
                     break;
                 default:
                     // console.log(
@@ -84,11 +76,15 @@ export class JsWebm {
                 this.reader.pushStack({
                     id: element.elementId,
                     size: element.totalLength,
-                    start: this.reader.offset
+                    start: this.reader.totalOffset
                 });
             } else {
                 this.reader.sliceBuffer(element.totalLength);
             }
         }
+    }
+
+    flush() {
+        this.reader.flush();
     }
 }

@@ -14,8 +14,9 @@ export class DataReader {
      * Amount of data that has been sliced off already
      */
     public offset = 0;
+    public totalOffset = 0;
     private hasCheckedValidEbml = false;
-    private sliceRes = 0;
+    private toSlice = 0;
 
     public stack: { id: number; size: number; start: number }[] = [];
 
@@ -36,9 +37,6 @@ export class DataReader {
 
             this.totalBuffer = newBuffer;
         }
-        if (this.sliceRes > 0) {
-            this.sliceBuffer(this.sliceRes);
-        }
 
         if (!this.hasCheckedValidEbml && this.totalBuffer.byteLength >= 4) {
             // Read first 4 bytes to check if it is an EBML file
@@ -53,18 +51,21 @@ export class DataReader {
     sliceBuffer(size: number) {
         // If the slice is larger than the buffer size, save the
         // residual length to subtract it later again
-        if (size > this.totalBuffer.byteLength) {
-            this.sliceRes = size - this.totalBuffer.byteLength;
-        } else {
-            this.sliceRes = 0;
+        this.toSlice += size;
+        this.offset += size;
+        this.totalOffset += size;
+        if (this.toSlice > 1000) {
+            // this.offset += Math.min(this.toSlice, this.totalBuffer.byteLength);
+            this.totalBuffer = this.totalBuffer.slice(this.toSlice);
+            this.offset -= this.toSlice;
+            this.toSlice = 0;
         }
-        this.offset += Math.min(size, this.totalBuffer.byteLength);
-        this.totalBuffer = this.totalBuffer.slice(size);
 
         // Check if outside latest stack item
         this.stack = this.stack.filter((stackItem) => {
             return (
-                this.offset >= stackItem.start && this.offset <= stackItem.size + stackItem.start
+                this.totalOffset >= stackItem.start &&
+                this.totalOffset <= stackItem.size + stackItem.start
             );
         });
     }
@@ -73,160 +74,15 @@ export class DataReader {
         this.stack.push(stackItem);
     }
 
-    //#region Data reading
-
-    private readElementInt(element: EbmlElementTag, offset = 0, buffer = this.buffer) {
-        const size = element.contentLength;
-
-        let value: number | bigint;
-        switch (size) {
-            case 1: {
-                value = buffer.getInt8(offset);
-                break;
-            }
-            case 2: {
-                value = buffer.getInt16(offset);
-                break;
-            }
-            case 3: {
-                value = buffer.getInt16(offset);
-                value <<= 8;
-                value += buffer.getInt8(offset + 2);
-                break;
-            }
-            case 4: {
-                value = buffer.getInt32(offset);
-                break;
-            }
-            case 5: {
-                value = BigInt(buffer.getInt32(offset));
-                value <<= 8n;
-                value += BigInt(buffer.getInt8(offset + 4));
-                break;
-            }
-            case 6: {
-                value = BigInt(buffer.getInt32(offset));
-                value <<= 16n;
-                value += BigInt(buffer.getInt16(offset + 4));
-                break;
-            }
-            case 7: {
-                value = BigInt(buffer.getInt32(offset));
-                value <<= 16n;
-                value += BigInt(buffer.getInt16(offset + 4));
-                value <<= 8n;
-                value += BigInt(buffer.getInt8(offset + 6));
-                break;
-            }
-
-            default: {
-                value = buffer.getBigInt64(offset);
-                break;
-            }
-        }
-
-        return value;
-    }
-
-    private readElementUint(element: EbmlElementTag, offset = 0, buffer = this.buffer) {
-        const size = element.contentLength;
-
-        let value: number | bigint;
-        switch (size) {
-            case 1: {
-                value = buffer.getUint8(offset);
-                break;
-            }
-            case 2: {
-                value = buffer.getUint16(offset);
-                break;
-            }
-            case 3: {
-                value = buffer.getUint16(offset);
-                value <<= 8;
-                value += buffer.getUint8(offset + 2);
-                break;
-            }
-            case 4: {
-                value = buffer.getUint32(offset);
-                break;
-            }
-            case 5: {
-                value = BigInt(buffer.getUint32(offset));
-                value <<= 8n;
-                value += BigInt(buffer.getUint8(offset + 4));
-                break;
-            }
-            case 6: {
-                value = BigInt(buffer.getUint32(offset));
-                value <<= 16n;
-                value += BigInt(buffer.getUint16(offset + 4));
-                break;
-            }
-            case 7: {
-                value = BigInt(buffer.getUint32(offset));
-                value <<= 16n;
-                value += BigInt(buffer.getUint16(offset + 4));
-                value <<= 8n;
-                value += BigInt(buffer.getUint8(offset + 6));
-                break;
-            }
-
-            default: {
-                value = buffer.getBigUint64(offset);
-                break;
-            }
-        }
-
-        return value;
-    }
-
-    private readString(start: number = 0, size = 1, buffer = this.buffer) {
-        let res = '';
-        for (let i = 0; i < size; i++) {
-            const byte = buffer.getInt8(i + start);
-            if (byte !== 0x00) {
-                res += String.fromCharCode(byte);
-            }
-        }
-        return res;
-    }
-    private readHexString(start: number = 0, size = 1, buffer = this.buffer) {
-        let res = '';
-        for (let i = 0; i < size; i++) {
-            res += buffer
-                .getUint8(i + start)
-                .toString(16)
-                .padStart(2, '0');
-        }
-        return res;
-    }
-
-    private readDate(size: number, start: number = 0, buffer = this.buffer) {
-        switch (size) {
-            case 1:
-                return new Date(buffer.getUint8(start));
-            case 2:
-                return new Date(buffer.getUint16(start));
-            case 4:
-                return new Date(buffer.getUint32(start));
-            case 8:
-                return new Date(Number.parseInt(this.readHexString(0, size, buffer), 16));
-            default:
-                return new Date(0);
-        }
-    }
-    //#endregion Data reading
-
     //#region Element decoding
     readElementTag(offset = 0, bytes = this.buffer): undefined | EbmlElementTag {
-        if (offset == bytes.byteLength) {
+        if (offset >= bytes.byteLength) {
             return;
         }
         const tag = this.readElementId(offset, bytes);
 
         if (!tag || bytes.byteLength < offset + tag.length) {
-            console.log('No tag');
+            console.log('No tag', bytes.byteLength, bytes.byteOffset, offset);
             return;
         }
         const size = this.readElementSize(offset + tag.length, bytes);
@@ -284,6 +140,9 @@ export class DataReader {
     }
     private decodeIDLength(offset = 0, bytes = this.buffer) {
         const index = offset || 0;
+        if (bytes.byteLength < index) {
+            return;
+        }
         const byte = bytes.getUint8(index);
 
         if (byte >= 128) return 1;
@@ -369,7 +228,10 @@ export class DataReader {
     /**
      * Convert an element to a JSON representation
      */
-    elementToJson(element: EbmlElementTag, extraOffset = 0) {
+    elementToJson(element: EbmlElementTag, extraOffset = this.offset) {
+        if (!element) {
+            return;
+        }
         const elementInfo = ElementInfo[element.elementId];
         if (elementInfo?.type !== ElementType.Master) {
             return this.readElement(element, extraOffset);
@@ -377,25 +239,16 @@ export class DataReader {
 
         const elementJson: { [key: string]: any } = {};
         let offset = element.elementTagLength + extraOffset;
-        if (extraOffset > 0) {
-            console.log(offset, this.readElementTag(offset, this.buffer));
-        }
-        if (!element) {
-            return;
-        }
 
         while (offset < element.totalLength + extraOffset) {
             const elem = this.readElementTag(offset, this.buffer);
-            if (extraOffset > 0) {
-                console.log(elem);
-            }
             if (!elem) break;
 
             const elemInfo = ElementInfo[elem.elementId];
             if (elemInfo) {
                 const result = this.elementToJson(elem, offset);
 
-                const maxOccurs = parseInt(elemInfo.maxOccurs ?? '1');
+                const maxOccurs = parseInt(elemInfo.maxOccurs ?? '2');
                 if (maxOccurs > 1) {
                     if (!(elemInfo.name in elementJson)) {
                         elementJson[elemInfo.name] = [result];
@@ -426,7 +279,7 @@ export class DataReader {
                     );
                     break;
                 case ElementType.Date:
-                    result = this.readDate(
+                    result = Reader.readDate(
                         elem.contentLength!,
                         elem.elementTagLength + offset,
                         this.buffer
@@ -439,10 +292,14 @@ export class DataReader {
                             : this.buffer.getFloat64(elem.elementTagLength + offset);
                     break;
                 case ElementType.Integer:
-                    result = this.readElementInt(elem, elem.elementTagLength + offset, this.buffer);
+                    result = Reader.readElementInt(
+                        elem,
+                        elem.elementTagLength + offset,
+                        this.buffer
+                    );
                     break;
                 case ElementType.Uinteger: {
-                    result = this.readElementUint(
+                    result = Reader.readElementUint(
                         elem,
                         offset + elem.elementTagLength,
                         this.buffer
@@ -451,7 +308,7 @@ export class DataReader {
                 }
                 case ElementType.UTF8:
                 case ElementType.String:
-                    result = this.readString(
+                    result = Reader.readString(
                         elem.elementTagLength + offset,
                         elem.contentLength ?? 1,
                         this.buffer
@@ -469,7 +326,7 @@ export class DataReader {
         }
     }
 
-    private debugReadHex(start = 0, length = 16, buffer = this.buffer) {
+    debugReadHex(start = this.offset, length = 16, buffer = this.buffer) {
         return new Array(length)
             .fill('')
             .map((_, i) =>
@@ -479,6 +336,15 @@ export class DataReader {
                     .padStart(2, '0')
             )
             .join(' ');
+    }
+
+    flush() {
+        this.totalBuffer = new ArrayBuffer(0);
+        this.offset = 0;
+        this.totalOffset = 0;
+        this.hasCheckedValidEbml = false;
+        this.stack = [];
+        this.toSlice = 0;
     }
 }
 
@@ -501,4 +367,187 @@ export interface EbmlElementTag {
     contentLength: number;
 
     isMaster: boolean;
+}
+
+export class Reader {
+    static readElementInt(element: EbmlElementTag, offset = 0, buffer: DataView) {
+        const size = element.contentLength;
+
+        let value: number | bigint;
+        switch (size) {
+            case 1: {
+                value = buffer.getInt8(offset);
+                break;
+            }
+            case 2: {
+                value = buffer.getInt16(offset);
+                break;
+            }
+            case 3: {
+                value = buffer.getInt16(offset);
+                value <<= 8;
+                value += buffer.getInt8(offset + 2);
+                break;
+            }
+            case 4: {
+                value = buffer.getInt32(offset);
+                break;
+            }
+            case 5: {
+                value = BigInt(buffer.getInt32(offset));
+                value <<= 8n;
+                value += BigInt(buffer.getInt8(offset + 4));
+                break;
+            }
+            case 6: {
+                value = BigInt(buffer.getInt32(offset));
+                value <<= 16n;
+                value += BigInt(buffer.getInt16(offset + 4));
+                break;
+            }
+            case 7: {
+                value = BigInt(buffer.getInt32(offset));
+                value <<= 16n;
+                value += BigInt(buffer.getInt16(offset + 4));
+                value <<= 8n;
+                value += BigInt(buffer.getInt8(offset + 6));
+                break;
+            }
+
+            default: {
+                value = buffer.getBigInt64(offset);
+                break;
+            }
+        }
+
+        return value;
+    }
+
+    static readElementUint(element: EbmlElementTag, offset = 0, buffer: DataView) {
+        const size = element.contentLength;
+
+        let value: number | bigint;
+        switch (size) {
+            case 1: {
+                value = buffer.getUint8(offset);
+                break;
+            }
+            case 2: {
+                value = buffer.getUint16(offset);
+                break;
+            }
+            case 3: {
+                value = buffer.getUint16(offset);
+                value <<= 8;
+                value += buffer.getUint8(offset + 2);
+                break;
+            }
+            case 4: {
+                value = buffer.getUint32(offset);
+                break;
+            }
+            case 5: {
+                value = BigInt(buffer.getUint32(offset));
+                value <<= 8n;
+                value += BigInt(buffer.getUint8(offset + 4));
+                break;
+            }
+            case 6: {
+                value = BigInt(buffer.getUint32(offset));
+                value <<= 16n;
+                value += BigInt(buffer.getUint16(offset + 4));
+                break;
+            }
+            case 7: {
+                value = BigInt(buffer.getUint32(offset));
+                value <<= 16n;
+                value += BigInt(buffer.getUint16(offset + 4));
+                value <<= 8n;
+                value += BigInt(buffer.getUint8(offset + 6));
+                break;
+            }
+
+            default: {
+                value = buffer.getBigUint64(offset);
+                break;
+            }
+        }
+
+        return value;
+    }
+
+    static readString(start: number = 0, size = 1, buffer: DataView) {
+        let res = '';
+        for (let i = 0; i < size; i++) {
+            const byte = buffer.getInt8(i + start);
+            if (byte !== 0x00) {
+                res += String.fromCharCode(byte);
+            }
+        }
+        return res;
+    }
+    static readHexString(start: number = 0, size = 1, buffer: DataView) {
+        let res = '';
+        for (let i = 0; i < size; i++) {
+            res += buffer
+                .getUint8(i + start)
+                .toString(16)
+                .padStart(2, '0');
+        }
+        return res;
+    }
+
+    static readDate(size: number, start: number = 0, buffer: DataView) {
+        switch (size) {
+            case 1:
+                return new Date(buffer.getUint8(start));
+            case 2:
+                return new Date(buffer.getUint16(start));
+            case 4:
+                return new Date(buffer.getUint32(start));
+            case 8:
+                return new Date(Number.parseInt(this.readHexString(0, size, buffer), 16));
+            default:
+                return new Date(0);
+        }
+    }
+
+    static readVInt(offset = 0, bytes: DataView) {
+        const index = offset || 0;
+        const byte = bytes.getUint8(index);
+
+        let size = 0;
+        let rest = 0;
+
+        if (byte >= 128) {
+            size = 1;
+            rest = byte & 0b1111111;
+        } else if (byte >= 64) {
+            size = 2;
+            rest = byte & 0b111111;
+        } else if (byte >= 32) {
+            size = 3;
+            rest = byte & 0b11111;
+        } else if (byte >= 16) {
+            size = 4;
+            rest = byte & 0b1111;
+        } else if (byte >= 8) {
+            size = 5;
+            rest = byte & 0b111;
+        } else if (byte >= 4) {
+            size = 6;
+            rest = byte & 0b11;
+        } else if (byte >= 2) {
+            size = 7;
+            rest = byte & 0b1;
+        } else {
+            size = 8;
+            rest = 0;
+        }
+
+        return {
+            size,
+            rest
+        };
+    }
 }
