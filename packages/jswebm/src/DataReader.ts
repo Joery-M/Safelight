@@ -54,7 +54,8 @@ export class DataReader {
         this.toSlice += size;
         this.offset += size;
         this.totalOffset += size;
-        if (this.toSlice > 1000) {
+        // 1 MB
+        if (this.toSlice > 1_000_000) {
             // this.offset += Math.min(this.toSlice, this.totalBuffer.byteLength);
             this.totalBuffer = this.totalBuffer.slice(this.toSlice);
             this.offset -= this.toSlice;

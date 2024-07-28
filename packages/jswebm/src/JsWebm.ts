@@ -1,7 +1,7 @@
 import { EventEmitter } from 'tseep';
-import { DataReader, EbmlElementTag } from './DataReader';
-import { EbmlElements, ElementEventMap, ElementInfo, MatroskaElements } from './elements';
 import { Block } from './Block';
+import { DataReader, EbmlElementTag, Reader } from './DataReader';
+import { EbmlElements, ElementEventMap, ElementInfo, MatroskaElements } from './elements';
 
 export class WebmReader {
     private reader = new DataReader();
@@ -21,7 +21,7 @@ export class WebmReader {
         this.events.emit('chunkDone');
     }
 
-    private lastTimestampOffset = 0n;
+    private lastTimestampOffset = 0;
 
     readElements() {
         // eslint-disable-next-line no-constant-condition
@@ -58,7 +58,9 @@ export class WebmReader {
             // }
 
             if (element.elementId == MatroskaElements.Timestamp) {
-                this.lastTimestampOffset = BigInt(this.reader.elementToJson(element));
+                this.lastTimestampOffset = Number(
+                    Reader.readElementUint(element, this.reader.offset, this.reader.buffer)
+                );
             }
 
             switch (element.elementId) {
@@ -76,19 +78,23 @@ export class WebmReader {
                         });
                     } else {
                         if (this.events.hasListeners(element.elementId)) {
-                            let data: any;
+                            const data = this.reader.elementToJson(element);
+
+                            // Extra behavior
                             switch (element.elementId) {
-                                case MatroskaElements.SimpleBlock:
-                                    data = new Block(
-                                        this.reader.elementToJson(element),
-                                        this.lastTimestampOffset
-                                    );
+                                case MatroskaElements.SimpleBlock: {
+                                    if (this.events.hasListeners('block')) {
+                                        const block = new Block(data, this.lastTimestampOffset);
+
+                                        this.events.emit('block', block);
+                                    }
                                     break;
+                                }
 
                                 default:
-                                    data = this.reader.elementToJson(element);
                                     break;
                             }
+
                             this.events.emit(element.elementId as keyof ElementEventMap, data);
                         }
                     }
@@ -109,15 +115,15 @@ export class WebmReader {
     }
 
     flush() {
-        this.lastTimestampOffset = 0n;
+        this.lastTimestampOffset = 0;
         this.reader.flush();
     }
 }
 
-type ExcludedElems = [MatroskaElements.SimpleBlock];
+type ExcludedElems = [];
 
 export type ReaderEvents = {
-    [MatroskaElements.SimpleBlock]: (data: Block) => void;
+    block: (data: Block) => void;
     chunkDone: () => void;
     unknownElement: (element: { element: EbmlElementTag; data: ArrayBuffer }) => void;
 } & {

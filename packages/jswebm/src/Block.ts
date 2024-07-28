@@ -16,13 +16,13 @@ export class Block {
     data: ArrayBufferLike;
     constructor(
         public totalBuffer: ArrayBufferLike,
-        private timestampOffset = 0n
+        timestampOffset = 0
     ) {
         this.buffer = new DataView(this.totalBuffer);
 
         const trackVint = Reader.readVInt(0, this.buffer);
         this.TrackNumber = trackVint.rest;
-        this.TimeStamp = this.buffer.getInt16(trackVint.size) + Number(timestampOffset);
+        this.TimeStamp = this.buffer.getInt16(trackVint.size) + timestampOffset;
         this.Flags = this.buffer.getUint8(trackVint.size + 2);
 
         this.data = totalBuffer.slice(trackVint.size + 3);
