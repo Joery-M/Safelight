@@ -19,6 +19,9 @@ fetch(url)
         // Info for each element type
         result += GenerateElementInfo(EBML);
 
+        // Generate map for events
+        result += GenerateEventMap(EBML);
+
         const __dirname = fileURLToPath(new URL('.', import.meta.url));
         fs.writeFileSync(join(__dirname, '../src/elements.ts'), result.replaceAll('\n', '\r\n'));
     });
@@ -128,30 +131,40 @@ export const ElementInfo: {[key: number]: Element | undefined} = {
         path: '\\EBML\\EBMLVersion',
         id: '0x4286',
         type: ElementType.Uinteger,
+        minOccurs: '1',
+        maxOccurs: '1',
     },
     [EbmlElements.EBMLReadVersion]: {
         name: 'EBMLReadVersion',
         path: '\\EBML\\EBMLReadVersion',
         id: '0x42F7',
         type: ElementType.Uinteger,
+        minOccurs: '1',
+        maxOccurs: '1',
     },
     [EbmlElements.DocType]: {
         name: 'DocType',
         path: '\\EBML\\DocType',
         id: '0x4282',
         type: ElementType.String,
+        minOccurs: '1',
+        maxOccurs: '1',
     },
     [EbmlElements.DocTypeVersion]: {
         name: 'DocTypeVersion',
         path: '\\EBML\\DocTypeVersion',
         id: '0x4287',
         type: ElementType.Uinteger,
+        minOccurs: '1',
+        maxOccurs: '1',
     },
     [EbmlElements.DocTypeReadVersion]: {
         name: 'DocTypeReadVersion',
         path: '\\EBML\\DocTypeReadVersion',
         id: '0x4285',
         type: ElementType.Uinteger,
+        minOccurs: '1',
+        maxOccurs: '1',
     },
 `;
     for (const element of EBML) {
@@ -176,19 +189,19 @@ export const ElementInfo: {[key: number]: Element | undefined} = {
             if (Array.isArray(element.documentation)) {
                 element.documentation.forEach((doc: any) => {
                     result += `     * @${doc['@_purpose']}\n`;
-                    result += `     * ${doc['#text']}\n`;
+                    result += formatJsdocText(doc['#text']) + '\n';
                     result += `     *\n`;
                 });
             } else {
                 const doc = element.documentation;
                 result += `     * @${doc['@_purpose']}\n`;
-                result += `     * ${doc['#text']}\n`;
+                result += formatJsdocText(doc['#text']) + '\n';
                 result += `     *\n`;
             }
         }
 
         result += `     */\n`;
-        result += `    ${element['@_id']}: ${JSON.stringify(elementType)},\n`;
+        result += `    [MatroskaElements.${element['@_name']}]: ${JSON.stringify(elementType)},\n`;
     }
     result += `};\n`;
     result = result.replace(/('|")ElementType\.([A-z0-9]*)('|")/g, 'ElementType.$2');
@@ -196,4 +209,29 @@ export const ElementInfo: {[key: number]: Element | undefined} = {
     return result;
 }
 
-function GenerateTypeTree(EBML: any) {}
+// function GenerateTypeTree(EBML: any) {}
+
+function GenerateEventMap(EBML: any) {
+    let result = `\nexport type ElementEventMap = {
+    ${/* Need to add types that dont exist in the matroska spec */ ''}
+    [EbmlElements.EBMLHead]: (data: any) => void,
+    [EbmlElements.EBMLVersion]: (data: any) => void,
+    [EbmlElements.EBMLReadVersion]: (data: any) => void,
+    [EbmlElements.DocType]: (data: any) => void,
+    [EbmlElements.DocTypeVersion]: (data: any) => void,
+    [EbmlElements.DocTypeReadVersion]: (data: any) => void,`;
+    for (const element of EBML) {
+        result += `    [MatroskaElements.${element['@_name']}]: (data: any) => void,\n`;
+    }
+
+    result += `};\n`;
+
+    return result;
+}
+
+function formatJsdocText(text: string) {
+    return text
+        .split('\n')
+        .map((t) => '     * ' + t)
+        .join('\n');
+}

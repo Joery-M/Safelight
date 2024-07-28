@@ -17,9 +17,13 @@
     "types": "dist/JsWebm.d.ts",
     "exports": {
         "./*": {
+            "default": "./dist/*.js",
+            "require": "./dist/*.cjs",
+            "import": "./dist/*.js",
             "types": "./dist/*.d.ts"
         },
         ".": {
+            "default": "./dist/jswebm.js",
             "require": "./dist/jswebm.cjs",
             "import": "./dist/jswebm.js",
             "types": "./dist/JsWebm.d.ts"
@@ -40,6 +44,10 @@
         "tsx": "^4.16.0",
         "typescript": "^5.5.3",
         "vite": "^5.3.2",
-        "vite-plugin-dts": "^3.9.1"
+        "vite-plugin-dts": "^3.9.1",
+        "vite-plugin-no-bundle": "^4.0.0"
+    },
+    "dependencies": {
+        "tseep": "^1.2.2"
     }
 }

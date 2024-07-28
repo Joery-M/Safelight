@@ -1,6 +1,7 @@
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
+import noBundlePlugin from 'vite-plugin-no-bundle';
 
 export default defineConfig((config) => {
     return {
@@ -11,11 +12,12 @@ export default defineConfig((config) => {
         plugins: [
             config.mode == 'development'
                 ? dts({ tsconfigPath: resolve(import.meta.dirname, './tsconfig.lib.json') })
-                : undefined
+                : undefined,
+            noBundlePlugin()
         ],
         build: {
             lib: {
-                formats: ['es', 'cjs'],
+                formats: config.mode == 'development' ? ['es'] : ['es', 'cjs'],
                 entry: resolve(import.meta.dirname, 'src/JsWebm.ts'),
                 name: 'jswebm'
             },

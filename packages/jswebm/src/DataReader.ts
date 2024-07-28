@@ -81,13 +81,13 @@ export class DataReader {
         }
         const tag = this.readElementId(offset, bytes);
 
-        if (!tag || bytes.byteLength < offset + tag.length) {
-            console.log('No tag', bytes.byteLength, bytes.byteOffset, offset);
+        if (!tag || offset + tag.length >= bytes.byteLength) {
+            // Means buffer was too small
             return;
         }
         const size = this.readElementSize(offset + tag.length, bytes);
         if (!size) {
-            console.log('No size');
+            // Means buffer was too small
             return;
         }
 
@@ -102,6 +102,9 @@ export class DataReader {
 
     private decodeIntLength(offset = 0, bytes = this.buffer) {
         const index = offset || 0;
+        if (offset >= bytes.byteLength) {
+            return undefined;
+        }
         const byte = bytes.getUint8(index);
 
         let size = 0;
@@ -140,7 +143,7 @@ export class DataReader {
     }
     private decodeIDLength(offset = 0, bytes = this.buffer) {
         const index = offset || 0;
-        if (bytes.byteLength < index) {
+        if (index >= bytes.byteLength) {
             return;
         }
         const byte = bytes.getUint8(index);
@@ -176,7 +179,16 @@ export class DataReader {
     }
     private readElementSize(offset = 0, buffer = this.buffer) {
         const start = offset || 0;
-        const { rest, size } = this.decodeIntLength(start, buffer);
+        const intSize = this.decodeIntLength(start, buffer);
+        if (!intSize) {
+            return undefined;
+        }
+        const { rest, size } = intSize;
+
+        if (size + start > buffer.byteLength) {
+            return undefined;
+        }
+
         let value: number | null = rest;
 
         if (size > 1) {

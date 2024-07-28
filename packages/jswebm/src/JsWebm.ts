@@ -1,16 +1,27 @@
-import { Block, BlockFlags } from './Block';
+import { EventEmitter } from 'tseep';
 import { DataReader, EbmlElementTag } from './DataReader';
-import { EbmlElements, ElementInfo, MatroskaElements } from './elements';
+import { EbmlElements, ElementEventMap, ElementInfo, MatroskaElements } from './elements';
+import { Block } from './Block';
 
-export { Block } from './Block';
-
-export class JsWebm {
+export class WebmReader {
     private reader = new DataReader();
+    private events = new EventEmitter<ReaderEvents>();
+
+    on: EventEmitter<ReaderEvents>['on'] = (...args) => this.events.on(...args);
+    off: EventEmitter<ReaderEvents>['off'] = (...args) => this.events.off(...args);
+    once: EventEmitter<ReaderEvents>['once'] = (...args) => this.events.once(...args);
+    addListener: EventEmitter<ReaderEvents>['addListener'] = (...args) =>
+        this.events.addListener(...args);
+    removeListener: EventEmitter<ReaderEvents>['removeListener'] = (...args) =>
+        this.events.removeListener(...args);
 
     appendChunk(buffer: ArrayBufferLike) {
         this.reader.appendBuffer(buffer);
         this.readElements();
+        this.events.emit('chunkDone');
     }
+
+    private lastTimestampOffset = 0n;
 
     readElements() {
         // eslint-disable-next-line no-constant-condition
@@ -46,38 +57,41 @@ export class JsWebm {
             //     }
             // }
 
+            if (element.elementId == MatroskaElements.Timestamp) {
+                this.lastTimestampOffset = BigInt(this.reader.elementToJson(element));
+            }
+
             switch (element.elementId) {
                 case EbmlElements.void:
                     // Void the void
                     break;
-                case EbmlElements.EBMLHead:
-                    console.log('Head', this.reader.elementToJson(element));
-                    break;
-                case MatroskaElements.SimpleBlock: {
-                    const data = this.reader.elementToJson(element);
-                    console.log('SimpleBlock', data);
-                    const block = new Block(data);
-                    console.log(
-                        block.Flags.toString(2).padStart(8, '0'),
-                        block.hasFlag(BlockFlags.XiphLacing)
-                    );
-                    break;
-                }
-
-                case MatroskaElements.TrackEntry:
-                    console.log('TrackEntry', this.reader.elementToJson(element));
-                    break;
                 default:
-                    // console.log(
-                    //     'Unknown element:',
-                    //     element.elementId.toString(16),
-                    //     ', size:',
-                    //     element.totalLength,
-                    //     ', is master element:',
-                    //     isMasterElement,
-                    //     'Name:',
-                    //     ElementInfo[element.elementId].name
-                    // );
+                    if (!(element.elementId in ElementInfo)) {
+                        this.events.emit('unknownElement', {
+                            element,
+                            data: this.reader.buffer.buffer.slice(
+                                this.reader.offset,
+                                element.totalLength
+                            )
+                        });
+                    } else {
+                        if (this.events.hasListeners(element.elementId)) {
+                            let data: any;
+                            switch (element.elementId) {
+                                case MatroskaElements.SimpleBlock:
+                                    data = new Block(
+                                        this.reader.elementToJson(element),
+                                        this.lastTimestampOffset
+                                    );
+                                    break;
+
+                                default:
+                                    data = this.reader.elementToJson(element);
+                                    break;
+                            }
+                            this.events.emit(element.elementId as keyof ElementEventMap, data);
+                        }
+                    }
                     break;
             }
             // Always slice
@@ -95,6 +109,17 @@ export class JsWebm {
     }
 
     flush() {
+        this.lastTimestampOffset = 0n;
         this.reader.flush();
     }
 }
+
+type ExcludedElems = [MatroskaElements.SimpleBlock];
+
+export type ReaderEvents = {
+    [MatroskaElements.SimpleBlock]: (data: Block) => void;
+    chunkDone: () => void;
+    unknownElement: (element: { element: EbmlElementTag; data: ArrayBuffer }) => void;
+} & {
+    [elem in Exclude<keyof ElementEventMap, ExcludedElems[number]>]: ElementEventMap[elem];
+};
