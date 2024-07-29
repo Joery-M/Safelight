@@ -46,13 +46,13 @@
         "vue-router": "^4.4.0"
     },
     "devDependencies": {
-        "@babel/types": "^7.24.9",
+        "@babel/types": "^7.25.0",
         "@intlify/eslint-plugin-vue-i18n": "^3.0.0",
         "@tsconfig/node20": "^20.1.4",
         "@types/dom-webcodecs": "^0.1.11",
         "@types/fuzzysearch": "^1.0.2",
         "@types/luxon": "^3.4.2",
-        "@types/node": "^20.14.12",
+        "@types/node": "^22.0.0",
         "@types/uuid": "^10.0.0",
         "@vitejs/plugin-vue": "^5.1.0",
         "@vue/tsconfig": "^0.5.1",
