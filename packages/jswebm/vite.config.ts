@@ -1,7 +1,26 @@
 import { resolve } from 'path';
-import { defineConfig } from 'vite';
+import { minify } from 'terser';
+import { defineConfig, Plugin } from 'vite';
 import dts from 'vite-plugin-dts';
-import noBundlePlugin from 'vite-plugin-no-bundle';
+
+const plugin = (): Plugin => ({
+    name: 'minify-bundle',
+    async generateBundle(_, bundle) {
+        for (const asset of Object.values(bundle)) {
+            if (asset.type == 'chunk') {
+                asset.code =
+                    (
+                        await minify(asset.code, {
+                            compress: false,
+                            module: asset.fileName.endsWith('.js'),
+                            mangle: false,
+                            format: { preserve_annotations: true }
+                        })
+                    ).code ?? asset.code;
+            }
+        }
+    }
+});
 
 export default defineConfig((config) => {
     return {
@@ -12,8 +31,7 @@ export default defineConfig((config) => {
         plugins: [
             config.mode == 'development'
                 ? dts({ tsconfigPath: resolve(import.meta.dirname, './tsconfig.lib.json') })
-                : undefined,
-            noBundlePlugin()
+                : plugin()
         ],
         build: {
             lib: {
@@ -21,7 +39,8 @@ export default defineConfig((config) => {
                 entry: resolve(import.meta.dirname, 'src/JsWebm.ts'),
                 name: 'jswebm'
             },
-            sourcemap: config.mode == 'development'
+            sourcemap: config.mode == 'development',
+            minify: false
         }
     };
 });

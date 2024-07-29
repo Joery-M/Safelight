@@ -36,5 +36,8 @@ jobs:
             - name: Build Timeline
               run: pnpm build:timeline
 
+            - name: Build JsWebm
+              run: pnpm build:jswebm
+
             - name: Build safelight
               run: pnpm build:safelight

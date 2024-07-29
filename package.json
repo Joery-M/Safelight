@@ -11,6 +11,7 @@
     "build:darkroom": "cd packages/darkroom && pnpm build",
     "build:timeline": "cd packages/timeline && pnpm build",
     "build:safelight": "cd packages/safelight && pnpm build",
+    "build:jswebm": "cd packages/jswebm && pnpm build",
     "test": "pnpm run -r --parallel \"/test:run.*/\"",
     "test:darkroom": "cd packages/darkroom && pnpm test:run",
     "test:darkroom-firefox": "cd packages/darkroom && pnpm test:run-firefox",

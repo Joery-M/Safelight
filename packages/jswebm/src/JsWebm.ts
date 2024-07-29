@@ -44,18 +44,6 @@ export class WebmReader {
                 // Come back later when more data has been loaded
                 break whileLoop;
             }
-            // if (element.elementId !== EbmlElements.void) {
-            //     if (element.elementId in ElementInfo) {
-            //         console.log(
-            //             this.reader.stack.map((item) => ElementInfo[item.id]?.name).join(' > '),
-            //             '>',
-            //             ElementInfo[element.elementId]?.name
-            //         );
-            //     } else {
-            //         console.log(`Could not find element info for '${element.elementId.toString(16)}' at position ${this.reader.totalOffset}`);
-            //         console.log('%c' + this.reader.debugReadHex(), '');
-            //     }
-            // }
 
             if (element.elementId == MatroskaElements.Timestamp) {
                 this.lastTimestampOffset = Number(
@@ -79,6 +67,10 @@ export class WebmReader {
                     } else {
                         if (this.events.hasListeners(element.elementId)) {
                             const data = this.reader.elementToJson(element);
+                            if (!data) {
+                                // Not enough data, come back later
+                                break whileLoop;
+                            }
 
                             // Extra behavior
                             switch (element.elementId) {
@@ -120,6 +112,7 @@ export class WebmReader {
     }
 }
 
+// Currently nothing excluded
 type ExcludedElems = [];
 
 export type ReaderEvents = {
@@ -129,3 +122,6 @@ export type ReaderEvents = {
 } & {
     [elem in Exclude<keyof ElementEventMap, ExcludedElems[number]>]: ElementEventMap[elem];
 };
+
+export { Block, BlockFlags } from './Block';
+export { EbmlElements, ElementType, MatroskaElements, type Element } from './elements';

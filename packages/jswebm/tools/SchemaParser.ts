@@ -14,7 +14,8 @@ fetch(url)
         let result = GenerateElementHexLookup(EBML);
 
         // Lookup of master elements
-        result += GenerateMasterElementLookup(EBML);
+        // result += GenerateMasterElementLookup(EBML);
+        // Not needed
 
         // Info for each element type
         result += GenerateElementInfo(EBML);

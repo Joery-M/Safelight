@@ -1,4 +1,4 @@
-import { EbmlElements, ElementInfo, ElementType, MasterElements } from './elements';
+import { EbmlElements, ElementInfo, ElementType } from './elements';
 
 export class DataReader {
     private _totalBuffer = new ArrayBuffer(0);
@@ -97,7 +97,7 @@ export class DataReader {
             contentLength: size.size ?? 0,
             elementTagLength: tag.length + size.length,
             totalLength: (size.size ?? 0) + size.length + tag.length,
-            isMaster: MasterElements.includes(tag.value)
+            isMaster: ElementInfo[tag.value]?.type == ElementType.Master
         };
     }
 
@@ -252,6 +252,10 @@ export class DataReader {
 
         const elementJson: { [key: string]: any } = {};
         let offset = element.elementTagLength + extraOffset;
+
+        if (element.totalLength + extraOffset >= this.buffer.byteLength) {
+            return;
+        }
 
         while (offset < element.totalLength + extraOffset) {
             const elem = this.readElementTag(offset, this.buffer);
