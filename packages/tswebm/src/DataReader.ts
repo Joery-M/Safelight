@@ -90,6 +90,8 @@ export class DataReader {
         if (!size) {
             // Means buffer was too small
             return;
+        } else if (size.size === null) {
+            console.log('No size');
         }
 
         return {
@@ -155,7 +157,7 @@ export class DataReader {
         else if (byte >= 16) return 4;
 
         const length = this.decodeIntLength(byte);
-        console.log('Invalid length for ID:', length);
+        console.error(new Error('Invalid length for ID: ' + length));
     }
     private readElementId(offset = 0, buffer = this.buffer) {
         const start = offset || 0;
@@ -163,10 +165,10 @@ export class DataReader {
         const length = this.decodeIDLength(start, buffer) ?? 0;
 
         if (length > 4) {
-            console.log('Length too long:', length);
+            console.error(new Error('Length too long: ' + length));
             return;
         } else if (length == 0) {
-            console.log('Element length not found');
+            console.error(new Error('Element length not found'));
             return;
         }
 
@@ -236,6 +238,25 @@ export class DataReader {
             length: size
         };
     }
+    private readElementUnknownSize(start = 0, buffer = this.buffer) {
+        // This is pretty shit...
+        // Get sibling or parent-sibling elements to this one, if unknown element, throw
+        // Walk the segment, until a sibling or parent-sibling is found
+        // If it is found, return value,
+        // If end of buffer, return undefined
+        let offset = start;
+
+        const siblings = [];
+
+        for (const element in ElementInfo) {
+            if (Object.prototype.hasOwnProperty.call(object, key)) {
+                const element = object[key];
+            }
+        }
+
+        return offset - start;
+    }
+
     //#endregion Element decoding
 
     /**

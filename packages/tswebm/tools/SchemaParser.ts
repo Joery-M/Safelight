@@ -114,6 +114,7 @@ export enum ElementType {
 export interface Element {
     name: string;
     path: string;
+    pathArray: (MatroskaElements | EbmlElements)[];
     id: string;
     type: ElementType;
     maxOccurs?: string;
@@ -133,12 +134,14 @@ export const ElementInfo: {[key: number]: Element | undefined} = {
     [EbmlElements.EBMLHead]: {
         name: 'EBML',
         path: '\\EBML',
+        pathArray: [EbmlElements.EBMLHead],
         id: '0x1a45dfa3',
         type: ElementType.Master,
     },
     [EbmlElements.EBMLVersion]: {
         name: 'EBMLVersion',
         path: '\\EBML\\EBMLVersion',
+        pathArray: [EbmlElements.EBMLHead, EbmlElements.EBMLVersion],
         id: '0x4286',
         type: ElementType.Uinteger,
         minOccurs: '1',
@@ -147,6 +150,7 @@ export const ElementInfo: {[key: number]: Element | undefined} = {
     [EbmlElements.EBMLReadVersion]: {
         name: 'EBMLReadVersion',
         path: '\\EBML\\EBMLReadVersion',
+        pathArray: [EbmlElements.EBMLHead, EbmlElements.EBMLReadVersion],
         id: '0x42F7',
         type: ElementType.Uinteger,
         minOccurs: '1',
@@ -155,6 +159,7 @@ export const ElementInfo: {[key: number]: Element | undefined} = {
     [EbmlElements.DocType]: {
         name: 'DocType',
         path: '\\EBML\\DocType',
+        pathArray: [EbmlElements.EBMLHead, EbmlElements.DocType],
         id: '0x4282',
         type: ElementType.String,
         minOccurs: '1',
@@ -163,6 +168,7 @@ export const ElementInfo: {[key: number]: Element | undefined} = {
     [EbmlElements.DocTypeVersion]: {
         name: 'DocTypeVersion',
         path: '\\EBML\\DocTypeVersion',
+        pathArray: [EbmlElements.EBMLHead, EbmlElements.DocTypeVersion],
         id: '0x4287',
         type: ElementType.Uinteger,
         minOccurs: '1',
@@ -171,6 +177,7 @@ export const ElementInfo: {[key: number]: Element | undefined} = {
     [EbmlElements.DocTypeReadVersion]: {
         name: 'DocTypeReadVersion',
         path: '\\EBML\\DocTypeReadVersion',
+        pathArray: [EbmlElements.EBMLHead, EbmlElements.DocTypeReadVersion],
         id: '0x4285',
         type: ElementType.Uinteger,
         minOccurs: '1',
@@ -192,7 +199,18 @@ export const ElementInfo: {[key: number]: Element | undefined} = {
                 elementType[key.replace('@_', '')] = value;
             }
         }
-        result += `    [MatroskaElements.${element['@_name']}]: ${JSON.stringify(elementType)},\n`;
+        elementType.pathArray = element['@_path']
+            .split('\\')
+            .filter((s: string) => s.length > 0)
+            .map((s: string) =>
+                s === 'EBML'
+                    ? 'EbmlElements.EBMLHead'
+                    : 'MatroskaElements.' + s.replace(/[^A-z0-9]/, '')
+            );
+
+        let type = JSON.stringify(elementType);
+        type = type.replace(/(?<=\[[^\]]*)"(?=[^\[]*?\])/g, '');
+        result += `    [MatroskaElements.${element['@_name']}]: ${type},\n`;
     }
     result += `};\n`;
     result = result.replace(/('|")ElementType\.([A-z0-9]*)('|")/g, 'ElementType.$2');

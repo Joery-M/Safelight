@@ -2992,6 +2992,7 @@ export enum ElementType {
 export interface Element {
     name: string;
     path: string;
+    pathArray: (MatroskaElements | EbmlElements)[];
     id: string;
     type: ElementType;
     maxOccurs?: string;
@@ -3010,12 +3011,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
     [EbmlElements.EBMLHead]: {
         name: 'EBML',
         path: 'EBML',
+        pathArray: [EbmlElements.EBMLHead],
         id: '0x1a45dfa3',
         type: ElementType.Master
     },
     [EbmlElements.EBMLVersion]: {
         name: 'EBMLVersion',
         path: 'EBMLEBMLVersion',
+        pathArray: [EbmlElements.EBMLHead, EbmlElements.EBMLVersion],
         id: '0x4286',
         type: ElementType.Uinteger,
         minOccurs: '1',
@@ -3024,6 +3027,7 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
     [EbmlElements.EBMLReadVersion]: {
         name: 'EBMLReadVersion',
         path: 'EBMLEBMLReadVersion',
+        pathArray: [EbmlElements.EBMLHead, EbmlElements.EBMLReadVersion],
         id: '0x42F7',
         type: ElementType.Uinteger,
         minOccurs: '1',
@@ -3032,6 +3036,7 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
     [EbmlElements.DocType]: {
         name: 'DocType',
         path: 'EBMLDocType',
+        pathArray: [EbmlElements.EBMLHead, EbmlElements.DocType],
         id: '0x4282',
         type: ElementType.String,
         minOccurs: '1',
@@ -3040,6 +3045,7 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
     [EbmlElements.DocTypeVersion]: {
         name: 'DocTypeVersion',
         path: 'EBMLDocTypeVersion',
+        pathArray: [EbmlElements.EBMLHead, EbmlElements.DocTypeVersion],
         id: '0x4287',
         type: ElementType.Uinteger,
         minOccurs: '1',
@@ -3048,6 +3054,7 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
     [EbmlElements.DocTypeReadVersion]: {
         name: 'DocTypeReadVersion',
         path: 'EBMLDocTypeReadVersion',
+        pathArray: [EbmlElements.EBMLHead, EbmlElements.DocTypeReadVersion],
         id: '0x4285',
         type: ElementType.Uinteger,
         minOccurs: '1',
@@ -3061,7 +3068,8 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         range: '4',
         default: '4',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [EbmlElements.EBMLHead, MatroskaElements.EBMLMaxIDLength]
     },
     [MatroskaElements.EBMLMaxSizeLength]: {
         name: 'EBMLMaxSizeLength',
@@ -3071,7 +3079,8 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         range: '1-8',
         default: '8',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [EbmlElements.EBMLHead, MatroskaElements.EBMLMaxSizeLength]
     },
     [MatroskaElements.Segment]: {
         name: 'Segment',
@@ -3080,21 +3089,24 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Master,
         minOccurs: '1',
         maxOccurs: '1',
-        unknownsizeallowed: '1'
+        unknownsizeallowed: '1',
+        pathArray: [MatroskaElements.Segment]
     },
     [MatroskaElements.SeekHead]: {
         name: 'SeekHead',
         path: '\\Segment\\SeekHead',
         id: '0x114D9B74',
         type: ElementType.Master,
-        maxOccurs: '2'
+        maxOccurs: '2',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.SeekHead]
     },
     [MatroskaElements.Seek]: {
         name: 'Seek',
         path: '\\Segment\\SeekHead\\Seek',
         id: '0x4DBB',
         type: ElementType.Master,
-        minOccurs: '1'
+        minOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.SeekHead, MatroskaElements.Seek]
     },
     [MatroskaElements.SeekID]: {
         name: 'SeekID',
@@ -3103,7 +3115,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Binary,
         length: '4',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.SeekHead,
+            MatroskaElements.Seek,
+            MatroskaElements.SeekID
+        ]
     },
     [MatroskaElements.SeekPosition]: {
         name: 'SeekPosition',
@@ -3111,7 +3129,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x53AC',
         type: ElementType.Uinteger,
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.SeekHead,
+            MatroskaElements.Seek,
+            MatroskaElements.SeekPosition
+        ]
     },
     [MatroskaElements.Info]: {
         name: 'Info',
@@ -3120,7 +3144,8 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Master,
         minOccurs: '1',
         maxOccurs: '1',
-        recurring: '1'
+        recurring: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Info]
     },
     [MatroskaElements.SegmentUUID]: {
         name: 'SegmentUUID',
@@ -3128,14 +3153,16 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x73A4',
         type: ElementType.Binary,
         length: '16',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Info, MatroskaElements.SegmentUUID]
     },
     [MatroskaElements.SegmentFilename]: {
         name: 'SegmentFilename',
         path: '\\Segment\\Info\\SegmentFilename',
         id: '0x7384',
         type: ElementType.UTF8,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Info, MatroskaElements.SegmentFilename]
     },
     [MatroskaElements.PrevUUID]: {
         name: 'PrevUUID',
@@ -3143,14 +3170,16 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x3CB923',
         type: ElementType.Binary,
         length: '16',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Info, MatroskaElements.PrevUUID]
     },
     [MatroskaElements.PrevFilename]: {
         name: 'PrevFilename',
         path: '\\Segment\\Info\\PrevFilename',
         id: '0x3C83AB',
         type: ElementType.UTF8,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Info, MatroskaElements.PrevFilename]
     },
     [MatroskaElements.NextUUID]: {
         name: 'NextUUID',
@@ -3158,27 +3187,31 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x3EB923',
         type: ElementType.Binary,
         length: '16',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Info, MatroskaElements.NextUUID]
     },
     [MatroskaElements.NextFilename]: {
         name: 'NextFilename',
         path: '\\Segment\\Info\\NextFilename',
         id: '0x3E83BB',
         type: ElementType.UTF8,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Info, MatroskaElements.NextFilename]
     },
     [MatroskaElements.SegmentFamily]: {
         name: 'SegmentFamily',
         path: '\\Segment\\Info\\SegmentFamily',
         id: '0x4444',
         type: ElementType.Binary,
-        length: '16'
+        length: '16',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Info, MatroskaElements.SegmentFamily]
     },
     [MatroskaElements.ChapterTranslate]: {
         name: 'ChapterTranslate',
         path: '\\Segment\\Info\\ChapterTranslate',
         id: '0x6924',
-        type: ElementType.Master
+        type: ElementType.Master,
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Info, MatroskaElements.ChapterTranslate]
     },
     [MatroskaElements.ChapterTranslateID]: {
         name: 'ChapterTranslateID',
@@ -3186,7 +3219,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x69A5',
         type: ElementType.Binary,
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Info,
+            MatroskaElements.ChapterTranslate,
+            MatroskaElements.ChapterTranslateID
+        ]
     },
     [MatroskaElements.ChapterTranslateCodec]: {
         name: 'ChapterTranslateCodec',
@@ -3194,13 +3233,25 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x69BF',
         type: ElementType.Uinteger,
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Info,
+            MatroskaElements.ChapterTranslate,
+            MatroskaElements.ChapterTranslateCodec
+        ]
     },
     [MatroskaElements.ChapterTranslateEditionUID]: {
         name: 'ChapterTranslateEditionUID',
         path: '\\Segment\\Info\\ChapterTranslate\\ChapterTranslateEditionUID',
         id: '0x69FC',
-        type: ElementType.Uinteger
+        type: ElementType.Uinteger,
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Info,
+            MatroskaElements.ChapterTranslate,
+            MatroskaElements.ChapterTranslateEditionUID
+        ]
     },
     [MatroskaElements.TimestampScale]: {
         name: 'TimestampScale',
@@ -3210,7 +3261,8 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         range: 'not 0',
         default: '1000000',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Info, MatroskaElements.TimestampScale]
     },
     [MatroskaElements.Duration]: {
         name: 'Duration',
@@ -3218,21 +3270,24 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x4489',
         type: ElementType.Float,
         range: '> 0x0p+0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Info, MatroskaElements.Duration]
     },
     [MatroskaElements.DateUTC]: {
         name: 'DateUTC',
         path: '\\Segment\\Info\\DateUTC',
         id: '0x4461',
         type: ElementType.Date,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Info, MatroskaElements.DateUTC]
     },
     [MatroskaElements.Title]: {
         name: 'Title',
         path: '\\Segment\\Info\\Title',
         id: '0x7BA9',
         type: ElementType.UTF8,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Info, MatroskaElements.Title]
     },
     [MatroskaElements.MuxingApp]: {
         name: 'MuxingApp',
@@ -3240,7 +3295,8 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x4D80',
         type: ElementType.UTF8,
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Info, MatroskaElements.MuxingApp]
     },
     [MatroskaElements.WritingApp]: {
         name: 'WritingApp',
@@ -3248,14 +3304,16 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x5741',
         type: ElementType.UTF8,
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Info, MatroskaElements.WritingApp]
     },
     [MatroskaElements.Cluster]: {
         name: 'Cluster',
         path: '\\Segment\\Cluster',
         id: '0x1F43B675',
         type: ElementType.Master,
-        unknownsizeallowed: '1'
+        unknownsizeallowed: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Cluster]
     },
     [MatroskaElements.Timestamp]: {
         name: 'Timestamp',
@@ -3263,7 +3321,8 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0xE7',
         type: ElementType.Uinteger,
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Cluster, MatroskaElements.Timestamp]
     },
     [MatroskaElements.SilentTracks]: {
         name: 'SilentTracks',
@@ -3272,7 +3331,8 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Master,
         minver: '0',
         maxver: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Cluster, MatroskaElements.SilentTracks]
     },
     [MatroskaElements.SilentTrackNumber]: {
         name: 'SilentTrackNumber',
@@ -3280,7 +3340,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x58D7',
         type: ElementType.Uinteger,
         minver: '0',
-        maxver: '0'
+        maxver: '0',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cluster,
+            MatroskaElements.SilentTracks,
+            MatroskaElements.SilentTrackNumber
+        ]
     },
     [MatroskaElements.Position]: {
         name: 'Position',
@@ -3288,27 +3354,31 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0xA7',
         type: ElementType.Uinteger,
         maxver: '4',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Cluster, MatroskaElements.Position]
     },
     [MatroskaElements.PrevSize]: {
         name: 'PrevSize',
         path: '\\Segment\\Cluster\\PrevSize',
         id: '0xAB',
         type: ElementType.Uinteger,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Cluster, MatroskaElements.PrevSize]
     },
     [MatroskaElements.SimpleBlock]: {
         name: 'SimpleBlock',
         path: '\\Segment\\Cluster\\SimpleBlock',
         id: '0xA3',
         type: ElementType.Binary,
-        minver: '2'
+        minver: '2',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Cluster, MatroskaElements.SimpleBlock]
     },
     [MatroskaElements.BlockGroup]: {
         name: 'BlockGroup',
         path: '\\Segment\\Cluster\\BlockGroup',
         id: '0xA0',
-        type: ElementType.Master
+        type: ElementType.Master,
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Cluster, MatroskaElements.BlockGroup]
     },
     [MatroskaElements.Block]: {
         name: 'Block',
@@ -3316,7 +3386,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0xA1',
         type: ElementType.Binary,
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cluster,
+            MatroskaElements.BlockGroup,
+            MatroskaElements.Block
+        ]
     },
     [MatroskaElements.BlockVirtual]: {
         name: 'BlockVirtual',
@@ -3325,21 +3401,40 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Binary,
         minver: '0',
         maxver: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cluster,
+            MatroskaElements.BlockGroup,
+            MatroskaElements.BlockVirtual
+        ]
     },
     [MatroskaElements.BlockAdditions]: {
         name: 'BlockAdditions',
         path: '\\Segment\\Cluster\\BlockGroup\\BlockAdditions',
         id: '0x75A1',
         type: ElementType.Master,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cluster,
+            MatroskaElements.BlockGroup,
+            MatroskaElements.BlockAdditions
+        ]
     },
     [MatroskaElements.BlockMore]: {
         name: 'BlockMore',
         path: '\\Segment\\Cluster\\BlockGroup\\BlockAdditions\\BlockMore',
         id: '0xA6',
         type: ElementType.Master,
-        minOccurs: '1'
+        minOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cluster,
+            MatroskaElements.BlockGroup,
+            MatroskaElements.BlockAdditions,
+            MatroskaElements.BlockMore
+        ]
     },
     [MatroskaElements.BlockAdditional]: {
         name: 'BlockAdditional',
@@ -3347,7 +3442,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0xA5',
         type: ElementType.Binary,
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cluster,
+            MatroskaElements.BlockGroup,
+            MatroskaElements.BlockAdditions,
+            MatroskaElements.BlockMore,
+            MatroskaElements.BlockAdditional
+        ]
     },
     [MatroskaElements.BlockAddID]: {
         name: 'BlockAddID',
@@ -3357,14 +3460,28 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         range: 'not 0',
         default: '1',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cluster,
+            MatroskaElements.BlockGroup,
+            MatroskaElements.BlockAdditions,
+            MatroskaElements.BlockMore,
+            MatroskaElements.BlockAddID
+        ]
     },
     [MatroskaElements.BlockDuration]: {
         name: 'BlockDuration',
         path: '\\Segment\\Cluster\\BlockGroup\\BlockDuration',
         id: '0x9B',
         type: ElementType.Uinteger,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cluster,
+            MatroskaElements.BlockGroup,
+            MatroskaElements.BlockDuration
+        ]
     },
     [MatroskaElements.ReferencePriority]: {
         name: 'ReferencePriority',
@@ -3373,13 +3490,25 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cluster,
+            MatroskaElements.BlockGroup,
+            MatroskaElements.ReferencePriority
+        ]
     },
     [MatroskaElements.ReferenceBlock]: {
         name: 'ReferenceBlock',
         path: '\\Segment\\Cluster\\BlockGroup\\ReferenceBlock',
         id: '0xFB',
-        type: ElementType.Integer
+        type: ElementType.Integer,
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cluster,
+            MatroskaElements.BlockGroup,
+            MatroskaElements.ReferenceBlock
+        ]
     },
     [MatroskaElements.ReferenceVirtual]: {
         name: 'ReferenceVirtual',
@@ -3388,7 +3517,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Integer,
         minver: '0',
         maxver: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cluster,
+            MatroskaElements.BlockGroup,
+            MatroskaElements.ReferenceVirtual
+        ]
     },
     [MatroskaElements.CodecState]: {
         name: 'CodecState',
@@ -3396,7 +3531,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0xA4',
         type: ElementType.Binary,
         minver: '2',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cluster,
+            MatroskaElements.BlockGroup,
+            MatroskaElements.CodecState
+        ]
     },
     [MatroskaElements.DiscardPadding]: {
         name: 'DiscardPadding',
@@ -3404,7 +3545,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x75A2',
         type: ElementType.Integer,
         minver: '4',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cluster,
+            MatroskaElements.BlockGroup,
+            MatroskaElements.DiscardPadding
+        ]
     },
     [MatroskaElements.Slices]: {
         name: 'Slices',
@@ -3413,7 +3560,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Master,
         minver: '0',
         maxver: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cluster,
+            MatroskaElements.BlockGroup,
+            MatroskaElements.Slices
+        ]
     },
     [MatroskaElements.TimeSlice]: {
         name: 'TimeSlice',
@@ -3421,7 +3574,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0xE8',
         type: ElementType.Master,
         minver: '0',
-        maxver: '0'
+        maxver: '0',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cluster,
+            MatroskaElements.BlockGroup,
+            MatroskaElements.Slices,
+            MatroskaElements.TimeSlice
+        ]
     },
     [MatroskaElements.LaceNumber]: {
         name: 'LaceNumber',
@@ -3430,7 +3590,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cluster,
+            MatroskaElements.BlockGroup,
+            MatroskaElements.Slices,
+            MatroskaElements.TimeSlice,
+            MatroskaElements.LaceNumber
+        ]
     },
     [MatroskaElements.FrameNumber]: {
         name: 'FrameNumber',
@@ -3440,7 +3608,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '0',
         maxver: '0',
         default: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cluster,
+            MatroskaElements.BlockGroup,
+            MatroskaElements.Slices,
+            MatroskaElements.TimeSlice,
+            MatroskaElements.FrameNumber
+        ]
     },
     [MatroskaElements.BlockAdditionID]: {
         name: 'BlockAdditionID',
@@ -3450,7 +3626,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '0',
         maxver: '0',
         default: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cluster,
+            MatroskaElements.BlockGroup,
+            MatroskaElements.Slices,
+            MatroskaElements.TimeSlice,
+            MatroskaElements.BlockAdditionID
+        ]
     },
     [MatroskaElements.Delay]: {
         name: 'Delay',
@@ -3460,7 +3644,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '0',
         maxver: '0',
         default: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cluster,
+            MatroskaElements.BlockGroup,
+            MatroskaElements.Slices,
+            MatroskaElements.TimeSlice,
+            MatroskaElements.Delay
+        ]
     },
     [MatroskaElements.SliceDuration]: {
         name: 'SliceDuration',
@@ -3470,7 +3662,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '0',
         maxver: '0',
         default: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cluster,
+            MatroskaElements.BlockGroup,
+            MatroskaElements.Slices,
+            MatroskaElements.TimeSlice,
+            MatroskaElements.SliceDuration
+        ]
     },
     [MatroskaElements.ReferenceFrame]: {
         name: 'ReferenceFrame',
@@ -3479,7 +3679,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Master,
         minver: '0',
         maxver: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cluster,
+            MatroskaElements.BlockGroup,
+            MatroskaElements.ReferenceFrame
+        ]
     },
     [MatroskaElements.ReferenceOffset]: {
         name: 'ReferenceOffset',
@@ -3489,7 +3695,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '0',
         maxver: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cluster,
+            MatroskaElements.BlockGroup,
+            MatroskaElements.ReferenceFrame,
+            MatroskaElements.ReferenceOffset
+        ]
     },
     [MatroskaElements.ReferenceTimestamp]: {
         name: 'ReferenceTimestamp',
@@ -3499,7 +3712,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '0',
         maxver: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cluster,
+            MatroskaElements.BlockGroup,
+            MatroskaElements.ReferenceFrame,
+            MatroskaElements.ReferenceTimestamp
+        ]
     },
     [MatroskaElements.EncryptedBlock]: {
         name: 'EncryptedBlock',
@@ -3507,7 +3727,8 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0xAF',
         type: ElementType.Binary,
         minver: '0',
-        maxver: '0'
+        maxver: '0',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Cluster, MatroskaElements.EncryptedBlock]
     },
     [MatroskaElements.Tracks]: {
         name: 'Tracks',
@@ -3515,14 +3736,16 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x1654AE6B',
         type: ElementType.Master,
         maxOccurs: '1',
-        recurring: '1'
+        recurring: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Tracks]
     },
     [MatroskaElements.TrackEntry]: {
         name: 'TrackEntry',
         path: '\\Segment\\Tracks\\TrackEntry',
         id: '0xAE',
         type: ElementType.Master,
-        minOccurs: '1'
+        minOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Tracks, MatroskaElements.TrackEntry]
     },
     [MatroskaElements.TrackNumber]: {
         name: 'TrackNumber',
@@ -3531,7 +3754,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         range: 'not 0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.TrackNumber
+        ]
     },
     [MatroskaElements.TrackUID]: {
         name: 'TrackUID',
@@ -3540,7 +3769,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         range: 'not 0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.TrackUID
+        ]
     },
     [MatroskaElements.TrackType]: {
         name: 'TrackType',
@@ -3548,7 +3783,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x83',
         type: ElementType.Uinteger,
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.TrackType
+        ]
     },
     [MatroskaElements.FlagEnabled]: {
         name: 'FlagEnabled',
@@ -3559,7 +3800,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         range: '0-1',
         default: '1',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.FlagEnabled
+        ]
     },
     [MatroskaElements.FlagDefault]: {
         name: 'FlagDefault',
@@ -3569,7 +3816,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         range: '0-1',
         default: '1',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.FlagDefault
+        ]
     },
     [MatroskaElements.FlagForced]: {
         name: 'FlagForced',
@@ -3579,7 +3832,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         range: '0-1',
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.FlagForced
+        ]
     },
     [MatroskaElements.FlagHearingImpaired]: {
         name: 'FlagHearingImpaired',
@@ -3588,7 +3847,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         minver: '4',
         range: '0-1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.FlagHearingImpaired
+        ]
     },
     [MatroskaElements.FlagVisualImpaired]: {
         name: 'FlagVisualImpaired',
@@ -3597,7 +3862,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         minver: '4',
         range: '0-1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.FlagVisualImpaired
+        ]
     },
     [MatroskaElements.FlagTextDescriptions]: {
         name: 'FlagTextDescriptions',
@@ -3606,7 +3877,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         minver: '4',
         range: '0-1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.FlagTextDescriptions
+        ]
     },
     [MatroskaElements.FlagOriginal]: {
         name: 'FlagOriginal',
@@ -3615,7 +3892,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         minver: '4',
         range: '0-1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.FlagOriginal
+        ]
     },
     [MatroskaElements.FlagCommentary]: {
         name: 'FlagCommentary',
@@ -3624,7 +3907,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         minver: '4',
         range: '0-1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.FlagCommentary
+        ]
     },
     [MatroskaElements.FlagLacing]: {
         name: 'FlagLacing',
@@ -3634,7 +3923,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         range: '0-1',
         default: '1',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.FlagLacing
+        ]
     },
     [MatroskaElements.MinCache]: {
         name: 'MinCache',
@@ -3645,7 +3940,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         maxver: '0',
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.MinCache
+        ]
     },
     [MatroskaElements.MaxCache]: {
         name: 'MaxCache',
@@ -3654,7 +3955,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.MaxCache
+        ]
     },
     [MatroskaElements.DefaultDuration]: {
         name: 'DefaultDuration',
@@ -3662,7 +3969,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x23E383',
         type: ElementType.Uinteger,
         range: 'not 0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.DefaultDuration
+        ]
     },
     [MatroskaElements.DefaultDecodedFieldDuration]: {
         name: 'DefaultDecodedFieldDuration',
@@ -3671,7 +3984,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         minver: '4',
         range: 'not 0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.DefaultDecodedFieldDuration
+        ]
     },
     [MatroskaElements.TrackTimestampScale]: {
         name: 'TrackTimestampScale',
@@ -3682,7 +4001,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         range: '> 0x0p+0',
         default: '0x1p+0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.TrackTimestampScale
+        ]
     },
     [MatroskaElements.TrackOffset]: {
         name: 'TrackOffset',
@@ -3692,7 +4017,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '0',
         maxver: '0',
         default: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.TrackOffset
+        ]
     },
     [MatroskaElements.MaxBlockAdditionID]: {
         name: 'MaxBlockAdditionID',
@@ -3701,14 +4032,26 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.MaxBlockAdditionID
+        ]
     },
     [MatroskaElements.BlockAdditionMapping]: {
         name: 'BlockAdditionMapping',
         path: '\\Segment\\Tracks\\TrackEntry\\BlockAdditionMapping',
         id: '0x41E4',
         type: ElementType.Master,
-        minver: '4'
+        minver: '4',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.BlockAdditionMapping
+        ]
     },
     [MatroskaElements.BlockAddIDValue]: {
         name: 'BlockAddIDValue',
@@ -3717,7 +4060,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         minver: '4',
         range: '>=2',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.BlockAdditionMapping,
+            MatroskaElements.BlockAddIDValue
+        ]
     },
     [MatroskaElements.BlockAddIDName]: {
         name: 'BlockAddIDName',
@@ -3725,7 +4075,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x41A4',
         type: ElementType.String,
         minver: '4',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.BlockAdditionMapping,
+            MatroskaElements.BlockAddIDName
+        ]
     },
     [MatroskaElements.BlockAddIDType]: {
         name: 'BlockAddIDType',
@@ -3735,7 +4092,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '4',
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.BlockAdditionMapping,
+            MatroskaElements.BlockAddIDType
+        ]
     },
     [MatroskaElements.BlockAddIDExtraData]: {
         name: 'BlockAddIDExtraData',
@@ -3743,14 +4107,27 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x41ED',
         type: ElementType.Binary,
         minver: '4',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.BlockAdditionMapping,
+            MatroskaElements.BlockAddIDExtraData
+        ]
     },
     [MatroskaElements.Name]: {
         name: 'Name',
         path: '\\Segment\\Tracks\\TrackEntry\\Name',
         id: '0x536E',
         type: ElementType.UTF8,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Name
+        ]
     },
     [MatroskaElements.Language]: {
         name: 'Language',
@@ -3759,7 +4136,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.String,
         default: 'eng',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Language
+        ]
     },
     [MatroskaElements.LanguageBCP47]: {
         name: 'LanguageBCP47',
@@ -3767,7 +4150,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x22B59D',
         type: ElementType.String,
         minver: '4',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.LanguageBCP47
+        ]
     },
     [MatroskaElements.CodecID]: {
         name: 'CodecID',
@@ -3775,21 +4164,39 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x86',
         type: ElementType.String,
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.CodecID
+        ]
     },
     [MatroskaElements.CodecPrivate]: {
         name: 'CodecPrivate',
         path: '\\Segment\\Tracks\\TrackEntry\\CodecPrivate',
         id: '0x63A2',
         type: ElementType.Binary,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.CodecPrivate
+        ]
     },
     [MatroskaElements.CodecName]: {
         name: 'CodecName',
         path: '\\Segment\\Tracks\\TrackEntry\\CodecName',
         id: '0x258688',
         type: ElementType.UTF8,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.CodecName
+        ]
     },
     [MatroskaElements.AttachmentLink]: {
         name: 'AttachmentLink',
@@ -3798,7 +4205,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         maxver: '3',
         range: 'not 0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.AttachmentLink
+        ]
     },
     [MatroskaElements.CodecSettings]: {
         name: 'CodecSettings',
@@ -3807,7 +4220,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.UTF8,
         minver: '0',
         maxver: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.CodecSettings
+        ]
     },
     [MatroskaElements.CodecInfoURL]: {
         name: 'CodecInfoURL',
@@ -3815,7 +4234,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x3B4040',
         type: ElementType.String,
         minver: '0',
-        maxver: '0'
+        maxver: '0',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.CodecInfoURL
+        ]
     },
     [MatroskaElements.CodecDownloadURL]: {
         name: 'CodecDownloadURL',
@@ -3823,7 +4248,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x26B240',
         type: ElementType.String,
         minver: '0',
-        maxver: '0'
+        maxver: '0',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.CodecDownloadURL
+        ]
     },
     [MatroskaElements.CodecDecodeAll]: {
         name: 'CodecDecodeAll',
@@ -3834,14 +4265,26 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         range: '0-1',
         default: '1',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.CodecDecodeAll
+        ]
     },
     [MatroskaElements.TrackOverlay]: {
         name: 'TrackOverlay',
         path: '\\Segment\\Tracks\\TrackEntry\\TrackOverlay',
         id: '0x6FAB',
         type: ElementType.Uinteger,
-        maxver: '0'
+        maxver: '0',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.TrackOverlay
+        ]
     },
     [MatroskaElements.CodecDelay]: {
         name: 'CodecDelay',
@@ -3851,7 +4294,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '4',
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.CodecDelay
+        ]
     },
     [MatroskaElements.SeekPreRoll]: {
         name: 'SeekPreRoll',
@@ -3861,13 +4310,25 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '4',
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.SeekPreRoll
+        ]
     },
     [MatroskaElements.TrackTranslate]: {
         name: 'TrackTranslate',
         path: '\\Segment\\Tracks\\TrackEntry\\TrackTranslate',
         id: '0x6624',
-        type: ElementType.Master
+        type: ElementType.Master,
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.TrackTranslate
+        ]
     },
     [MatroskaElements.TrackTranslateTrackID]: {
         name: 'TrackTranslateTrackID',
@@ -3875,7 +4336,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x66A5',
         type: ElementType.Binary,
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.TrackTranslate,
+            MatroskaElements.TrackTranslateTrackID
+        ]
     },
     [MatroskaElements.TrackTranslateCodec]: {
         name: 'TrackTranslateCodec',
@@ -3883,20 +4351,40 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x66BF',
         type: ElementType.Uinteger,
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.TrackTranslate,
+            MatroskaElements.TrackTranslateCodec
+        ]
     },
     [MatroskaElements.TrackTranslateEditionUID]: {
         name: 'TrackTranslateEditionUID',
         path: '\\Segment\\Tracks\\TrackEntry\\TrackTranslate\\TrackTranslateEditionUID',
         id: '0x66FC',
-        type: ElementType.Uinteger
+        type: ElementType.Uinteger,
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.TrackTranslate,
+            MatroskaElements.TrackTranslateEditionUID
+        ]
     },
     [MatroskaElements.Video]: {
         name: 'Video',
         path: '\\Segment\\Tracks\\TrackEntry\\Video',
         id: '0xE0',
         type: ElementType.Master,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video
+        ]
     },
     [MatroskaElements.FlagInterlaced]: {
         name: 'FlagInterlaced',
@@ -3906,7 +4394,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '2',
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.FlagInterlaced
+        ]
     },
     [MatroskaElements.FieldOrder]: {
         name: 'FieldOrder',
@@ -3916,7 +4411,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '4',
         default: '2',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.FieldOrder
+        ]
     },
     [MatroskaElements.StereoMode]: {
         name: 'StereoMode',
@@ -3926,7 +4428,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '3',
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.StereoMode
+        ]
     },
     [MatroskaElements.AlphaMode]: {
         name: 'AlphaMode',
@@ -3936,7 +4445,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '3',
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.AlphaMode
+        ]
     },
     [MatroskaElements.OldStereoMode]: {
         name: 'OldStereoMode',
@@ -3944,7 +4460,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x53B9',
         type: ElementType.Uinteger,
         maxver: '2',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.OldStereoMode
+        ]
     },
     [MatroskaElements.PixelWidth]: {
         name: 'PixelWidth',
@@ -3953,7 +4476,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         range: 'not 0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.PixelWidth
+        ]
     },
     [MatroskaElements.PixelHeight]: {
         name: 'PixelHeight',
@@ -3962,7 +4492,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         range: 'not 0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.PixelHeight
+        ]
     },
     [MatroskaElements.PixelCropBottom]: {
         name: 'PixelCropBottom',
@@ -3971,7 +4508,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.PixelCropBottom
+        ]
     },
     [MatroskaElements.PixelCropTop]: {
         name: 'PixelCropTop',
@@ -3980,7 +4524,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.PixelCropTop
+        ]
     },
     [MatroskaElements.PixelCropLeft]: {
         name: 'PixelCropLeft',
@@ -3989,7 +4540,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.PixelCropLeft
+        ]
     },
     [MatroskaElements.PixelCropRight]: {
         name: 'PixelCropRight',
@@ -3998,7 +4556,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.PixelCropRight
+        ]
     },
     [MatroskaElements.DisplayWidth]: {
         name: 'DisplayWidth',
@@ -4006,7 +4571,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x54B0',
         type: ElementType.Uinteger,
         range: 'not 0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.DisplayWidth
+        ]
     },
     [MatroskaElements.DisplayHeight]: {
         name: 'DisplayHeight',
@@ -4014,7 +4586,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x54BA',
         type: ElementType.Uinteger,
         range: 'not 0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.DisplayHeight
+        ]
     },
     [MatroskaElements.DisplayUnit]: {
         name: 'DisplayUnit',
@@ -4023,7 +4602,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.DisplayUnit
+        ]
     },
     [MatroskaElements.AspectRatioType]: {
         name: 'AspectRatioType',
@@ -4033,7 +4619,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '0',
         maxver: '0',
         default: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.AspectRatioType
+        ]
     },
     [MatroskaElements.UncompressedFourCC]: {
         name: 'UncompressedFourCC',
@@ -4041,7 +4634,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x2EB524',
         type: ElementType.Binary,
         length: '4',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.UncompressedFourCC
+        ]
     },
     [MatroskaElements.GammaValue]: {
         name: 'GammaValue',
@@ -4051,7 +4651,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '0',
         maxver: '0',
         range: '> 0x0p+0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.GammaValue
+        ]
     },
     [MatroskaElements.FrameRate]: {
         name: 'FrameRate',
@@ -4061,7 +4668,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '0',
         maxver: '0',
         range: '> 0x0p+0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.FrameRate
+        ]
     },
     [MatroskaElements.Colour]: {
         name: 'Colour',
@@ -4069,7 +4683,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x55B0',
         type: ElementType.Master,
         minver: '4',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour
+        ]
     },
     [MatroskaElements.MatrixCoefficients]: {
         name: 'MatrixCoefficients',
@@ -4079,7 +4700,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '4',
         default: '2',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.MatrixCoefficients
+        ]
     },
     [MatroskaElements.BitsPerChannel]: {
         name: 'BitsPerChannel',
@@ -4089,7 +4718,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '4',
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.BitsPerChannel
+        ]
     },
     [MatroskaElements.ChromaSubsamplingHorz]: {
         name: 'ChromaSubsamplingHorz',
@@ -4097,7 +4734,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x55B3',
         type: ElementType.Uinteger,
         minver: '4',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.ChromaSubsamplingHorz
+        ]
     },
     [MatroskaElements.ChromaSubsamplingVert]: {
         name: 'ChromaSubsamplingVert',
@@ -4105,7 +4750,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x55B4',
         type: ElementType.Uinteger,
         minver: '4',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.ChromaSubsamplingVert
+        ]
     },
     [MatroskaElements.CbSubsamplingHorz]: {
         name: 'CbSubsamplingHorz',
@@ -4113,7 +4766,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x55B5',
         type: ElementType.Uinteger,
         minver: '4',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.CbSubsamplingHorz
+        ]
     },
     [MatroskaElements.CbSubsamplingVert]: {
         name: 'CbSubsamplingVert',
@@ -4121,7 +4782,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x55B6',
         type: ElementType.Uinteger,
         minver: '4',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.CbSubsamplingVert
+        ]
     },
     [MatroskaElements.ChromaSitingHorz]: {
         name: 'ChromaSitingHorz',
@@ -4131,7 +4800,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '4',
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.ChromaSitingHorz
+        ]
     },
     [MatroskaElements.ChromaSitingVert]: {
         name: 'ChromaSitingVert',
@@ -4141,7 +4818,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '4',
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.ChromaSitingVert
+        ]
     },
     [MatroskaElements.Range]: {
         name: 'Range',
@@ -4151,7 +4836,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '4',
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.Range
+        ]
     },
     [MatroskaElements.TransferCharacteristics]: {
         name: 'TransferCharacteristics',
@@ -4161,7 +4854,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '4',
         default: '2',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.TransferCharacteristics
+        ]
     },
     [MatroskaElements.Primaries]: {
         name: 'Primaries',
@@ -4171,7 +4872,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '4',
         default: '2',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.Primaries
+        ]
     },
     [MatroskaElements.MaxCLL]: {
         name: 'MaxCLL',
@@ -4179,7 +4888,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x55BC',
         type: ElementType.Uinteger,
         minver: '4',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.MaxCLL
+        ]
     },
     [MatroskaElements.MaxFALL]: {
         name: 'MaxFALL',
@@ -4187,7 +4904,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x55BD',
         type: ElementType.Uinteger,
         minver: '4',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.MaxFALL
+        ]
     },
     [MatroskaElements.MasteringMetadata]: {
         name: 'MasteringMetadata',
@@ -4195,7 +4920,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x55D0',
         type: ElementType.Master,
         minver: '4',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.MasteringMetadata
+        ]
     },
     [MatroskaElements.PrimaryRChromaticityX]: {
         name: 'PrimaryRChromaticityX',
@@ -4204,7 +4937,16 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Float,
         minver: '4',
         range: '0x0p+0-0x1p+0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.MasteringMetadata,
+            MatroskaElements.PrimaryRChromaticityX
+        ]
     },
     [MatroskaElements.PrimaryRChromaticityY]: {
         name: 'PrimaryRChromaticityY',
@@ -4213,7 +4955,16 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Float,
         minver: '4',
         range: '0x0p+0-0x1p+0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.MasteringMetadata,
+            MatroskaElements.PrimaryRChromaticityY
+        ]
     },
     [MatroskaElements.PrimaryGChromaticityX]: {
         name: 'PrimaryGChromaticityX',
@@ -4222,7 +4973,16 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Float,
         minver: '4',
         range: '0x0p+0-0x1p+0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.MasteringMetadata,
+            MatroskaElements.PrimaryGChromaticityX
+        ]
     },
     [MatroskaElements.PrimaryGChromaticityY]: {
         name: 'PrimaryGChromaticityY',
@@ -4231,7 +4991,16 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Float,
         minver: '4',
         range: '0x0p+0-0x1p+0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.MasteringMetadata,
+            MatroskaElements.PrimaryGChromaticityY
+        ]
     },
     [MatroskaElements.PrimaryBChromaticityX]: {
         name: 'PrimaryBChromaticityX',
@@ -4240,7 +5009,16 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Float,
         minver: '4',
         range: '0x0p+0-0x1p+0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.MasteringMetadata,
+            MatroskaElements.PrimaryBChromaticityX
+        ]
     },
     [MatroskaElements.PrimaryBChromaticityY]: {
         name: 'PrimaryBChromaticityY',
@@ -4249,7 +5027,16 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Float,
         minver: '4',
         range: '0x0p+0-0x1p+0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.MasteringMetadata,
+            MatroskaElements.PrimaryBChromaticityY
+        ]
     },
     [MatroskaElements.WhitePointChromaticityX]: {
         name: 'WhitePointChromaticityX',
@@ -4258,7 +5045,16 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Float,
         minver: '4',
         range: '0x0p+0-0x1p+0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.MasteringMetadata,
+            MatroskaElements.WhitePointChromaticityX
+        ]
     },
     [MatroskaElements.WhitePointChromaticityY]: {
         name: 'WhitePointChromaticityY',
@@ -4267,7 +5063,16 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Float,
         minver: '4',
         range: '0x0p+0-0x1p+0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.MasteringMetadata,
+            MatroskaElements.WhitePointChromaticityY
+        ]
     },
     [MatroskaElements.LuminanceMax]: {
         name: 'LuminanceMax',
@@ -4276,7 +5081,16 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Float,
         minver: '4',
         range: '>= 0x0p+0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.MasteringMetadata,
+            MatroskaElements.LuminanceMax
+        ]
     },
     [MatroskaElements.LuminanceMin]: {
         name: 'LuminanceMin',
@@ -4285,7 +5099,16 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Float,
         minver: '4',
         range: '>= 0x0p+0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Colour,
+            MatroskaElements.MasteringMetadata,
+            MatroskaElements.LuminanceMin
+        ]
     },
     [MatroskaElements.Projection]: {
         name: 'Projection',
@@ -4293,7 +5116,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x7670',
         type: ElementType.Master,
         minver: '4',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Projection
+        ]
     },
     [MatroskaElements.ProjectionType]: {
         name: 'ProjectionType',
@@ -4303,7 +5133,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '4',
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Projection,
+            MatroskaElements.ProjectionType
+        ]
     },
     [MatroskaElements.ProjectionPrivate]: {
         name: 'ProjectionPrivate',
@@ -4311,7 +5149,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x7672',
         type: ElementType.Binary,
         minver: '4',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Projection,
+            MatroskaElements.ProjectionPrivate
+        ]
     },
     [MatroskaElements.ProjectionPoseYaw]: {
         name: 'ProjectionPoseYaw',
@@ -4322,7 +5168,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '4',
         default: '0x0p+0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Projection,
+            MatroskaElements.ProjectionPoseYaw
+        ]
     },
     [MatroskaElements.ProjectionPosePitch]: {
         name: 'ProjectionPosePitch',
@@ -4333,7 +5187,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         range: '>= -0x5Ap+0, <= 0x5Ap+0',
         default: '0x0p+0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Projection,
+            MatroskaElements.ProjectionPosePitch
+        ]
     },
     [MatroskaElements.ProjectionPoseRoll]: {
         name: 'ProjectionPoseRoll',
@@ -4344,14 +5206,28 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         range: '>= -0xB4p+0, <= 0xB4p+0',
         default: '0x0p+0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Video,
+            MatroskaElements.Projection,
+            MatroskaElements.ProjectionPoseRoll
+        ]
     },
     [MatroskaElements.Audio]: {
         name: 'Audio',
         path: '\\Segment\\Tracks\\TrackEntry\\Audio',
         id: '0xE1',
         type: ElementType.Master,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Audio
+        ]
     },
     [MatroskaElements.SamplingFrequency]: {
         name: 'SamplingFrequency',
@@ -4361,7 +5237,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         range: '> 0x0p+0',
         default: '0x1.f4p+12',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Audio,
+            MatroskaElements.SamplingFrequency
+        ]
     },
     [MatroskaElements.OutputSamplingFrequency]: {
         name: 'OutputSamplingFrequency',
@@ -4369,7 +5252,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x78B5',
         type: ElementType.Float,
         range: '> 0x0p+0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Audio,
+            MatroskaElements.OutputSamplingFrequency
+        ]
     },
     [MatroskaElements.Channels]: {
         name: 'Channels',
@@ -4379,7 +5269,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         range: 'not 0',
         default: '1',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Audio,
+            MatroskaElements.Channels
+        ]
     },
     [MatroskaElements.ChannelPositions]: {
         name: 'ChannelPositions',
@@ -4388,7 +5285,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Binary,
         minver: '0',
         maxver: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Audio,
+            MatroskaElements.ChannelPositions
+        ]
     },
     [MatroskaElements.BitDepth]: {
         name: 'BitDepth',
@@ -4396,7 +5300,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x6264',
         type: ElementType.Uinteger,
         range: 'not 0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Audio,
+            MatroskaElements.BitDepth
+        ]
     },
     [MatroskaElements.Emphasis]: {
         name: 'Emphasis',
@@ -4406,7 +5317,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '5',
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.Audio,
+            MatroskaElements.Emphasis
+        ]
     },
     [MatroskaElements.TrackOperation]: {
         name: 'TrackOperation',
@@ -4414,7 +5332,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0xE2',
         type: ElementType.Master,
         minver: '3',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.TrackOperation
+        ]
     },
     [MatroskaElements.TrackCombinePlanes]: {
         name: 'TrackCombinePlanes',
@@ -4422,7 +5346,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0xE3',
         type: ElementType.Master,
         minver: '3',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.TrackOperation,
+            MatroskaElements.TrackCombinePlanes
+        ]
     },
     [MatroskaElements.TrackPlane]: {
         name: 'TrackPlane',
@@ -4430,7 +5361,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0xE4',
         type: ElementType.Master,
         minver: '3',
-        minOccurs: '1'
+        minOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.TrackOperation,
+            MatroskaElements.TrackCombinePlanes,
+            MatroskaElements.TrackPlane
+        ]
     },
     [MatroskaElements.TrackPlaneUID]: {
         name: 'TrackPlaneUID',
@@ -4440,7 +5379,16 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '3',
         range: 'not 0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.TrackOperation,
+            MatroskaElements.TrackCombinePlanes,
+            MatroskaElements.TrackPlane,
+            MatroskaElements.TrackPlaneUID
+        ]
     },
     [MatroskaElements.TrackPlaneType]: {
         name: 'TrackPlaneType',
@@ -4449,7 +5397,16 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         minver: '3',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.TrackOperation,
+            MatroskaElements.TrackCombinePlanes,
+            MatroskaElements.TrackPlane,
+            MatroskaElements.TrackPlaneType
+        ]
     },
     [MatroskaElements.TrackJoinBlocks]: {
         name: 'TrackJoinBlocks',
@@ -4457,7 +5414,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0xE9',
         type: ElementType.Master,
         minver: '3',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.TrackOperation,
+            MatroskaElements.TrackJoinBlocks
+        ]
     },
     [MatroskaElements.TrackJoinUID]: {
         name: 'TrackJoinUID',
@@ -4466,7 +5430,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         minver: '3',
         range: 'not 0',
-        minOccurs: '1'
+        minOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.TrackOperation,
+            MatroskaElements.TrackJoinBlocks,
+            MatroskaElements.TrackJoinUID
+        ]
     },
     [MatroskaElements.TrickTrackUID]: {
         name: 'TrickTrackUID',
@@ -4475,7 +5447,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.TrickTrackUID
+        ]
     },
     [MatroskaElements.TrickTrackSegmentUID]: {
         name: 'TrickTrackSegmentUID',
@@ -4485,7 +5463,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '0',
         maxver: '0',
         length: '16',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.TrickTrackSegmentUID
+        ]
     },
     [MatroskaElements.TrickTrackFlag]: {
         name: 'TrickTrackFlag',
@@ -4495,7 +5479,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '0',
         maxver: '0',
         default: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.TrickTrackFlag
+        ]
     },
     [MatroskaElements.TrickMasterTrackUID]: {
         name: 'TrickMasterTrackUID',
@@ -4504,7 +5494,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.TrickMasterTrackUID
+        ]
     },
     [MatroskaElements.TrickMasterTrackSegmentUID]: {
         name: 'TrickMasterTrackSegmentUID',
@@ -4514,21 +5510,40 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '0',
         maxver: '0',
         length: '16',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.TrickMasterTrackSegmentUID
+        ]
     },
     [MatroskaElements.ContentEncodings]: {
         name: 'ContentEncodings',
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings',
         id: '0x6D80',
         type: ElementType.Master,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.ContentEncodings
+        ]
     },
     [MatroskaElements.ContentEncoding]: {
         name: 'ContentEncoding',
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings\\ContentEncoding',
         id: '0x6240',
         type: ElementType.Master,
-        minOccurs: '1'
+        minOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.ContentEncodings,
+            MatroskaElements.ContentEncoding
+        ]
     },
     [MatroskaElements.ContentEncodingOrder]: {
         name: 'ContentEncodingOrder',
@@ -4537,7 +5552,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.ContentEncodings,
+            MatroskaElements.ContentEncoding,
+            MatroskaElements.ContentEncodingOrder
+        ]
     },
     [MatroskaElements.ContentEncodingScope]: {
         name: 'ContentEncodingScope',
@@ -4546,7 +5569,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         default: '1',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.ContentEncodings,
+            MatroskaElements.ContentEncoding,
+            MatroskaElements.ContentEncodingScope
+        ]
     },
     [MatroskaElements.ContentEncodingType]: {
         name: 'ContentEncodingType',
@@ -4555,14 +5586,30 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.ContentEncodings,
+            MatroskaElements.ContentEncoding,
+            MatroskaElements.ContentEncodingType
+        ]
     },
     [MatroskaElements.ContentCompression]: {
         name: 'ContentCompression',
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings\\ContentEncoding\\ContentCompression',
         id: '0x5034',
         type: ElementType.Master,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.ContentEncodings,
+            MatroskaElements.ContentEncoding,
+            MatroskaElements.ContentCompression
+        ]
     },
     [MatroskaElements.ContentCompAlgo]: {
         name: 'ContentCompAlgo',
@@ -4571,21 +5618,47 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.ContentEncodings,
+            MatroskaElements.ContentEncoding,
+            MatroskaElements.ContentCompression,
+            MatroskaElements.ContentCompAlgo
+        ]
     },
     [MatroskaElements.ContentCompSettings]: {
         name: 'ContentCompSettings',
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings\\ContentEncoding\\ContentCompression\\ContentCompSettings',
         id: '0x4255',
         type: ElementType.Binary,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.ContentEncodings,
+            MatroskaElements.ContentEncoding,
+            MatroskaElements.ContentCompression,
+            MatroskaElements.ContentCompSettings
+        ]
     },
     [MatroskaElements.ContentEncryption]: {
         name: 'ContentEncryption',
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings\\ContentEncoding\\ContentEncryption',
         id: '0x5035',
         type: ElementType.Master,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.ContentEncodings,
+            MatroskaElements.ContentEncoding,
+            MatroskaElements.ContentEncryption
+        ]
     },
     [MatroskaElements.ContentEncAlgo]: {
         name: 'ContentEncAlgo',
@@ -4594,14 +5667,32 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.ContentEncodings,
+            MatroskaElements.ContentEncoding,
+            MatroskaElements.ContentEncryption,
+            MatroskaElements.ContentEncAlgo
+        ]
     },
     [MatroskaElements.ContentEncKeyID]: {
         name: 'ContentEncKeyID',
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings\\ContentEncoding\\ContentEncryption\\ContentEncKeyID',
         id: '0x47E2',
         type: ElementType.Binary,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.ContentEncodings,
+            MatroskaElements.ContentEncoding,
+            MatroskaElements.ContentEncryption,
+            MatroskaElements.ContentEncKeyID
+        ]
     },
     [MatroskaElements.ContentEncAESSettings]: {
         name: 'ContentEncAESSettings',
@@ -4609,7 +5700,16 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x47E7',
         type: ElementType.Master,
         minver: '4',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.ContentEncodings,
+            MatroskaElements.ContentEncoding,
+            MatroskaElements.ContentEncryption,
+            MatroskaElements.ContentEncAESSettings
+        ]
     },
     [MatroskaElements.AESSettingsCipherMode]: {
         name: 'AESSettingsCipherMode',
@@ -4618,7 +5718,17 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         minver: '4',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.ContentEncodings,
+            MatroskaElements.ContentEncoding,
+            MatroskaElements.ContentEncryption,
+            MatroskaElements.ContentEncAESSettings,
+            MatroskaElements.AESSettingsCipherMode
+        ]
     },
     [MatroskaElements.ContentSignature]: {
         name: 'ContentSignature',
@@ -4626,7 +5736,16 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x47E3',
         type: ElementType.Binary,
         maxver: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.ContentEncodings,
+            MatroskaElements.ContentEncoding,
+            MatroskaElements.ContentEncryption,
+            MatroskaElements.ContentSignature
+        ]
     },
     [MatroskaElements.ContentSigKeyID]: {
         name: 'ContentSigKeyID',
@@ -4634,7 +5753,16 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x47E4',
         type: ElementType.Binary,
         maxver: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.ContentEncodings,
+            MatroskaElements.ContentEncoding,
+            MatroskaElements.ContentEncryption,
+            MatroskaElements.ContentSigKeyID
+        ]
     },
     [MatroskaElements.ContentSigAlgo]: {
         name: 'ContentSigAlgo',
@@ -4643,7 +5771,16 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         maxver: '0',
         default: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.ContentEncodings,
+            MatroskaElements.ContentEncoding,
+            MatroskaElements.ContentEncryption,
+            MatroskaElements.ContentSigAlgo
+        ]
     },
     [MatroskaElements.ContentSigHashAlgo]: {
         name: 'ContentSigHashAlgo',
@@ -4652,21 +5789,32 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         maxver: '0',
         default: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tracks,
+            MatroskaElements.TrackEntry,
+            MatroskaElements.ContentEncodings,
+            MatroskaElements.ContentEncoding,
+            MatroskaElements.ContentEncryption,
+            MatroskaElements.ContentSigHashAlgo
+        ]
     },
     [MatroskaElements.Cues]: {
         name: 'Cues',
         path: '\\Segment\\Cues',
         id: '0x1C53BB6B',
         type: ElementType.Master,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Cues]
     },
     [MatroskaElements.CuePoint]: {
         name: 'CuePoint',
         path: '\\Segment\\Cues\\CuePoint',
         id: '0xBB',
         type: ElementType.Master,
-        minOccurs: '1'
+        minOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Cues, MatroskaElements.CuePoint]
     },
     [MatroskaElements.CueTime]: {
         name: 'CueTime',
@@ -4674,14 +5822,26 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0xB3',
         type: ElementType.Uinteger,
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cues,
+            MatroskaElements.CuePoint,
+            MatroskaElements.CueTime
+        ]
     },
     [MatroskaElements.CueTrackPositions]: {
         name: 'CueTrackPositions',
         path: '\\Segment\\Cues\\CuePoint\\CueTrackPositions',
         id: '0xB7',
         type: ElementType.Master,
-        minOccurs: '1'
+        minOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cues,
+            MatroskaElements.CuePoint,
+            MatroskaElements.CueTrackPositions
+        ]
     },
     [MatroskaElements.CueTrack]: {
         name: 'CueTrack',
@@ -4690,7 +5850,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         range: 'not 0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cues,
+            MatroskaElements.CuePoint,
+            MatroskaElements.CueTrackPositions,
+            MatroskaElements.CueTrack
+        ]
     },
     [MatroskaElements.CueClusterPosition]: {
         name: 'CueClusterPosition',
@@ -4698,7 +5865,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0xF1',
         type: ElementType.Uinteger,
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cues,
+            MatroskaElements.CuePoint,
+            MatroskaElements.CueTrackPositions,
+            MatroskaElements.CueClusterPosition
+        ]
     },
     [MatroskaElements.CueRelativePosition]: {
         name: 'CueRelativePosition',
@@ -4706,7 +5880,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0xF0',
         type: ElementType.Uinteger,
         minver: '4',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cues,
+            MatroskaElements.CuePoint,
+            MatroskaElements.CueTrackPositions,
+            MatroskaElements.CueRelativePosition
+        ]
     },
     [MatroskaElements.CueDuration]: {
         name: 'CueDuration',
@@ -4714,7 +5895,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0xB2',
         type: ElementType.Uinteger,
         minver: '4',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cues,
+            MatroskaElements.CuePoint,
+            MatroskaElements.CueTrackPositions,
+            MatroskaElements.CueDuration
+        ]
     },
     [MatroskaElements.CueBlockNumber]: {
         name: 'CueBlockNumber',
@@ -4722,7 +5910,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x5378',
         type: ElementType.Uinteger,
         range: 'not 0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cues,
+            MatroskaElements.CuePoint,
+            MatroskaElements.CueTrackPositions,
+            MatroskaElements.CueBlockNumber
+        ]
     },
     [MatroskaElements.CueCodecState]: {
         name: 'CueCodecState',
@@ -4732,14 +5927,28 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '2',
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cues,
+            MatroskaElements.CuePoint,
+            MatroskaElements.CueTrackPositions,
+            MatroskaElements.CueCodecState
+        ]
     },
     [MatroskaElements.CueReference]: {
         name: 'CueReference',
         path: '\\Segment\\Cues\\CuePoint\\CueTrackPositions\\CueReference',
         id: '0xDB',
         type: ElementType.Master,
-        minver: '2'
+        minver: '2',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cues,
+            MatroskaElements.CuePoint,
+            MatroskaElements.CueTrackPositions,
+            MatroskaElements.CueReference
+        ]
     },
     [MatroskaElements.CueRefTime]: {
         name: 'CueRefTime',
@@ -4748,7 +5957,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         minver: '2',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cues,
+            MatroskaElements.CuePoint,
+            MatroskaElements.CueTrackPositions,
+            MatroskaElements.CueReference,
+            MatroskaElements.CueRefTime
+        ]
     },
     [MatroskaElements.CueRefCluster]: {
         name: 'CueRefCluster',
@@ -4758,7 +5975,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '0',
         maxver: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cues,
+            MatroskaElements.CuePoint,
+            MatroskaElements.CueTrackPositions,
+            MatroskaElements.CueReference,
+            MatroskaElements.CueRefCluster
+        ]
     },
     [MatroskaElements.CueRefNumber]: {
         name: 'CueRefNumber',
@@ -4769,7 +5994,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         maxver: '0',
         range: 'not 0',
         default: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cues,
+            MatroskaElements.CuePoint,
+            MatroskaElements.CueTrackPositions,
+            MatroskaElements.CueReference,
+            MatroskaElements.CueRefNumber
+        ]
     },
     [MatroskaElements.CueRefCodecState]: {
         name: 'CueRefCodecState',
@@ -4779,28 +6012,44 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         minver: '0',
         maxver: '0',
         default: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Cues,
+            MatroskaElements.CuePoint,
+            MatroskaElements.CueTrackPositions,
+            MatroskaElements.CueReference,
+            MatroskaElements.CueRefCodecState
+        ]
     },
     [MatroskaElements.Attachments]: {
         name: 'Attachments',
         path: '\\Segment\\Attachments',
         id: '0x1941A469',
         type: ElementType.Master,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Attachments]
     },
     [MatroskaElements.AttachedFile]: {
         name: 'AttachedFile',
         path: '\\Segment\\Attachments\\AttachedFile',
         id: '0x61A7',
         type: ElementType.Master,
-        minOccurs: '1'
+        minOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Attachments, MatroskaElements.AttachedFile]
     },
     [MatroskaElements.FileDescription]: {
         name: 'FileDescription',
         path: '\\Segment\\Attachments\\AttachedFile\\FileDescription',
         id: '0x467E',
         type: ElementType.UTF8,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Attachments,
+            MatroskaElements.AttachedFile,
+            MatroskaElements.FileDescription
+        ]
     },
     [MatroskaElements.FileName]: {
         name: 'FileName',
@@ -4808,7 +6057,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x466E',
         type: ElementType.UTF8,
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Attachments,
+            MatroskaElements.AttachedFile,
+            MatroskaElements.FileName
+        ]
     },
     [MatroskaElements.FileMediaType]: {
         name: 'FileMediaType',
@@ -4816,7 +6071,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x4660',
         type: ElementType.String,
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Attachments,
+            MatroskaElements.AttachedFile,
+            MatroskaElements.FileMediaType
+        ]
     },
     [MatroskaElements.FileData]: {
         name: 'FileData',
@@ -4824,7 +6085,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x465C',
         type: ElementType.Binary,
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Attachments,
+            MatroskaElements.AttachedFile,
+            MatroskaElements.FileData
+        ]
     },
     [MatroskaElements.FileUID]: {
         name: 'FileUID',
@@ -4833,7 +6100,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         range: 'not 0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Attachments,
+            MatroskaElements.AttachedFile,
+            MatroskaElements.FileUID
+        ]
     },
     [MatroskaElements.FileReferral]: {
         name: 'FileReferral',
@@ -4842,7 +6115,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Binary,
         minver: '0',
         maxver: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Attachments,
+            MatroskaElements.AttachedFile,
+            MatroskaElements.FileReferral
+        ]
     },
     [MatroskaElements.FileUsedStartTime]: {
         name: 'FileUsedStartTime',
@@ -4851,7 +6130,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Attachments,
+            MatroskaElements.AttachedFile,
+            MatroskaElements.FileUsedStartTime
+        ]
     },
     [MatroskaElements.FileUsedEndTime]: {
         name: 'FileUsedEndTime',
@@ -4860,7 +6145,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         minver: '0',
         maxver: '0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Attachments,
+            MatroskaElements.AttachedFile,
+            MatroskaElements.FileUsedEndTime
+        ]
     },
     [MatroskaElements.Chapters]: {
         name: 'Chapters',
@@ -4868,14 +6159,16 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x1043A770',
         type: ElementType.Master,
         maxOccurs: '1',
-        recurring: '1'
+        recurring: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Chapters]
     },
     [MatroskaElements.EditionEntry]: {
         name: 'EditionEntry',
         path: '\\Segment\\Chapters\\EditionEntry',
         id: '0x45B9',
         type: ElementType.Master,
-        minOccurs: '1'
+        minOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Chapters, MatroskaElements.EditionEntry]
     },
     [MatroskaElements.EditionUID]: {
         name: 'EditionUID',
@@ -4883,7 +6176,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x45BC',
         type: ElementType.Uinteger,
         range: 'not 0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.EditionUID
+        ]
     },
     [MatroskaElements.EditionFlagHidden]: {
         name: 'EditionFlagHidden',
@@ -4893,7 +6192,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         range: '0-1',
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.EditionFlagHidden
+        ]
     },
     [MatroskaElements.EditionFlagDefault]: {
         name: 'EditionFlagDefault',
@@ -4903,7 +6208,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         range: '0-1',
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.EditionFlagDefault
+        ]
     },
     [MatroskaElements.EditionFlagOrdered]: {
         name: 'EditionFlagOrdered',
@@ -4913,14 +6224,26 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         range: '0-1',
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.EditionFlagOrdered
+        ]
     },
     [MatroskaElements.EditionDisplay]: {
         name: 'EditionDisplay',
         path: '\\Segment\\Chapters\\EditionEntry\\EditionDisplay',
         id: '0x4520',
         type: ElementType.Master,
-        minver: '5'
+        minver: '5',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.EditionDisplay
+        ]
     },
     [MatroskaElements.EditionString]: {
         name: 'EditionString',
@@ -4929,14 +6252,28 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.UTF8,
         minver: '5',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.EditionDisplay,
+            MatroskaElements.EditionString
+        ]
     },
     [MatroskaElements.EditionLanguageIETF]: {
         name: 'EditionLanguageIETF',
         path: '\\Segment\\Chapters\\EditionEntry\\EditionDisplay\\EditionLanguageIETF',
         id: '0x45E4',
         type: ElementType.String,
-        minver: '5'
+        minver: '5',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.EditionDisplay,
+            MatroskaElements.EditionLanguageIETF
+        ]
     },
     [MatroskaElements.ChapterAtom]: {
         name: 'ChapterAtom',
@@ -4944,7 +6281,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0xB6',
         type: ElementType.Master,
         minOccurs: '1',
-        recursive: '1'
+        recursive: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom
+        ]
     },
     [MatroskaElements.ChapterUID]: {
         name: 'ChapterUID',
@@ -4953,7 +6296,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         range: 'not 0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom,
+            MatroskaElements.ChapterUID
+        ]
     },
     [MatroskaElements.ChapterStringUID]: {
         name: 'ChapterStringUID',
@@ -4961,7 +6311,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x5654',
         type: ElementType.UTF8,
         minver: '3',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom,
+            MatroskaElements.ChapterStringUID
+        ]
     },
     [MatroskaElements.ChapterTimeStart]: {
         name: 'ChapterTimeStart',
@@ -4969,14 +6326,28 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x91',
         type: ElementType.Uinteger,
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom,
+            MatroskaElements.ChapterTimeStart
+        ]
     },
     [MatroskaElements.ChapterTimeEnd]: {
         name: 'ChapterTimeEnd',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterTimeEnd',
         id: '0x92',
         type: ElementType.Uinteger,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom,
+            MatroskaElements.ChapterTimeEnd
+        ]
     },
     [MatroskaElements.ChapterFlagHidden]: {
         name: 'ChapterFlagHidden',
@@ -4986,7 +6357,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         range: '0-1',
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom,
+            MatroskaElements.ChapterFlagHidden
+        ]
     },
     [MatroskaElements.ChapterFlagEnabled]: {
         name: 'ChapterFlagEnabled',
@@ -4996,7 +6374,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         range: '0-1',
         default: '1',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom,
+            MatroskaElements.ChapterFlagEnabled
+        ]
     },
     [MatroskaElements.ChapterSegmentUUID]: {
         name: 'ChapterSegmentUUID',
@@ -5004,7 +6389,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x6E67',
         type: ElementType.Binary,
         length: '16',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom,
+            MatroskaElements.ChapterSegmentUUID
+        ]
     },
     [MatroskaElements.ChapterSkipType]: {
         name: 'ChapterSkipType',
@@ -5012,7 +6404,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x4588',
         type: ElementType.Uinteger,
         maxOccurs: '1',
-        minver: '5'
+        minver: '5',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom,
+            MatroskaElements.ChapterSkipType
+        ]
     },
     [MatroskaElements.ChapterSegmentEditionUID]: {
         name: 'ChapterSegmentEditionUID',
@@ -5020,21 +6419,42 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x6EBC',
         type: ElementType.Uinteger,
         range: 'not 0',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom,
+            MatroskaElements.ChapterSegmentEditionUID
+        ]
     },
     [MatroskaElements.ChapterPhysicalEquiv]: {
         name: 'ChapterPhysicalEquiv',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterPhysicalEquiv',
         id: '0x63C3',
         type: ElementType.Uinteger,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom,
+            MatroskaElements.ChapterPhysicalEquiv
+        ]
     },
     [MatroskaElements.ChapterTrack]: {
         name: 'ChapterTrack',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterTrack',
         id: '0x8F',
         type: ElementType.Master,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom,
+            MatroskaElements.ChapterTrack
+        ]
     },
     [MatroskaElements.ChapterTrackUID]: {
         name: 'ChapterTrackUID',
@@ -5042,13 +6462,28 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x89',
         type: ElementType.Uinteger,
         range: 'not 0',
-        minOccurs: '1'
+        minOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom,
+            MatroskaElements.ChapterTrack,
+            MatroskaElements.ChapterTrackUID
+        ]
     },
     [MatroskaElements.ChapterDisplay]: {
         name: 'ChapterDisplay',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterDisplay',
         id: '0x80',
-        type: ElementType.Master
+        type: ElementType.Master,
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom,
+            MatroskaElements.ChapterDisplay
+        ]
     },
     [MatroskaElements.ChapString]: {
         name: 'ChapString',
@@ -5056,7 +6491,15 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x85',
         type: ElementType.UTF8,
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom,
+            MatroskaElements.ChapterDisplay,
+            MatroskaElements.ChapString
+        ]
     },
     [MatroskaElements.ChapLanguage]: {
         name: 'ChapLanguage',
@@ -5064,26 +6507,57 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x437C',
         type: ElementType.String,
         default: 'eng',
-        minOccurs: '1'
+        minOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom,
+            MatroskaElements.ChapterDisplay,
+            MatroskaElements.ChapLanguage
+        ]
     },
     [MatroskaElements.ChapLanguageBCP47]: {
         name: 'ChapLanguageBCP47',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterDisplay\\ChapLanguageBCP47',
         id: '0x437D',
         type: ElementType.String,
-        minver: '4'
+        minver: '4',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom,
+            MatroskaElements.ChapterDisplay,
+            MatroskaElements.ChapLanguageBCP47
+        ]
     },
     [MatroskaElements.ChapCountry]: {
         name: 'ChapCountry',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterDisplay\\ChapCountry',
         id: '0x437E',
-        type: ElementType.String
+        type: ElementType.String,
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom,
+            MatroskaElements.ChapterDisplay,
+            MatroskaElements.ChapCountry
+        ]
     },
     [MatroskaElements.ChapProcess]: {
         name: 'ChapProcess',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapProcess',
         id: '0x6944',
-        type: ElementType.Master
+        type: ElementType.Master,
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom,
+            MatroskaElements.ChapProcess
+        ]
     },
     [MatroskaElements.ChapProcessCodecID]: {
         name: 'ChapProcessCodecID',
@@ -5092,20 +6566,44 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         default: '0',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom,
+            MatroskaElements.ChapProcess,
+            MatroskaElements.ChapProcessCodecID
+        ]
     },
     [MatroskaElements.ChapProcessPrivate]: {
         name: 'ChapProcessPrivate',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapProcess\\ChapProcessPrivate',
         id: '0x450D',
         type: ElementType.Binary,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom,
+            MatroskaElements.ChapProcess,
+            MatroskaElements.ChapProcessPrivate
+        ]
     },
     [MatroskaElements.ChapProcessCommand]: {
         name: 'ChapProcessCommand',
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapProcess\\ChapProcessCommand',
         id: '0x6911',
-        type: ElementType.Master
+        type: ElementType.Master,
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom,
+            MatroskaElements.ChapProcess,
+            MatroskaElements.ChapProcessCommand
+        ]
     },
     [MatroskaElements.ChapProcessTime]: {
         name: 'ChapProcessTime',
@@ -5113,7 +6611,16 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x6922',
         type: ElementType.Uinteger,
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom,
+            MatroskaElements.ChapProcess,
+            MatroskaElements.ChapProcessCommand,
+            MatroskaElements.ChapProcessTime
+        ]
     },
     [MatroskaElements.ChapProcessData]: {
         name: 'ChapProcessData',
@@ -5121,20 +6628,31 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x6933',
         type: ElementType.Binary,
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Chapters,
+            MatroskaElements.EditionEntry,
+            MatroskaElements.ChapterAtom,
+            MatroskaElements.ChapProcess,
+            MatroskaElements.ChapProcessCommand,
+            MatroskaElements.ChapProcessData
+        ]
     },
     [MatroskaElements.Tags]: {
         name: 'Tags',
         path: '\\Segment\\Tags',
         id: '0x1254C367',
-        type: ElementType.Master
+        type: ElementType.Master,
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Tags]
     },
     [MatroskaElements.Tag]: {
         name: 'Tag',
         path: '\\Segment\\Tags\\Tag',
         id: '0x7373',
         type: ElementType.Master,
-        minOccurs: '1'
+        minOccurs: '1',
+        pathArray: [MatroskaElements.Segment, MatroskaElements.Tags, MatroskaElements.Tag]
     },
     [MatroskaElements.Targets]: {
         name: 'Targets',
@@ -5142,7 +6660,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x63C0',
         type: ElementType.Master,
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tags,
+            MatroskaElements.Tag,
+            MatroskaElements.Targets
+        ]
     },
     [MatroskaElements.TargetTypeValue]: {
         name: 'TargetTypeValue',
@@ -5151,42 +6675,84 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.Uinteger,
         default: '50',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tags,
+            MatroskaElements.Tag,
+            MatroskaElements.Targets,
+            MatroskaElements.TargetTypeValue
+        ]
     },
     [MatroskaElements.TargetType]: {
         name: 'TargetType',
         path: '\\Segment\\Tags\\Tag\\Targets\\TargetType',
         id: '0x63CA',
         type: ElementType.String,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tags,
+            MatroskaElements.Tag,
+            MatroskaElements.Targets,
+            MatroskaElements.TargetType
+        ]
     },
     [MatroskaElements.TagTrackUID]: {
         name: 'TagTrackUID',
         path: '\\Segment\\Tags\\Tag\\Targets\\TagTrackUID',
         id: '0x63C5',
         type: ElementType.Uinteger,
-        default: '0'
+        default: '0',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tags,
+            MatroskaElements.Tag,
+            MatroskaElements.Targets,
+            MatroskaElements.TagTrackUID
+        ]
     },
     [MatroskaElements.TagEditionUID]: {
         name: 'TagEditionUID',
         path: '\\Segment\\Tags\\Tag\\Targets\\TagEditionUID',
         id: '0x63C9',
         type: ElementType.Uinteger,
-        default: '0'
+        default: '0',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tags,
+            MatroskaElements.Tag,
+            MatroskaElements.Targets,
+            MatroskaElements.TagEditionUID
+        ]
     },
     [MatroskaElements.TagChapterUID]: {
         name: 'TagChapterUID',
         path: '\\Segment\\Tags\\Tag\\Targets\\TagChapterUID',
         id: '0x63C4',
         type: ElementType.Uinteger,
-        default: '0'
+        default: '0',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tags,
+            MatroskaElements.Tag,
+            MatroskaElements.Targets,
+            MatroskaElements.TagChapterUID
+        ]
     },
     [MatroskaElements.TagAttachmentUID]: {
         name: 'TagAttachmentUID',
         path: '\\Segment\\Tags\\Tag\\Targets\\TagAttachmentUID',
         id: '0x63C6',
         type: ElementType.Uinteger,
-        default: '0'
+        default: '0',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tags,
+            MatroskaElements.Tag,
+            MatroskaElements.Targets,
+            MatroskaElements.TagAttachmentUID
+        ]
     },
     [MatroskaElements.SimpleTag]: {
         name: 'SimpleTag',
@@ -5194,7 +6760,13 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x67C8',
         type: ElementType.Master,
         minOccurs: '1',
-        recursive: '1'
+        recursive: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tags,
+            MatroskaElements.Tag,
+            MatroskaElements.SimpleTag
+        ]
     },
     [MatroskaElements.TagName]: {
         name: 'TagName',
@@ -5202,7 +6774,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x45A3',
         type: ElementType.UTF8,
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tags,
+            MatroskaElements.Tag,
+            MatroskaElements.SimpleTag,
+            MatroskaElements.TagName
+        ]
     },
     [MatroskaElements.TagLanguage]: {
         name: 'TagLanguage',
@@ -5211,7 +6790,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         type: ElementType.String,
         default: 'und',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tags,
+            MatroskaElements.Tag,
+            MatroskaElements.SimpleTag,
+            MatroskaElements.TagLanguage
+        ]
     },
     [MatroskaElements.TagLanguageBCP47]: {
         name: 'TagLanguageBCP47',
@@ -5219,7 +6805,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x447B',
         type: ElementType.String,
         minver: '4',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tags,
+            MatroskaElements.Tag,
+            MatroskaElements.SimpleTag,
+            MatroskaElements.TagLanguageBCP47
+        ]
     },
     [MatroskaElements.TagDefault]: {
         name: 'TagDefault',
@@ -5229,7 +6822,14 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         range: '0-1',
         default: '1',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tags,
+            MatroskaElements.Tag,
+            MatroskaElements.SimpleTag,
+            MatroskaElements.TagDefault
+        ]
     },
     [MatroskaElements.TagDefaultBogus]: {
         name: 'TagDefaultBogus',
@@ -5241,21 +6841,42 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         range: '0-1',
         default: '1',
         minOccurs: '1',
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tags,
+            MatroskaElements.Tag,
+            MatroskaElements.SimpleTag,
+            MatroskaElements.TagDefaultBogus
+        ]
     },
     [MatroskaElements.TagString]: {
         name: 'TagString',
         path: '\\Segment\\Tags\\Tag\\+SimpleTag\\TagString',
         id: '0x4487',
         type: ElementType.UTF8,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tags,
+            MatroskaElements.Tag,
+            MatroskaElements.SimpleTag,
+            MatroskaElements.TagString
+        ]
     },
     [MatroskaElements.TagBinary]: {
         name: 'TagBinary',
         path: '\\Segment\\Tags\\Tag\\+SimpleTag\\TagBinary',
         id: '0x4485',
         type: ElementType.Binary,
-        maxOccurs: '1'
+        maxOccurs: '1',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tags,
+            MatroskaElements.Tag,
+            MatroskaElements.SimpleTag,
+            MatroskaElements.TagBinary
+        ]
     }
 };
 
