@@ -25,7 +25,7 @@ export class WebmReader {
 
     readElements() {
         // eslint-disable-next-line no-constant-condition
-        whileLoop: while (true) {
+        loop: while (true) {
             let element: EbmlElementTag | undefined;
             try {
                 element = this.reader.readElementTag(this.reader.offset);
@@ -42,7 +42,7 @@ export class WebmReader {
                         this.reader.offset
             ) {
                 // Come back later when more data has been loaded
-                break whileLoop;
+                break loop;
             }
 
             if (element.elementId == MatroskaElements.Timestamp) {
@@ -73,7 +73,7 @@ export class WebmReader {
                             const data = this.reader.elementToJson(element);
                             if (!data) {
                                 // Not enough data, come back later
-                                break whileLoop;
+                                break loop;
                             }
 
                             // Extra behavior
@@ -128,4 +128,4 @@ export type ReaderEvents = {
 };
 
 export { Block, BlockFlags } from './Block';
-export { EbmlElements, ElementType, MatroskaElements, type Element } from './elements';
+export { EbmlElements, Elements, ElementType, MatroskaElements, type Element } from './elements';

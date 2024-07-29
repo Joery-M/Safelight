@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 export enum EbmlElements {
     EBMLHead = 0x1a45dfa3,
     EBMLVersion = 0x4286,
@@ -5262,9 +5263,21 @@ export type ElementEventMap = {
     [EbmlElements.EBMLHead]: (data: Elements.EBMLHead) => void;
     [EbmlElements.EBMLVersion]: (data: Elements.EBMLVersion) => void;
     [EbmlElements.EBMLReadVersion]: (data: Elements.EBMLReadVersion) => void;
+    [EbmlElements.EBMLMaxIDLength]: (data: Elements.EBMLMaxIDLength) => void;
+    [EbmlElements.EBMLMaxSizeLength]: (data: Elements.EBMLMaxSizeLength) => void;
     [EbmlElements.DocType]: (data: Elements.DocType) => void;
     [EbmlElements.DocTypeVersion]: (data: Elements.DocTypeVersion) => void;
     [EbmlElements.DocTypeReadVersion]: (data: Elements.DocTypeReadVersion) => void;
+    [EbmlElements.CRC32]: (data: Elements.CRC32) => void;
+    // [EbmlElements.void]: (data: Elements.Void) => void, Void elements are skipped entirely
+    [EbmlElements.SignatureSlot]: (data: Elements.SignatureSlot) => void;
+    [EbmlElements.SignatureAlgo]: (data: Elements.SignatureAlgo) => void;
+    [EbmlElements.SignatureHash]: (data: Elements.SignatureHash) => void;
+    [EbmlElements.SignaturePublicKey]: (data: Elements.SignaturePublicKey) => void;
+    [EbmlElements.Signature]: (data: Elements.Signature) => void;
+    [EbmlElements.SignatureElements]: (data: Elements.SignatureElements) => void;
+    [EbmlElements.SignatureElementList]: (data: Elements.SignatureElementList) => void;
+    [EbmlElements.SignedElement]: (data: Elements.SignedElement) => void;
     [MatroskaElements.EBMLMaxIDLength]: (data: Elements.EBMLMaxIDLength) => void;
     [MatroskaElements.EBMLMaxSizeLength]: (data: Elements.EBMLMaxSizeLength) => void;
     [MatroskaElements.Segment]: (data: Elements.Segment) => void;
@@ -5283,9 +5296,7 @@ export type ElementEventMap = {
     [MatroskaElements.ChapterTranslate]: (data: Elements.ChapterTranslate) => void;
     [MatroskaElements.ChapterTranslateID]: (data: Elements.ChapterTranslateID) => void;
     [MatroskaElements.ChapterTranslateCodec]: (data: Elements.ChapterTranslateCodec) => void;
-    [MatroskaElements.ChapterTranslateEditionUID]: (
-        data: Elements.ChapterTranslateEditionUID
-    ) => void;
+    [MatroskaElements.ChapterTranslateEditionUID]: (data: Elements.ChapterTranslateEditionUID) => void;
     [MatroskaElements.TimestampScale]: (data: Elements.TimestampScale) => void;
     [MatroskaElements.Duration]: (data: Elements.Duration) => void;
     [MatroskaElements.DateUTC]: (data: Elements.DateUTC) => void;
@@ -5340,9 +5351,7 @@ export type ElementEventMap = {
     [MatroskaElements.MinCache]: (data: Elements.MinCache) => void;
     [MatroskaElements.MaxCache]: (data: Elements.MaxCache) => void;
     [MatroskaElements.DefaultDuration]: (data: Elements.DefaultDuration) => void;
-    [MatroskaElements.DefaultDecodedFieldDuration]: (
-        data: Elements.DefaultDecodedFieldDuration
-    ) => void;
+    [MatroskaElements.DefaultDecodedFieldDuration]: (data: Elements.DefaultDecodedFieldDuration) => void;
     [MatroskaElements.TrackTimestampScale]: (data: Elements.TrackTimestampScale) => void;
     [MatroskaElements.TrackOffset]: (data: Elements.TrackOffset) => void;
     [MatroskaElements.MaxBlockAdditionID]: (data: Elements.MaxBlockAdditionID) => void;
@@ -5437,9 +5446,7 @@ export type ElementEventMap = {
     [MatroskaElements.TrickTrackSegmentUID]: (data: Elements.TrickTrackSegmentUID) => void;
     [MatroskaElements.TrickTrackFlag]: (data: Elements.TrickTrackFlag) => void;
     [MatroskaElements.TrickMasterTrackUID]: (data: Elements.TrickMasterTrackUID) => void;
-    [MatroskaElements.TrickMasterTrackSegmentUID]: (
-        data: Elements.TrickMasterTrackSegmentUID
-    ) => void;
+    [MatroskaElements.TrickMasterTrackSegmentUID]: (data: Elements.TrickMasterTrackSegmentUID) => void;
     [MatroskaElements.ContentEncodings]: (data: Elements.ContentEncodings) => void;
     [MatroskaElements.ContentEncoding]: (data: Elements.ContentEncoding) => void;
     [MatroskaElements.ContentEncodingOrder]: (data: Elements.ContentEncodingOrder) => void;

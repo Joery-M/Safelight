@@ -40,8 +40,8 @@ export class DataReader {
 
         if (!this.hasCheckedValidEbml && this.totalBuffer.byteLength >= 4) {
             // Read first 4 bytes to check if it is an EBML file
-            const EbmlHead = this.readElementTag();
-            if (EbmlHead?.elementId !== EbmlElements.EBMLHead) {
+            const EbmlHead = this.readElementId();
+            if (EbmlHead?.value !== EbmlElements.EBMLHead) {
                 throw new Error('Provided file is not an EBML-compatible file');
             }
             this.hasCheckedValidEbml = true;
@@ -275,6 +275,8 @@ export class DataReader {
                 } else {
                     elementJson[elemInfo.name] = result;
                 }
+            } else {
+                console.log('No elem info', elem);
             }
 
             offset += elem.totalLength;
@@ -285,62 +287,51 @@ export class DataReader {
 
     private readElement(elem: EbmlElementTag, offset = 0) {
         const elemInfo = ElementInfo[elem.elementId];
-        if (elemInfo) {
-            let result: any;
+        let result: any;
 
-            switch (elemInfo.type) {
-                case ElementType.Binary:
-                    result = this.buffer.buffer.slice(
-                        offset + elem.elementTagLength,
-                        offset + elem.totalLength
-                    );
-                    break;
-                case ElementType.Date:
-                    result = Reader.readDate(
-                        elem.contentLength!,
-                        elem.elementTagLength + offset,
-                        this.buffer
-                    );
-                    break;
-                case ElementType.Float:
-                    result =
-                        elem.contentLength == 4
-                            ? this.buffer.getFloat32(elem.elementTagLength + offset)
-                            : this.buffer.getFloat64(elem.elementTagLength + offset);
-                    break;
-                case ElementType.Integer:
-                    result = Reader.readElementInt(
-                        elem,
-                        elem.elementTagLength + offset,
-                        this.buffer
-                    );
-                    break;
-                case ElementType.Uinteger: {
-                    result = Reader.readElementUint(
-                        elem,
-                        offset + elem.elementTagLength,
-                        this.buffer
-                    );
-                    break;
-                }
-                case ElementType.UTF8:
-                case ElementType.String:
-                    result = Reader.readString(
-                        elem.elementTagLength + offset,
-                        elem.contentLength ?? 1,
-                        this.buffer
-                    );
-                    break;
-                case ElementType.Master:
-                    result = this.elementToJson(elem, offset);
-                    break;
-
-                default:
-                    break;
+        switch (elemInfo?.type) {
+            case ElementType.Date:
+                result = Reader.readDate(
+                    elem.contentLength!,
+                    elem.elementTagLength + offset,
+                    this.buffer
+                );
+                break;
+            case ElementType.Float:
+                result =
+                    elem.contentLength == 4
+                        ? this.buffer.getFloat32(elem.elementTagLength + offset)
+                        : this.buffer.getFloat64(elem.elementTagLength + offset);
+                break;
+            case ElementType.Integer:
+                result = Reader.readElementInt(elem, elem.elementTagLength + offset, this.buffer);
+                break;
+            case ElementType.Uinteger: {
+                result = Reader.readElementUint(elem, offset + elem.elementTagLength, this.buffer);
+                break;
             }
+            case ElementType.UTF8:
+            case ElementType.String:
+                result = Reader.readString(
+                    elem.elementTagLength + offset,
+                    elem.contentLength ?? 1,
+                    this.buffer
+                );
+                break;
+            case ElementType.Master:
+                result = this.elementToJson(elem, offset);
+                break;
 
-            return result;
+            case ElementType.Binary:
+            default:
+                result = this.buffer.buffer.slice(
+                    offset + elem.elementTagLength,
+                    offset + elem.totalLength
+                );
+                break;
         }
+
+        return result;
     }
 
     debugReadHex(start = this.offset, length = 16, buffer = this.buffer) {

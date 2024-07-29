@@ -36,7 +36,7 @@
         "build": "pnpm run \"/(clean|generate:elements)/\" && pnpm build:vite && pnpm build:tsc",
         "build:vite": "vite build",
         "build:tsc": "tsc --emitDeclarationOnly --project tsconfig.lib.json",
-        "generate:elements": "tsx ./tools/SchemaParser.ts https://raw.githubusercontent.com/ietf-wg-cellar/matroska-specification/master/ebml_matroska.xml && prettier ./src/elements.ts --write",
+        "generate:elements": "tsx ./tools/SchemaParser.ts https://raw.githubusercontent.com/ietf-wg-cellar/matroska-specification/master/ebml_matroska.xml && prettier ./src/elements.ts --write --print-width 110",
         "test": "vitest",
         "test:run": "vitest run --ui false"
     },

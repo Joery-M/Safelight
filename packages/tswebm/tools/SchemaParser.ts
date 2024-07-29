@@ -9,9 +9,10 @@ fetch(url)
     .then((data) => {
         const parser = new XMLParser({ ignoreAttributes: false });
         const EBML = parser.parse(data).EBMLSchema.element;
+        let result = `/* eslint-disable prettier/prettier */\n`;
 
         // Hex lookup
-        let result = GenerateElementHexLookup(EBML);
+        result += GenerateElementHexLookup(EBML);
 
         // Lookup of master elements
         // result += GenerateMasterElementLookup(EBML);
@@ -205,9 +206,21 @@ function GenerateEventMap(EBML: any) {
     [EbmlElements.EBMLHead]: (data: Elements.EBMLHead) => void,
     [EbmlElements.EBMLVersion]: (data: Elements.EBMLVersion) => void,
     [EbmlElements.EBMLReadVersion]: (data: Elements.EBMLReadVersion) => void,
+    [EbmlElements.EBMLMaxIDLength]: (data: Elements.EBMLMaxIDLength) => void,
+    [EbmlElements.EBMLMaxSizeLength]: (data: Elements.EBMLMaxSizeLength) => void,
     [EbmlElements.DocType]: (data: Elements.DocType) => void,
     [EbmlElements.DocTypeVersion]: (data: Elements.DocTypeVersion) => void,
-    [EbmlElements.DocTypeReadVersion]: (data: Elements.DocTypeReadVersion) => void,`;
+    [EbmlElements.DocTypeReadVersion]: (data: Elements.DocTypeReadVersion) => void,
+    [EbmlElements.CRC32]: (data: Elements.CRC32) => void,
+    // [EbmlElements.void]: (data: Elements.Void) => void, Void elements are skipped entirely
+    [EbmlElements.SignatureSlot]: (data: Elements.SignatureSlot) => void,
+    [EbmlElements.SignatureAlgo]: (data: Elements.SignatureAlgo) => void,
+    [EbmlElements.SignatureHash]: (data: Elements.SignatureHash) => void,
+    [EbmlElements.SignaturePublicKey]: (data: Elements.SignaturePublicKey) => void,
+    [EbmlElements.Signature]: (data: Elements.Signature) => void,
+    [EbmlElements.SignatureElements]: (data: Elements.SignatureElements) => void,
+    [EbmlElements.SignatureElementList]: (data: Elements.SignatureElementList) => void,
+    [EbmlElements.SignedElement]: (data: Elements.SignedElement) => void,`;
     for (const element of EBML) {
         result += `    [MatroskaElements.${element['@_name']}]: (data: Elements.${element['@_name']}) => void,\n`;
     }
@@ -381,23 +394,6 @@ function generateJsdocDocumentation(elem: any, extraLine?: string) {
     if (extraLine) {
         result += `     * ${extraLine}`;
     }
-
-    // Generate jsdoc
-    const elementType: { [key: string]: any } = {};
-    for (const key in elem) {
-        if (!key.startsWith('@_')) {
-            continue;
-        }
-
-        if (Object.prototype.hasOwnProperty.call(elem, key)) {
-            let value = elem[key];
-            if (key == '@_type') {
-                value = getEnumFromType(value);
-            }
-            elementType[key.replace('@_', '')] = value;
-        }
-    }
-
     if (elem.documentation) {
         if (Array.isArray(elem.documentation)) {
             elem.documentation.forEach((doc: any) => {
