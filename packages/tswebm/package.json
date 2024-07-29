@@ -1,6 +1,6 @@
 {
-    "name": "@safelight/jswebm",
-    "version": "0.0.1",
+    "name": "@safelight/tswebm",
+    "version": "1.0.0",
     "author": "Joery Münninghoff",
     "keywords": [
         "webm",
@@ -12,9 +12,9 @@
     },
     "contributors": [],
     "license": "MIT",
-    "main": "dist/jswebm.cjs",
-    "module": "dist/jswebm.js",
-    "types": "dist/JsWebm.d.ts",
+    "main": "dist/tswebm.cjs",
+    "module": "dist/tswebm.js",
+    "types": "dist/tswebm.d.ts",
     "exports": {
         "./*": {
             "default": "./dist/*.js",
@@ -23,16 +23,17 @@
             "types": "./dist/*.d.ts"
         },
         ".": {
-            "default": "./dist/jswebm.js",
-            "require": "./dist/jswebm.cjs",
-            "import": "./dist/jswebm.js",
-            "types": "./dist/JsWebm.d.ts"
+            "default": "./dist/tswebm.js",
+            "require": "./dist/tswebm.cjs",
+            "import": "./dist/tswebm.js",
+            "types": "./dist/tswebm.d.ts"
         }
     },
     "type": "module",
     "scripts": {
         "dev": "vite build --mode=development --watch",
-        "build": "rimraf ./dist/ ./tsconfig.lib.tsbuildinfo && pnpm build:vite && pnpm build:tsc",
+        "clean": "rimraf ./dist/ ./tsconfig.lib.tsbuildinfo",
+        "build": "pnpm run \"/(clean|generate:elements)/\" && pnpm build:vite && pnpm build:tsc",
         "build:vite": "vite build",
         "build:tsc": "tsc --emitDeclarationOnly --project tsconfig.lib.json",
         "generate:elements": "tsx ./tools/SchemaParser.ts https://raw.githubusercontent.com/ietf-wg-cellar/matroska-specification/master/ebml_matroska.xml && prettier ./src/elements.ts --write"

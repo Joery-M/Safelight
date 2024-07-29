@@ -3,6 +3,7 @@ import { minify } from 'terser';
 import { defineConfig, Plugin } from 'vite';
 import dts from 'vite-plugin-dts';
 
+// Plugin to minify es
 const plugin = (): Plugin => ({
     name: 'minify-bundle',
     async generateBundle(_, bundle) {
@@ -36,8 +37,8 @@ export default defineConfig((config) => {
         build: {
             lib: {
                 formats: config.mode == 'development' ? ['es'] : ['es', 'cjs'],
-                entry: resolve(import.meta.dirname, 'src/JsWebm.ts'),
-                name: 'jswebm'
+                entry: resolve(import.meta.dirname, 'src/tswebm.ts'),
+                name: 'tswebm'
             },
             sourcemap: config.mode == 'development',
             minify: false
