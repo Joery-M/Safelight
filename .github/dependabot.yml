@@ -17,6 +17,9 @@ updates:
           - "mediainfo.js"
           - "strip-ansi"
           - "uuid"
+          - "change-case"
+          - "fast-xml-parser"
+          - "tseep"
         update-types:
           - "major"
           - "minor"

@@ -142,6 +142,9 @@ importers:
       '@types/node':
         specifier: ^20.14.10
         version: 20.14.12
+      change-case:
+        specifier: ^5.4.4
+        version: 5.4.4
       fast-xml-parser:
         specifier: ^4.4.0
         version: 4.4.0
@@ -2690,6 +2693,10 @@ packages:
     dependencies:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
+    dev: true
+
+  /change-case@5.4.4:
+    resolution: {integrity: sha512-HRQyTk2/YPEkt9TnUPbOpr64Uw3KOicFWPVBb+xiHvd6eBx/qPr9xqfBFDT8P2vWsvvz4jbEkfDe71W3VyNu2w==}
     dev: true
 
   /check-error@2.1.1:
@@ -5438,7 +5445,7 @@ packages:
       kolorist: 1.8.0
       magic-string: 0.30.10
       typescript: 5.5.4
-      vite: 5.3.5(@types/node@20.14.12)
+      vite: 5.3.5(@types/node@20.14.12)(terser@5.31.3)
       vue-tsc: 1.8.27(typescript@5.5.4)
     transitivePeerDependencies:
       - '@types/node'

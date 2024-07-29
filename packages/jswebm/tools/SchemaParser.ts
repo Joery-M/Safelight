@@ -1,6 +1,6 @@
+import { pascalCase } from 'change-case';
 import { XMLParser } from 'fast-xml-parser';
 import fs from 'fs';
-import { join } from 'path';
 import { fileURLToPath } from 'url';
 const url = process.argv[2];
 
@@ -23,8 +23,11 @@ fetch(url)
         // Generate map for events
         result += GenerateEventMap(EBML);
 
-        const __dirname = fileURLToPath(new URL('.', import.meta.url));
-        fs.writeFileSync(join(__dirname, '../src/elements.ts'), result.replaceAll('\n', '\r\n'));
+        // Generate type tree
+        result += GenerateTypeTree(EBML);
+
+        const outPath = fileURLToPath(new URL('../src/elements.ts', import.meta.url));
+        fs.writeFileSync(outPath, result.replaceAll('\n', '\r\n'));
     });
 
 function getEnumFromType(type: string): string {
@@ -65,14 +68,19 @@ function GenerateElementHexLookup(EBML: any) {
 
     result += `export enum MatroskaElements {\n`;
     for (const element of EBML) {
-        result += `    ${element['@_name']} = ${element['@_id']},\n`;
+        const jsdoc = generateJsdocDocumentation(
+            element,
+            `@interface {@link Elements.${element['@_name']}}\n`
+        );
+        result += `${jsdoc}${element['@_name']} = ${element['@_id']},\n`;
     }
     result += `}\n\n`;
 
     return result;
 }
 
-function GenerateMasterElementLookup(EBML: any) {
+// Unused
+/* function GenerateMasterElementLookup(EBML: any) {
     let result = `export const MasterElements = [\n`;
     result += `    EbmlElements.EBMLHead,\n`;
     result += `    EbmlElements.SignatureSlot,\n`;
@@ -87,7 +95,7 @@ function GenerateMasterElementLookup(EBML: any) {
     result += `];\n`;
 
     return result;
-}
+} */
 
 function GenerateElementInfo(EBML: any) {
     let result = `
@@ -183,25 +191,6 @@ export const ElementInfo: {[key: number]: Element | undefined} = {
                 elementType[key.replace('@_', '')] = value;
             }
         }
-        result += `    /**\n`;
-        result += `     * @type MatroskaElements.${element['@_name']}\n`;
-
-        if (element.documentation) {
-            if (Array.isArray(element.documentation)) {
-                element.documentation.forEach((doc: any) => {
-                    result += `     * @${doc['@_purpose']}\n`;
-                    result += formatJsdocText(doc['#text']) + '\n';
-                    result += `     *\n`;
-                });
-            } else {
-                const doc = element.documentation;
-                result += `     * @${doc['@_purpose']}\n`;
-                result += formatJsdocText(doc['#text']) + '\n';
-                result += `     *\n`;
-            }
-        }
-
-        result += `     */\n`;
         result += `    [MatroskaElements.${element['@_name']}]: ${JSON.stringify(elementType)},\n`;
     }
     result += `};\n`;
@@ -210,19 +199,17 @@ export const ElementInfo: {[key: number]: Element | undefined} = {
     return result;
 }
 
-// function GenerateTypeTree(EBML: any) {}
-
 function GenerateEventMap(EBML: any) {
     let result = `\nexport type ElementEventMap = {
     ${/* Need to add types that dont exist in the matroska spec */ ''}
-    [EbmlElements.EBMLHead]: (data: any) => void,
-    [EbmlElements.EBMLVersion]: (data: any) => void,
-    [EbmlElements.EBMLReadVersion]: (data: any) => void,
-    [EbmlElements.DocType]: (data: any) => void,
-    [EbmlElements.DocTypeVersion]: (data: any) => void,
-    [EbmlElements.DocTypeReadVersion]: (data: any) => void,`;
+    [EbmlElements.EBMLHead]: (data: Elements.EBMLHead) => void,
+    [EbmlElements.EBMLVersion]: (data: Elements.EBMLVersion) => void,
+    [EbmlElements.EBMLReadVersion]: (data: Elements.EBMLReadVersion) => void,
+    [EbmlElements.DocType]: (data: Elements.DocType) => void,
+    [EbmlElements.DocTypeVersion]: (data: Elements.DocTypeVersion) => void,
+    [EbmlElements.DocTypeReadVersion]: (data: Elements.DocTypeReadVersion) => void,`;
     for (const element of EBML) {
-        result += `    [MatroskaElements.${element['@_name']}]: (data: any) => void,\n`;
+        result += `    [MatroskaElements.${element['@_name']}]: (data: Elements.${element['@_name']}) => void,\n`;
     }
 
     result += `};\n`;
@@ -235,4 +222,204 @@ function formatJsdocText(text: string) {
         .split('\n')
         .map((t) => '     * ' + t)
         .join('\n');
+}
+
+//#region Generate type tree
+function GenerateTypeTree(EBML: any) {
+    let result = `
+    // eslint-disable-next-line @typescript-eslint/no-namespace
+    export namespace Elements {
+        export interface EBMLHead {
+            EBMLVersion: EBMLVersion;
+            EBMLReadVersion: EBMLReadVersion;
+            EBMLMaxIDLength: EBMLMaxIDLength;
+            EBMLMaxSizeLength: EBMLMaxSizeLength;
+            DocType: DocType;
+            DocTypeVersion: DocTypeVersion;
+            DocTypeReadVersion: DocTypeReadVersion;
+        }
+
+        export type EBMLVersion = number;
+        export type EBMLReadVersion = number;
+        // export type EBMLMaxIDLength = number;
+        // export type EBMLMaxSizeLength = number;
+        export type DocType = string;
+        export type DocTypeVersion = number;
+        export type DocTypeReadVersion = number;
+        export type CRC32 = ArrayBuffer;
+        export interface SignatureSlot {
+            SignatureAlgo?: SignatureAlgo;
+            SignatureHash?: SignatureHash;
+            SignaturePublicKey?: SignaturePublicKey;
+            Signature?: Signature;
+        }
+        export enum SignatureAlgo {
+            RSA = 1,
+            elliptic = 2,
+        }
+        export enum SignatureHash {
+            SHA1_160 = 1,
+            MD5 = 2,
+        }
+        export type SignaturePublicKey = ArrayBuffer;
+        export type Signature = ArrayBuffer;
+        export interface SignatureElements {
+            SignatureElementList?: SignatureElementList
+        };
+        export interface SignatureElementList {
+            SignedElement?: SignedElement
+        };
+        export type SignedElement = ArrayBuffer;`;
+
+    for (const elem of EBML) {
+        result += generateElemInterface(EBML, elem);
+    }
+    return result + '}\n';
+}
+
+function getPathChildren(EBML: any, path: string) {
+    const results = [];
+
+    for (const elem of EBML) {
+        const elemPath = elem['@_path'];
+        if (
+            elemPath.startsWith(path) &&
+            !elemPath.replace(path, '').slice(1).includes('\\') &&
+            elemPath.replace(path, '').slice(1).length > 1
+        ) {
+            results.push(elem);
+        }
+    }
+
+    return results;
+}
+function generateElemInterface(EBML: any, elem: any) {
+    let result = '\n' + generateJsdocDocumentation(elem);
+
+    // Generate enum
+    if (elem.restriction) {
+        result += `export enum ${elem['@_name']} {\n`;
+
+        const values = Array.isArray(elem.restriction.enum)
+            ? elem.restriction.enum
+            : [elem.restriction.enum];
+
+        values.forEach((value: any) => {
+            result += generateJsdocDocumentation(value);
+            const label = pascalCase(value['@_label'].replace(/(\(|\))/g, ' ').trim());
+            const val = Number.isNaN(parseFloat(value['@_value']))
+                ? `'${value['@_value']}'`
+                : value['@_value'];
+
+            const quotes = /^[_A-Za-z][_0-9A-Za-z]*$/.test(label) ? '' : "'";
+            if (label.startsWith('TargetTypeValue_')) {
+                result += `${quotes}${value['@_value']}${quotes} = ${val},\n`;
+            } else {
+                result += `${quotes}${label}${quotes} = ${val},\n`;
+            }
+        });
+        result += '\n}\n';
+        return result;
+    }
+
+    // Non-master types
+    if (elem['@_type'] !== 'master') {
+        let type = 'unknown';
+        switch (elem['@_type']) {
+            case 'binary':
+                type = `ArrayBuffer`;
+                break;
+            case 'date':
+                type = `Date`;
+                break;
+            case 'float':
+                type = `number`;
+                break;
+            case 'integer':
+                type = `number`;
+                break;
+            case 'string':
+                type = `string`;
+                break;
+            case 'utf-8':
+                type = `string`;
+                break;
+            case 'uinteger':
+                type = `number`;
+                break;
+            default:
+                type = `unknown`;
+                break;
+        }
+        return result + `export type ${elem['@_name']} = ${type};\n`;
+    }
+
+    // Interface for master elements
+    result += `export interface ${elem['@_name']} {\n`;
+
+    const children = getPathChildren(EBML, elem['@_path']);
+    children.forEach((child) => {
+        let arrSuff = '';
+        let optional = '';
+        if (!child['@_minOccurs'] || child['@_minver'] || child['@_maxver']) {
+            optional = '?';
+        }
+        if (child['@_maxOccurs'] != '1') {
+            arrSuff = '[]';
+        }
+        result += `\n${child['@_name']}${optional}: ${child['@_name']}${arrSuff};`;
+    });
+
+    return result + '}\n';
+}
+
+//#endregion
+
+function generateJsdocDocumentation(elem: any, extraLine?: string) {
+    let result = `    /**\n`;
+
+    if (extraLine) {
+        result += `     * ${extraLine}`;
+    }
+
+    // Generate jsdoc
+    const elementType: { [key: string]: any } = {};
+    for (const key in elem) {
+        if (!key.startsWith('@_')) {
+            continue;
+        }
+
+        if (Object.prototype.hasOwnProperty.call(elem, key)) {
+            let value = elem[key];
+            if (key == '@_type') {
+                value = getEnumFromType(value);
+            }
+            elementType[key.replace('@_', '')] = value;
+        }
+    }
+
+    if (elem.documentation) {
+        if (Array.isArray(elem.documentation)) {
+            elem.documentation.forEach((doc: any) => {
+                result += `     * @${doc['@_purpose']}\n`;
+                result += formatJsdocText(doc['#text']) + '\n';
+                result += `     *\n`;
+            });
+        } else {
+            const doc = elem.documentation;
+            result += `     * @${doc['@_purpose']}\n`;
+            result += formatJsdocText(doc['#text']) + '\n';
+            result += `     *\n`;
+        }
+    }
+
+    const extraComments = ['default', 'range', 'minver', 'maxver', 'maxOccurs', 'minOccurs', 'id'];
+    extraComments.forEach((com) => {
+        if (elem['@_' + com]) {
+            result += `     * @${com} ${elem['@_' + com]}\n`;
+        }
+    });
+
+    result += `     */\n`;
+    return result;
 }

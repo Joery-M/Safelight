@@ -32,20 +32,21 @@
     "type": "module",
     "scripts": {
         "dev": "vite build --mode=development --watch",
-        "build": "rimraf ./dist/ && pnpm build:vite && pnpm build:tsc",
+        "build": "rimraf ./dist/ ./tsconfig.lib.tsbuildinfo && pnpm build:vite && pnpm build:tsc",
         "build:vite": "vite build",
         "build:tsc": "tsc --emitDeclarationOnly --project tsconfig.lib.json",
-        "generate:elements": "cd ./tools/ && tsx ./SchemaParser.ts https://raw.githubusercontent.com/ietf-wg-cellar/matroska-specification/master/ebml_matroska.xml && prettier ../src/elements.ts --write"
+        "generate:elements": "tsx ./tools/SchemaParser.ts https://raw.githubusercontent.com/ietf-wg-cellar/matroska-specification/master/ebml_matroska.xml && prettier ./src/elements.ts --write"
     },
     "devDependencies": {
         "@types/node": "^20.14.10",
+        "change-case": "^5.4.4",
         "fast-xml-parser": "^4.4.0",
         "rimraf": "^5.0.5",
         "terser": "^5.31.3",
+        "tseep": "^1.2.2",
         "tsx": "^4.16.0",
         "typescript": "^5.5.3",
         "vite": "^5.3.2",
-        "vite-plugin-dts": "^3.9.1",
-        "tseep": "^1.2.2"
+        "vite-plugin-dts": "^3.9.1"
     }
 }
