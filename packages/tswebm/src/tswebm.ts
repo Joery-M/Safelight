@@ -65,7 +65,11 @@ export class WebmReader {
                             )
                         });
                     } else {
-                        if (this.events.hasListeners(element.elementId)) {
+                        if (
+                            this.events.hasListeners(element.elementId) ||
+                            (element.elementId == MatroskaElements.SimpleBlock &&
+                                this.events.hasListeners('block'))
+                        ) {
                             const data = this.reader.elementToJson(element);
                             if (!data) {
                                 // Not enough data, come back later

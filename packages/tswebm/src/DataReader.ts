@@ -387,8 +387,18 @@ export interface EbmlElementTag {
 }
 
 export class Reader {
-    static readElementInt(element: EbmlElementTag, offset = 0, buffer: DataView) {
-        const size = element.contentLength;
+    static readElementInt(size: number, offset: number, buffer: DataView): number | bigint;
+    static readElementInt(
+        element: EbmlElementTag,
+        offset: number,
+        buffer: DataView
+    ): number | bigint;
+    static readElementInt(
+        element: EbmlElementTag | number,
+        offset = 0,
+        buffer: DataView
+    ): number | bigint {
+        const size = typeof element === 'number' ? element : element.contentLength;
 
         let value: number | bigint;
         switch (size) {
@@ -515,18 +525,11 @@ export class Reader {
     }
 
     static readDate(size: number, start: number = 0, buffer: DataView) {
-        switch (size) {
-            case 1:
-                return new Date(buffer.getUint8(start));
-            case 2:
-                return new Date(buffer.getUint16(start));
-            case 4:
-                return new Date(buffer.getUint32(start));
-            case 8:
-                return new Date(Number.parseInt(this.readHexString(0, size, buffer), 16));
-            default:
-                return new Date(0);
-        }
+        // Dates are normalized to start of millennium
+        // https://matroska-org.github.io/libebml/specs.html
+        const startMillennium = 978303600000;
+        const num = BigInt(this.readElementInt(size, start, buffer)) / 1_000_000n;
+        return new Date(startMillennium + Number(num));
     }
 
     static readVInt(offset = 0, bytes: DataView) {

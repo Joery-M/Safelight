@@ -1,7 +1,10 @@
 node_modules
 tools
 src
+tests
 types
 tsconfig.node.json
 vite.config.ts
+vitest.config.ts
 tsconfig.lib.tsbuildinfo
+matroska-test-files

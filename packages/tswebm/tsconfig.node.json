@@ -1,15 +1,15 @@
 {
-    "include": ["vite.config.ts", "./tools/**/*.ts"],
+    "include": ["vite.config.ts", "vitest.config.ts", "./tools/**/*.ts", "./tests/**/*.ts", "."],
     "compilerOptions": {
-        "lib": ["es2023"],
-        "module": "Node16",
-        "target": "es2022",
+        "lib": ["es2023", "ESNext"],
+        "module": "ESNext",
+        "target": "ESNext",
 
         "strict": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
         "composite": true,
-        "moduleResolution": "node16",
-        "types": ["@types/node"]
+        "moduleResolution": "Bundler",
+        "types": ["@types/node", "vite/client", "vitest/globals"]
     }
 }
