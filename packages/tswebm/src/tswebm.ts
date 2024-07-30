@@ -56,12 +56,15 @@ export class WebmReader {
                     // Void the void
                     break;
                 default:
+                    if (this.reader.totalOffset > 441450 && this.reader.totalOffset < 456450) {
+                        console.log(this.reader.totalOffset, element.elementId);
+                    }
                     if (!(element.elementId in ElementInfo)) {
                         this.events.emit('unknownElement', {
                             element,
                             data: this.reader.buffer.buffer.slice(
                                 this.reader.offset,
-                                element.totalLength
+                                this.reader.offset + element.totalLength
                             )
                         });
                     } else {

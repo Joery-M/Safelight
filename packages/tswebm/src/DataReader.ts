@@ -56,7 +56,6 @@ export class DataReader {
         this.totalOffset += size;
         // 1 MB
         if (this.toSlice > 1_000_000) {
-            // this.offset += Math.min(this.toSlice, this.totalBuffer.byteLength);
             this.totalBuffer = this.totalBuffer.slice(this.toSlice);
             this.offset -= this.toSlice;
             this.toSlice = 0;
@@ -91,7 +90,8 @@ export class DataReader {
             // Means buffer was too small
             return;
         } else if (size.size === null) {
-            console.log('No size');
+            // Unknown element size
+            return;
         }
 
         return {
@@ -157,7 +157,7 @@ export class DataReader {
         else if (byte >= 16) return 4;
 
         const length = this.decodeIntLength(byte);
-        console.error(new Error('Invalid length for ID: ' + length));
+        console.error(new Error('Invalid length for ID: ' + JSON.stringify(length)));
     }
     private readElementId(offset = 0, buffer = this.buffer) {
         const start = offset || 0;
@@ -238,7 +238,18 @@ export class DataReader {
             length: size
         };
     }
-    private readElementUnknownSize(start = 0, buffer = this.buffer) {
+
+    /**
+     * NOT IMPLEMENTED
+     */
+    private readElementOfUnknownSize(
+        tag: {
+            value: number;
+            length: number;
+        },
+        start = 0,
+        buffer = this.buffer
+    ) {
         // This is pretty shit...
         // Get sibling or parent-sibling elements to this one, if unknown element, throw
         // Walk the segment, until a sibling or parent-sibling is found
@@ -246,12 +257,89 @@ export class DataReader {
         // If end of buffer, return undefined
         let offset = start;
 
-        const siblings = [];
+        const curPath = ElementInfo[tag.value]?.pathArray;
+        if (!curPath) {
+            return;
+        }
 
-        for (const element in ElementInfo) {
-            if (Object.prototype.hasOwnProperty.call(object, key)) {
-                const element = object[key];
+        // Get all sibling of current element and its parents
+        //
+        // example: Reading EBML > DocType
+        // ├ EBML       ✔️
+        // │   ├ EBMLVersion        ✔️
+        // │   ├ EBMLMaxIDLength    ✔️
+        // │   ├ EBMLMaxSizeLength  ✔️
+        // │   ├ EBMLReadVersion    ✔️
+        // │   ├ DocType            ✔️
+        // │   ├ DocTypeVersion     ✔️
+        // │   └ DocTypeReadVersion ✔️
+        // └ Segment    ✔️
+        //     ├ Segment info       ❌
+        //     ├ Tracks             ❌
+        //     └ Cluster            ❌
+        const getSiblings = (id: number) => {
+            const elem = ElementInfo[id];
+            if (!elem) return [];
+
+            return (
+                Object.entries(ElementInfo)
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    .filter(([_, path]) => {
+                        if (!path) return false;
+
+                        if (path.pathArray.length == elem.pathArray.length) {
+                            // Count how many wrong branches, allow only 1
+                            let wrongBranches = 0;
+                            for (let i = 0; i < path.pathArray.length; i++) {
+                                if (path.pathArray[i] !== elem.pathArray[i]) {
+                                    wrongBranches++;
+                                    if (wrongBranches > 1) {
+                                        return false;
+                                    }
+                                }
+                            }
+                            return true;
+                        }
+                    })
+                    .map(([key]) => parseInt(key))
+            );
+        };
+
+        const siblings: number[] = curPath.flatMap((elem) => getSiblings(elem));
+
+        // const pool = workerpool.pool();
+
+        const walkBuffer = (buffer: ArrayBufferLike, siblings: number[], offset: number) => {
+            const data = new DataView(buffer);
+            const res = this.readElementId(offset, data);
+            if (!res) {
+                return false;
             }
+            const size = this.readElementSize(offset, data);
+            if (!size) {
+                return false;
+            }
+
+            return siblings.some((id) => res.value == id);
+        };
+
+        console.log(
+            siblings.map((id) => ({
+                name: ElementInfo[id]?.name,
+                size: id.toString(16).length / 2
+            }))
+        );
+        console.log('A');
+        let attempts = 0;
+        console.log(buffer.byteLength);
+        while (attempts <= buffer.byteLength + this.totalOffset) {
+            const res = walkBuffer(buffer.buffer, siblings, offset + tag.length);
+            if (res) {
+                console.log(res);
+                break;
+            }
+            attempts++;
+            offset++;
         }
 
         return offset - start;
@@ -281,6 +369,11 @@ export class DataReader {
         while (offset < element.totalLength + extraOffset) {
             const elem = this.readElementTag(offset, this.buffer);
             if (!elem) break;
+
+            if (elem.elementId == EbmlElements.CRC32 || elem.elementId == EbmlElements.void) {
+                offset += elem.totalLength;
+                continue;
+            }
 
             const elemInfo = ElementInfo[elem.elementId];
             if (elemInfo) {
