@@ -60,3 +60,6 @@ jobs:
 
             - name: Test timeline
               run: pnpm test:timeline
+
+            - name: Test tswebm
+              run: pnpm test:tswebm

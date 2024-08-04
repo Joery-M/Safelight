@@ -11,15 +11,15 @@ updates:
           - "@endo/static-module-record"
           - "@quantco/pnpm-licenses"
           - "@tsconfig/node20"
+          - "change-case"
           - "dot-path-value"
+          - "fast-xml-parser"
           - "fuzzysearch"
           - "luxon"
           - "mediainfo.js"
           - "strip-ansi"
-          - "uuid"
-          - "change-case"
-          - "fast-xml-parser"
           - "tseep"
+          - "uuid"
         update-types:
           - "major"
           - "minor"
@@ -39,11 +39,12 @@ updates:
           - "rollup-plugin-visualizer"
           - "sass"
           - "tailwindcss"
+          - "terser"
           - "tsx"
+          - "typescript"
           - "unplugin-turbo-console"
           - "vite-*"
           - "vite"
-          - "typescript"
       vitest:
         patterns:
           - "@vitest/*"
@@ -55,19 +56,19 @@ updates:
       vue:
         patterns:
           - "@vue/*"
+          - "@vueuse/*"
           - "unplugin-vue-router"
           - "vue-*"
           - "vue"
-          - "@vueuse/*"
       lint:
         patterns:
           - "@eslint*"
+          - "@intlify/eslint-plugin-vue-i18n"
           - "@typescript-eslint/*"
           - "eslint-*"
-          - "@intlify/eslint-plugin-vue-i18n"
           - "eslint"
-          - "typescript-eslint"
           - "prettier*"
+          - "typescript-eslint"
         update-types:
           - "patch"
           - "minor"

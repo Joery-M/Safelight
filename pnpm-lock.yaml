@@ -307,6 +307,9 @@ importers:
       '@safelight/safelight':
         specifier: workspace:^
         version: link:../safelight
+      '@safelight/tswebm':
+        specifier: workspace:^
+        version: link:../tswebm
       '@vueuse/core':
         specifier: ~10
         version: 10.11.0(vue@3.4.31)

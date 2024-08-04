@@ -11,6 +11,7 @@
         "test:run": "vitest run --ui false"
     },
     "dependencies": {
+        "@safelight/tswebm": "workspace:^",
         "dexie": "^4.0.8",
         "dot-path-value": "^0.0.10",
         "hash-wasm": "^4.11.0",
