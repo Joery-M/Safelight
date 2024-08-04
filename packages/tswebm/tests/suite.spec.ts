@@ -214,11 +214,43 @@ test.concurrent('test 7', async () => {
             }
         });
     });
-    demuxer.on(MatroskaElements.FlagInterlaced, () => {
-        console.log('Nope');
+
+    // Not entirely sure how to test broken elements
+    // Need to revisit, but the default data is parsed at least
+    // demuxer.on(MatroskaElements.FlagInterlaced, () => {
+    //     console.log('Nope');
+    // });
+    // demuxer.on('unknownElement', (elem) => {
+    //     console.log('Unknown', elem);
+    // });
+
+    const releaseDateFn = vi.fn((date: Date) => {
+        expect(date.getFullYear()).toBe(2010);
     });
-    demuxer.on('unknownElement', (elem) => {
-        console.log('Unknown');
+    demuxer.on(MatroskaElements.DateUTC, releaseDateFn);
+
+    demuxer.appendChunk(buffer);
+    expect(releaseDateFn).toHaveBeenCalledOnce();
+});
+
+test.concurrent('test 8', async () => {
+    const buffer = (
+        await readFile(path.join(__dirname, '..', `/matroska-test-files/test_files/test8.mkv`))
+    ).buffer;
+    const demuxer = new WebmReader();
+
+    const Tags: { Name: string; String: string }[] = new XMLParser().parse(
+        await readFile(path.join(__dirname, '..', `/matroska-test-files/test_files/test8-tag.xml`))
+    )?.Tags?.Tag?.Simple;
+
+    expectTypeOf(Tags).toBeArray();
+
+    demuxer.on(MatroskaElements.SimpleTag, (tag) => {
+        Tags.forEach((sourceTag) => {
+            if (sourceTag.Name == tag.TagName) {
+                expect(sourceTag.String.toString()).toBe(tag.TagString?.toString());
+            }
+        });
     });
 
     const releaseDateFn = vi.fn((date: Date) => {
@@ -226,8 +258,6 @@ test.concurrent('test 7', async () => {
     });
     demuxer.on(MatroskaElements.DateUTC, releaseDateFn);
 
-    demuxer.on('chunkDone', () => {
-        expect(releaseDateFn).toHaveBeenCalledOnce();
-    });
     demuxer.appendChunk(buffer);
+    expect(releaseDateFn).toHaveBeenCalledOnce();
 });

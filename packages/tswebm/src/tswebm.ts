@@ -56,12 +56,12 @@ export class WebmReader {
                     // Void the void
                     break;
                 default:
-                    if (this.reader.totalOffset > 441450 && this.reader.totalOffset < 456450) {
-                        console.log(this.reader.totalOffset, element.elementId);
-                    }
                     if (!(element.elementId in ElementInfo)) {
+                        // Exclude isMaster, since it isn't known for unknown elements
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        const { isMaster, ...elemWithoutMaster } = element;
                         this.events.emit('unknownElement', {
-                            element,
+                            element: elemWithoutMaster,
                             data: this.reader.buffer.buffer.slice(
                                 this.reader.offset,
                                 this.reader.offset + element.totalLength
@@ -122,10 +122,59 @@ export class WebmReader {
 // Currently nothing excluded
 type ExcludedElems = [];
 
+export type UnknownEbmlElement = {
+    element: {
+        /**
+         * The parsed element ID of this element
+         */
+        elementId: number;
+        /**
+         * Size of the tag of this element in bytes
+         *
+         * ```text
+         * [IIL]000000
+         *
+         * I = Element ID
+         * L = Element length
+         * 0 = Data
+         * [] = Range of this length
+         * ```
+         */
+        elementTagLength: number;
+        /**
+         * Length of this entire element, including content, in bytes
+         *
+         * ```text
+         * [IIL000000]
+         *
+         * I = Element ID
+         * L = Element length
+         * 0 = Data
+         * [] = Range of this length
+         * ```
+         */
+        totalLength: number;
+        /**
+         * Length of the content inside this element in bytes
+         *
+         * ```text
+         * IIL[000000]
+         *
+         * I = Element ID
+         * L = Element length
+         * 0 = Data
+         * [] = Range of this length
+         * ```
+         */
+        contentLength: number;
+    };
+    data: ArrayBuffer;
+};
+
 export type ReaderEvents = {
     block: (data: Block) => void;
     chunkDone: () => void;
-    unknownElement: (element: { element: EbmlElementTag; data: ArrayBuffer }) => void;
+    unknownElement: (element: UnknownEbmlElement) => void;
 } & {
     [elem in Exclude<keyof ElementEventMap, ExcludedElems[number]>]: ElementEventMap[elem];
 };
