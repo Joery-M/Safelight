@@ -33,8 +33,8 @@
     "@typescript-eslint/eslint-plugin": "^7.17.0",
     "@typescript-eslint/parser": "^7.17.0",
     "@vitejs/plugin-vue": "^5.1.0",
-    "@vitest/browser": "^2.0.4",
-    "@vitest/ui": "^2.0.4",
+    "@vitest/browser": "^2.0.5",
+    "@vitest/ui": "^2.0.5",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
@@ -44,7 +44,7 @@
     "prettier-plugin-tailwindcss": "^0.6.5",
     "typescript-eslint": "^7.17.0",
     "vite": "^5.3.5",
-    "vitest": "^2.0.4",
+    "vitest": "^2.0.5",
     "vue": "^3.4.34"
   },
   "packageManager": "pnpm@8.15.8+sha256.691fe176eea9a8a80df20e4976f3dfb44a04841ceb885638fe2a26174f81e65e"
