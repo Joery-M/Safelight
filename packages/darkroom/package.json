@@ -46,14 +46,14 @@
         "playwright": "^1.46.0",
         "rimraf": "^6.0.1",
         "typescript": "^5.5.4",
-        "vite": "^5.3.5",
-        "vite-plugin-dts": "^3.9.1",
+        "vite": "^5.4.0",
+        "vite-plugin-dts": "^4.0.1",
         "vitest": "^2.0.5"
     },
     "optionalDependencies": {
         "@codemirror/lang-javascript": "^6.2.2",
         "@types/node": "^20.14.12",
-        "@vitejs/plugin-vue": "^5.1.0",
+        "@vitejs/plugin-vue": "^5.1.2",
         "@vue/tsconfig": "^0.5.1",
         "@vueuse/core": "^10.11.0",
         "@vueuse/rxjs": "^10.11.0",
