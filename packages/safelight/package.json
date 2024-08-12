@@ -24,11 +24,11 @@
         "@quantco/pnpm-licenses": "^2.1.0",
         "@safelight/shared": "workspace:*",
         "@safelight/timeline": "workspace:*",
-        "@vueuse/core": "^10.11.0",
+        "@vueuse/core": "^10.11.1",
         "@vueuse/gesture": "^2.0.0",
-        "@vueuse/integrations": "^10.11.0",
-        "@vueuse/math": "^10.11.0",
-        "@vueuse/rxjs": "^10.11.0",
+        "@vueuse/integrations": "^10.11.1",
+        "@vueuse/math": "^10.11.1",
+        "@vueuse/rxjs": "^10.11.1",
         "dexie": "^4.0.8",
         "dot-path-value": "^0.0.10",
         "fuzzysearch": "^1.0.3",
@@ -40,10 +40,10 @@
         "primevue": "^4.0.1",
         "rxjs": "^7.8.1",
         "uuid": "^10.0.0",
-        "vue": "^3.4.34",
+        "vue": "^3.4.37",
         "vue-i18n": "10.0.0-beta.5",
         "vue-markdown-render": "^2.1.1",
-        "vue-router": "^4.4.0"
+        "vue-router": "^4.4.3"
     },
     "devDependencies": {
         "@babel/types": "^7.25.2",
@@ -67,7 +67,7 @@
         "tailwindcss": "^3.4.9",
         "tsx": "^4.17.0",
         "typescript": "^5.5.4",
-        "unplugin-vue-router": "^0.10.1",
+        "unplugin-vue-router": "^0.10.3",
         "vite": "^5.4.0",
         "vite-plugin-mkcert": "^1.17.5",
         "vue-tsc": "^2.0.29"
