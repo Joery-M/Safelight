@@ -441,6 +441,9 @@ importers:
       happy-dom:
         specifier: ^14.12.3
         version: 14.12.3
+      prettier:
+        specifier: ^3.3.3
+        version: 3.3.3
       rimraf:
         specifier: ^5.0.5
         version: 5.0.9
