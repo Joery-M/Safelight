@@ -18,8 +18,6 @@ Since Matroska, and by extension, webm, have their file schemas [publicly availa
   - [Example](#example)
     - [Basic reading](#basic-reading)
 - [Caveats/Known issues](#caveatsknown-issues)
-  - [Disabling eval warnings](#disabling-eval-warnings)
-    - [Vite:](#vite)
 
 ## Usage
 
@@ -78,29 +76,3 @@ reader.flush();
 
 1. There is no clear sign when reading has stalled due to corrupt or bad data.
 2. Blocks of unknown size are **not** currently supported.
-3. [tseep](https://github.com/Morglod/tseep) is used for the events, which uses [eval](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval). There is a chance you might get warnings about this.
-
-## Disabling eval warnings
-
-In most situation you can disable eval warnings:
-
-### Vite:
-
-Add this to your vite config:
-
-```ts
-export default defineConfig({
-    build: {
-        rollupOptions: {
-            onwarn: (warning, warn) => {
-                // Ignore eval warning from @safelight/tswebm
-                // Read more: https://github.com/Joery-M/Safelight/blob/main/packages/tswebm/README.md#disabling-eval-warnings
-                if (warning.code == 'EVAL' && warning.id.endsWith('tswebm.js')) {
-                    return;
-                }
-                warn(warning);
-            }
-        }
-    }
-});
-```

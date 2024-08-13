@@ -84,21 +84,161 @@ console.log(read_profile(dv, 2));
 //#endregion Reading VP9 profile
 
 //#region Read level
-// const vp9_levels = [
-//     { LEVEL_1,   829440,      36864,    512,   200,    400,    2, 1,  4,  8 },
-//   { LEVEL_1_1, 2764800,     73728,    768,   800,    1000,   2, 1,  4,  8 },
-//   { LEVEL_2,   4608000,     122880,   960,   1800,   1500,   2, 1,  4,  8 },
-//   { LEVEL_2_1, 9216000,     245760,   1344,  3600,   2800,   2, 2,  4,  8 },
-//   { LEVEL_3,   20736000,    552960,   2048,  7200,   6000,   2, 4,  4,  8 },
-//   { LEVEL_3_1, 36864000,    983040,   2752,  12000,  10000,  2, 4,  4,  8 },
-//   { LEVEL_4,   83558400,    2228224,  4160,  18000,  16000,  4, 4,  4,  8 },
-//   { LEVEL_4_1, 160432128,   2228224,  4160,  30000,  18000,  4, 4,  5,  6 },
-//   { LEVEL_5,   311951360,   8912896,  8384,  60000,  36000,  6, 8,  6,  4 },
-//   { LEVEL_5_1, 588251136,   8912896,  8384,  120000, 46000,  8, 8,  10, 4 },
-//   // TODO(huisu): update max_cpb_size for level 5_2 ~ 6_2 when
-//   // they are finalized (currently tentative).
-//   { LEVEL_5_2, 1176502272,  8912896,  8384,  180000, 90000,  8, 8,  10, 4 },
-//   { LEVEL_6,   1176502272,  35651584, 16832, 180000, 90000,  8, 16, 10, 4 },
-//   { LEVEL_6_1, 2353004544u, 35651584, 16832, 240000, 180000, 8, 16, 10, 4 },
-//   { LEVEL_6_2, 4706009088u, 35651584, 16832, 480000, 360000, 8, 16, 10, 4 },
-// ]
+const vp9_levels = {
+    LEVEL_1: {
+        maxLumaSampleRate: 829440,
+        maxLumaPicSize: 36864,
+        maxWidthAndHeight: 512,
+        maxBitrate: 200,
+        maxCPBsize: 400,
+        minCompressionRatio: 2,
+        maxTiles: 1,
+        minAltRefDist: 4,
+        maxRefFrames: 8
+    },
+    LEVEL_1_1: {
+        maxLumaSampleRate: 2764800,
+        maxLumaPicSize: 73728,
+        maxWidthAndHeight: 768,
+        maxBitrate: 800,
+        maxCPBsize: 1000,
+        minCompressionRatio: 2,
+        maxTiles: 1,
+        minAltRefDist: 4,
+        maxRefFrames: 8
+    },
+    LEVEL_2: {
+        maxLumaSampleRate: 4608000,
+        maxLumaPicSize: 122880,
+        maxWidthAndHeight: 960,
+        maxBitrate: 1800,
+        maxCPBsize: 1500,
+        minCompressionRatio: 2,
+        maxTiles: 1,
+        minAltRefDist: 4,
+        maxRefFrames: 8
+    },
+    LEVEL_2_1: {
+        maxLumaSampleRate: 9216000,
+        maxLumaPicSize: 245760,
+        maxWidthAndHeight: 1344,
+        maxBitrate: 3600,
+        maxCPBsize: 2800,
+        minCompressionRatio: 2,
+        maxTiles: 2,
+        minAltRefDist: 4,
+        maxRefFrames: 8
+    },
+    LEVEL_3: {
+        maxLumaSampleRate: 20736000,
+        maxLumaPicSize: 552960,
+        maxWidthAndHeight: 2048,
+        maxBitrate: 7200,
+        maxCPBsize: 6000,
+        minCompressionRatio: 2,
+        maxTiles: 4,
+        minAltRefDist: 4,
+        maxRefFrames: 8
+    },
+    LEVEL_3_1: {
+        maxLumaSampleRate: 36864000,
+        maxLumaPicSize: 983040,
+        maxWidthAndHeight: 2752,
+        maxBitrate: 12000,
+        maxCPBsize: 10000,
+        minCompressionRatio: 2,
+        maxTiles: 4,
+        minAltRefDist: 4,
+        maxRefFrames: 8
+    },
+    LEVEL_4: {
+        maxLumaSampleRate: 83558400,
+        maxLumaPicSize: 2228224,
+        maxWidthAndHeight: 4160,
+        maxBitrate: 18000,
+        maxCPBsize: 16000,
+        minCompressionRatio: 4,
+        maxTiles: 4,
+        minAltRefDist: 4,
+        maxRefFrames: 8
+    },
+    LEVEL_4_1: {
+        maxLumaSampleRate: 160432128,
+        maxLumaPicSize: 2228224,
+        maxWidthAndHeight: 4160,
+        maxBitrate: 30000,
+        maxCPBsize: 18000,
+        minCompressionRatio: 4,
+        maxTiles: 4,
+        minAltRefDist: 5,
+        maxRefFrames: 6
+    },
+    LEVEL_5: {
+        maxLumaSampleRate: 311951360,
+        maxLumaPicSize: 8912896,
+        maxWidthAndHeight: 8384,
+        maxBitrate: 60000,
+        maxCPBsize: 36000,
+        minCompressionRatio: 6,
+        maxTiles: 8,
+        minAltRefDist: 6,
+        maxRefFrames: 4
+    },
+    LEVEL_5_1: {
+        maxLumaSampleRate: 588251136,
+        maxLumaPicSize: 8912896,
+        maxWidthAndHeight: 8384,
+        maxBitrate: 120000,
+        maxCPBsize: 46000,
+        minCompressionRatio: 8,
+        maxTiles: 8,
+        minAltRefDist: 10,
+        maxRefFrames: 4
+    },
+    // TODO(huisu): update max_cpb_size for level 5_2 ~ 6_2 when
+    // they are finalized (currently tentative).
+    LEVEL_5_2: {
+        maxLumaSampleRate: 1176502272,
+        maxLumaPicSize: 8912896,
+        maxWidthAndHeight: 8384,
+        maxBitrate: 180000,
+        maxCPBsize: 90000,
+        minCompressionRatio: 8,
+        maxTiles: 8,
+        minAltRefDist: 10,
+        maxRefFrames: 4
+    },
+    LEVEL_6: {
+        maxLumaSampleRate: 1176502272,
+        maxLumaPicSize: 35651584,
+        maxWidthAndHeight: 16832,
+        maxBitrate: 180000,
+        maxCPBsize: 90000,
+        minCompressionRatio: 8,
+        maxTiles: 16,
+        minAltRefDist: 10,
+        maxRefFrames: 4
+    },
+    LEVEL_6_1: {
+        maxLumaSampleRate: 2353004544,
+        maxLumaPicSize: 35651584,
+        maxWidthAndHeight: 16832,
+        maxBitrate: 240000,
+        maxCPBsize: 180000,
+        minCompressionRatio: 8,
+        maxTiles: 16,
+        minAltRefDist: 10,
+        maxRefFrames: 4
+    },
+    LEVEL_6_2: {
+        maxLumaSampleRate: 4706009088,
+        maxLumaPicSize: 35651584,
+        maxWidthAndHeight: 16832,
+        maxBitrate: 480000,
+        maxCPBsize: 360000,
+        minCompressionRatio: 8,
+        maxTiles: 16,
+        minAltRefDist: 10,
+        maxRefFrames: 4
+    }
+};

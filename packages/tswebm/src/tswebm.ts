@@ -1,28 +1,35 @@
-import { EventEmitter } from 'tseep';
+import { EventEmitter } from 'eventemitter3';
 import { Block } from './Block';
 import { DataReader, EbmlElementTag, Reader } from './DataReader';
-import { EbmlElements, ElementEventMap, ElementInfo, MatroskaElements } from './elements';
+import { EbmlElements, type ElementEventMap, ElementInfo, MatroskaElements } from './elements';
 
 export class WebmReader {
     private reader = new DataReader();
     private events = new EventEmitter<ReaderEvents>();
 
-    on: EventEmitter<ReaderEvents>['on'] = (...args) => this.events.on(...args);
-    off: EventEmitter<ReaderEvents>['off'] = (...args) => this.events.off(...args);
-    once: EventEmitter<ReaderEvents>['once'] = (...args) => this.events.once(...args);
-    addListener: EventEmitter<ReaderEvents>['addListener'] = (...args) =>
-        this.events.addListener(...args);
-    removeListener: EventEmitter<ReaderEvents>['removeListener'] = (...args) =>
-        this.events.removeListener(...args);
+    public readonly on = this.events.on;
+    public readonly off = this.events.off;
+    public readonly once = this.events.once;
+    public readonly addListener = this.events.addListener;
+    public readonly removeListener = this.events.removeListener;
 
     appendChunk(buffer: ArrayBufferLike) {
         this.reader.appendBuffer(buffer);
-        this.readElements();
+        if (this.config.autoReadElements !== false) {
+            this.readElements();
+        }
         this.events.emit('chunkDone');
     }
 
     private lastTimestampOffset = 0;
 
+    constructor(private config: WebmReaderConfig = {}) {}
+
+    /**
+     * Called automatically when appending a chunk.
+     *
+     * Except when `config.autoReadElements` is `false`
+     */
     readElements() {
         // eslint-disable-next-line no-constant-condition
         loop: while (true) {
@@ -30,7 +37,10 @@ export class WebmReader {
             try {
                 element = this.reader.readElementTag(this.reader.offset);
             } catch (error) {
-                console.log(error);
+                console.log(
+                    'Error reading EBML element. Reader will get stuck on this element.',
+                    error
+                );
                 break;
             }
 
@@ -69,9 +79,9 @@ export class WebmReader {
                         });
                     } else {
                         if (
-                            this.events.hasListeners(element.elementId) ||
+                            this.events.listenerCount(element.elementId) > 0 ||
                             (element.elementId == MatroskaElements.SimpleBlock &&
-                                this.events.hasListeners('block'))
+                                this.events.listenerCount('block'))
                         ) {
                             const data = this.reader.elementToJson(element);
                             if (!data) {
@@ -82,7 +92,7 @@ export class WebmReader {
                             // Extra behavior
                             switch (element.elementId) {
                                 case MatroskaElements.SimpleBlock: {
-                                    if (this.events.hasListeners('block')) {
+                                    if (this.events.listenerCount('block') > 0) {
                                         const block = new Block(data, this.lastTimestampOffset);
 
                                         this.events.emit('block', block);
@@ -118,9 +128,6 @@ export class WebmReader {
         this.reader.flush();
     }
 }
-
-// Currently nothing excluded
-type ExcludedElems = [];
 
 export type UnknownEbmlElement = {
     element: {
@@ -171,6 +178,9 @@ export type UnknownEbmlElement = {
     data: ArrayBuffer;
 };
 
+// Currently nothing excluded
+type ExcludedElems = [];
+
 export type ReaderEvents = {
     block: (data: Block) => void;
     chunkDone: () => void;
@@ -178,6 +188,17 @@ export type ReaderEvents = {
 } & {
     [elem in Exclude<keyof ElementEventMap, ExcludedElems[number]>]: ElementEventMap[elem];
 };
+
+export interface WebmReaderConfig {
+    /**
+     * Automatically start reading elements after appending a chunk.
+     *
+     * Can be manually called with `WebmReader.readElements()`
+     *
+     * @default true
+     */
+    autoReadElements?: boolean;
+}
 
 export { Block, BlockFlags } from './Block';
 export { EbmlElements, Elements, ElementType, MatroskaElements, type Element } from './elements';

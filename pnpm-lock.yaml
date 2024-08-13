@@ -435,6 +435,9 @@ importers:
       change-case:
         specifier: ^5.4.4
         version: 5.4.4
+      eventemitter3:
+        specifier: ^5.0.1
+        version: 5.0.1
       fast-xml-parser:
         specifier: ^4.4.0
         version: 4.4.0
@@ -450,9 +453,6 @@ importers:
       terser:
         specifier: ^5.31.3
         version: 5.31.3
-      tseep:
-        specifier: ^1.2.2
-        version: 1.2.2
       tsx:
         specifier: ^4.16.0
         version: 4.16.2
@@ -467,7 +467,7 @@ importers:
         version: 3.9.1(@types/node@20.14.12)(typescript@5.5.4)(vite@5.3.5)
       vitest:
         specifier: ^2.0.4
-        version: 2.0.4(@types/node@20.14.12)(@vitest/browser@2.0.4)(@vitest/ui@2.0.4)(happy-dom@14.12.3)(terser@5.31.3)
+        version: 2.0.4(@types/node@20.14.12)(@vitest/ui@2.0.4)(happy-dom@14.12.3)(terser@5.31.3)
 
 packages:
 
@@ -2011,7 +2011,7 @@ packages:
       pathe: 1.1.2
       sirv: 2.0.4
       tinyrainbow: 1.2.0
-      vitest: 2.0.4(@types/node@20.14.12)(@vitest/browser@2.0.4)(@vitest/ui@2.0.4)(happy-dom@14.12.3)(terser@5.31.3)
+      vitest: 2.0.4(@types/node@20.14.12)(@vitest/ui@2.0.4)(happy-dom@14.12.3)(terser@5.31.3)
     dev: true
 
   /@vitest/utils@2.0.4:
@@ -3242,6 +3242,10 @@ packages:
   /esutils@2.0.3:
     resolution: {integrity: sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==}
     engines: {node: '>=0.10.0'}
+    dev: true
+
+  /eventemitter3@5.0.1:
+    resolution: {integrity: sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA==}
     dev: true
 
   /execa@8.0.1:
@@ -5227,10 +5231,6 @@ packages:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
     dev: true
 
-  /tseep@1.2.2:
-    resolution: {integrity: sha512-GgPFuNx+08UaYBYmJQmuI86ykYa2PUUtfXAYb4MLRHGunSCp8k9N+dbsR4PK1yk4/zV9q4e4PrNg8ymXqGYaYA==}
-    dev: true
-
   /tslib@2.6.3:
     resolution: {integrity: sha512-xNvxJEOUiWPGhUuUdQgAJPKOOJfGnIyKySOc09XkKsgdUV/3E2zvwZYdejjmRgPCgcym1juLH3226yA7sEFJKQ==}
 
@@ -5762,7 +5762,7 @@ packages:
       - terser
     dev: true
 
-  /vitest@2.0.4(@types/node@20.14.12)(@vitest/browser@2.0.4)(@vitest/ui@2.0.4)(happy-dom@14.12.3)(terser@5.31.3):
+  /vitest@2.0.4(@types/node@20.14.12)(@vitest/ui@2.0.4)(happy-dom@14.12.3)(terser@5.31.3):
     resolution: {integrity: sha512-luNLDpfsnxw5QSW4bISPe6tkxVvv5wn2BBs/PuDRkhXZ319doZyLOBr1sjfB5yCEpTiU7xCAdViM8TNVGPwoog==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -5789,7 +5789,6 @@ packages:
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@types/node': 20.14.12
-      '@vitest/browser': 2.0.4(typescript@5.5.4)(vitest@2.0.4)
       '@vitest/expect': 2.0.4
       '@vitest/pretty-format': 2.0.4
       '@vitest/runner': 2.0.4

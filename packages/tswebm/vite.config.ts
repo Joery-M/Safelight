@@ -41,14 +41,7 @@ export default defineConfig((config) => {
                 name: 'tswebm'
             },
             sourcemap: config.mode == 'development',
-            minify: false,
-            rollupOptions: {
-                onwarn: (warning, warn) => {
-                    console.log(warning);
-                    if (warning.code == 'EVAL') return;
-                    warn(warning);
-                }
-            }
+            minify: false
         }
     };
 });

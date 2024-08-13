@@ -209,7 +209,7 @@ export const ElementInfo: {[key: number]: Element | undefined} = {
             );
 
         let type = JSON.stringify(elementType);
-        type = type.replace(/(?<=\[[^\]]*)"(?=[^\[]*?\])/g, '');
+        type = type.replace(/(?<=\[[^\]]*)"(?=[^[]*?\])/g, '');
         result += `    [MatroskaElements.${element['@_name']}]: ${type},\n`;
     }
     result += `};\n`;

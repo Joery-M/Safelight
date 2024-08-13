@@ -13,12 +13,12 @@ updates:
           - "@tsconfig/node20"
           - "change-case"
           - "dot-path-value"
+          - "eventemitter3"
           - "fast-xml-parser"
           - "fuzzysearch"
           - "luxon"
           - "mediainfo.js"
           - "strip-ansi"
-          - "tseep"
           - "uuid"
         update-types:
           - "major"
