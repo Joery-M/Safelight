@@ -7,11 +7,16 @@ export class WebmReader {
     private reader = new DataReader();
     private events = new EventEmitter<ReaderEvents>();
 
-    public readonly on = this.events.on;
-    public readonly off = this.events.off;
-    public readonly once = this.events.once;
-    public readonly addListener = this.events.addListener;
-    public readonly removeListener = this.events.removeListener;
+    /* eslint-disable prettier/prettier */
+    public readonly on: EventEmitter<ReaderEvents>['on'] = (...args) => this.events.on(...args);
+    public readonly off: EventEmitter<ReaderEvents>['off'] = (...args) => this.events.off(...args);
+    // prettier-ignore
+    public readonly once: EventEmitter<ReaderEvents>['once'] = (...args) => this.events.once(...args);
+    // prettier-ignore
+    public readonly addListener: EventEmitter<ReaderEvents>['addListener'] = (...args) => this.events.addListener(...args);
+    // prettier-ignore
+    public readonly removeListener: EventEmitter<ReaderEvents>['removeListener'] = (...args) => this.events.removeListener(...args);
+    /* eslint-enable prettier/prettier */
 
     appendChunk(buffer: ArrayBufferLike) {
         this.reader.appendBuffer(buffer);
@@ -29,15 +34,17 @@ export class WebmReader {
      * Called automatically when appending a chunk.
      *
      * Except when `config.autoReadElements` is `false`
+     *
+     * @param [single=false] Only read 1 element
      */
-    readElements() {
+    readElements<ElementId extends keyof ElementEventMap = keyof ElementEventMap>(single = false) {
         // eslint-disable-next-line no-constant-condition
         loop: while (true) {
             let element: EbmlElementTag | undefined;
             try {
                 element = this.reader.readElementTag(this.reader.offset);
             } catch (error) {
-                console.log(
+                console.error(
                     'Error reading EBML element. Reader will get stuck on this element.',
                     error
                 );
@@ -52,6 +59,9 @@ export class WebmReader {
                         this.reader.offset
             ) {
                 // Come back later when more data has been loaded
+                if (single) {
+                    return 'Need more data';
+                }
                 break loop;
             }
 
@@ -60,6 +70,8 @@ export class WebmReader {
                     Reader.readElementUint(element, this.reader.offset, this.reader.buffer)
                 );
             }
+
+            let elementResult: Parameters<ElementEventMap[ElementId]>['0'] | undefined = undefined;
 
             switch (element.elementId) {
                 case EbmlElements.void:
@@ -83,9 +95,12 @@ export class WebmReader {
                             (element.elementId == MatroskaElements.SimpleBlock &&
                                 this.events.listenerCount('block'))
                         ) {
-                            const data = this.reader.elementToJson(element);
-                            if (!data) {
+                            elementResult = this.reader.elementToJson(element);
+                            if (!elementResult) {
                                 // Not enough data, come back later
+                                if (single) {
+                                    return 'Need more data';
+                                }
                                 break loop;
                             }
 
@@ -93,7 +108,10 @@ export class WebmReader {
                             switch (element.elementId) {
                                 case MatroskaElements.SimpleBlock: {
                                     if (this.events.listenerCount('block') > 0) {
-                                        const block = new Block(data, this.lastTimestampOffset);
+                                        const block = new Block(
+                                            elementResult as ArrayBuffer,
+                                            this.lastTimestampOffset
+                                        );
 
                                         this.events.emit('block', block);
                                     }
@@ -104,7 +122,10 @@ export class WebmReader {
                                     break;
                             }
 
-                            this.events.emit(element.elementId as keyof ElementEventMap, data);
+                            this.events.emit(
+                                element.elementId as keyof ElementEventMap,
+                                elementResult as any
+                            );
                         }
                     }
                     break;
@@ -119,6 +140,9 @@ export class WebmReader {
                 });
             } else {
                 this.reader.sliceBuffer(element.totalLength);
+            }
+            if (single) {
+                return elementResult;
             }
         }
     }
@@ -199,6 +223,3 @@ export interface WebmReaderConfig {
      */
     autoReadElements?: boolean;
 }
-
-export { Block, BlockFlags } from './Block';
-export { EbmlElements, Elements, ElementType, MatroskaElements, type Element } from './elements';

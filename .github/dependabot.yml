@@ -29,6 +29,7 @@ updates:
           - "@types/*"
       build-tools:
         patterns:
+          - "@rollup/plugin-terser"
           - "@vitejs/plugin-vue"
           - "@vue/*"
           - "autoprefixer"
@@ -39,7 +40,6 @@ updates:
           - "rollup-plugin-visualizer"
           - "sass"
           - "tailwindcss"
-          - "terser"
           - "tsx"
           - "typescript"
           - "unplugin-turbo-console"

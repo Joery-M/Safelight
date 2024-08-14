@@ -1,4 +1,4 @@
-import { EbmlElements, ElementInfo, ElementType } from './elements';
+import { EbmlElements, ElementEventMap, ElementInfo, ElementType } from './elements';
 
 export class DataReader {
     private _totalBuffer = new ArrayBuffer(0);
@@ -350,7 +350,10 @@ export class DataReader {
     /**
      * Convert an element to a JSON representation
      */
-    elementToJson(element: EbmlElementTag, extraOffset = this.offset) {
+    elementToJson<ElementId extends keyof ElementEventMap = keyof ElementEventMap>(
+        element: EbmlElementTag,
+        extraOffset = this.offset
+    ): Parameters<ElementEventMap[ElementId]>['0'] | undefined {
         if (!element) {
             return;
         }

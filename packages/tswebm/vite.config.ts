@@ -1,47 +1,40 @@
+import terser from '@rollup/plugin-terser';
 import { resolve } from 'path';
-import { minify } from 'terser';
-import { defineConfig, Plugin } from 'vite';
+import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
-
-// Plugin to minify es
-const plugin = (): Plugin => ({
-    name: 'minify-bundle',
-    async generateBundle(_, bundle) {
-        for (const asset of Object.values(bundle)) {
-            if (asset.type == 'chunk') {
-                asset.code =
-                    (
-                        await minify(asset.code, {
-                            compress: false,
-                            module: asset.fileName.endsWith('.js'),
-                            mangle: false,
-                            format: { preserve_annotations: true }
-                        })
-                    ).code ?? asset.code;
-            }
-        }
-    }
-});
 
 export default defineConfig((config) => {
     return {
-        // only use the dts plugin in dev mode,
-        // since pnpm doesn't wait for it to finish when
-        // running 'build' in workspace root.
+        // only use the dts plugin in dev mode, since pnpm doesn't wait for it to finish when building.
         // Use tsc instead.
         plugins: [
             config.mode == 'development'
                 ? dts({ tsconfigPath: resolve(import.meta.dirname, './tsconfig.lib.json') })
-                : plugin()
+                : terser({
+                      compress: true,
+                      mangle: true,
+                      format: {
+                          preserve_annotations: true
+                      }
+                  })
         ],
         build: {
             lib: {
                 formats: config.mode == 'development' ? ['es'] : ['es', 'cjs'],
-                entry: resolve(import.meta.dirname, 'src/tswebm.ts'),
-                name: 'tswebm'
+                entry: resolve(import.meta.dirname, 'src/index.ts'),
+                fileName(format, entryName) {
+                    return entryName + (format == 'es' ? '.js' : '.cjs');
+                }
             },
-            sourcemap: config.mode == 'development',
-            minify: false
+            sourcemap: config.mode == 'development' ? true : 'hidden',
+            minify: false,
+            rollupOptions: {
+                output: {
+                    manualChunks: (id) => {
+                        if (id.endsWith('elements.ts')) return 'elements';
+                    }
+                }
+            }
         }
     };
 });

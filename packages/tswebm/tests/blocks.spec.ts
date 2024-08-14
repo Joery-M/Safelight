@@ -1,7 +1,7 @@
 import { readFile } from 'fs/promises';
 import path from 'path';
 import { test } from 'vitest';
-import { Block, WebmReader } from '../src/tswebm';
+import { Block, WebmReader } from '../src';
 
 test('Block count', async () => {
     const buffer = (
