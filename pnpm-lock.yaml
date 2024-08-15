@@ -199,8 +199,8 @@ importers:
         specifier: ^0.50.0
         version: 0.50.0
       pinia:
-        specifier: ^2.1.7
-        version: 2.1.7(typescript@5.5.4)(vue@3.4.37)
+        specifier: ^2.2.1
+        version: 2.2.1(typescript@5.5.4)(vue@3.4.37)
       primevue:
         specifier: ^4.0.1
         version: 4.0.1(vue@3.4.37)
@@ -2570,7 +2570,7 @@ packages:
     resolution: {integrity: sha512-LHpC8711VFZlDaYUXEBbFBCQ7GS3dVU9mjOhhMhXP6txTV4EhYQg/KGnQuvt/sPAtoUKq7VVUnL6mVtFoL42sA==}
     requiresBuild: true
     dependencies:
-      vue-demi: 0.14.8(vue@3.4.37)
+      vue-demi: 0.14.10(vue@3.4.37)
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
@@ -4695,8 +4695,8 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /pinia@2.1.7(typescript@5.5.4)(vue@3.4.37):
-    resolution: {integrity: sha512-+C2AHFtcFqjPih0zpYuvof37SFxMQ7OEG2zV9jRI12i9BOy3YQVAHwdKtyyc8pDcDyIc33WCIsZaCFWU7WWxGQ==}
+  /pinia@2.2.1(typescript@5.5.4)(vue@3.4.37):
+    resolution: {integrity: sha512-ltEU3xwiz5ojVMizdP93AHi84Rtfz0+yKd8ud75hr9LVyWX2alxp7vLbY1kFm7MXFmHHr/9B08Xf8Jj6IHTEiQ==}
     peerDependencies:
       '@vue/composition-api': ^1.4.0
       typescript: '>=4.4.4'
@@ -4710,7 +4710,7 @@ packages:
       '@vue/devtools-api': 6.6.3
       typescript: 5.5.4
       vue: 3.4.37(typescript@5.5.4)
-      vue-demi: 0.14.8(vue@3.4.37)
+      vue-demi: 0.14.10(vue@3.4.37)
     dev: false
 
   /pirates@4.0.6:
@@ -6072,6 +6072,21 @@ packages:
   /vue-component-type-helpers@2.0.21:
     resolution: {integrity: sha512-3NaicyZ7N4B6cft4bfb7dOnPbE9CjLcx+6wZWAg5zwszfO4qXRh+U52dN5r5ZZfc6iMaxKCEcoH9CmxxoFZHLg==}
     dev: true
+
+  /vue-demi@0.14.10(vue@3.4.37):
+    resolution: {integrity: sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==}
+    engines: {node: '>=12'}
+    hasBin: true
+    requiresBuild: true
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^3.0.0-0 || ^2.6.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      vue: 3.4.37(typescript@5.5.4)
+    dev: false
 
   /vue-demi@0.14.8(vue@3.4.31):
     resolution: {integrity: sha512-Uuqnk9YE9SsWeReYqK2alDI5YzciATE0r2SkA6iMAtuXvNTMNACJLJEXNXaEy94ECuBe4Sk6RzRU80kjdbIo1Q==}
