@@ -4,7 +4,7 @@ import { DataReader, EbmlElementTag, Reader } from './DataReader';
 import { EbmlElements, type ElementEventMap, ElementInfo, MatroskaElements } from './elements';
 
 export class WebmReader {
-    private reader = new DataReader();
+    private reader: DataReader;
     private events = new EventEmitter<ReaderEvents>();
 
     /* eslint-disable prettier/prettier */
@@ -27,8 +27,14 @@ export class WebmReader {
     }
 
     private lastTimestampOffset = 0;
+    private loopDetection = {
+        offset: 0,
+        times: 0
+    };
 
-    constructor(private config: WebmReaderConfig = {}) {}
+    constructor(private config: WebmReaderConfig = {}) {
+        this.reader = new DataReader(config?.bufferSize);
+    }
 
     /**
      * Called automatically when appending a chunk.
@@ -41,6 +47,18 @@ export class WebmReader {
         // eslint-disable-next-line no-constant-condition
         loop: while (true) {
             let element: EbmlElementTag | undefined;
+
+            if (this.loopDetection.times > 100) {
+                throw new Error(`Reader stalled on offset ${this.reader.totalOffset}, quitting`);
+            }
+
+            if (this.loopDetection.offset === this.reader.totalOffset) {
+                this.loopDetection.times++;
+            } else {
+                this.loopDetection.offset = this.reader.totalOffset;
+                this.loopDetection.times = 0;
+            }
+
             try {
                 element = this.reader.readElementTag(this.reader.offset);
             } catch (error) {
@@ -222,4 +240,16 @@ export interface WebmReaderConfig {
      * @default true
      */
     autoReadElements?: boolean;
+
+    /**
+     * How large the buffer is allowed to be before slicing off excess data.
+     *
+     * Slicing is an expensive process, so being able to use a little more RAM to slice large chunks helps with performance.
+     *
+     * Larger numbers use more RAM, but can result in more performance (not guaranteed).
+     *
+     * @unit bytes
+     * @default 1_000_000 (1 MB)
+     */
+    bufferSize?: number;
 }

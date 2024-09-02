@@ -11,14 +11,19 @@ export class DataReader {
     }
     public buffer = new DataView(this.totalBuffer);
     /**
-     * Amount of data that has been sliced off already
+     * Pointer to indicate where to look in the current buffer (after slicing)
      */
     public offset = 0;
+    /**
+     * Total offset in the complete buffer
+     */
     public totalOffset = 0;
     private hasCheckedValidEbml = false;
     private toSlice = 0;
 
     public stack: { id: number; size: number; start: number }[] = [];
+
+    constructor(private maxBufferSize = 1_000_000) {}
 
     appendBuffer(buffer: ArrayBufferLike) {
         // Transfer is faster, but not widely supported
@@ -55,7 +60,7 @@ export class DataReader {
         this.offset += size;
         this.totalOffset += size;
         // 1 MB
-        if (this.toSlice > 1_000_000) {
+        if (this.toSlice > this.maxBufferSize) {
             this.totalBuffer = this.totalBuffer.slice(this.toSlice);
             this.offset -= this.toSlice;
             this.toSlice = 0;
