@@ -1,277 +1,137 @@
-import { computed, reactive, ref, type Component } from 'vue';
+import EventEmitter from 'eventemitter3';
+import { onBeforeUnmount, reactive } from 'vue';
 
-export { default as Timeline } from './Timeline.vue';
+export function createTimelineManager(canvas: HTMLCanvasElement) {
+    const manager = new TimelineManager(canvas);
 
-export interface TimelineItem {
-    id: string;
-    name: string;
-    color?: string;
-    icon?: Component;
+    return manager;
+}
+
+class TimelineManager {
+    public timelineElements = new Set<TimelineElement>();
+    /**
+     * Currently visible elements
+     */
+    public visibleElements = new WeakSet<TimelineElement>();
+    /**
+     * Elements that are queued up for the next tick
+     */
+    public queuedElements = new WeakSet<TimelineElement>();
+
+    public events = new EventEmitter<TimelineEvents>();
+
+    public viewport = reactive({
+        start: 0,
+        end: 1000
+    });
+
+    private ctx: CanvasRenderingContext2D;
+
+    constructor(private canvas: HTMLCanvasElement) {
+        const context = this.canvas.getContext('2d');
+        if (!context) {
+            throw new Error('Could not get canvas context');
+        }
+        this.ctx = context;
+
+        const mouseDownEv = (ev: PointerEvent) => {
+            this.events.emit('mouseDown', this, ev, canvas);
+        };
+        canvas.addEventListener('pointerdown', mouseDownEv);
+
+        const mouseUpEv = (ev: PointerEvent) => {
+            this.events.emit('mouseUp', this, ev, canvas);
+        };
+        canvas.addEventListener('pointerup', mouseUpEv);
+
+        const mouseMoveEv = (ev: PointerEvent) => {
+            this.events.emit('mouseMove', this, ev, canvas);
+        };
+        canvas.addEventListener('pointermove', mouseMoveEv);
+
+        onBeforeUnmount(() => {
+            this.events.emit('unmount', this);
+            this.events.removeAllListeners();
+
+            canvas.removeEventListener('pointerdown', mouseDownEv);
+            canvas.removeEventListener('pointerup', mouseUpEv);
+            canvas.removeEventListener('pointermove', mouseMoveEv);
+        });
+    }
+
+    renderAll() {
+        this.ele;
+    }
+
+    requestExtraRender(element: TimelineElement) {
+        this.queuedElements.add(element);
+    }
+
+    pxToTime(pixel: number) {}
+}
+
+interface TimelineEvents {
+    mouseDown: [manager: TimelineManager, ev: PointerEvent, canvas: HTMLCanvasElement];
+    mouseUp: [manager: TimelineManager, ev: PointerEvent, canvas: HTMLCanvasElement];
+    mouseMove: [manager: TimelineManager, ev: PointerEvent, canvas: HTMLCanvasElement];
+    scroll: [manager: TimelineManager];
+    pan: [manager: TimelineManager];
+    unmount: [manager: TimelineManager];
+}
+
+export type TimelineElementTypes = 'generic' | 'layerItem' | 'layer';
+
+export interface TimelineElement {
+    type: TimelineElementTypes;
+    init?: (
+        manager: TimelineManager,
+        canvas: HTMLCanvasElement,
+        ctx: CanvasRenderingContext2D
+    ) => any;
+    render: (ctx: CanvasRenderingContext2D, manager: TimelineManager) => any;
+}
+
+export interface TimelineItemElement extends TimelineElement {
     start: number;
-    duration: number;
+    end: number;
     layer: number;
 }
 
-export type TimelineAlignment = 'top' | 'bottom';
+export class VideoTimelineElement implements TimelineItemElement {
+    type: TimelineElementTypes = 'layerItem';
+    start = 0;
+    end = 0;
+    layer = 0;
 
-export interface TimelineProps {
-    /**
-     * Whether to align the timeline to the top or bottom.
-     *
-     * Useful when you have 2 timelines vertically stacked.
-     *
-     * @default 'bottom'
-     */
-    alignment?: TimelineAlignment;
-    /**
-     * The scale factor when zooming.
-     *
-     * @default 2
-     */
-    zoomFactor?: number;
-    /**
-     * Whether to invert the axis that scrolling uses.
-     *
-     * Used for trackpads.
-     *
-     * @default false
-     */
-    invertScrollAxes?: boolean;
-    /**
-     * Whether to invert the vertical scrolling.
-     *
-     * @default false
-     */
-    invertVerticalScroll?: boolean;
-    /**
-     * Whether to invert the horizontal scrolling.
-     *
-     * @default false
-     */
-    invertHorizontalScroll?: boolean;
-    /**
-     * Current timeline FPS
-     *
-     * @default Infinity
-     */
-    fps?: number;
+    render(ctx: CanvasRenderingContext2D, manager: TimelineManager) {
+        ctx.beginPath();
+        ctx.moveTo(this.start, 0);
+        ctx.moveTo(this.start, this.layer);
+        ctx.moveTo(0, this.layer);
+        ctx.moveTo(0, 0);
+        ctx.closePath();
+    }
 }
 
-/* 
+export class TimelineCursorElement implements TimelineElement {
+    type: TimelineElementTypes = 'generic';
+    private cursorPos = 0;
+    private isDragging = false;
 
-Huge thanks to all the contributors of vue-devtools, especially Guillaume Chau.
-This code is heavily inspired by (and copied from) the timeline implementation in vue-devtools.
-
-Even though the original code is written for Pixi (which i have considered using), it still works beautifully here.
-*/
-
-export class TimelineViewport {
-    /**
-     * The amount of padding to add to the end of the timeline in milliseconds
-     */
-    readonly endPadding = 1000;
-
-    /**
-     * The current left side boundary of the viewport in milliseconds
-     *
-     * @default 0 milliseconds
-     */
-    startTime = ref(0);
-    /**
-     * The current right side boundary of the viewport in milliseconds
-     *
-     * @default 1 second
-     */
-    endTime = ref(10000);
-
-    /**
-     * The current bottom side boundary of the viewport, when alignment is set to 'bottom'.
-     *
-     * If alignment is set to 'top', this value is the top side boundary.
-     *
-     * @default 0
-     */
-    startY = ref(0);
-
-    /**
-     * The minimum time that can be displayed in the viewport
-     *
-     * Basically the left side boundary of the viewport
-     *
-     * @default 0 milliseconds
-     */
-    minTime = ref(0);
-    /**
-     * The maximum time that can be displayed in the viewport
-     *
-     * Basically the end of the last element in the timeline
-     *
-     * @default 1 second (Will be overwritten once items are added)
-     */
-    maxTime = ref(1000);
-
-    /**
-     * The current view offset in pixels.
-     *
-     * Used to calculate the X position of items.
-     * @see [TimelineItem](./TimelineItemComponent.vue)
-     */
-    offsetX = computed(() => this.getTimePosition(this.startTime.value));
-
-    boundingBoxHeight = ref(250);
-    boundingBoxWidth = ref(250);
-
-    timebarHeight = ref(0);
-
-    /**
-     * Current playback position in milliseconds
-     */
-    pbPos = ref<number | undefined>(0);
-
-    fps = ref(Infinity);
-    frameDuration = computed(() => 1000 / this.fps.value);
-
-    private constantYScale = 0.5;
-
-    public defaultLayerHeight = 32;
-    public zoomFactor = ref(2);
-
-    public layerHeights = reactive<number[]>([]);
-    highestLayer = ref(0);
-
-    alignment = ref<TimelineAlignment>('bottom');
-
-    /**
-     * Convert a layer index to its corresponding Y position
-     */
-    LayerToYPosition(
-        layer: number,
-        includeCurrent = false,
-        includeOffset = false,
-        useAlignment = true
-    ) {
-        let totalHeight = 0;
-        if (includeCurrent) {
-            for (let i = 0; i <= layer; i++) {
-                const curHeight = this.layerHeights[i] ?? this.defaultLayerHeight;
-                totalHeight += curHeight;
-            }
-        } else {
-            for (let i = 0; i < layer; i++) {
-                const curHeight = this.layerHeights[i] ?? this.defaultLayerHeight;
-                totalHeight += curHeight;
-            }
-        }
-
-        const offset = totalHeight + (includeOffset ? -this.startY.value * this.constantYScale : 0);
-
-        if (this.alignment.value == 'bottom' && useAlignment) {
-            return this.boundingBoxHeight.value - offset;
-        } else {
-            return offset;
-        }
+    init(manager: TimelineManager) {
+        manager.events.on('mouseDown', this.mouseDown);
     }
 
-    zoom(delta: number, cursorPosition = 0.5) {
-        const size = this.endTime.value - this.startTime.value;
-
-        const center = size * cursorPosition + this.startTime.value;
-
-        let newSize = size + (delta / this.boundingBoxWidth.value) * size * this.zoomFactor.value;
-        if (newSize < 50) {
-            newSize = 50;
-        }
-
-        let start = center - newSize * cursorPosition;
-        let end = center + newSize * (1 - cursorPosition);
-        if (start < this.minTime.value) {
-            start = this.minTime.value;
-            end = start + newSize;
-        }
-
-        // Add a bit of padding to the end
-        if (end > this.maxTime.value + this.endPadding) {
-            end = this.maxTime.value + this.endPadding;
-
-            // Don't allow the start to go past the minTime
-            if (start > this.minTime.value) {
-                start = end - newSize;
-            }
-        }
-        this.startTime.value = start;
-        this.endTime.value = end;
+    render(ctx: CanvasRenderingContext2D, manager: TimelineManager) {
+        // ctx.beginPath();
+        // ctx.moveTo(this.start - 2);
     }
 
-    move(delta: number) {
-        const size = this.endTime.value - this.startTime.value;
-        let start = this.startTime.value + (delta / this.boundingBoxWidth.value) * size;
-        let end = start + size;
-        if (start < this.minTime.value) {
-            start = this.minTime.value;
-            end = start + size;
+    private mouseDown(manager: TimelineManager, event: PointerEvent, canvas: HTMLCanvasElement) {
+        if (event.clientX) {
         }
-
-        // Add a bit of padding to the end
-        if (end > this.maxTime.value + this.endPadding) {
-            end = this.maxTime.value + this.endPadding;
-            start = end - size;
-        }
-        this.startTime.value = start;
-        this.endTime.value = end;
+        event;
     }
 
-    moveY(delta: number) {
-        if (this.alignment.value == 'bottom') {
-            this.startY.value -= delta;
-            if (this.startY.value < 0) {
-                this.startY.value = 0;
-            }
-
-            const maxHeight =
-                this.LayerToYPosition(this.highestLayer.value + 2, true, false, false) +
-                this.boundingBoxHeight.value / 2;
-            if (this.startY.value > maxHeight) {
-                this.startY.value = maxHeight;
-            }
-        } else {
-            this.startY.value += delta;
-            if (this.startY.value < this.defaultLayerHeight * 2) {
-                this.startY.value = this.defaultLayerHeight * 2;
-            }
-
-            const maxHeight =
-                this.LayerToYPosition(this.highestLayer.value + 2, true, false, false) +
-                this.boundingBoxHeight.value;
-            if (this.startY.value > maxHeight) {
-                this.startY.value = maxHeight;
-            }
-        }
-    }
-
-    /**
-     * Get pixel position for given time
-     */
-    getTimePosition(time: number) {
-        return (
-            ((time - this.minTime.value) / (this.endTime.value - this.startTime.value)) *
-            this.boundingBoxWidth.value
-        );
-    }
-
-    getPositionTime(position: number) {
-        return (
-            (position / this.boundingBoxWidth.value) * (this.endTime.value - this.startTime.value)
-        );
-    }
-
-    /**
-     * Get whether the item is visible in the current viewport horizontally.
-     *
-     * I hope no one needs to have like 10000 items stacked vertically.
-     */
-    isItemVisible(item: { start: number; duration: number }) {
-        const isHorizontalVisible =
-            item.start + item.duration >= this.startTime.value && item.start <= this.endTime.value;
-        return isHorizontalVisible;
-    }
+    public moveCursor(time: number) {}
 }
