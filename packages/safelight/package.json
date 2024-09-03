@@ -20,7 +20,7 @@
     "dependencies": {
         "@fontsource-variable/inter": "^5.0.19",
         "@phosphor-icons/vue": "^2.2.1",
-        "@primevue/themes": "^4.0.4",
+        "@primevue/themes": "^4.0.5",
         "@quantco/pnpm-licenses": "^2.1.0",
         "@safelight/shared": "workspace:*",
         "@safelight/timeline": "workspace:*",
