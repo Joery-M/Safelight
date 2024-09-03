@@ -1,5 +1,6 @@
 name: 'Dependabot Batcher'
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 9 * * 1,3'
 
