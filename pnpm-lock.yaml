@@ -196,8 +196,8 @@ importers:
         specifier: ^1.0.5
         version: 1.0.5
       monaco-editor:
-        specifier: ^0.50.0
-        version: 0.50.0
+        specifier: ^0.51.0
+        version: 0.51.0
       pinia:
         specifier: ^2.2.2
         version: 2.2.2(typescript@5.5.4)(vue@3.4.37)
@@ -2200,7 +2200,7 @@ packages:
       pathe: 1.1.2
       sirv: 2.0.4
       tinyrainbow: 1.2.0
-      vitest: 2.0.5(@vitest/browser@2.0.5)(@vitest/ui@2.0.5)
+      vitest: 2.0.5(@types/node@22.5.2)(@vitest/browser@2.0.5)(@vitest/ui@2.0.5)
     dev: true
 
   /@vitest/utils@2.0.5:
@@ -4575,8 +4575,8 @@ packages:
       ufo: 1.5.3
     dev: true
 
-  /monaco-editor@0.50.0:
-    resolution: {integrity: sha512-8CclLCmrRRh+sul7C08BmPBP3P8wVWfBHomsTcndxg5NRCEPfu/mc2AGU8k37ajjDVXcXFc12ORAMUkmk+lkFA==}
+  /monaco-editor@0.51.0:
+    resolution: {integrity: sha512-xaGwVV1fq343cM7aOYB6lVE4Ugf0UyimdD/x5PWcWBMKENwectaEu77FAN7c5sFiyumqeJdX1RPTh1ocioyDjw==}
     dev: false
 
   /mrmime@2.0.0:

@@ -35,7 +35,7 @@
         "hash-wasm": "^4.11.0",
         "luxon": "^3.5.0",
         "mime-matcher": "^1.0.5",
-        "monaco-editor": "^0.50.0",
+        "monaco-editor": "^0.51.0",
         "pinia": "^2.2.2",
         "primevue": "^4.0.1",
         "rxjs": "^7.8.1",
