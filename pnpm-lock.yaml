@@ -72,8 +72,8 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
       ses:
-        specifier: ^1.4.1
-        version: 1.5.0
+        specifier: ^1.8.0
+        version: 1.8.0
     optionalDependencies:
       '@codemirror/lang-javascript':
         specifier: ^6.2.2
@@ -719,8 +719,8 @@ packages:
     dev: false
     optional: true
 
-  /@endo/env-options@1.1.4:
-    resolution: {integrity: sha512-hBwS+uijkN+KDFcEM4FRMvkCeusqm/drC2WuUXZA2aqjzaWgNjneIks3m5VcFmGvEZSpjDmGtGydAS31vdk7Mw==}
+  /@endo/env-options@1.1.6:
+    resolution: {integrity: sha512-Uqy94PwLTco90Yfign43muvDtjsYTbL6Ck4W5sSWQUqJiFOL+YP8kiBOoGyQynDsGTY0MCQvMxEPfphaJKnzlQ==}
     dev: false
 
   /@endo/static-module-record@1.1.2:
@@ -730,7 +730,7 @@ packages:
       '@babel/parser': 7.24.7
       '@babel/traverse': 7.24.7
       '@babel/types': 7.25.6
-      ses: 1.5.0
+      ses: 1.8.0
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -2200,7 +2200,7 @@ packages:
       pathe: 1.1.2
       sirv: 2.0.4
       tinyrainbow: 1.2.0
-      vitest: 2.0.5(@vitest/browser@2.0.5)(@vitest/ui@2.0.5)
+      vitest: 2.0.5(@types/node@22.5.2)(@vitest/browser@2.0.5)(@vitest/ui@2.0.5)
     dev: true
 
   /@vitest/utils@2.0.5:
@@ -5254,10 +5254,10 @@ packages:
     hasBin: true
     dev: true
 
-  /ses@1.5.0:
-    resolution: {integrity: sha512-mtbONkuHpOZbJn0ueOMpBzIdNual1Ou+Tg1LbStRNsWnRljzg9ZLnoF0PyuzPPQG7kiwv2V2tN3GSJMXHPrQWg==}
+  /ses@1.8.0:
+    resolution: {integrity: sha512-pis9agyAy7s9lDApaYY9OSktkzc10gkBggSbhHXwTf3cWL9H8xA7oKiXIfT/uVNf8dzZN3o2TtPYjer9/axIhw==}
     dependencies:
-      '@endo/env-options': 1.1.4
+      '@endo/env-options': 1.1.6
     dev: false
 
   /set-function-length@1.2.2:
