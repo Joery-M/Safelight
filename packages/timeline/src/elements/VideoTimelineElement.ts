@@ -1,48 +1,41 @@
+import { ref, watch } from 'vue';
 import { TimelineElementTypes, TimelineItemElement, TimelineManager } from '..';
 
 export class VideoTimelineElement implements TimelineItemElement {
     type: TimelineElementTypes = 'layerItem';
 
-    private manager!: TimelineManager;
+    private tempHue = 0;
 
-    /* Start */
-    private _start = 0;
-    public get start() {
-        return this._start;
-    }
-    public set start(value) {
-        this._start = value;
-        this.manager.requestExtraRender();
-    }
-
-    /* End */
-    private _end = 0;
-    public get end() {
-        return this._end;
-    }
-    public set end(value) {
-        this._end = value;
-        this.manager.requestExtraRender();
-    }
-
-    /* Layer */
-    private _layer = 0;
-    public get layer() {
-        return this._layer;
-    }
-    public set layer(value) {
-        this._layer = value;
-        this.manager.requestExtraRender();
-    }
+    start = ref(0);
+    end = ref(0);
+    layer = ref(100);
 
     init = (manager: TimelineManager) => {
-        this.manager = manager;
+        watch([this.start, this.end, this.layer], () => {
+            manager.requestExtraRender();
+        });
     };
 
-    render(ctx: CanvasRenderingContext2D) {
-        console.log('render', this.end, this.layer);
-        ctx.fillText(Date.now().toString(), 0, 0);
-        ctx.fillStyle = '#' + ((Math.random() * 0xffffff) << 0).toString(16).padStart(6, '0');
-        ctx.fillRect(0, 0, this.end, this.layer);
-    }
+    render = (ctx: CanvasRenderingContext2D, manager: TimelineManager) => {
+        // Offset
+        const offset = manager.msToPx(this.start.value) - manager.offsetX.value;
+        ctx.translate(offset, 0);
+
+        // Square
+        const elemWidth = manager.msToPx(Math.abs(this.end.value - this.start.value));
+        this.tempHue += 10;
+        this.tempHue %= 360;
+        ctx.fillStyle = `hsl(${this.tempHue}, 50%, 20%)`;
+        ctx.fillRect(0, 0, elemWidth, this.layer.value);
+
+        // Text
+        ctx.fillStyle = 'white';
+        ctx.font = 'Arial';
+        const text = (this.tempHue / 10).toString();
+        const textSize = ctx.measureText(text);
+        ctx.fillText(text, elemWidth / 2 - textSize.width / 2, 20);
+
+        // Move back
+        ctx.translate(-offset, 0);
+    };
 }

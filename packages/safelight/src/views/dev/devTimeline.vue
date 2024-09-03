@@ -10,13 +10,50 @@
             </RouterLink>
         </template>
         <template #content>
-            <canvas ref="canvas" />
+            <canvas ref="canvas" style="width: 100%; height: 200px" />
             <input v-model="invertScrollAxes" type="checkbox" />
             <label> Trackpad mode </label>
             <div>
-                <input type="range" v-model.number="testVal.end" :max="500" />
+                <input
+                    v-model.number="testVal.start"
+                    type="range"
+                    :max="500"
+                    style="width: 250px"
+                />
+                <input v-model.number="testVal.start" type="number" style="width: 75px" />
                 <br />
-                <input type="range" v-model.number="testVal.layer" :max="500" />
+                <input v-model.number="testVal.end" type="range" :max="500" style="width: 250px" />
+                <input v-model.number="testVal.end" type="number" style="width: 75px" />
+            </div>
+            <div>
+                <button @click="manager?.manager?.zoom(100)">Zoom in</button>
+                <button @click="manager?.manager?.zoom(-100)">Zoom out</button>
+                <button @click="manager?.manager?.requestExtraRender()">Re-render</button>
+            </div>
+            <div v-if="manager">
+                <input
+                    v-model.number="manager.manager.viewport.start"
+                    type="range"
+                    :max="1000"
+                    style="width: 250px"
+                />
+                <input
+                    v-model.number="manager.manager.viewport.start"
+                    type="number"
+                    style="width: 75px"
+                />
+                <br />
+                <input
+                    v-model.number="manager.manager.viewport.end"
+                    type="range"
+                    :max="1000"
+                    style="width: 250px"
+                />
+                <input
+                    v-model.number="manager.manager.viewport.end"
+                    type="number"
+                    style="width: 75px"
+                />
             </div>
         </template>
     </Card>
@@ -24,11 +61,10 @@
 
 <script lang="ts" setup>
 import { PhArrowLeft } from '@phosphor-icons/vue';
-import { createTimelineManager } from '@safelight/timeline';
+import { createTimelineManager, type CreateTimelineFn } from '@safelight/timeline';
 import { VideoTimelineElement } from '@safelight/timeline/elements/VideoTimelineElement';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
-import Slider from 'primevue/slider';
 import { onMounted, reactive, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router/auto';
 
@@ -37,22 +73,22 @@ const invertScrollAxes = ref(true);
 const canvas = ref<HTMLCanvasElement>();
 
 const testVal = reactive({
-    end: 100,
-    layer: 100
+    start: 0,
+    end: 100
 });
-
+const manager = ref<CreateTimelineFn>();
 onMounted(() => {
     if (canvas.value) {
-        const manager = createTimelineManager(canvas.value);
+        manager.value = createTimelineManager(canvas.value);
 
         const videoElem = new VideoTimelineElement();
-        manager.addElement(videoElem);
+        manager.value!.addElement(videoElem);
 
         watch(
             testVal,
-            ({ end, layer }) => {
-                videoElem.end = end;
-                videoElem.layer = layer;
+            ({ end, start }) => {
+                videoElem.end.value = end;
+                videoElem.start.value = start;
             },
             { immediate: true, deep: true }
         );
@@ -67,12 +103,6 @@ body {
 }
 </style>
 
-<style scoped>
-:deep(#horizontalContainer) {
-    height: 100%;
-}
-</style>
-
 <route lang="json">
-{ "path": "/dev/timeline" }
+{ "path": "/dev/timeline", "name": "Timeline" }
 </route>

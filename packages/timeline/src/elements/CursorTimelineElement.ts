@@ -2,6 +2,8 @@ import { TimelineElement, TimelineElementTypes, TimelineManager } from '..';
 
 export class TimelineCursorElement implements TimelineElement {
     type: TimelineElementTypes = 'generic';
+
+    manager!: TimelineManager;
     /**
      * Cursor position in milliseconds
      */
@@ -9,6 +11,7 @@ export class TimelineCursorElement implements TimelineElement {
     private isDragging = false;
 
     init(manager: TimelineManager) {
+        this.manager = manager;
         manager.events.on('mouseDown', this.mouseDown);
     }
 
@@ -19,6 +22,7 @@ export class TimelineCursorElement implements TimelineElement {
 
     private mouseDown(_manager: TimelineManager, event: PointerEvent, _canvas: HTMLCanvasElement) {
         if (event.clientX) {
+            _manager.cursor.value = 'grab';
         }
         event;
     }
