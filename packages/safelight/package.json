@@ -18,9 +18,9 @@
         "type-check": "vue-tsc --noEmit"
     },
     "dependencies": {
-        "@fontsource-variable/inter": "^5.0.19",
+        "@fontsource-variable/inter": "^5.0.20",
         "@phosphor-icons/vue": "^2.2.1",
-        "@primevue/themes": "^4.0.4",
+        "@primevue/themes": "^4.0.5",
         "@quantco/pnpm-licenses": "^2.1.0",
         "@safelight/shared": "workspace:*",
         "@safelight/timeline": "workspace:*",
@@ -35,9 +35,9 @@
         "hash-wasm": "^4.11.0",
         "luxon": "^3.5.0",
         "mime-matcher": "^1.0.5",
-        "monaco-editor": "^0.50.0",
+        "monaco-editor": "^0.51.0",
         "pinia": "^2.2.2",
-        "primevue": "^4.0.1",
+        "primevue": "^4.0.5",
         "rxjs": "^7.8.1",
         "uuid": "^10.0.0",
         "vue": "^3.4.37",
