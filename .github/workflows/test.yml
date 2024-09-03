@@ -40,8 +40,6 @@ jobs:
               with:
                   path: '~/.cache/ms-playwright'
                   key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
-                  restore-keys: |
-                      ${{ runner.os }}-playwright-
 
             - name: Install dependencies
               if: steps.playwright-cache.outputs.cache-hit != 'true'
