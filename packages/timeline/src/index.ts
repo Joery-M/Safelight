@@ -140,30 +140,6 @@ export class TimelineManager {
                 this.events.once('unmount', unregister);
             });
         }
-
-        // const speed = 0.5;
-        // useRafFn(() => {
-        //     const dist = this.viewport.start - this.viewportSmooth.start;
-
-        //     // When offset is less than 0.1 pixels, just go right to the end
-        //     if (Math.abs(this.msToPx(dist)) < 0.1) {
-        //         this.viewportSmooth.start = this.viewport.start;
-        //         return;
-        //     }
-
-        //     this.viewportSmooth.start = this.viewportSmooth.start + dist * speed;
-        // });
-        // useRafFn(() => {
-        //     const dist = this.viewport.end - this.viewportSmooth.end;
-
-        //     // When offset is less than 0.1 pixels, just go right to the end
-        //     if (Math.abs(this.msToPx(dist)) < 0.1) {
-        //         this.viewportSmooth.end = this.viewport.end;
-        //         return;
-        //     }
-
-        //     this.viewportSmooth.end = this.viewportSmooth.end + dist * speed;
-        // });
     }
 
     setCanvasProperties() {
@@ -202,7 +178,15 @@ export class TimelineManager {
         this.renderingOnNextTick = true;
     };
 
-    /* Viewport */
+    /*
+        ============    Viewport    ============
+
+        Huge thanks to all the contributors of vue-devtools (v6), especially Guillaume Chau.
+        This code is heavily inspired by (and copied from) the timeline implementation in vue-devtools:
+        https://github.com/vuejs/devtools-v6/blob/79116147aef2a8957f8fd31b1f2dc67654686e1b/packages/app-frontend/src/features/timeline/Timeline.vue#L184-L206
+
+        Even though the original code is written for Pixi (which i have considered using), it still works beautifully here.
+    */
 
     pxToMs = (pixel: number) => {
         return (
