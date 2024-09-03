@@ -1,27 +1,47 @@
 import EventEmitter from 'eventemitter3';
-import { onBeforeUnmount, reactive } from 'vue';
+import { computed, nextTick, onBeforeUnmount, reactive } from 'vue';
 
-export function createTimelineManager(canvas: HTMLCanvasElement) {
+export function createTimelineManager(canvas: HTMLCanvasElement): CreateTimelineFn {
     const manager = new TimelineManager(canvas);
 
-    return manager;
+    return {
+        manager,
+        addElement(element: TimelineElement) {
+            manager.timelineElements.add(element);
+            if (element['init']) element.init(manager);
+            manager.renderAll();
+        }
+    };
 }
 
-class TimelineManager {
+export interface CreateTimelineFn {
+    manager: TimelineManager;
+    addElement: (element: TimelineElement) => void;
+}
+
+export class TimelineManager {
     public timelineElements = new Set<TimelineElement>();
     /**
-     * Currently visible elements
+     * Currently visible elements.
+     *
+     * Is assigned before rendering.
      */
     public visibleElements = new WeakSet<TimelineElement>();
     /**
-     * Elements that are queued up for the next tick
+     * Whether an extra render has already been queued
      */
-    public queuedElements = new WeakSet<TimelineElement>();
+    private renderingOnNextTick = false;
 
     public events = new EventEmitter<TimelineEvents>();
 
     public viewport = reactive({
+        /**
+         * The left-most side of the timeline in milliseconds
+         */
         start: 0,
+        /**
+         * The right-most side of the timeline in milliseconds
+         */
         end: 1000
     });
 
@@ -33,6 +53,7 @@ class TimelineManager {
             throw new Error('Could not get canvas context');
         }
         this.ctx = context;
+        this.setCanvasProperties();
 
         const mouseDownEv = (ev: PointerEvent) => {
             this.events.emit('mouseDown', this, ev, canvas);
@@ -57,17 +78,52 @@ class TimelineManager {
             canvas.removeEventListener('pointerup', mouseUpEv);
             canvas.removeEventListener('pointermove', mouseMoveEv);
         });
+
+        if (import.meta.env.DEV) {
+            import('./devtools/').then((dev) => {
+                const unregister = dev.registerTimelineManager(this);
+                this.events.once('unmount', unregister);
+            });
+        }
     }
 
-    renderAll() {
-        this.ele;
+    setCanvasProperties() {}
+
+    renderAll(queued = false) {
+        // this.ctx.fillText(Date.now().toString(), 0, 0);
+        this.ctx.fillStyle = 'white';
+        this.ctx.save();
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        for (const element of this.timelineElements) {
+            if (element.type == 'layerItem') {
+                // TODO: Check if item is in view
+                this.visibleElements.add(element);
+            } else {
+                this.visibleElements.add(element);
+            }
+
+            // Restore to last known settings before each render
+            this.ctx.restore();
+            element.render(this.ctx, this, queued);
+        }
     }
 
-    requestExtraRender(element: TimelineElement) {
-        this.queuedElements.add(element);
+    requestExtraRender() {
+        if (!this.renderingOnNextTick) {
+            nextTick(() => {
+                this.renderingOnNextTick = false;
+                this.renderAll(true);
+            });
+        }
+        this.renderingOnNextTick = true;
     }
 
-    pxToTime(pixel: number) {}
+    pxToMs(pixel: number) {
+        return pixel;
+    }
+    msToPx(ms: number) {
+        return ms;
+    }
 }
 
 interface TimelineEvents {
@@ -83,55 +139,12 @@ export type TimelineElementTypes = 'generic' | 'layerItem' | 'layer';
 
 export interface TimelineElement {
     type: TimelineElementTypes;
-    init?: (
-        manager: TimelineManager,
-        canvas: HTMLCanvasElement,
-        ctx: CanvasRenderingContext2D
-    ) => any;
-    render: (ctx: CanvasRenderingContext2D, manager: TimelineManager) => any;
+    init?: (manager: TimelineManager) => any;
+    render: (ctx: CanvasRenderingContext2D, manager: TimelineManager, isQueued: boolean) => any;
 }
 
 export interface TimelineItemElement extends TimelineElement {
     start: number;
     end: number;
     layer: number;
-}
-
-export class VideoTimelineElement implements TimelineItemElement {
-    type: TimelineElementTypes = 'layerItem';
-    start = 0;
-    end = 0;
-    layer = 0;
-
-    render(ctx: CanvasRenderingContext2D, manager: TimelineManager) {
-        ctx.beginPath();
-        ctx.moveTo(this.start, 0);
-        ctx.moveTo(this.start, this.layer);
-        ctx.moveTo(0, this.layer);
-        ctx.moveTo(0, 0);
-        ctx.closePath();
-    }
-}
-
-export class TimelineCursorElement implements TimelineElement {
-    type: TimelineElementTypes = 'generic';
-    private cursorPos = 0;
-    private isDragging = false;
-
-    init(manager: TimelineManager) {
-        manager.events.on('mouseDown', this.mouseDown);
-    }
-
-    render(ctx: CanvasRenderingContext2D, manager: TimelineManager) {
-        // ctx.beginPath();
-        // ctx.moveTo(this.start - 2);
-    }
-
-    private mouseDown(manager: TimelineManager, event: PointerEvent, canvas: HTMLCanvasElement) {
-        if (event.clientX) {
-        }
-        event;
-    }
-
-    public moveCursor(time: number) {}
 }

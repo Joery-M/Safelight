@@ -13,12 +13,13 @@
   "exports": {
     "./style.css": "./dist/style.css",
     ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
-    },
-    "./source": {
       "import": "./src/index.ts"
+    },
+    "./elements/*": {
+      "import": "./src/elements/*.ts"
+    },
+    "./devtools": {
+      "import": "./src/devtools/index.ts"
     }
   },
   "types": "./dist/index.d.ts",
@@ -42,6 +43,7 @@
   "devDependencies": {
     "@types/node": "^22.3.0",
     "@vitejs/plugin-vue": "^5.1.2",
+    "@vue/devtools-api": "^6.6.3",
     "@vue/test-utils": "^2.4.5",
     "@vue/tsconfig": "^0.5.1",
     "happy-dom": "^14.12.3",

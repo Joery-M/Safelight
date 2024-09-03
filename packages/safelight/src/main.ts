@@ -1,5 +1,5 @@
 import { createPinia } from 'pinia';
-import { createApp } from 'vue';
+import { createApp, nextTick } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router/auto';
 import { routes } from 'vue-router/auto-routes';
 import App from './App.vue';
@@ -25,6 +25,15 @@ export const router = createRouter({
 const app = createApp(App);
 
 export const pinia = createPinia();
+
+// Setup timeline devtools
+if (import.meta.env.DEV) {
+    import('@safelight/timeline/devtools').then((dev) => {
+        nextTick(() => {
+            dev.setupDevtools(app);
+        });
+    });
+}
 
 const mainTheme = definePreset(Aura, {
     semantic: {

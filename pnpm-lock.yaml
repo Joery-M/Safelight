@@ -399,6 +399,9 @@ importers:
       '@vitejs/plugin-vue':
         specifier: ^5.1.2
         version: 5.1.2(vite@5.4.0)(vue@3.4.37)
+      '@vue/devtools-api':
+        specifier: ^6.6.3
+        version: 6.6.3
       '@vue/test-utils':
         specifier: ^2.4.5
         version: 2.4.6
