@@ -13,4 +13,4 @@ jobs:
       - name: 'Dependabot Batcher'
         uses: Legal-and-General/dependabot-batcher@v1.0.4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.DEPENDABOT_MERGER_TOKEN }}
