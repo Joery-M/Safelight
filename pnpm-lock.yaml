@@ -63,8 +63,8 @@ importers:
         specifier: ^1.1.1
         version: 1.1.2
       esbuild-wasm:
-        specifier: ^0.23.0
-        version: 0.23.0
+        specifier: ^0.23.1
+        version: 0.23.1
       path-browserify:
         specifier: ^1.0.1
         version: 1.0.1
@@ -3476,8 +3476,8 @@ packages:
     dev: false
     optional: true
 
-  /esbuild-wasm@0.23.0:
-    resolution: {integrity: sha512-6jP8UmWy6R6TUUV8bMuC3ZyZ6lZKI56x0tkxyCIqWwRRJ/DgeQKneh/Oid5EoGoPFLrGNkz47ZEtWAYuiY/u9g==}
+  /esbuild-wasm@0.23.1:
+    resolution: {integrity: sha512-L3vn7ctvBrtScRfoB0zG1eOCiV4xYvpLYWfe6PDZuV+iDFDm4Mt3xeLIDllG8cDHQ8clUouK3XekulE+cxgkgw==}
     engines: {node: '>=18'}
     hasBin: true
     dev: false
