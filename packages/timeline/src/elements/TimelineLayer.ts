@@ -42,7 +42,7 @@ export class TimelineLayer {
         this.height.value = manager.defaultLayerHeight.value;
 
         watch([this.elements, this.highlightDebounce], () => {
-            this.manager.requestExtraRender(this);
+            this.manager.requestExtraRender();
         });
         let unhighlightTimeout: ReturnType<typeof setTimeout> | undefined;
         watch(this.highlight, (highlight) => {

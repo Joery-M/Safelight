@@ -22,7 +22,7 @@ export function createTimelineManager(canvas: HTMLCanvasElement): CreateTimeline
         addElement(element: TimelineElement) {
             manager.timelineElements.add(element);
             if (element['init']) element.init(manager);
-            manager.renderAll(true);
+            manager.renderAll();
         },
         addLayer(layer: TimelineLayer) {
             let maxIndex = 0;
@@ -65,11 +65,6 @@ export class TimelineManager {
      * Whether an extra render has already been queued
      */
     private renderingOnNextTick = false;
-    /**
-     * Layers that have requested an extra render
-     */
-    private queuedLayers = new WeakSet<TimelineLayer>();
-    private layerRenderBuffer: CanvasRenderingContext2D;
 
     /**
      * Current cursor for the user
@@ -163,13 +158,6 @@ export class TimelineManager {
         this.ctx = context;
         this.setCanvasProperties();
 
-        const bufferCanvas = document.createElement('canvas');
-        const ctx2 = bufferCanvas.getContext('2d');
-        if (!ctx2) {
-            throw new Error('Could not get canvas context');
-        }
-        this.layerRenderBuffer = ctx2;
-
         /* 
             ----- Listen to user events ------
         */
@@ -259,75 +247,32 @@ export class TimelineManager {
         this.canvas.style.display = 'block';
     }
 
-    renderAll = (useBuffer = false) => {
-        let differentSize = false;
-        if (
-            this.canvas.width != this.canvasWidth.value ||
-            this.canvas.height != this.canvasHeight.value
-        ) {
-            differentSize = true;
-        }
+    renderAll = () => {
         this.canvas.width = this.canvasWidth.value;
         this.canvas.height = this.canvasHeight.value;
-        this.layerRenderBuffer.canvas.width = this.canvasWidth.value;
-        this.layerRenderBuffer.canvas.height = this.canvasHeight.value;
-
-        if (differentSize) {
-            // If canvas is different size, completely re-render
-            this.renderAll(false);
-            return;
-        }
 
         this.ctx.save();
-        console.log(useBuffer, this.isCanvasBlank(this.layerRenderBuffer));
-        if (!useBuffer) {
-            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        } else if (!this.isCanvasBlank(this.layerRenderBuffer)) {
-            console.log('buffer');
-            this.ctx.putImageData(
-                this.layerRenderBuffer.getImageData(
-                    0,
-                    0,
-                    this.canvasWidth.value,
-                    this.canvasHeight.value
-                ),
-                0,
-                0
-            );
-            this.ctx.drawImage(this.layerRenderBuffer.canvas, 0, 0);
-        }
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         for (const layer of this.layers) {
-            if (useBuffer) {
-                if (!this.queuedLayers.has(layer)) {
-                    continue;
-                } else {
-                    this.queuedLayers.delete(layer);
-                }
-            }
             // Restore to last known settings before each render
             this.ctx.restore();
             // If called from event handler (v-on:click), `this` is a proxy
-            layer.render(this.ctx, toRaw(this), useBuffer);
+            layer.render(this.ctx, toRaw(this), false);
         }
         this.ctx.restore();
 
-        if (!useBuffer) {
-            this.layerRenderBuffer.drawImage(this.ctx.canvas, 0, 0);
-        }
-
         for (const element of this.timelineElements) {
             this.ctx.restore();
-            element.render(this.ctx, this, useBuffer);
+            element.render(this.ctx, this, false);
         }
     };
 
-    requestExtraRender = (layer: TimelineLayer) => {
-        this.queuedLayers.add(layer);
+    requestExtraRender = () => {
         if (!this.renderingOnNextTick) {
             nextTick(() => {
                 this.renderingOnNextTick = false;
-                this.renderAll(true);
+                this.renderAll();
             });
         }
         this.renderingOnNextTick = true;
@@ -435,16 +380,6 @@ export class TimelineManager {
                 this.startY.value = maxHeight;
             }
         }
-    }
-
-    private isCanvasBlank(ctx: CanvasRenderingContext2D) {
-        if (ctx.canvas.width === 0 || ctx.canvas.height == 0) {
-            return true;
-        }
-        const buff = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height).data.buffer;
-        const pixelBuffer = new Uint32Array(buff);
-
-        return !pixelBuffer.some((color) => color !== 0);
     }
 }
 

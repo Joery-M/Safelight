@@ -1,6 +1,6 @@
 import { App, setupDevtoolsPlugin } from '@vue/devtools-api';
 import { watchDeep } from '@vueuse/core';
-import { computed, nextTick, shallowReactive } from 'vue';
+import { computed, shallowReactive } from 'vue';
 import { TimelineManager } from '..';
 
 const INSPECTOR_ID = 'timeline-inspector';
