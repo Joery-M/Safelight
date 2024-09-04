@@ -1,5 +1,17 @@
+import { syncRef, useElementBounding, useEventListener } from '@vueuse/core';
 import EventEmitter from 'eventemitter3';
-import { computed, nextTick, onBeforeUnmount, reactive, Ref, ref, toRaw, watch } from 'vue';
+import {
+    computed,
+    isRef,
+    nextTick,
+    onBeforeUnmount,
+    reactive,
+    Ref,
+    ref,
+    shallowReactive,
+    toRaw,
+    watch
+} from 'vue';
 import { useSmoothNum } from './tools/useSmoothNum';
 
 export function createTimelineManager(canvas: HTMLCanvasElement): CreateTimelineFn {
@@ -21,7 +33,7 @@ export interface CreateTimelineFn {
 }
 
 export class TimelineManager {
-    public timelineElements = new Set<TimelineElement>();
+    public timelineElements = shallowReactive(new Set<TimelineElement>());
     /**
      * Currently visible elements.
      *
@@ -50,24 +62,40 @@ export class TimelineManager {
          */
         end: 1000
     });
+
+    /**
+     * How quickly the viewport transition to another state
+     *
+     * @example 1 = instant
+     */
+    public viewportSmoothing = ref(0.75);
     public viewportSmooth = {
         start: useSmoothNum(
             computed(() => this.viewport.start),
-            { snapOffset: 0.01 }
+            { snapOffset: 0.01, stepPerc: this.viewportSmoothing }
         ),
         end: useSmoothNum(
             computed(() => this.viewport.end),
-            { snapOffset: 0.01 }
+            { snapOffset: 0.01, stepPerc: this.viewportSmoothing }
         )
     };
 
+    /* Public settings */
     public rightPadding = ref(1000);
     public leftBoundary = ref(0);
-    public rightBoundary = ref(1000);
+    public invertScrollAxes = ref(true);
+    public invertVerticalScroll = ref(true);
+    public invertHorizontalScroll = ref(true);
+    public alignment = ref<TimelineAlignment>('bottom');
+    public defaultLayerHeight = ref(32);
 
+    /* Internal settings */
+
+    public pointerOut = ref(true);
     private canvasHeight = ref(100);
     private canvasWidth = ref(100);
     public zoomFactor = ref(1);
+    public startY = ref(0);
 
     /* Computed */
 
@@ -75,6 +103,20 @@ export class TimelineManager {
      * Offset from left boundary of timeline in pixels
      */
     public offsetX = computed(() => this.msToPx(this.viewportSmooth.start.value));
+    public maxWidth = computed(() => {
+        // So the view doesn't snap when moving outside the max width, also use the current end as a max
+        let maxRight = this.viewport.end - this.rightPadding.value;
+
+        for (const element of this.timelineElements) {
+            if (element.type == 'layerItem' && 'end' in element && isRef(element.end)) {
+                if ((parseFloat(element.end.value as any) || 0) > maxRight) {
+                    maxRight = parseFloat(element.end.value as any);
+                }
+            }
+        }
+
+        return maxRight;
+    });
 
     private ctx: CanvasRenderingContext2D;
 
@@ -86,31 +128,67 @@ export class TimelineManager {
         this.ctx = context;
         this.setCanvasProperties();
 
-        const mouseDownEv = (ev: PointerEvent) => {
-            this.events.emit('mouseDown', this, ev, canvas);
-        };
-        canvas.addEventListener('pointerdown', mouseDownEv);
+        /* 
+            ----- Listen to user events ------
+        */
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const that = this;
+        useEventListener('pointerdown', (ev) => this.events.emit('mouseDown', that, ev, canvas));
+        useEventListener('pointerup', (ev) => this.events.emit('mouseUp', that, ev, canvas));
+        useEventListener('pointermove', (ev) => this.events.emit('mouseMove', that, ev, canvas));
 
-        const mouseUpEv = (ev: PointerEvent) => {
-            this.events.emit('mouseUp', this, ev, canvas);
-        };
-        canvas.addEventListener('pointerup', mouseUpEv);
+        const bounds = useElementBounding(canvas);
+        syncRef(bounds.width, this.canvasWidth, { direction: 'ltr' });
+        syncRef(bounds.height, this.canvasHeight, { direction: 'ltr' });
 
-        const mouseMoveEv = (ev: PointerEvent) => {
-            this.events.emit('mouseMove', this, ev, canvas);
-        };
-        canvas.addEventListener('pointermove', mouseMoveEv);
+        // Prevent browser zooming
 
-        const resizeObserver = new ResizeObserver(() => {
-            this.canvasWidth.value = canvas.clientWidth;
-            this.canvasHeight.value = canvas.clientHeight;
+        useEventListener(['mousemove', 'mouseenter', 'mouseover'], (ev) => {
+            if (ev.target) {
+                this.pointerOut.value = canvas !== ev.target;
+            }
         });
-        resizeObserver.observe(canvas);
 
+        // Mouse wheel zoom and pan
+        useEventListener(
+            'wheel',
+            (ev) => {
+                console.log(ev.deltaY);
+                if (!this.pointerOut.value) {
+                    ev.preventDefault();
+                } else {
+                    return;
+                }
+
+                if (ev.ctrlKey) {
+                    // Zooming
+                    const mouseX = ev.clientX - bounds.left.value;
+                    const mouseXPerc = mouseX / bounds.width.value;
+                    // Invert cause scrolling down should be zoom out
+                    this.zoom(-ev.deltaY, mouseXPerc);
+                } else {
+                    // Scrolling
+                    const shift = this.invertScrollAxes.value ? !ev.shiftKey : ev.shiftKey;
+                    const invertY = this.invertVerticalScroll.value ? -1 : 1;
+                    const invertX = this.invertHorizontalScroll.value ? -1 : 1;
+                    if (shift) {
+                        this.moveY(ev.deltaY * invertY);
+                        this.move(ev.deltaX * invertX);
+                    } else {
+                        this.moveY(ev.deltaX * invertY);
+                        this.move(ev.deltaY * invertX);
+                    }
+                }
+            },
+            { passive: false }
+        );
+
+        // Set user cursor
         watch(this.cursor, (cursor) => {
             canvas.style.cursor = cursor ?? 'auto';
         });
 
+        // Render when any of these properties change
         watch(
             [
                 this.canvasWidth,
@@ -127,13 +205,9 @@ export class TimelineManager {
         onBeforeUnmount(() => {
             this.events.emit('unmount', this);
             this.events.removeAllListeners();
-            resizeObserver.disconnect();
-
-            canvas.removeEventListener('pointerdown', mouseDownEv);
-            canvas.removeEventListener('pointerup', mouseUpEv);
-            canvas.removeEventListener('pointermove', mouseMoveEv);
         });
 
+        // Import devtools
         if (import.meta.env.DEV) {
             import('./devtools/').then((dev) => {
                 const unregister = dev.registerTimelineManager(this);
@@ -188,28 +262,21 @@ export class TimelineManager {
         Even though the original code is written for Pixi (which i have considered using), it still works beautifully here.
     */
 
-    pxToMs = (pixel: number) => {
-        return (
-            (pixel / this.canvasWidth.value) *
-            (this.viewportSmooth.end.value - this.viewportSmooth.start.value)
-        );
-    };
-    msToPx = (time: number) => {
-        return (
-            ((time - this.leftBoundary.value) /
-                (this.viewportSmooth.end.value - this.viewportSmooth.start.value)) *
-            this.canvasWidth.value
-        );
-    };
+    pxToMs = (pixel: number) =>
+        (pixel / this.canvasWidth.value) *
+        (this.viewportSmooth.end.value - this.viewportSmooth.start.value);
 
-    zoom = (deltaInv: number, cursorPosition = 0.5) => {
-        const delta = deltaInv * -1;
+    msToPx = (time: number) =>
+        ((time - this.leftBoundary.value) /
+            (this.viewportSmooth.end.value - this.viewportSmooth.start.value)) *
+        this.canvasWidth.value;
 
+    zoom = (delta: number, cursorPosition = 0.5) => {
         const size = this.viewport.end - this.viewport.start;
 
         const center = size * cursorPosition + this.viewport.start;
 
-        let newSize = size + (delta / this.canvasWidth.value) * size * this.zoomFactor.value;
+        let newSize = size - this.pxToMs(delta);
         if (newSize < 50) {
             newSize = 50;
         }
@@ -222,17 +289,72 @@ export class TimelineManager {
         }
 
         // Add a bit of padding to the end
-        if (end > this.rightBoundary.value + this.rightPadding.value) {
-            end = this.rightBoundary.value + this.rightPadding.value;
+        if (end > this.maxWidth.value + this.rightPadding.value) {
+            end = this.maxWidth.value + this.rightPadding.value;
 
             // Don't allow the start to go past the minTime
             if (start > this.leftBoundary.value) {
-                start = end - newSize;
+                start = this.leftBoundary.value;
             }
         }
         this.viewport.start = start;
         this.viewport.end = end;
     };
+
+    move(delta: number) {
+        const size = this.viewport.end - this.viewport.start;
+        let start = this.viewport.start + (delta / this.canvasWidth.value) * size;
+        let end = start + size;
+
+        const maxEnd = this.maxWidth.value + this.rightPadding.value;
+
+        // Add a bit of padding to the end
+        if (end > maxEnd) {
+            end = maxEnd;
+            start = end - size;
+        }
+
+        if (start < this.leftBoundary.value) {
+            start = this.leftBoundary.value;
+            end = start + size;
+        }
+
+        if (end > maxEnd && start < this.leftBoundary.value) {
+            start = this.leftBoundary.value;
+            end = start + maxEnd;
+        }
+
+        this.viewport.start = start;
+        this.viewport.end = end;
+    }
+
+    moveY(delta: number) {
+        if (this.alignment.value == 'bottom') {
+            this.startY.value -= delta;
+            if (this.startY.value < 0) {
+                this.startY.value = 0;
+            }
+
+            const maxHeight =
+                /* this.LayerToYPosition(this.highestLayer.value + 2, true, false, false) + */
+                this.canvasHeight.value / 2;
+            if (this.startY.value > maxHeight) {
+                this.startY.value = maxHeight;
+            }
+        } else {
+            this.startY.value += delta;
+            if (this.startY.value < this.defaultLayerHeight.value * 2) {
+                this.startY.value = this.defaultLayerHeight.value * 2;
+            }
+
+            const maxHeight =
+                /* this.LayerToYPosition(this.highestLayer.value + 2, true, false, false) + */
+                this.canvasHeight.value;
+            if (this.startY.value > maxHeight) {
+                this.startY.value = maxHeight;
+            }
+        }
+    }
 }
 
 interface TimelineEvents {
@@ -257,3 +379,5 @@ export interface TimelineItemElement extends TimelineElement {
     end: Ref<number>;
     layer: Ref<number>;
 }
+
+export type TimelineAlignment = 'top' | 'bottom';

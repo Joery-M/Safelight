@@ -34,7 +34,7 @@
                 <input
                     v-model.number="manager.manager.viewport.start"
                     type="range"
-                    :max="1000"
+                    :max="2000"
                     style="width: 250px"
                 />
                 <input
@@ -46,7 +46,7 @@
                 <input
                     v-model.number="manager.manager.viewport.end"
                     type="range"
-                    :max="1000"
+                    :max="2000"
                     style="width: 250px"
                 />
                 <input

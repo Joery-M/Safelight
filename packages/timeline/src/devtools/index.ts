@@ -1,5 +1,5 @@
 import { App, setupDevtoolsPlugin } from '@vue/devtools-api';
-import { shallowReactive, watch } from 'vue';
+import { computed, shallowReactive, watch } from 'vue';
 import { TimelineManager } from '..';
 
 const INSPECTOR_ID = 'timeline-inspector';
@@ -9,7 +9,6 @@ const managers = shallowReactive(new Map<string, TimelineManager>());
 export function setupDevtools(app: App) {
     const stateType = 'timeline properties';
 
-    console.log('Setup');
     setupDevtoolsPlugin(
         {
             id: 'app.safelight.timeline',
@@ -21,7 +20,6 @@ export function setupDevtools(app: App) {
             componentStateTypes: [stateType]
         },
         (api) => {
-            console.log(api);
             api.addInspector({
                 id: INSPECTOR_ID,
                 label: 'Timeline inspector',
@@ -32,7 +30,7 @@ export function setupDevtools(app: App) {
             api.on.getInspectorTree((payload) => {
                 if (payload.inspectorId === INSPECTOR_ID) {
                     payload.rootNodes = [];
-                    for (const [id, manager] of managers) {
+                    for (const [id, _manager] of managers) {
                         if (!id.includes(payload.filter)) {
                             continue;
                         }
@@ -77,9 +75,34 @@ export function setupDevtools(app: App) {
                                 viewport: [
                                     {
                                         key: 'view',
-                                        value: manager.viewport,
+                                        value: computed(() => manager.viewport).value,
                                         objectType: 'reactive',
                                         editable: true
+                                    },
+                                    {
+                                        key: 'view Y',
+                                        value: manager.startY.value,
+                                        objectType: 'ref',
+                                        editable: false
+                                    },
+                                    {
+                                        key: 'Pointer inside canvas',
+                                        value: !manager.pointerOut.value,
+                                        objectType: 'computed',
+                                        editable: false
+                                    },
+                                    {
+                                        key: 'Smoothing',
+                                        value: manager.viewportSmoothing.value,
+                                        objectType: 'ref',
+                                        editable: false
+                                    }
+                                ],
+                                items: [
+                                    {
+                                        key: 'Items end',
+                                        value: manager.maxWidth.value,
+                                        objectType: 'computed'
                                     }
                                 ]
                             };
@@ -94,8 +117,6 @@ export function setupDevtools(app: App) {
 
             api.on.editInspectorState((payload) => {
                 if (payload.inspectorId == INSPECTOR_ID) {
-                    console.log(payload);
-
                     const nodeType = payload.nodeId.split('---')[0];
                     const managerId = payload.nodeId.split('---')[1];
                     const manager = managers.get(managerId);

@@ -74,7 +74,8 @@ export default defineConfig({
             'primevue/useconfirm',
             'primevue/usedialog',
             'rxjs',
-            'uuid'
+            'uuid',
+            'eventemitter3'
         ]
     },
     server: {

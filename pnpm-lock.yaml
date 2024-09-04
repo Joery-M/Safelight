@@ -180,6 +180,9 @@ importers:
       dot-path-value:
         specifier: ^0.0.10
         version: 0.0.10
+      eventemitter3:
+        specifier: ~5
+        version: 5.0.1
       fuzzysearch:
         specifier: ^1.0.3
         version: 1.0.3
