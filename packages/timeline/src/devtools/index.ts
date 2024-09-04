@@ -1,5 +1,6 @@
 import { App, setupDevtoolsPlugin } from '@vue/devtools-api';
-import { computed, shallowReactive, watch } from 'vue';
+import { watchDeep } from '@vueuse/core';
+import { computed, nextTick, shallowReactive } from 'vue';
 import { TimelineManager } from '..';
 
 const INSPECTOR_ID = 'timeline-inspector';
@@ -30,31 +31,37 @@ export function setupDevtools(app: App) {
             api.on.getInspectorTree((payload) => {
                 if (payload.inspectorId === INSPECTOR_ID) {
                     payload.rootNodes = [];
-                    for (const [id, _manager] of managers) {
+                    for (const [id, manager] of managers) {
                         if (!id.includes(payload.filter)) {
                             continue;
                         }
                         payload.rootNodes.push({
                             id: 'timeline---' + id,
                             label: `Timeline (${id})`,
-                            children: [
-                                {
-                                    id: 'layer',
-                                    label: `Layer ${payload.filter}`,
-                                    tags: [
-                                        {
-                                            label: 'active',
-                                            textColor: 0x000000,
-                                            backgroundColor: 0xff984f
-                                        },
-                                        {
-                                            label: 'test',
-                                            textColor: 0xffffff,
-                                            backgroundColor: 0x000000
-                                        }
-                                    ]
-                                }
-                            ]
+                            children: manager.layersSorted.value.map((layer) => {
+                                return {
+                                    id: 'layer---' + id + '---' + layer.index.value,
+                                    label: `Layer ${layer.index.value}`
+                                };
+                            })
+                            // [
+                            //     {
+                            //         id: 'layer',
+                            //         label: `Layer ${payload.filter}`,
+                            //         tags: [
+                            //             {
+                            //                 label: 'active',
+                            //                 textColor: 0x000000,
+                            //                 backgroundColor: 0xff984f
+                            //             },
+                            //             {
+                            //                 label: 'test',
+                            //                 textColor: 0xffffff,
+                            //                 backgroundColor: 0x000000
+                            //             }
+                            //         ]
+                            //     }
+                            // ]
                         });
                     }
                 }
@@ -62,8 +69,10 @@ export function setupDevtools(app: App) {
 
             api.on.getInspectorState((payload) => {
                 if (payload.inspectorId == INSPECTOR_ID) {
-                    const nodeType = payload.nodeId.split('---')[0];
-                    const managerId = payload.nodeId.split('---')[1];
+                    const sections = payload.nodeId.split('---');
+                    const nodeType = sections[0];
+                    const managerId = sections[1];
+                    const extraInfo = sections[2];
                     const manager = managers.get(managerId);
                     if (!manager) {
                         return;
@@ -109,6 +118,15 @@ export function setupDevtools(app: App) {
                             break;
                         }
 
+                        case 'layer': {
+                            const layer = manager.layersSorted.value.find(
+                                (l) => l.index.value == parseInt(extraInfo)
+                            );
+                            if (layer) {
+                                layer.highlight.value = true;
+                            }
+                            break;
+                        }
                         default:
                             break;
                     }
@@ -139,7 +157,7 @@ export function setupDevtools(app: App) {
                 }
             });
 
-            watch(managers, () => {
+            watchDeep(managers, () => {
                 api.sendInspectorTree(INSPECTOR_ID);
             });
         }

@@ -28,7 +28,7 @@
             <div>
                 <button @click="manager?.manager?.zoom(100)">Zoom in</button>
                 <button @click="manager?.manager?.zoom(-100)">Zoom out</button>
-                <button @click="manager?.manager?.requestExtraRender()">Re-render</button>
+                <button @click="manager?.manager?.renderAll()">Re-render</button>
             </div>
             <div v-if="manager">
                 <input
@@ -62,6 +62,7 @@
 <script lang="ts" setup>
 import { PhArrowLeft } from '@phosphor-icons/vue';
 import { createTimelineManager, type CreateTimelineFn } from '@safelight/timeline';
+import { TimelineLayer } from '@safelight/timeline/elements/TimelineLayer';
 import { VideoTimelineElement } from '@safelight/timeline/elements/VideoTimelineElement';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
@@ -81,8 +82,14 @@ onMounted(() => {
     if (canvas.value) {
         manager.value = createTimelineManager(canvas.value);
 
+        const layer1 = new TimelineLayer();
+        const layer2 = new TimelineLayer();
+
         const videoElem = new VideoTimelineElement();
-        manager.value!.addElement(videoElem);
+        layer1.elements.add(videoElem);
+
+        manager.value!.addLayer(layer1);
+        manager.value!.addLayer(layer2);
 
         watch(
             testVal,

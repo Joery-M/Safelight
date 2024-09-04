@@ -2,7 +2,6 @@ import { syncRef, useElementBounding, useEventListener } from '@vueuse/core';
 import EventEmitter from 'eventemitter3';
 import {
     computed,
-    isRef,
     nextTick,
     onBeforeUnmount,
     reactive,
@@ -12,6 +11,7 @@ import {
     toRaw,
     watch
 } from 'vue';
+import { TimelineLayer } from './elements/TimelineLayer';
 import { useSmoothNum } from './tools/useSmoothNum';
 
 export function createTimelineManager(canvas: HTMLCanvasElement): CreateTimelineFn {
@@ -22,7 +22,26 @@ export function createTimelineManager(canvas: HTMLCanvasElement): CreateTimeline
         addElement(element: TimelineElement) {
             manager.timelineElements.add(element);
             if (element['init']) element.init(manager);
-            manager.requestExtraRender();
+            manager.renderAll(true);
+        },
+        addLayer(layer: TimelineLayer) {
+            let maxIndex = 0;
+            let indexTaken = false;
+            manager.layers.forEach((l) => {
+                if (layer.index.value == l.index.value) {
+                    indexTaken = true;
+                }
+                if (l.index.value > maxIndex) maxIndex = l.index.value;
+            });
+            if (indexTaken) {
+                layer.index.value = maxIndex + 1;
+            }
+            console.log(layer.index.value);
+
+            manager.layers.add(layer);
+            layer.init(manager);
+
+            manager.renderAll();
         }
     };
 }
@@ -30,10 +49,12 @@ export function createTimelineManager(canvas: HTMLCanvasElement): CreateTimeline
 export interface CreateTimelineFn {
     manager: TimelineManager;
     addElement: (element: TimelineElement) => void;
+    addLayer: (layer: TimelineLayer) => void;
 }
 
 export class TimelineManager {
     public timelineElements = shallowReactive(new Set<TimelineElement>());
+    public layers = shallowReactive(new Set<TimelineLayer>());
     /**
      * Currently visible elements.
      *
@@ -44,6 +65,11 @@ export class TimelineManager {
      * Whether an extra render has already been queued
      */
     private renderingOnNextTick = false;
+    /**
+     * Layers that have requested an extra render
+     */
+    private queuedLayers = new WeakSet<TimelineLayer>();
+    private layerRenderBuffer: CanvasRenderingContext2D;
 
     /**
      * Current cursor for the user
@@ -90,12 +116,12 @@ export class TimelineManager {
     public defaultLayerHeight = ref(32);
 
     /* Internal settings */
-
     public pointerOut = ref(true);
     private canvasHeight = ref(100);
     private canvasWidth = ref(100);
     public zoomFactor = ref(1);
     public startY = ref(0);
+    public defaultLayerPaneWidth = ref(128);
 
     /* Computed */
 
@@ -107,16 +133,25 @@ export class TimelineManager {
         // So the view doesn't snap when moving outside the max width, also use the current end as a max
         let maxRight = this.viewport.end - this.rightPadding.value;
 
-        for (const element of this.timelineElements) {
-            if (element.type == 'layerItem' && 'end' in element && isRef(element.end)) {
-                if ((parseFloat(element.end.value as any) || 0) > maxRight) {
-                    maxRight = parseFloat(element.end.value as any);
-                }
+        // for (const element of this.timelineElements) {
+        //     if (element.type == 'layerItem' && 'end' in element && isRef(element.end)) {
+        //         if ((parseFloat(element.end.value as any) || 0) > maxRight) {
+        //             maxRight = parseFloat(element.end.value as any);
+        //         }
+        //     }
+        // }
+        for (const layer of this.layers) {
+            if (layer.maxEnd.value > maxRight) {
+                maxRight = layer.maxEnd.value;
             }
         }
 
         return maxRight;
     });
+
+    public layersSorted = computed(() =>
+        Array.from(this.layers.values()).sort((a, b) => b.index.value - a.index.value)
+    );
 
     private ctx: CanvasRenderingContext2D;
 
@@ -128,14 +163,19 @@ export class TimelineManager {
         this.ctx = context;
         this.setCanvasProperties();
 
+        const bufferCanvas = document.createElement('canvas');
+        const ctx2 = bufferCanvas.getContext('2d');
+        if (!ctx2) {
+            throw new Error('Could not get canvas context');
+        }
+        this.layerRenderBuffer = ctx2;
+
         /* 
             ----- Listen to user events ------
         */
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
-        const that = this;
-        useEventListener('pointerdown', (ev) => this.events.emit('mouseDown', that, ev, canvas));
-        useEventListener('pointerup', (ev) => this.events.emit('mouseUp', that, ev, canvas));
-        useEventListener('pointermove', (ev) => this.events.emit('mouseMove', that, ev, canvas));
+        useEventListener('pointerdown', (ev) => this.events.emit('mouseDown', this, ev, canvas));
+        useEventListener('pointerup', (ev) => this.events.emit('mouseUp', this, ev, canvas));
+        useEventListener('pointermove', (ev) => this.events.emit('mouseMove', this, ev, canvas));
 
         const bounds = useElementBounding(canvas);
         syncRef(bounds.width, this.canvasWidth, { direction: 'ltr' });
@@ -153,7 +193,6 @@ export class TimelineManager {
         useEventListener(
             'wheel',
             (ev) => {
-                console.log(ev.deltaY);
                 if (!this.pointerOut.value) {
                     ev.preventDefault();
                 } else {
@@ -198,7 +237,7 @@ export class TimelineManager {
                 this.viewportSmooth.end
             ],
             () => {
-                this.requestExtraRender();
+                this.renderAll();
             }
         );
 
@@ -220,29 +259,71 @@ export class TimelineManager {
         this.canvas.style.display = 'block';
     }
 
-    renderAll = (queued = false) => {
+    renderAll = (useBuffer = false) => {
+        let differentSize = false;
+        if (
+            this.canvas.width != this.canvasWidth.value ||
+            this.canvas.height != this.canvasHeight.value
+        ) {
+            differentSize = true;
+        }
         this.canvas.width = this.canvasWidth.value;
         this.canvas.height = this.canvasHeight.value;
-        // this.ctx.fillText(Date.now().toString(), 0, 0);
-        this.ctx.fillStyle = 'white';
-        this.ctx.save();
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        for (const element of this.timelineElements) {
-            if (element.type == 'layerItem') {
-                // TODO: Check if item is in view
-                this.visibleElements.add(element);
-            } else {
-                this.visibleElements.add(element);
-            }
+        this.layerRenderBuffer.canvas.width = this.canvasWidth.value;
+        this.layerRenderBuffer.canvas.height = this.canvasHeight.value;
 
+        if (differentSize) {
+            // If canvas is different size, completely re-render
+            this.renderAll(false);
+            return;
+        }
+
+        this.ctx.save();
+        console.log(useBuffer, this.isCanvasBlank(this.layerRenderBuffer));
+        if (!useBuffer) {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        } else if (!this.isCanvasBlank(this.layerRenderBuffer)) {
+            console.log('buffer');
+            this.ctx.putImageData(
+                this.layerRenderBuffer.getImageData(
+                    0,
+                    0,
+                    this.canvasWidth.value,
+                    this.canvasHeight.value
+                ),
+                0,
+                0
+            );
+            this.ctx.drawImage(this.layerRenderBuffer.canvas, 0, 0);
+        }
+
+        for (const layer of this.layers) {
+            if (useBuffer) {
+                if (!this.queuedLayers.has(layer)) {
+                    continue;
+                } else {
+                    this.queuedLayers.delete(layer);
+                }
+            }
             // Restore to last known settings before each render
             this.ctx.restore();
             // If called from event handler (v-on:click), `this` is a proxy
-            element.render(this.ctx, toRaw(this), queued);
+            layer.render(this.ctx, toRaw(this), useBuffer);
+        }
+        this.ctx.restore();
+
+        if (!useBuffer) {
+            this.layerRenderBuffer.drawImage(this.ctx.canvas, 0, 0);
+        }
+
+        for (const element of this.timelineElements) {
+            this.ctx.restore();
+            element.render(this.ctx, this, useBuffer);
         }
     };
 
-    requestExtraRender = () => {
+    requestExtraRender = (layer: TimelineLayer) => {
+        this.queuedLayers.add(layer);
         if (!this.renderingOnNextTick) {
             nextTick(() => {
                 this.renderingOnNextTick = false;
@@ -355,6 +436,16 @@ export class TimelineManager {
             }
         }
     }
+
+    private isCanvasBlank(ctx: CanvasRenderingContext2D) {
+        if (ctx.canvas.width === 0 || ctx.canvas.height == 0) {
+            return true;
+        }
+        const buff = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height).data.buffer;
+        const pixelBuffer = new Uint32Array(buff);
+
+        return !pixelBuffer.some((color) => color !== 0);
+    }
 }
 
 interface TimelineEvents {
@@ -366,18 +457,29 @@ interface TimelineEvents {
     unmount: [manager: TimelineManager];
 }
 
-export type TimelineElementTypes = 'generic' | 'layerItem' | 'layer';
+export enum TimelineElementTypes {
+    'generic',
+    'layerItem',
+    'layer'
+}
 
 export interface TimelineElement {
-    type: TimelineElementTypes;
+    type: TimelineElementTypes.generic;
     init?: (manager: TimelineManager) => any;
     render: (ctx: CanvasRenderingContext2D, manager: TimelineManager, isQueued: boolean) => any;
 }
 
-export interface TimelineItemElement extends TimelineElement {
+export interface TimelineItemElement {
+    type: TimelineElementTypes.layerItem;
     start: Ref<number>;
     end: Ref<number>;
-    layer: Ref<number>;
+    init?: (layer: TimelineLayer) => any;
+    render: (payload: {
+        ctx: CanvasRenderingContext2D;
+        layer: TimelineLayer;
+        manager: TimelineManager;
+        isQueued: boolean;
+    }) => any;
 }
 
 export type TimelineAlignment = 'top' | 'bottom';

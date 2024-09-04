@@ -1,7 +1,7 @@
 import { TimelineElement, TimelineElementTypes, TimelineManager } from '..';
 
 export class TimelineCursorElement implements TimelineElement {
-    type: TimelineElementTypes = 'generic';
+    type: TimelineElementTypes.generic = TimelineElementTypes.generic;
 
     manager!: TimelineManager;
     /**
