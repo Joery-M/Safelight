@@ -1,4 +1,4 @@
-import { syncRef, useElementBounding, useEventListener } from '@vueuse/core';
+import { syncRef, useDevicePixelRatio, useElementBounding, useEventListener } from '@vueuse/core';
 import EventEmitter from 'eventemitter3';
 import {
     computed,
@@ -13,6 +13,13 @@ import {
 import { TimelineLayer } from './elements/TimelineLayer';
 import { canvasRestore, canvasSave } from './tools/canvasState';
 import { useSmoothNum } from './tools/useSmoothNum';
+
+/**
+ * DONT USE
+ *
+ * Automatically set whenever devtools has been installed
+ */
+export const __DEVTOOLS_AVAILABLE__ = ref(false);
 
 export function createTimelineManager(canvas: HTMLCanvasElement): CreateTimelineFn {
     const manager = new TimelineManager(canvas);
@@ -87,7 +94,7 @@ export class TimelineManager {
      *
      * @example 1 = instant
      */
-    public viewportSmoothingX = ref(0.75);
+    public viewportSmoothingX = ref(0.5);
     public viewportSmoothingY = ref(0.5);
     public viewportSmooth = {
         start: useSmoothNum(
@@ -105,7 +112,7 @@ export class TimelineManager {
     };
 
     /* Public settings */
-    public rightPadding = ref(1000);
+    public rightPadding = ref(5000);
     public leftBoundary = ref(0);
     public invertScrollAxes = ref(true);
     public invertVerticalScroll = ref(true);
@@ -117,14 +124,16 @@ export class TimelineManager {
     public _pointerOut = ref(true);
     private canvasHeight = ref(100);
     private canvasWidth = ref(100);
-    private windowDPI = ref(2);
     private paneResizing = ref(false);
+    public windowDPI = useDevicePixelRatio().pixelRatio;
     public defaultLayerPaneWidth = ref(128);
+    public layerPaneWidth = ref(128);
     /**
      * Change the speed of vertical scrolling
      */
     // Magic number, lets goooo
     private constantYScale = 0.5;
+    private changedLayerPaneWidth = ref(false);
 
     /* Computed */
 
@@ -167,6 +176,7 @@ export class TimelineManager {
         useEventListener('pointerdown', (ev) => this.events.emit('mouseDown', ev, this, canvas));
         useEventListener('pointerup', (ev) => this.events.emit('mouseUp', ev, this, canvas));
         useEventListener('pointermove', (ev) => this.events.emit('mouseMove', ev, this, canvas));
+        useEventListener('click', (ev) => this.events.emit('mouseClick', ev, this, canvas));
 
         const bounds = useElementBounding(canvas);
         syncRef(bounds.width, this.canvasWidth, { direction: 'ltr' });
@@ -192,12 +202,11 @@ export class TimelineManager {
 
                 if (ev.ctrlKey) {
                     // Zooming
-                    let mouseX = ev.clientX - bounds.left.value - this.defaultLayerPaneWidth.value;
+                    let mouseX = ev.clientX - bounds.left.value - this.layerPaneWidth.value;
                     if (mouseX < 0) {
                         mouseX = 0;
                     }
-                    const mouseXPerc =
-                        mouseX / (bounds.width.value - this.defaultLayerPaneWidth.value);
+                    const mouseXPerc = mouseX / (bounds.width.value - this.layerPaneWidth.value);
                     // Invert cause scrolling down should be zoom out
                     this.zoom(-ev.deltaY, mouseXPerc);
                 } else {
@@ -217,11 +226,18 @@ export class TimelineManager {
             { passive: false }
         );
 
+        watch(this.defaultLayerPaneWidth, () => {
+            if (!this.changedLayerPaneWidth.value) {
+                this.layerPaneWidth.value = this.defaultLayerPaneWidth.value;
+            }
+        });
+
         // Listen to mouse, and set cursor for layer pane resize handle
         {
             let paneResizeXStart = 0;
-            let startSize = this.defaultLayerPaneWidth.value;
+            let startSize = this.layerPaneWidth.value;
             let requestedSize = 0;
+            let lastClick = 0;
             this.events.on('mouseMove', (ev) => {
                 const distToHandle = ev.clientX - bounds.left.value - startSize;
                 if (Math.abs(distToHandle) < 2 || this.paneResizing.value) {
@@ -233,28 +249,44 @@ export class TimelineManager {
                     const offset = distToHandle - paneResizeXStart;
                     requestedSize = startSize + offset;
 
-                    this.defaultLayerPaneWidth.value = Math.max(requestedSize, 2);
-                    this.defaultLayerPaneWidth.value = Math.min(
-                        this.defaultLayerPaneWidth.value,
+                    this.layerPaneWidth.value = Math.max(requestedSize, 2);
+                    this.layerPaneWidth.value = Math.min(
+                        this.layerPaneWidth.value,
                         this.canvasWidth.value - 100
                     );
                 }
             });
             this.events.on('mouseDown', (ev) => {
                 if (!this._pointerOut.value) {
-                    const distToHandle =
-                        ev.clientX - bounds.left.value - this.defaultLayerPaneWidth.value;
+                    const distToHandle = ev.clientX - bounds.left.value - this.layerPaneWidth.value;
                     if (distToHandle < 2) {
                         paneResizeXStart = distToHandle;
-                        startSize = this.defaultLayerPaneWidth.value;
+                        startSize = this.layerPaneWidth.value;
                         this.paneResizing.value = true;
                     }
                 }
             });
             this.events.on('mouseUp', () => {
                 if (this.paneResizing.value) {
-                    startSize = this.defaultLayerPaneWidth.value;
+                    startSize = this.layerPaneWidth.value;
                     this.paneResizing.value = false;
+
+                    this.changedLayerPaneWidth.value = true;
+                }
+            });
+            this.events.on('mouseClick', (ev) => {
+                if (!this._pointerOut.value) {
+                    const distToHandle = ev.clientX - bounds.left.value - this.layerPaneWidth.value;
+                    if (distToHandle < 2) {
+                        if (Date.now() - lastClick < 500) {
+                            this.layerPaneWidth.value = this.defaultLayerPaneWidth.value;
+                            requestedSize = this.defaultLayerPaneWidth.value;
+                            startSize = this.defaultLayerPaneWidth.value;
+                            lastClick = 0;
+                        } else {
+                            lastClick = Date.now();
+                        }
+                    }
                 }
             });
         }
@@ -281,12 +313,20 @@ export class TimelineManager {
         });
 
         // Import devtools
-        if (import.meta.env.DEV) {
-            import('./devtools/').then((dev) => {
-                const unregister = dev.registerTimelineManager(this);
-                this.events.once('unmount', unregister);
-            });
-        }
+        watch(
+            __DEVTOOLS_AVAILABLE__,
+            (enable) => {
+                if (enable) {
+                    import('./devtools/').then((dev) => {
+                        if (dev.registerTimelineManager) {
+                            const unregister = dev.registerTimelineManager(this);
+                            this.events.once('unmount', unregister);
+                        }
+                    });
+                }
+            },
+            { immediate: true }
+        );
     }
 
     setCanvasProperties() {
@@ -345,13 +385,13 @@ export class TimelineManager {
     */
 
     pxToMs = (pixel: number) =>
-        (pixel / (this.canvasWidth.value - this.defaultLayerPaneWidth.value)) *
+        (pixel / (this.canvasWidth.value - this.layerPaneWidth.value)) *
         (this.viewportSmooth.end.value - this.viewportSmooth.start.value);
 
     msToPx = (time: number) =>
         ((time - this.leftBoundary.value) /
             (this.viewportSmooth.end.value - this.viewportSmooth.start.value)) *
-        (this.canvasWidth.value - this.defaultLayerPaneWidth.value);
+        (this.canvasWidth.value - this.layerPaneWidth.value);
 
     LayerToYPosition(
         layer: number,
@@ -467,6 +507,7 @@ interface TimelineEvents {
     mouseDown: [ev: PointerEvent, manager: TimelineManager, canvas: HTMLCanvasElement];
     mouseUp: [ev: PointerEvent, manager: TimelineManager, canvas: HTMLCanvasElement];
     mouseMove: [ev: PointerEvent, manager: TimelineManager, canvas: HTMLCanvasElement];
+    mouseClick: [ev: MouseEvent, manager: TimelineManager, canvas: HTMLCanvasElement];
     scroll: [manager: TimelineManager];
     pan: [manager: TimelineManager];
     unmount: [manager: TimelineManager];

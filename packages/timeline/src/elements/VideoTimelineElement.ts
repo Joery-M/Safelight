@@ -7,7 +7,7 @@ export class VideoTimelineElement implements TimelineItemElement {
     private tempHue = 0;
 
     start = ref(0);
-    end = ref(100);
+    end = ref(1000);
 
     render: TimelineItemElement['render'] = ({ ctx, manager, container }) => {
         // Offset

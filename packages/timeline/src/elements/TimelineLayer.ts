@@ -44,9 +44,9 @@ export class TimelineLayer {
         let state = canvasSave(ctx);
         ctx.fillStyle = '#18181b';
         const offsetY = manager.LayerToYPosition(this.index.value, false, true);
-        ctx.fillRect(0, offsetY, ctx.canvas.width, this.height.value);
 
         /* Render elements */
+        const viewportWidth = ctx.canvas.width / manager.windowDPI.value;
 
         const container = Object.freeze<ItemContainer>({
             bottom: ctx.canvas.height - (offsetY + this.height.value),
@@ -54,11 +54,11 @@ export class TimelineLayer {
             left: 0,
             right: 0,
             top: 0,
-            width: ctx.canvas.width - manager.defaultLayerPaneWidth.value
+            width: viewportWidth - manager.layerPaneWidth.value
         });
 
         canvasRestore(ctx, state);
-        ctx.translate(manager.defaultLayerPaneWidth.value, offsetY);
+        ctx.translate(manager.layerPaneWidth.value, offsetY);
         state = canvasSave(ctx);
 
         for (const element of this.elements) {
@@ -85,32 +85,42 @@ export class TimelineLayer {
             }
         }
         canvasRestore(ctx, state);
-        ctx.translate(-manager.defaultLayerPaneWidth.value, -offsetY);
+        ctx.translate(-manager.layerPaneWidth.value, -offsetY);
 
         ctx.fillStyle = '#18181b';
         // Layer pane
-        ctx.fillRect(0, offsetY, manager.defaultLayerPaneWidth.value, this.height.value);
+        ctx.fillRect(0, offsetY, manager.layerPaneWidth.value, this.height.value);
         ctx.fillStyle = '#3f3f46';
         // Right border
-        ctx.fillRect(manager.defaultLayerPaneWidth.value - 2, offsetY, 2, this.height.value);
+        ctx.fillRect(manager.layerPaneWidth.value - 2, offsetY, 2, this.height.value);
         // Top border in pane
-        ctx.fillRect(0, offsetY - 1.5, manager.defaultLayerPaneWidth.value, 2);
+        ctx.fillRect(0, offsetY - 1.5, manager.layerPaneWidth.value, 2);
         // Top border in timeline
         ctx.fillStyle = '#3f3f46A0';
+        ctx.globalCompositeOperation = 'destination-over';
         ctx.fillRect(
-            manager.defaultLayerPaneWidth.value,
+            manager.layerPaneWidth.value,
             offsetY - 1,
-            ctx.canvas.width - manager.defaultLayerPaneWidth.value,
+            viewportWidth - manager.layerPaneWidth.value,
             1
         );
+        ctx.globalCompositeOperation = 'source-over';
 
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, offsetY, manager.layerPaneWidth.value - 2, this.height.value);
+        ctx.clip();
+
+        // Layer pane contents
         ctx.fillStyle = 'white';
         ctx.fillText(this.index.value.toString(), 5, offsetY + this.height.value / 2);
         ctx.fillText(this.test.toString(), 20, offsetY + this.height.value / 2);
 
+        ctx.restore();
+
         if (this._highlight.value) {
             ctx.fillStyle = 'rgba(65, 184, 131, 0.35)';
-            ctx.fillRect(0, offsetY, ctx.canvas.width, this.height.value);
+            ctx.fillRect(0, offsetY, viewportWidth, this.height.value);
         }
 
         this.test++;

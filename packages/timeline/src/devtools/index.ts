@@ -1,29 +1,16 @@
 import { App, setupDevtoolsPlugin } from '@vue/devtools-api';
 import { shallowReactive, toRaw, watch } from 'vue';
-import { TimelineManager } from '..';
+import { __DEVTOOLS_AVAILABLE__, TimelineManager } from '..';
 import { TimelineLayer } from '../elements/TimelineLayer';
 
 const INSPECTOR_ID = 'timeline-inspector';
 
-const managers = shallowReactive(new Map<string, TimelineManager>());
-
-export let registerTimelineManager: (manager: TimelineManager) => () => void = (
-    manager: TimelineManager
-) => {
-    const id = crypto.randomUUID().split('-')[0];
-
-    manager.events.on('unmount', () => {
-        managers.delete(id);
-    });
-
-    managers.set(id, manager);
-    return () => {
-        managers.delete(id);
-    };
-};
+export let registerTimelineManager!: (manager: TimelineManager) => () => void;
 
 export function setupDevtools(app: App) {
     const stateType = 'timeline properties';
+
+    const managers = shallowReactive(new Map<string, TimelineManager>());
 
     setupDevtoolsPlugin(
         {
@@ -32,14 +19,14 @@ export function setupDevtools(app: App) {
             label: '@safelight/timeline',
             packageName: '@safelight/timeline',
             homepage: 'https://safelight.app/',
-            logo: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 -960 960 960' width='24px' fill='%23fbbf24'%3E%3Cpath d='M240-280h240v-80H240v80Zm120-160h240v-80H360v80Zm120-160h240v-80H480v80ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z'/%3E%3C/svg%3E`,
+            logo: import.meta.resolve('../../assets/devtools.svg'),
             componentStateTypes: [stateType]
         },
         (api) => {
             api.addInspector({
                 id: INSPECTOR_ID,
                 label: 'Timeline inspector',
-                icon: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 -960 960 960' width='24px' fill='%23fbbf24'%3E%3Cpath d='M240-280h240v-80H240v80Zm120-160h240v-80H360v80Zm120-160h240v-80H480v80ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z'/%3E%3C/svg%3E`,
+                icon: import.meta.resolve('../../assets/devtools.svg'),
                 treeFilterPlaceholder: 'Search for timeline ID...'
             });
 
@@ -122,6 +109,12 @@ export function setupDevtools(app: App) {
                                         value: manager._maxWidth.value,
                                         objectType: 'computed'
                                     }
+                                ],
+                                rendering: [
+                                    {
+                                        key: 'Render time (ms)',
+                                        value: manager.__RENDER_TIME__.value
+                                    }
                                 ]
                             };
                             break;
@@ -193,7 +186,7 @@ export function setupDevtools(app: App) {
                                             value: layer.__RENDER_TIME__.value
                                         },
                                         {
-                                            key: 'Render time (% of parent)',
+                                            key: 'Render time (% of timeline)',
                                             value:
                                                 Math.round(
                                                     (layer.__RENDER_TIME__.value /
@@ -244,28 +237,6 @@ export function setupDevtools(app: App) {
                 }
             });
 
-            managers.forEach((manager, id) => {
-                watch(
-                    [
-                        manager.viewportSmooth.end,
-                        manager.viewportSmooth.start,
-                        manager.viewportSmoothingX,
-                        manager._maxWidth,
-                        manager.__RENDER_TIME__,
-                        manager.layers
-                    ],
-                    () => {
-                        api.sendInspectorTree(INSPECTOR_ID);
-                    }
-                );
-                manager.events.on('unmount', () => {
-                    managers.delete(id);
-
-                    api.sendInspectorTree(INSPECTOR_ID);
-                });
-                api.sendInspectorTree(INSPECTOR_ID);
-            });
-
             registerTimelineManager = (manager: TimelineManager) => {
                 const id = crypto.randomUUID().split('-')[0];
 
@@ -280,20 +251,28 @@ export function setupDevtools(app: App) {
                     [
                         manager.viewportSmooth.end,
                         manager.viewportSmooth.start,
+                        manager.viewportSmooth.yPos,
                         manager.viewportSmoothingX,
                         manager._maxWidth,
                         manager.__RENDER_TIME__,
-                        manager.layers
+                        manager._pointerOut
                     ],
                     () => {
-                        api.sendInspectorTree(INSPECTOR_ID);
+                        api.sendInspectorState(INSPECTOR_ID);
                     }
                 );
+                watch([manager.layers, manager.timelineElements], () => {
+                    api.sendInspectorState(INSPECTOR_ID);
+                    api.sendInspectorTree(INSPECTOR_ID);
+                });
                 api.sendInspectorTree(INSPECTOR_ID);
                 return () => {
                     managers.delete(id);
+                    api.sendInspectorTree(INSPECTOR_ID);
                 };
             };
+
+            __DEVTOOLS_AVAILABLE__.value = true;
             // setInterval(() => {
             //     api.sendInspectorTree(INSPECTOR_ID);
             // }, 1000);
