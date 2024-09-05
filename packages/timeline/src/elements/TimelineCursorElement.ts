@@ -15,10 +15,10 @@ export class TimelineCursorElement implements TimelineElement {
         manager.events.on('mouseDown', this.mouseDown);
     }
 
-    render(_ctx: CanvasRenderingContext2D, _manager: TimelineManager) {
+    render: TimelineElement['render'] = ({ ctx, manager }) => {
         // ctx.beginPath();
         // ctx.moveTo(this.start - 2);
-    }
+    };
 
     private mouseDown(_manager: TimelineManager, event: PointerEvent, _canvas: HTMLCanvasElement) {
         if (event.clientX) {

@@ -1,8 +1,9 @@
-import { computed, ref, shallowReactive, watch } from 'vue';
-import { TimelineElementTypes, TimelineItemElement, TimelineManager } from '..';
-import { debouncedRef } from '@vueuse/core';
+import { computed, ref, shallowReactive } from 'vue';
+import { ItemContainer, TimelineElementTypes, TimelineItemElement, TimelineManager } from '..';
+import { canvasRestore, canvasSave } from '../tools/canvasState';
 
 export class TimelineLayer {
+    public __RENDER_TIME__ = ref(0);
     public type = TimelineElementTypes.layer;
     public index = ref(0);
     public elements = shallowReactive(new Set<TimelineItemElement>());
@@ -16,9 +17,10 @@ export class TimelineLayer {
 
     /**
      * USED BY DEVTOOLS, DONT SET
+     *
+     * unless if you want to highlight this layer ofc
      */
-    public highlight = ref(false);
-    private highlightDebounce = debouncedRef(this.highlight, 300);
+    public _highlight = ref(false);
 
     private test = 0;
 
@@ -34,38 +36,83 @@ export class TimelineLayer {
         return maxRight;
     });
 
-    private manager!: TimelineManager;
-
     public init(manager: TimelineManager) {
-        this.manager = manager;
-
         this.height.value = manager.defaultLayerHeight.value;
-
-        watch([this.elements, this.highlightDebounce], () => {
-            this.manager.requestExtraRender();
-        });
-        let unhighlightTimeout: ReturnType<typeof setTimeout> | undefined;
-        watch(this.highlight, (highlight) => {
-            if (highlight) {
-                clearTimeout(unhighlightTimeout);
-                unhighlightTimeout = setTimeout(() => {
-                    this.highlight.value = false;
-                }, 300);
-            }
-        });
     }
 
-    public render(ctx: CanvasRenderingContext2D, _manager: TimelineManager, _queued: boolean) {
-        ctx.fillStyle = this.index.value % 2 == 0 ? '#404040' : '#a0a0a0';
-        const offsetY = this.height.value * this.index.value;
+    public render(ctx: CanvasRenderingContext2D, manager: TimelineManager) {
+        let state = canvasSave(ctx);
+        ctx.fillStyle = '#18181b';
+        const offsetY = manager.LayerToYPosition(this.index.value, false, true);
         ctx.fillRect(0, offsetY, ctx.canvas.width, this.height.value);
-        ctx.fillStyle = this.index.value % 2 == 1 ? '#404040' : '#a0a0a0';
-        ctx.fillText(this.test.toString(), 20, offsetY + this.height.value / 2);
-        this.test++;
-        if (this.highlightDebounce.value) {
-            ctx.fillStyle = '#e8bf2d';
-            ctx.lineWidth = 2;
-            ctx.fillRect(ctx.canvas.width - 2, offsetY, 2, this.height.value);
+
+        /* Render elements */
+
+        const container = Object.freeze<ItemContainer>({
+            bottom: ctx.canvas.height - (offsetY + this.height.value),
+            height: this.height.value,
+            left: 0,
+            right: 0,
+            top: 0,
+            width: ctx.canvas.width - manager.defaultLayerPaneWidth.value
+        });
+
+        canvasRestore(ctx, state);
+        ctx.translate(manager.defaultLayerPaneWidth.value, offsetY);
+        state = canvasSave(ctx);
+
+        for (const element of this.elements) {
+            canvasRestore(ctx, state);
+            if (import.meta.env.DEV) {
+                const start = performance.now();
+                element.render({
+                    ctx,
+                    isQueued: false,
+                    container,
+                    layer: this,
+                    manager: manager
+                });
+                const end = performance.now();
+                element.__RENDER_TIME__.value = end - start;
+            } else {
+                element.render({
+                    ctx,
+                    isQueued: false,
+                    container,
+                    layer: this,
+                    manager: manager
+                });
+            }
         }
+        canvasRestore(ctx, state);
+        ctx.translate(-manager.defaultLayerPaneWidth.value, -offsetY);
+
+        ctx.fillStyle = '#18181b';
+        // Layer pane
+        ctx.fillRect(0, offsetY, manager.defaultLayerPaneWidth.value, this.height.value);
+        ctx.fillStyle = '#3f3f46';
+        // Right border
+        ctx.fillRect(manager.defaultLayerPaneWidth.value - 2, offsetY, 2, this.height.value);
+        // Top border in pane
+        ctx.fillRect(0, offsetY - 1.5, manager.defaultLayerPaneWidth.value, 2);
+        // Top border in timeline
+        ctx.fillStyle = '#3f3f46A0';
+        ctx.fillRect(
+            manager.defaultLayerPaneWidth.value,
+            offsetY - 1,
+            ctx.canvas.width - manager.defaultLayerPaneWidth.value,
+            1
+        );
+
+        ctx.fillStyle = 'white';
+        ctx.fillText(this.index.value.toString(), 5, offsetY + this.height.value / 2);
+        ctx.fillText(this.test.toString(), 20, offsetY + this.height.value / 2);
+
+        if (this._highlight.value) {
+            ctx.fillStyle = 'rgba(65, 184, 131, 0.35)';
+            ctx.fillRect(0, offsetY, ctx.canvas.width, this.height.value);
+        }
+
+        this.test++;
     }
 }

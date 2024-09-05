@@ -10,6 +10,11 @@ export function useSmoothNum(
 
     const outputVal = ref(sourceVal.value);
 
+    // Instant return in test
+    if (__TEST__) {
+        return readonly(outputVal);
+    }
+
     let animating = false;
     function step() {
         if (Math.abs(outputVal.value - sourceVal.value) > snapOffsetVal.value) {

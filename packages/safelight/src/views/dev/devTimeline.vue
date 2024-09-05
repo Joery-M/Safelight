@@ -14,17 +14,37 @@
             <input v-model="invertScrollAxes" type="checkbox" />
             <label> Trackpad mode </label>
             <div>
-                <input
-                    v-model.number="testVal.start"
-                    type="range"
-                    :max="500"
-                    style="width: 250px"
-                />
-                <input v-model.number="testVal.start" type="number" style="width: 75px" />
-                <br />
-                <input v-model.number="testVal.end" type="range" :max="500" style="width: 250px" />
-                <input v-model.number="testVal.end" type="number" style="width: 75px" />
+                <input v-model="isItemActive[0]" type="checkbox" />
+                <input v-model="isItemActive[1]" type="checkbox" />
+                <input v-model="isItemActive[2]" type="checkbox" />
+                <input v-model="isItemActive[3]" type="checkbox" />
+                <input v-model="isItemActive[4]" type="checkbox" />
+                <input v-model="isItemActive[5]" type="checkbox" />
             </div>
+            <template v-for="(item, i) of items" :key="i">
+                <div v-if="isItemActive[i]">
+                    <p>{{ i }}</p>
+                    <input
+                        v-model.number="item.item.start.value"
+                        type="range"
+                        :max="1000"
+                        style="width: 250px"
+                    />
+                    <input
+                        v-model.number="item.item.start.value"
+                        type="number"
+                        style="width: 75px"
+                    />
+                    <br />
+                    <input
+                        v-model.number="item.item.end.value"
+                        type="range"
+                        :max="1000"
+                        style="width: 250px"
+                    />
+                    <input v-model.number="item.item.end.value" type="number" style="width: 75px" />
+                </div>
+            </template>
             <div>
                 <button @click="manager?.manager?.zoom(100)">Zoom in</button>
                 <button @click="manager?.manager?.zoom(-100)">Zoom out</button>
@@ -66,17 +86,22 @@ import { TimelineLayer } from '@safelight/timeline/elements/TimelineLayer';
 import { VideoTimelineElement } from '@safelight/timeline/elements/VideoTimelineElement';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
-import { onMounted, reactive, ref, watch } from 'vue';
+import { onMounted, reactive, ref, shallowReactive, watch } from 'vue';
 import { RouterLink } from 'vue-router/auto';
 
 const invertScrollAxes = ref(true);
 
 const canvas = ref<HTMLCanvasElement>();
 
-const testVal = reactive({
-    start: 0,
-    end: 100
-});
+const items = shallowReactive([
+    { item: new VideoTimelineElement(), layer: 2 },
+    { item: new VideoTimelineElement(), layer: 0 },
+    { item: new VideoTimelineElement(), layer: 2 },
+    { item: new VideoTimelineElement(), layer: 2 },
+    { item: new VideoTimelineElement(), layer: 1 },
+    { item: new VideoTimelineElement(), layer: 0 }
+]);
+const isItemActive = reactive([true, false, false, false, false, false]);
 const manager = ref<CreateTimelineFn>();
 onMounted(() => {
     if (canvas.value) {
@@ -84,20 +109,35 @@ onMounted(() => {
 
         const layer1 = new TimelineLayer();
         const layer2 = new TimelineLayer();
+        const layer3 = new TimelineLayer();
 
-        const videoElem = new VideoTimelineElement();
-        layer1.elements.add(videoElem);
+        const layers = [layer1, layer2, layer3];
 
         manager.value!.addLayer(layer1);
         manager.value!.addLayer(layer2);
+        manager.value!.addLayer(layer3);
 
         watch(
-            testVal,
-            ({ end, start }) => {
-                videoElem.end.value = end;
-                videoElem.start.value = start;
+            isItemActive,
+            () => {
+                for (let i = 0; i < items.length; i++) {
+                    const item = items[i];
+                    const active = isItemActive[i];
+
+                    const layer = layers[item.layer];
+
+                    if (active) {
+                        if (!layer.elements.has(item.item)) {
+                            layer.elements.add(item.item);
+                        }
+                    } else {
+                        if (layer.elements.has(item.item)) {
+                            layer.elements.delete(item.item);
+                        }
+                    }
+                }
             },
-            { immediate: true, deep: true }
+            { immediate: true }
         );
     }
 });

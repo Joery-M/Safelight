@@ -1,11 +1,26 @@
 import { App, setupDevtoolsPlugin } from '@vue/devtools-api';
-import { watchDeep } from '@vueuse/core';
-import { computed, shallowReactive } from 'vue';
+import { shallowReactive, toRaw, watch } from 'vue';
 import { TimelineManager } from '..';
+import { TimelineLayer } from '../elements/TimelineLayer';
 
 const INSPECTOR_ID = 'timeline-inspector';
 
 const managers = shallowReactive(new Map<string, TimelineManager>());
+
+export let registerTimelineManager: (manager: TimelineManager) => () => void = (
+    manager: TimelineManager
+) => {
+    const id = crypto.randomUUID().split('-')[0];
+
+    manager.events.on('unmount', () => {
+        managers.delete(id);
+    });
+
+    managers.set(id, manager);
+    return () => {
+        managers.delete(id);
+    };
+};
 
 export function setupDevtools(app: App) {
     const stateType = 'timeline properties';
@@ -36,32 +51,28 @@ export function setupDevtools(app: App) {
                             continue;
                         }
                         payload.rootNodes.push({
-                            id: 'timeline---' + id,
+                            id: 'timeline::' + id,
                             label: `Timeline (${id})`,
                             children: manager.layersSorted.value.map((layer) => {
                                 return {
-                                    id: 'layer---' + id + '---' + layer.index.value,
-                                    label: `Layer ${layer.index.value}`
+                                    id: 'layer::' + id + '::' + layer.index.value,
+                                    label: `Layer ${layer.index.value + 1}`,
+                                    children: Array.from(layer.elements.values()).map(
+                                        (_element, i) => {
+                                            return {
+                                                id:
+                                                    'element::' +
+                                                    id +
+                                                    '::' +
+                                                    layer.index.value +
+                                                    ';' +
+                                                    i,
+                                                label: 'Element ' + i
+                                            };
+                                        }
+                                    )
                                 };
                             })
-                            // [
-                            //     {
-                            //         id: 'layer',
-                            //         label: `Layer ${payload.filter}`,
-                            //         tags: [
-                            //             {
-                            //                 label: 'active',
-                            //                 textColor: 0x000000,
-                            //                 backgroundColor: 0xff984f
-                            //             },
-                            //             {
-                            //                 label: 'test',
-                            //                 textColor: 0xffffff,
-                            //                 backgroundColor: 0x000000
-                            //             }
-                            //         ]
-                            //     }
-                            // ]
                         });
                     }
                 }
@@ -69,7 +80,7 @@ export function setupDevtools(app: App) {
 
             api.on.getInspectorState((payload) => {
                 if (payload.inspectorId == INSPECTOR_ID) {
-                    const sections = payload.nodeId.split('---');
+                    const sections = payload.nodeId.split('::');
                     const nodeType = sections[0];
                     const managerId = sections[1];
                     const extraInfo = sections[2];
@@ -77,6 +88,7 @@ export function setupDevtools(app: App) {
                     if (!manager) {
                         return;
                     }
+                    let ignoreLayerChange: TimelineLayer | undefined;
 
                     switch (nodeType) {
                         case 'timeline': {
@@ -84,34 +96,81 @@ export function setupDevtools(app: App) {
                                 viewport: [
                                     {
                                         key: 'view',
-                                        value: computed(() => manager.viewport).value,
+                                        value: toRaw(manager.viewport),
                                         objectType: 'reactive',
                                         editable: true
                                     },
                                     {
-                                        key: 'view Y',
-                                        value: manager.startY.value,
-                                        objectType: 'ref',
-                                        editable: false
-                                    },
-                                    {
                                         key: 'Pointer inside canvas',
-                                        value: !manager.pointerOut.value,
+                                        value: !manager._pointerOut.value,
                                         objectType: 'computed',
                                         editable: false
                                     },
                                     {
                                         key: 'Smoothing',
-                                        value: manager.viewportSmoothing.value,
-                                        objectType: 'ref',
+                                        value: {
+                                            x: manager.viewportSmoothingX.value,
+                                            y: manager.viewportSmoothingY.value
+                                        },
+                                        objectType: 'computed',
                                         editable: false
                                     }
                                 ],
                                 items: [
                                     {
                                         key: 'Items end',
-                                        value: manager.maxWidth.value,
+                                        value: manager._maxWidth.value,
                                         objectType: 'computed'
+                                    }
+                                ]
+                            };
+                            break;
+                        }
+
+                        case 'element': {
+                            const layer = manager.layersSorted.value.find(
+                                (l) => l.index.value == parseInt(extraInfo.split(';')[0])
+                            );
+                            if (!layer) break;
+                            const element = Array.from(layer.elements.values())[
+                                parseInt(extraInfo.split(';')[1])
+                            ];
+                            if (!element) break;
+                            payload.state = {
+                                item: [
+                                    {
+                                        key: 'start',
+                                        value: element.start.value,
+                                        editable: false
+                                    },
+                                    {
+                                        key: 'end',
+                                        value: element.end.value,
+                                        editable: false
+                                    }
+                                ],
+                                rendering: [
+                                    {
+                                        key: 'Render time (ms)',
+                                        value: element.__RENDER_TIME__.value
+                                    },
+                                    {
+                                        key: 'Render time (% of layer)',
+                                        value:
+                                            Math.round(
+                                                (element.__RENDER_TIME__.value /
+                                                    layer.__RENDER_TIME__.value) *
+                                                    100
+                                            ) + '%'
+                                    },
+                                    {
+                                        key: 'Render time (% of timeline)',
+                                        value:
+                                            Math.round(
+                                                (element.__RENDER_TIME__.value /
+                                                    manager.__RENDER_TIME__.value) *
+                                                    100
+                                            ) + '%'
                                     }
                                 ]
                             };
@@ -120,23 +179,49 @@ export function setupDevtools(app: App) {
 
                         case 'layer': {
                             const layer = manager.layersSorted.value.find(
-                                (l) => l.index.value == parseInt(extraInfo)
+                                (l) => l.index.value == parseInt(extraInfo.split(';')[0])
                             );
+                            ignoreLayerChange = layer;
                             if (layer) {
-                                layer.highlight.value = true;
+                                if (!layer._highlight.value) {
+                                    layer._highlight.value = true;
+                                }
+                                payload.state = {
+                                    rendering: [
+                                        {
+                                            key: 'Render time (ms)',
+                                            value: layer.__RENDER_TIME__.value
+                                        },
+                                        {
+                                            key: 'Render time (% of parent)',
+                                            value:
+                                                Math.round(
+                                                    (layer.__RENDER_TIME__.value /
+                                                        manager.__RENDER_TIME__.value) *
+                                                        100
+                                                ) + '%'
+                                        }
+                                    ]
+                                };
                             }
                             break;
                         }
                         default:
                             break;
                     }
+
+                    manager.layers.forEach((layer) => {
+                        if (ignoreLayerChange !== layer && layer._highlight.value) {
+                            layer._highlight.value = false;
+                        }
+                    });
                 }
             });
 
             api.on.editInspectorState((payload) => {
                 if (payload.inspectorId == INSPECTOR_ID) {
-                    const nodeType = payload.nodeId.split('---')[0];
-                    const managerId = payload.nodeId.split('---')[1];
+                    const nodeType = payload.nodeId.split('::')[0];
+                    const managerId = payload.nodeId.split('::')[1];
                     const manager = managers.get(managerId);
                     if (!manager) {
                         return;
@@ -149,6 +234,8 @@ export function setupDevtools(app: App) {
                                     manager.viewport.start = payload.state.value;
                                 else if (payload.path[1] == 'end')
                                     manager.viewport.end = payload.state.value;
+                                else if (payload.path[1] == 'yPos')
+                                    manager.viewport.yPos = payload.state.value;
                             break;
 
                         default:
@@ -157,18 +244,67 @@ export function setupDevtools(app: App) {
                 }
             });
 
-            watchDeep(managers, () => {
+            managers.forEach((manager, id) => {
+                watch(
+                    [
+                        manager.viewportSmooth.end,
+                        manager.viewportSmooth.start,
+                        manager.viewportSmoothingX,
+                        manager._maxWidth,
+                        manager.__RENDER_TIME__,
+                        manager.layers
+                    ],
+                    () => {
+                        api.sendInspectorTree(INSPECTOR_ID);
+                    }
+                );
+                manager.events.on('unmount', () => {
+                    managers.delete(id);
+
+                    api.sendInspectorTree(INSPECTOR_ID);
+                });
                 api.sendInspectorTree(INSPECTOR_ID);
             });
+
+            registerTimelineManager = (manager: TimelineManager) => {
+                const id = crypto.randomUUID().split('-')[0];
+
+                manager.events.on('unmount', () => {
+                    managers.delete(id);
+                    api.sendInspectorTree(INSPECTOR_ID);
+                });
+
+                managers.set(id, manager);
+
+                watch(
+                    [
+                        manager.viewportSmooth.end,
+                        manager.viewportSmooth.start,
+                        manager.viewportSmoothingX,
+                        manager._maxWidth,
+                        manager.__RENDER_TIME__,
+                        manager.layers
+                    ],
+                    () => {
+                        api.sendInspectorTree(INSPECTOR_ID);
+                    }
+                );
+                api.sendInspectorTree(INSPECTOR_ID);
+                return () => {
+                    managers.delete(id);
+                };
+            };
+            // setInterval(() => {
+            //     api.sendInspectorTree(INSPECTOR_ID);
+            // }, 1000);
+
+            // watchDeep(
+            //     managers,
+            //     () => {
+            //         api.sendInspectorTree(INSPECTOR_ID);
+            //     },
+            //     {}
+            // );
         }
     );
-}
-
-export function registerTimelineManager(manager: TimelineManager) {
-    const id = crypto.randomUUID().split('-')[0];
-    managers.set(id, manager);
-
-    return () => {
-        managers.delete(id);
-    };
 }

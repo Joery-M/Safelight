@@ -2,16 +2,16 @@ import { syncRef, useElementBounding, useEventListener } from '@vueuse/core';
 import EventEmitter from 'eventemitter3';
 import {
     computed,
-    nextTick,
     onBeforeUnmount,
     reactive,
     Ref,
     ref,
     shallowReactive,
-    toRaw,
-    watch
+    watch,
+    watchEffect
 } from 'vue';
 import { TimelineLayer } from './elements/TimelineLayer';
+import { canvasRestore, canvasSave } from './tools/canvasState';
 import { useSmoothNum } from './tools/useSmoothNum';
 
 export function createTimelineManager(canvas: HTMLCanvasElement): CreateTimelineFn {
@@ -22,7 +22,6 @@ export function createTimelineManager(canvas: HTMLCanvasElement): CreateTimeline
         addElement(element: TimelineElement) {
             manager.timelineElements.add(element);
             if (element['init']) element.init(manager);
-            manager.renderAll();
         },
         addLayer(layer: TimelineLayer) {
             let maxIndex = 0;
@@ -36,12 +35,9 @@ export function createTimelineManager(canvas: HTMLCanvasElement): CreateTimeline
             if (indexTaken) {
                 layer.index.value = maxIndex + 1;
             }
-            console.log(layer.index.value);
 
             manager.layers.add(layer);
             layer.init(manager);
-
-            manager.renderAll();
         }
     };
 }
@@ -53,6 +49,8 @@ export interface CreateTimelineFn {
 }
 
 export class TimelineManager {
+    public __RENDER_TIME__ = ref(0);
+
     public timelineElements = shallowReactive(new Set<TimelineElement>());
     public layers = shallowReactive(new Set<TimelineLayer>());
     /**
@@ -61,10 +59,6 @@ export class TimelineManager {
      * Is assigned before rendering.
      */
     public visibleElements = new WeakSet<TimelineElement>();
-    /**
-     * Whether an extra render has already been queued
-     */
-    private renderingOnNextTick = false;
 
     /**
      * Current cursor for the user
@@ -81,23 +75,32 @@ export class TimelineManager {
         /**
          * The right-most side of the timeline in milliseconds
          */
-        end: 1000
+        end: 1000,
+        /**
+         * The Y offset
+         */
+        yPos: 0
     });
 
     /**
-     * How quickly the viewport transition to another state
+     * How quickly the viewport transitions to another state
      *
      * @example 1 = instant
      */
-    public viewportSmoothing = ref(0.75);
+    public viewportSmoothingX = ref(0.75);
+    public viewportSmoothingY = ref(0.5);
     public viewportSmooth = {
         start: useSmoothNum(
             computed(() => this.viewport.start),
-            { snapOffset: 0.01, stepPerc: this.viewportSmoothing }
+            { snapOffset: 0.01, stepPerc: this.viewportSmoothingX }
         ),
         end: useSmoothNum(
             computed(() => this.viewport.end),
-            { snapOffset: 0.01, stepPerc: this.viewportSmoothing }
+            { snapOffset: 0.01, stepPerc: this.viewportSmoothingX }
+        ),
+        yPos: useSmoothNum(
+            computed(() => this.viewport.yPos),
+            { snapOffset: 0.01, stepPerc: this.viewportSmoothingY }
         )
     };
 
@@ -111,30 +114,28 @@ export class TimelineManager {
     public defaultLayerHeight = ref(32);
 
     /* Internal settings */
-    public pointerOut = ref(true);
+    public _pointerOut = ref(true);
     private canvasHeight = ref(100);
     private canvasWidth = ref(100);
-    public zoomFactor = ref(1);
-    public startY = ref(0);
+    private windowDPI = ref(2);
+    private paneResizing = ref(false);
     public defaultLayerPaneWidth = ref(128);
+    /**
+     * Change the speed of vertical scrolling
+     */
+    // Magic number, lets goooo
+    private constantYScale = 0.5;
 
     /* Computed */
 
     /**
      * Offset from left boundary of timeline in pixels
      */
-    public offsetX = computed(() => this.msToPx(this.viewportSmooth.start.value));
-    public maxWidth = computed(() => {
+    public _offsetX = computed(() => this.msToPx(this.viewportSmooth.start.value));
+    public _maxWidth = computed(() => {
         // So the view doesn't snap when moving outside the max width, also use the current end as a max
         let maxRight = this.viewport.end - this.rightPadding.value;
 
-        // for (const element of this.timelineElements) {
-        //     if (element.type == 'layerItem' && 'end' in element && isRef(element.end)) {
-        //         if ((parseFloat(element.end.value as any) || 0) > maxRight) {
-        //             maxRight = parseFloat(element.end.value as any);
-        //         }
-        //     }
-        // }
         for (const layer of this.layers) {
             if (layer.maxEnd.value > maxRight) {
                 maxRight = layer.maxEnd.value;
@@ -147,6 +148,8 @@ export class TimelineManager {
     public layersSorted = computed(() =>
         Array.from(this.layers.values()).sort((a, b) => b.index.value - a.index.value)
     );
+
+    private layerHeights = computed(() => this.layersSorted.value.map((l) => l.height.value));
 
     private ctx: CanvasRenderingContext2D;
 
@@ -161,9 +164,9 @@ export class TimelineManager {
         /* 
             ----- Listen to user events ------
         */
-        useEventListener('pointerdown', (ev) => this.events.emit('mouseDown', this, ev, canvas));
-        useEventListener('pointerup', (ev) => this.events.emit('mouseUp', this, ev, canvas));
-        useEventListener('pointermove', (ev) => this.events.emit('mouseMove', this, ev, canvas));
+        useEventListener('pointerdown', (ev) => this.events.emit('mouseDown', ev, this, canvas));
+        useEventListener('pointerup', (ev) => this.events.emit('mouseUp', ev, this, canvas));
+        useEventListener('pointermove', (ev) => this.events.emit('mouseMove', ev, this, canvas));
 
         const bounds = useElementBounding(canvas);
         syncRef(bounds.width, this.canvasWidth, { direction: 'ltr' });
@@ -173,7 +176,7 @@ export class TimelineManager {
 
         useEventListener(['mousemove', 'mouseenter', 'mouseover'], (ev) => {
             if (ev.target) {
-                this.pointerOut.value = canvas !== ev.target;
+                this._pointerOut.value = canvas !== ev.target;
             }
         });
 
@@ -181,7 +184,7 @@ export class TimelineManager {
         useEventListener(
             'wheel',
             (ev) => {
-                if (!this.pointerOut.value) {
+                if (!this._pointerOut.value) {
                     ev.preventDefault();
                 } else {
                     return;
@@ -189,15 +192,19 @@ export class TimelineManager {
 
                 if (ev.ctrlKey) {
                     // Zooming
-                    const mouseX = ev.clientX - bounds.left.value;
-                    const mouseXPerc = mouseX / bounds.width.value;
+                    let mouseX = ev.clientX - bounds.left.value - this.defaultLayerPaneWidth.value;
+                    if (mouseX < 0) {
+                        mouseX = 0;
+                    }
+                    const mouseXPerc =
+                        mouseX / (bounds.width.value - this.defaultLayerPaneWidth.value);
                     // Invert cause scrolling down should be zoom out
                     this.zoom(-ev.deltaY, mouseXPerc);
                 } else {
                     // Scrolling
                     const shift = this.invertScrollAxes.value ? !ev.shiftKey : ev.shiftKey;
-                    const invertY = this.invertVerticalScroll.value ? -1 : 1;
-                    const invertX = this.invertHorizontalScroll.value ? -1 : 1;
+                    const invertY = this.invertVerticalScroll.value ? 1 : -1;
+                    const invertX = this.invertHorizontalScroll.value ? 1 : -1;
                     if (shift) {
                         this.moveY(ev.deltaY * invertY);
                         this.move(ev.deltaX * invertX);
@@ -210,24 +217,63 @@ export class TimelineManager {
             { passive: false }
         );
 
+        // Listen to mouse, and set cursor for layer pane resize handle
+        {
+            let paneResizeXStart = 0;
+            let startSize = this.defaultLayerPaneWidth.value;
+            let requestedSize = 0;
+            this.events.on('mouseMove', (ev) => {
+                const distToHandle = ev.clientX - bounds.left.value - startSize;
+                if (Math.abs(distToHandle) < 2 || this.paneResizing.value) {
+                    this.cursor.value = 'col-resize';
+                } else {
+                    this.cursor.value = 'auto';
+                }
+                if (this.paneResizing.value) {
+                    const offset = distToHandle - paneResizeXStart;
+                    requestedSize = startSize + offset;
+
+                    this.defaultLayerPaneWidth.value = Math.max(requestedSize, 2);
+                    this.defaultLayerPaneWidth.value = Math.min(
+                        this.defaultLayerPaneWidth.value,
+                        this.canvasWidth.value - 100
+                    );
+                }
+            });
+            this.events.on('mouseDown', (ev) => {
+                if (!this._pointerOut.value) {
+                    const distToHandle =
+                        ev.clientX - bounds.left.value - this.defaultLayerPaneWidth.value;
+                    if (distToHandle < 2) {
+                        paneResizeXStart = distToHandle;
+                        startSize = this.defaultLayerPaneWidth.value;
+                        this.paneResizing.value = true;
+                    }
+                }
+            });
+            this.events.on('mouseUp', () => {
+                if (this.paneResizing.value) {
+                    startSize = this.defaultLayerPaneWidth.value;
+                    this.paneResizing.value = false;
+                }
+            });
+        }
+
         // Set user cursor
         watch(this.cursor, (cursor) => {
             canvas.style.cursor = cursor ?? 'auto';
         });
 
-        // Render when any of these properties change
-        watch(
-            [
-                this.canvasWidth,
-                this.canvasHeight,
-                this.rightPadding,
-                this.viewportSmooth.start,
-                this.viewportSmooth.end
-            ],
-            () => {
+        watchEffect(() => {
+            if (import.meta.env.DEV) {
+                const start = performance.now();
+                this.renderAll();
+                const end = performance.now();
+                this.__RENDER_TIME__.value = end - start;
+            } else {
                 this.renderAll();
             }
-        );
+        });
 
         onBeforeUnmount(() => {
             this.events.emit('unmount', this);
@@ -248,34 +294,44 @@ export class TimelineManager {
     }
 
     renderAll = () => {
-        this.canvas.width = this.canvasWidth.value;
-        this.canvas.height = this.canvasHeight.value;
+        if (this.canvasWidth.value !== 0 && this.canvasHeight.value !== 0) {
+            this.canvas.width = this.canvasWidth.value * this.windowDPI.value;
+            this.canvas.height = this.canvasHeight.value * this.windowDPI.value;
+            this.ctx.scale(this.windowDPI.value, this.windowDPI.value);
+        }
 
-        this.ctx.save();
+        this.ctx.font = 'normal 14px "Inter Variable"';
+        const canvasState = canvasSave(this.ctx);
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        for (const element of this.timelineElements) {
+            if (element.renderStep == 'before') {
+                canvasRestore(this.ctx, canvasState);
+                element.render({ ctx: this.ctx, manager: this, isQueued: false });
+            }
+        }
 
         for (const layer of this.layers) {
             // Restore to last known settings before each render
-            this.ctx.restore();
-            // If called from event handler (v-on:click), `this` is a proxy
-            layer.render(this.ctx, toRaw(this), false);
+            canvasRestore(this.ctx, canvasState);
+
+            // If in dev mode, save render time
+            if (import.meta.env.DEV) {
+                const start = performance.now();
+                layer.render(this.ctx, this);
+                const end = performance.now();
+                layer.__RENDER_TIME__.value = end - start;
+            } else {
+                layer.render(this.ctx, this);
+            }
         }
-        this.ctx.restore();
 
         for (const element of this.timelineElements) {
-            this.ctx.restore();
-            element.render(this.ctx, this, false);
+            if (element.renderStep !== 'before') {
+                canvasRestore(this.ctx, canvasState);
+                element.render({ ctx: this.ctx, manager: this, isQueued: false });
+            }
         }
-    };
-
-    requestExtraRender = () => {
-        if (!this.renderingOnNextTick) {
-            nextTick(() => {
-                this.renderingOnNextTick = false;
-                this.renderAll();
-            });
-        }
-        this.renderingOnNextTick = true;
     };
 
     /*
@@ -289,13 +345,37 @@ export class TimelineManager {
     */
 
     pxToMs = (pixel: number) =>
-        (pixel / this.canvasWidth.value) *
+        (pixel / (this.canvasWidth.value - this.defaultLayerPaneWidth.value)) *
         (this.viewportSmooth.end.value - this.viewportSmooth.start.value);
 
     msToPx = (time: number) =>
         ((time - this.leftBoundary.value) /
             (this.viewportSmooth.end.value - this.viewportSmooth.start.value)) *
-        this.canvasWidth.value;
+        (this.canvasWidth.value - this.defaultLayerPaneWidth.value);
+
+    LayerToYPosition(
+        layer: number,
+        includeCurrent = false,
+        includeOffset = false,
+        useAlignment = true
+    ) {
+        const currentHeight = this.layerHeights.value[layer];
+        let totalHeight = includeCurrent ? currentHeight : 0;
+        for (let i = 0; i < layer; i++) {
+            const curHeight = this.layerHeights.value[i] ?? this.defaultLayerHeight;
+            totalHeight += curHeight + 1;
+        }
+
+        const offset =
+            totalHeight +
+            (includeOffset ? -this.viewportSmooth.yPos.value * this.constantYScale : 0);
+
+        if (this.alignment.value == 'bottom' && useAlignment) {
+            return this.canvasHeight.value - offset - currentHeight;
+        } else {
+            return offset;
+        }
+    }
 
     zoom = (delta: number, cursorPosition = 0.5) => {
         const size = this.viewport.end - this.viewport.start;
@@ -315,11 +395,11 @@ export class TimelineManager {
         }
 
         // Add a bit of padding to the end
-        if (end > this.maxWidth.value + this.rightPadding.value) {
-            end = this.maxWidth.value + this.rightPadding.value;
+        if (end > this._maxWidth.value + this.rightPadding.value) {
+            end = this._maxWidth.value + this.rightPadding.value;
 
             // Don't allow the start to go past the minTime
-            if (start > this.leftBoundary.value) {
+            if (start < this.leftBoundary.value) {
                 start = this.leftBoundary.value;
             }
         }
@@ -332,7 +412,7 @@ export class TimelineManager {
         let start = this.viewport.start + (delta / this.canvasWidth.value) * size;
         let end = start + size;
 
-        const maxEnd = this.maxWidth.value + this.rightPadding.value;
+        const maxEnd = this._maxWidth.value + this.rightPadding.value;
 
         // Add a bit of padding to the end
         if (end > maxEnd) {
@@ -356,37 +436,37 @@ export class TimelineManager {
 
     moveY(delta: number) {
         if (this.alignment.value == 'bottom') {
-            this.startY.value -= delta;
-            if (this.startY.value < 0) {
-                this.startY.value = 0;
+            this.viewport.yPos -= delta;
+            if (this.viewport.yPos < 0) {
+                this.viewport.yPos = 0;
             }
 
             const maxHeight =
-                /* this.LayerToYPosition(this.highestLayer.value + 2, true, false, false) + */
+                this.LayerToYPosition(this.layers.size + 2, true, false, false) +
                 this.canvasHeight.value / 2;
-            if (this.startY.value > maxHeight) {
-                this.startY.value = maxHeight;
+            if (this.viewport.yPos > maxHeight) {
+                this.viewport.yPos = maxHeight;
             }
         } else {
-            this.startY.value += delta;
-            if (this.startY.value < this.defaultLayerHeight.value * 2) {
-                this.startY.value = this.defaultLayerHeight.value * 2;
+            this.viewport.yPos += delta;
+            if (this.viewport.yPos < this.defaultLayerHeight.value * 2) {
+                this.viewport.yPos = this.defaultLayerHeight.value * 2;
             }
 
             const maxHeight =
-                /* this.LayerToYPosition(this.highestLayer.value + 2, true, false, false) + */
+                this.LayerToYPosition(this.layers.size + 2, true, false, false) +
                 this.canvasHeight.value;
-            if (this.startY.value > maxHeight) {
-                this.startY.value = maxHeight;
+            if (this.viewport.yPos > maxHeight) {
+                this.viewport.yPos = maxHeight;
             }
         }
     }
 }
 
 interface TimelineEvents {
-    mouseDown: [manager: TimelineManager, ev: PointerEvent, canvas: HTMLCanvasElement];
-    mouseUp: [manager: TimelineManager, ev: PointerEvent, canvas: HTMLCanvasElement];
-    mouseMove: [manager: TimelineManager, ev: PointerEvent, canvas: HTMLCanvasElement];
+    mouseDown: [ev: PointerEvent, manager: TimelineManager, canvas: HTMLCanvasElement];
+    mouseUp: [ev: PointerEvent, manager: TimelineManager, canvas: HTMLCanvasElement];
+    mouseMove: [ev: PointerEvent, manager: TimelineManager, canvas: HTMLCanvasElement];
     scroll: [manager: TimelineManager];
     pan: [manager: TimelineManager];
     unmount: [manager: TimelineManager];
@@ -400,8 +480,16 @@ export enum TimelineElementTypes {
 
 export interface TimelineElement {
     type: TimelineElementTypes.generic;
+    /**
+     * Render this element before or after rendering layers and their items
+     */
+    renderStep?: 'before' | 'after';
     init?: (manager: TimelineManager) => any;
-    render: (ctx: CanvasRenderingContext2D, manager: TimelineManager, isQueued: boolean) => any;
+    render: (payload: {
+        ctx: CanvasRenderingContext2D;
+        manager: TimelineManager;
+        isQueued: boolean;
+    }) => any;
 }
 
 export interface TimelineItemElement {
@@ -414,7 +502,19 @@ export interface TimelineItemElement {
         layer: TimelineLayer;
         manager: TimelineManager;
         isQueued: boolean;
+        container: Readonly<ItemContainer>;
     }) => any;
+
+    __RENDER_TIME__: Ref<number>;
 }
 
 export type TimelineAlignment = 'top' | 'bottom';
+
+export interface ItemContainer {
+    left: number;
+    right: number;
+    top: number;
+    bottom: number;
+    width: number;
+    height: number;
+}
