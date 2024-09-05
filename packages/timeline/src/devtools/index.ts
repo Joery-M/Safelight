@@ -114,6 +114,10 @@ export function setupDevtools(app: App) {
                                     {
                                         key: 'Render time (ms)',
                                         value: manager.__RENDER_TIME__.value
+                                    },
+                                    {
+                                        key: 'FPS',
+                                        value: manager.__FPS__.value
                                     }
                                 ]
                             };

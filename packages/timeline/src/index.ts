@@ -1,4 +1,5 @@
 import { syncRef, useDevicePixelRatio, useElementBounding, useEventListener } from '@vueuse/core';
+import { useAverage, useRound } from '@vueuse/math';
 import EventEmitter from 'eventemitter3';
 import {
     computed,
@@ -57,6 +58,8 @@ export interface CreateTimelineFn {
 
 export class TimelineManager {
     public __RENDER_TIME__ = ref(0);
+    private __FPS_LIST = reactive<number[]>([]);
+    public __FPS__ = useRound(useAverage(this.__FPS_LIST));
 
     public timelineElements = shallowReactive(new Set<TimelineElement>());
     public layers = shallowReactive(new Set<TimelineLayer>());
@@ -301,7 +304,11 @@ export class TimelineManager {
                 const start = performance.now();
                 this.renderAll();
                 const end = performance.now();
+                this.__FPS_LIST.push(1000 / (end - start));
                 this.__RENDER_TIME__.value = end - start;
+                while (this.__FPS_LIST.length > 100) {
+                    this.__FPS_LIST.shift();
+                }
             } else {
                 this.renderAll();
             }
@@ -333,7 +340,7 @@ export class TimelineManager {
         this.canvas.style.display = 'block';
     }
 
-    renderAll = () => {
+    renderAll() {
         if (this.canvasWidth.value !== 0 && this.canvasHeight.value !== 0) {
             this.canvas.width = this.canvasWidth.value * this.windowDPI.value;
             this.canvas.height = this.canvasHeight.value * this.windowDPI.value;
@@ -372,7 +379,7 @@ export class TimelineManager {
                 element.render({ ctx: this.ctx, manager: this, isQueued: false });
             }
         }
-    };
+    }
 
     /*
         ============    Viewport    ============

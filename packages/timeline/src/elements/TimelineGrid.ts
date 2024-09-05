@@ -15,11 +15,11 @@ export class TimelineGrid implements TimelineElement {
 
     public steps = shallowReactive<GridStep[]>([]);
     /**
-     * Maximum opacity that the largest step is allowed to be
+     * The highest opacity to use when rendering steps
      *
      * All other steps will be decreasingly opaque
      */
-    public maxOpacity = ref(0.5);
+    public baseOpacity = ref(0.5);
     private stepsSorted = computed(() =>
         this.steps.sort((a, b) => toValue(a.interval) - toValue(b.interval))
     );
@@ -37,10 +37,11 @@ export class TimelineGrid implements TimelineElement {
                 fadeStart,
                 fadeEnd,
                 0,
-                (this.maxOpacity.value / this.stepsSorted.value.length) * (i + 1),
+                this.baseOpacity.value / this.stepsSorted.value.length,
                 intervalPx
             );
 
+            ctx.fillStyle = `white`;
             if (opacity > 0) {
                 const viewportWidth = ctx.canvas.width / manager.windowDPI.value;
                 const viewportHeight = ctx.canvas.height / manager.windowDPI.value;
@@ -50,14 +51,13 @@ export class TimelineGrid implements TimelineElement {
                 ctx.rect(manager.layerPaneWidth.value, 0, viewportWidth, viewportHeight);
                 ctx.clip();
 
-                ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+                ctx.globalAlpha = opacity;
                 // 1 extra for at the start, another extra for at the end
                 for (let curX = 0; curX < Math.ceil(viewportWidth / intervalPx) + 2; curX++) {
                     const loopedOffset = manager._offsetX.value % intervalPx;
                     const lineOffset = curX * intervalPx;
 
                     const x = manager.layerPaneWidth.value + (lineOffset - loopedOffset) - 0.75;
-                    ctx.clearRect(x, 0, 1.5, viewportHeight);
                     ctx.fillRect(x, 0, 1.5, viewportHeight);
                 }
                 ctx.restore();
