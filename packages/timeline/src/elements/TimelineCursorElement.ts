@@ -1,12 +1,11 @@
 import { CustomInspectorState } from '@vue/devtools-api';
 import { MaybeRefOrGetter, toValue } from '@vueuse/core';
 import { computed, ref } from 'vue';
-import { TimelineElement, TimelineElementTypes, TimelineManager } from '..';
+import { TimelineElement, TimelineManager } from '..';
 import { useSmoothNum } from '../tools/useSmoothNum';
 
 export class TimelineCursorElement implements TimelineElement {
     name = 'Cursor';
-    type: TimelineElementTypes.generic = TimelineElementTypes.generic;
 
     frameInterval = ref(1);
 

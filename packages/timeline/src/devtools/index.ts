@@ -131,13 +131,13 @@ export function setupDevtools(app: App) {
                                 rendering: [
                                     {
                                         key: 'Render time (ms)',
-                                        value: element.__RENDER_TIME__.value
+                                        value: layer.__ELEMENT_RENDER_TIME__.get(element) ?? NaN
                                     },
                                     {
                                         key: 'Render time (% of layer)',
                                         value:
                                             Math.round(
-                                                (element.__RENDER_TIME__.value /
+                                                ((layer.__ELEMENT_RENDER_TIME__.get(element) ?? 0) /
                                                     layer.__RENDER_TIME__.value) *
                                                     100
                                             ) + '%'
@@ -146,7 +146,7 @@ export function setupDevtools(app: App) {
                                         key: 'Render time (% of timeline)',
                                         value:
                                             Math.round(
-                                                (element.__RENDER_TIME__.value /
+                                                ((layer.__ELEMENT_RENDER_TIME__.get(element) ?? 0) /
                                                     manager.__RENDER_TIME__.value) *
                                                     100
                                             ) + '%'
@@ -232,7 +232,6 @@ export function setupDevtools(app: App) {
                 let lastUpdateState = 0;
                 const updateStateFn = () => {
                     const update = () => {
-                        console.log('LA');
                         api.sendInspectorState(INSPECTOR_ID);
                         lastUpdateState = performance.now();
                     };
@@ -256,7 +255,6 @@ export function setupDevtools(app: App) {
                 watchArray(
                     manager.layersSorted,
                     (_cur, _old, added) => {
-                        console.log('L');
                         api.sendInspectorTree(INSPECTOR_ID);
 
                         for (const element of added) {

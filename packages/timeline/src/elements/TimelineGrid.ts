@@ -7,11 +7,10 @@ import {
     ShallowRef,
     toValue
 } from 'vue';
-import { TimelineElement, TimelineElementTypes } from '..';
+import { TimelineElement } from '..';
 
 export class TimelineGrid implements TimelineElement {
     name = 'Grid';
-    type: TimelineElementTypes.generic = TimelineElementTypes.generic;
     renderStep?: 'before' | 'after' | undefined = 'before';
 
     public steps = shallowReactive<GridStep[]>([]);

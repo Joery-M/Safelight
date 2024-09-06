@@ -675,15 +675,8 @@ export interface MouseEventData {
     ms: number;
 }
 
-export enum TimelineElementTypes {
-    'generic',
-    'layerItem',
-    'layer'
-}
-
 export interface TimelineElement {
     name: string;
-    type: TimelineElementTypes.generic;
     /**
      * Render this element before or after rendering layers and their items
      */
@@ -699,7 +692,6 @@ export interface TimelineElement {
 }
 
 export interface TimelineItemElement {
-    type: TimelineElementTypes.layerItem;
     start: Ref<number>;
     end: Ref<number>;
     init?: (layer: TimelineLayer) => any;
@@ -710,8 +702,6 @@ export interface TimelineItemElement {
         isQueued: boolean;
         container: Readonly<ItemContainer>;
     }) => any;
-
-    __RENDER_TIME__: Ref<number>;
 }
 
 export type TimelineAlignment = 'top' | 'bottom';

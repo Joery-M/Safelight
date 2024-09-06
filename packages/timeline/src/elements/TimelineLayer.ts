@@ -1,11 +1,11 @@
 import { CustomInspectorState } from '@vue/devtools-api';
 import { computed, ref, shallowReactive } from 'vue';
-import { ItemContainer, TimelineElementTypes, TimelineItemElement, TimelineManager } from '..';
+import { ItemContainer, TimelineItemElement, TimelineManager } from '..';
 import { canvasRestore, canvasSave } from '../tools/canvasState';
 
 export class TimelineLayer {
     public __RENDER_TIME__ = ref(0);
-    public type = TimelineElementTypes.layer;
+    public __ELEMENT_RENDER_TIME__ = shallowReactive(new Map<TimelineItemElement, number>());
     public index = ref(0);
     public elements = shallowReactive(new Set<TimelineItemElement>());
 
@@ -30,10 +30,8 @@ export class TimelineLayer {
     public maxEnd = computed(() => {
         let maxRight = 0;
         for (const element of this.elements) {
-            if (element.type == TimelineElementTypes.layerItem) {
-                if ((element.end.value || 0) > maxRight) {
-                    maxRight = parseFloat(element.end.value as any);
-                }
+            if ((element.end.value || 0) > maxRight) {
+                maxRight = parseFloat(element.end.value as any);
             }
         }
         return maxRight;
@@ -77,7 +75,7 @@ export class TimelineLayer {
                     manager: manager
                 });
                 const end = performance.now();
-                element.__RENDER_TIME__.value = end - start;
+                this.__ELEMENT_RENDER_TIME__.set(element, end - start);
             } else {
                 element.render({
                     ctx,
@@ -132,17 +130,30 @@ export class TimelineLayer {
 
     public _devtools_get_state = (): CustomInspectorState => {
         return {
-            rendering: [
+            'Render time': [
                 {
-                    key: 'Render time (ms)',
+                    key: 'layer ms',
                     value: this.__RENDER_TIME__.value
                 },
                 {
-                    key: 'Render time (% of timeline)',
+                    key: '% of timeline',
                     value:
                         Math.round(
                             (this.__RENDER_TIME__.value /
                                 (this.manager?.__RENDER_TIME__.value ?? 10000)) *
+                                100
+                        ) + '%'
+                },
+                {
+                    key: '% rendering self',
+                    value:
+                        Math.round(
+                            ((this.__RENDER_TIME__.value -
+                                Array.from(this.__ELEMENT_RENDER_TIME__.values()).reduce(
+                                    (p, c) => c + p,
+                                    0
+                                )) /
+                                this.__RENDER_TIME__.value) *
                                 100
                         ) + '%'
                 }

@@ -1,9 +1,7 @@
 import { computed, ref } from 'vue';
-import { TimelineElementTypes, TimelineItemElement } from '..';
+import { TimelineItemElement } from '..';
 
 export class VideoTimelineElement implements TimelineItemElement {
-    public __RENDER_TIME__ = ref(0);
-    type: TimelineElementTypes.layerItem = TimelineElementTypes.layerItem;
     private tempHue = 0;
 
     start = ref(0);
