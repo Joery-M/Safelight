@@ -1,3 +1,4 @@
+import { CustomInspectorState } from '@vue/devtools-api';
 import { computed, ref, shallowReactive } from 'vue';
 import { ItemContainer, TimelineElementTypes, TimelineItemElement, TimelineManager } from '..';
 import { canvasRestore, canvasSave } from '../tools/canvasState';
@@ -24,6 +25,8 @@ export class TimelineLayer {
 
     private test = 0;
 
+    private manager?: TimelineManager;
+
     public maxEnd = computed(() => {
         let maxRight = 0;
         for (const element of this.elements) {
@@ -37,6 +40,7 @@ export class TimelineLayer {
     });
 
     public init(manager: TimelineManager) {
+        this.manager = manager;
         this.height.value = manager.defaultLayerHeight.value;
     }
 
@@ -125,4 +129,24 @@ export class TimelineLayer {
 
         this.test++;
     }
+
+    public _devtools_get_state = (): CustomInspectorState => {
+        return {
+            rendering: [
+                {
+                    key: 'Render time (ms)',
+                    value: this.__RENDER_TIME__.value
+                },
+                {
+                    key: 'Render time (% of timeline)',
+                    value:
+                        Math.round(
+                            (this.__RENDER_TIME__.value /
+                                (this.manager?.__RENDER_TIME__.value ?? 10000)) *
+                                100
+                        ) + '%'
+                }
+            ]
+        };
+    };
 }

@@ -10,6 +10,7 @@ import {
 import { TimelineElement, TimelineElementTypes } from '..';
 
 export class TimelineGrid implements TimelineElement {
+    name = 'Grid';
     type: TimelineElementTypes.generic = TimelineElementTypes.generic;
     renderStep?: 'before' | 'after' | undefined = 'before';
 

@@ -1,3 +1,4 @@
+import { CustomInspectorState } from '@vue/devtools-api';
 import { syncRef, useDevicePixelRatio, useElementBounding, useEventListener } from '@vueuse/core';
 import { useAverage, useRound } from '@vueuse/math';
 import EventEmitter from 'eventemitter3';
@@ -8,6 +9,7 @@ import {
     Ref,
     ref,
     shallowReactive,
+    toRaw,
     watch,
     watchEffect
 } from 'vue';
@@ -73,7 +75,8 @@ export class TimelineManager {
     /**
      * Current cursor for the user
      */
-    public cursor = ref('auto');
+    public cursor = reactive(new Map<string, [string, number]>());
+    private curCursor = ref('auto');
 
     public events = new EventEmitter<TimelineEvents>();
 
@@ -177,10 +180,50 @@ export class TimelineManager {
         /* 
             ----- Listen to user events ------
         */
-        useEventListener('pointerdown', (ev) => this.events.emit('mouseDown', ev, this, canvas));
-        useEventListener('pointerup', (ev) => this.events.emit('mouseUp', ev, this, canvas));
-        useEventListener('pointermove', (ev) => this.events.emit('mouseMove', ev, this, canvas));
-        useEventListener('click', (ev) => this.events.emit('mouseClick', ev, this, canvas));
+        useEventListener('pointerdown', (ev) => {
+            const x = ev.clientX - bounds.left.value;
+            const y = ev.clientY - bounds.top.value;
+            const ms = this.pxToMs(x);
+            this.events.emit('mouseDown', {
+                ev: ev,
+                manager: this,
+                mouseData: Object.freeze({ ms, x, y }),
+                canvas
+            });
+        });
+        useEventListener('pointerup', (ev) => {
+            const x = ev.clientX - bounds.left.value;
+            const y = ev.clientY - bounds.top.value;
+            const ms = this.pxToMs(x);
+            this.events.emit('mouseUp', {
+                ev: ev,
+                manager: this,
+                mouseData: Object.freeze({ ms, x, y }),
+                canvas
+            });
+        });
+        useEventListener('pointermove', (ev) => {
+            const x = ev.clientX - bounds.left.value;
+            const y = ev.clientY - bounds.top.value;
+            const ms = this.pxToMs(x);
+            this.events.emit('mouseMove', {
+                ev: ev,
+                manager: this,
+                mouseData: Object.freeze({ ms, x, y }),
+                canvas
+            });
+        });
+        useEventListener('click', (ev) => {
+            const x = ev.clientX - bounds.left.value;
+            const y = ev.clientY - bounds.top.value;
+            const ms = this.pxToMs(x);
+            this.events.emit('mouseClick', {
+                ev: ev,
+                manager: this,
+                mouseData: Object.freeze({ ms, x, y }),
+                canvas
+            });
+        });
 
         const bounds = useElementBounding(canvas);
         syncRef(bounds.width, this.canvasWidth, { direction: 'ltr' });
@@ -242,12 +285,12 @@ export class TimelineManager {
             let startSize = this.layerPaneWidth.value;
             let requestedSize = 0;
             let lastClick = 0;
-            this.events.on('mouseMove', (ev) => {
-                const distToHandle = ev.clientX - bounds.left.value - startSize;
+            this.events.on('mouseMove', ({ mouseData: { x } }) => {
+                const distToHandle = x - startSize;
                 if (Math.abs(distToHandle) < 2 || this.paneResizing.value) {
-                    this.cursor.value = 'col-resize';
+                    this.cursor.set('layerPane', ['col-resize', 5]);
                 } else {
-                    this.cursor.value = 'auto';
+                    this.cursor.delete('layerPane');
                 }
                 if (this.paneResizing.value) {
                     const offset = distToHandle - paneResizeXStart;
@@ -260,10 +303,10 @@ export class TimelineManager {
                     );
                 }
             });
-            this.events.on('mouseDown', (ev) => {
+            this.events.on('mouseDown', ({ mouseData: { x } }) => {
                 if (!this._pointerOut.value) {
-                    const distToHandle = ev.clientX - bounds.left.value - this.layerPaneWidth.value;
-                    if (distToHandle < 2) {
+                    const distToHandle = x - this.layerPaneWidth.value;
+                    if (Math.abs(distToHandle) < 2) {
                         paneResizeXStart = distToHandle;
                         startSize = this.layerPaneWidth.value;
                         this.paneResizing.value = true;
@@ -278,10 +321,10 @@ export class TimelineManager {
                     this.changedLayerPaneWidth.value = true;
                 }
             });
-            this.events.on('mouseClick', (ev) => {
+            this.events.on('mouseClick', ({ mouseData: { x } }) => {
                 if (!this._pointerOut.value) {
-                    const distToHandle = ev.clientX - bounds.left.value - this.layerPaneWidth.value;
-                    if (distToHandle < 2) {
+                    const distToHandle = x - this.layerPaneWidth.value;
+                    if (Math.abs(distToHandle) < 2) {
                         if (Date.now() - lastClick < 500) {
                             this.layerPaneWidth.value = this.defaultLayerPaneWidth.value;
                             requestedSize = this.defaultLayerPaneWidth.value;
@@ -296,8 +339,20 @@ export class TimelineManager {
         }
 
         // Set user cursor
-        watch(this.cursor, (cursor) => {
-            canvas.style.cursor = cursor ?? 'auto';
+        watch(this.cursor, (cursorMap) => {
+            this.curCursor.value = 'auto';
+            canvas.style.cursor = 'auto';
+            const cursors = Array.from(cursorMap.entries()).sort(
+                ([_kA, [_cA, a]], [_kB, [_cB, b]]) => b - a
+            );
+
+            for (const [_s, [cursor]] of cursors) {
+                if (cursor && cursor !== 'auto') {
+                    canvas.style.cursor = cursor ?? 'auto';
+                    this.curCursor.value = cursor ?? 'auto';
+                    break;
+                }
+            }
         });
 
         watchEffect(() => {
@@ -509,16 +564,115 @@ export class TimelineManager {
             }
         }
     }
+
+    public _devtools_get_state = (): CustomInspectorState => {
+        return {
+            viewport: [
+                {
+                    key: 'view',
+                    value: toRaw(this.viewport ?? {}),
+                    objectType: 'reactive',
+                    editable: true
+                },
+                {
+                    key: 'X offset',
+                    value: this._offsetX.value,
+                    objectType: 'reactive',
+                    editable: true
+                },
+                {
+                    key: 'Pointer inside canvas',
+                    value: !this._pointerOut.value,
+                    objectType: 'computed',
+                    editable: false
+                },
+                {
+                    key: 'Smoothing',
+                    value: {
+                        x: this.viewportSmoothingX.value,
+                        y: this.viewportSmoothingY.value
+                    },
+                    objectType: 'computed',
+                    editable: false
+                }
+            ],
+            items: [
+                {
+                    key: 'Items end',
+                    value: this._maxWidth.value,
+                    objectType: 'computed'
+                }
+            ],
+            rendering: [
+                {
+                    key: 'Render time (ms)',
+                    value: this.__RENDER_TIME__.value
+                },
+                {
+                    key: 'FPS',
+                    value: this.__FPS__.value
+                }
+            ],
+            interaction: [
+                {
+                    key: 'Current cursor',
+                    value: this.canvas.style.cursor
+                },
+                {
+                    key: 'Cursor map',
+                    value: Object.fromEntries(
+                        Array.from(this.cursor.entries())
+                            .sort(([_kA, [_cA, a]], [_kB, [_cB, b]]) => b - a)
+                            .map(([key, [cursor, prio]]) => [`${key} (${prio})`, cursor])
+                    )
+                }
+            ]
+        };
+    };
 }
 
 interface TimelineEvents {
-    mouseDown: [ev: PointerEvent, manager: TimelineManager, canvas: HTMLCanvasElement];
-    mouseUp: [ev: PointerEvent, manager: TimelineManager, canvas: HTMLCanvasElement];
-    mouseMove: [ev: PointerEvent, manager: TimelineManager, canvas: HTMLCanvasElement];
-    mouseClick: [ev: MouseEvent, manager: TimelineManager, canvas: HTMLCanvasElement];
+    mouseDown: [
+        payload: {
+            ev: PointerEvent;
+            manager: TimelineManager;
+            mouseData: MouseEventData;
+            canvas: HTMLCanvasElement;
+        }
+    ];
+    mouseUp: [
+        payload: {
+            ev: PointerEvent;
+            manager: TimelineManager;
+            mouseData: MouseEventData;
+            canvas: HTMLCanvasElement;
+        }
+    ];
+    mouseMove: [
+        payload: {
+            ev: PointerEvent;
+            manager: TimelineManager;
+            mouseData: MouseEventData;
+            canvas: HTMLCanvasElement;
+        }
+    ];
+    mouseClick: [
+        payload: {
+            ev: MouseEvent;
+            manager: TimelineManager;
+            mouseData: MouseEventData;
+            canvas: HTMLCanvasElement;
+        }
+    ];
     scroll: [manager: TimelineManager];
     pan: [manager: TimelineManager];
     unmount: [manager: TimelineManager];
+}
+
+export interface MouseEventData {
+    x: number;
+    y: number;
+    ms: number;
 }
 
 export enum TimelineElementTypes {
@@ -528,6 +682,7 @@ export enum TimelineElementTypes {
 }
 
 export interface TimelineElement {
+    name: string;
     type: TimelineElementTypes.generic;
     /**
      * Render this element before or after rendering layers and their items
@@ -539,6 +694,8 @@ export interface TimelineElement {
         manager: TimelineManager;
         isQueued: boolean;
     }) => any;
+
+    devtoolsState?: () => CustomInspectorState;
 }
 
 export interface TimelineItemElement {

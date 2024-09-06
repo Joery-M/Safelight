@@ -9,13 +9,13 @@ export class VideoTimelineElement implements TimelineItemElement {
     start = ref(0);
     end = ref(1000);
 
-    fps = ref(1);
+    frameInterval = ref(1);
 
     private startSnapped = computed(
-        () => Math.ceil(this.start.value / this.fps.value) * this.fps.value
+        () => Math.ceil(this.start.value / this.frameInterval.value) * this.frameInterval.value
     );
     private endSnapped = computed(
-        () => Math.ceil(this.end.value / this.fps.value) * this.fps.value
+        () => Math.ceil(this.end.value / this.frameInterval.value) * this.frameInterval.value
     );
 
     render: TimelineItemElement['render'] = ({ ctx, manager, container }) => {

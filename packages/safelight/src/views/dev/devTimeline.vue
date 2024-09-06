@@ -123,12 +123,13 @@ const items = shallowReactive([
 ]);
 const isItemActive = reactive([true, false, false, false, false, false]);
 const manager = shallowRef<CreateTimelineFn>();
-const fps = ref(1000 / 60);
+const fps = ref(60);
+const fpsMS = computed(() => 1000 / fps.value);
 
 onMounted(() => {
     if (canvas.value) {
         items.forEach((item) => {
-            item.item.fps.value = fps.value;
+            item.item.frameInterval.value = fpsMS.value;
         });
         manager.value = createTimelineManager(canvas.value);
 
@@ -146,8 +147,7 @@ onMounted(() => {
 
         grid.steps.push(
             {
-                interval: computed(() => fps.value),
-                
+                interval: computed(() => fpsMS.value)
             },
             {
                 interval: 100

@@ -1,5 +1,6 @@
 import { App, setupDevtoolsPlugin } from '@vue/devtools-api';
-import { shallowReactive, toRaw, watch } from 'vue';
+import { watchArray } from '@vueuse/core';
+import { computed, nextTick, shallowReactive, watchEffect } from 'vue';
 import { __DEVTOOLS_AVAILABLE__, TimelineManager } from '..';
 import { TimelineLayer } from '../elements/TimelineLayer';
 
@@ -40,26 +41,48 @@ export function setupDevtools(app: App) {
                         payload.rootNodes.push({
                             id: 'timeline::' + id,
                             label: `Timeline (${id})`,
-                            children: manager.layersSorted.value.map((layer) => {
-                                return {
-                                    id: 'layer::' + id + '::' + layer.index.value,
-                                    label: `Layer ${layer.index.value + 1}`,
-                                    children: Array.from(layer.elements.values()).map(
-                                        (_element, i) => {
-                                            return {
-                                                id:
-                                                    'element::' +
-                                                    id +
-                                                    '::' +
-                                                    layer.index.value +
-                                                    ';' +
-                                                    i,
-                                                label: 'Element ' + i
-                                            };
-                                        }
+                            children: [
+                                ...manager.layersSorted.value.map((layer) => {
+                                    return {
+                                        id: 'layer::' + id + '::' + layer.index.value,
+                                        label: `Layer ${layer.index.value + 1}`,
+                                        children: Array.from(layer.elements.values()).map(
+                                            (_element, i) => {
+                                                return {
+                                                    id:
+                                                        'element::' +
+                                                        id +
+                                                        '::' +
+                                                        layer.index.value +
+                                                        ';' +
+                                                        i,
+                                                    label: 'Element ' + i
+                                                };
+                                            }
+                                        )
+                                    };
+                                }),
+                                {
+                                    id: 'items::' + id,
+                                    label: 'Items',
+                                    children: Array.from(manager.timelineElements.values()).map(
+                                        (elem, i) => ({
+                                            id: 'item::' + id + '::' + i,
+                                            label: elem.name,
+                                            tags:
+                                                elem.renderStep == 'before'
+                                                    ? [
+                                                          {
+                                                              label: 'Background',
+                                                              backgroundColor: 0x2b65e8,
+                                                              textColor: 0x000000
+                                                          }
+                                                      ]
+                                                    : []
+                                        })
                                     )
-                                };
-                            })
+                                }
+                            ]
                         });
                     }
                 }
@@ -79,48 +102,7 @@ export function setupDevtools(app: App) {
 
                     switch (nodeType) {
                         case 'timeline': {
-                            payload.state = {
-                                viewport: [
-                                    {
-                                        key: 'view',
-                                        value: toRaw(manager.viewport),
-                                        objectType: 'reactive',
-                                        editable: true
-                                    },
-                                    {
-                                        key: 'Pointer inside canvas',
-                                        value: !manager._pointerOut.value,
-                                        objectType: 'computed',
-                                        editable: false
-                                    },
-                                    {
-                                        key: 'Smoothing',
-                                        value: {
-                                            x: manager.viewportSmoothingX.value,
-                                            y: manager.viewportSmoothingY.value
-                                        },
-                                        objectType: 'computed',
-                                        editable: false
-                                    }
-                                ],
-                                items: [
-                                    {
-                                        key: 'Items end',
-                                        value: manager._maxWidth.value,
-                                        objectType: 'computed'
-                                    }
-                                ],
-                                rendering: [
-                                    {
-                                        key: 'Render time (ms)',
-                                        value: manager.__RENDER_TIME__.value
-                                    },
-                                    {
-                                        key: 'FPS',
-                                        value: manager.__FPS__.value
-                                    }
-                                ]
-                            };
+                            payload.state = manager._devtools_get_state();
                             break;
                         }
 
@@ -183,23 +165,17 @@ export function setupDevtools(app: App) {
                                 if (!layer._highlight.value) {
                                     layer._highlight.value = true;
                                 }
-                                payload.state = {
-                                    rendering: [
-                                        {
-                                            key: 'Render time (ms)',
-                                            value: layer.__RENDER_TIME__.value
-                                        },
-                                        {
-                                            key: 'Render time (% of timeline)',
-                                            value:
-                                                Math.round(
-                                                    (layer.__RENDER_TIME__.value /
-                                                        manager.__RENDER_TIME__.value) *
-                                                        100
-                                                ) + '%'
-                                        }
-                                    ]
-                                };
+                                payload.state = layer._devtools_get_state();
+                            }
+                            break;
+                        }
+
+                        case 'item': {
+                            const elem = Array.from(manager.timelineElements.values()).at(
+                                parseInt(extraInfo)
+                            );
+                            if (elem?.devtoolsState) {
+                                payload.state = elem.devtoolsState();
                             }
                             break;
                         }
@@ -220,6 +196,7 @@ export function setupDevtools(app: App) {
                     const nodeType = payload.nodeId.split('::')[0];
                     const managerId = payload.nodeId.split('::')[1];
                     const manager = managers.get(managerId);
+
                     if (!manager) {
                         return;
                     }
@@ -251,24 +228,72 @@ export function setupDevtools(app: App) {
 
                 managers.set(id, manager);
 
-                watch(
-                    [
-                        manager.viewportSmooth.end,
-                        manager.viewportSmooth.start,
-                        manager.viewportSmooth.yPos,
-                        manager.viewportSmoothingX,
-                        manager._maxWidth,
-                        manager.__RENDER_TIME__,
-                        manager._pointerOut
-                    ],
-                    () => {
+                let updateStateFnTimeout: ReturnType<typeof setTimeout>;
+                let lastUpdateState = 0;
+                const updateStateFn = () => {
+                    const update = () => {
+                        console.log('LA');
                         api.sendInspectorState(INSPECTOR_ID);
+                        lastUpdateState = performance.now();
+                    };
+
+                    if (lastUpdateState < performance.now() - 100) {
+                        update();
+                    }
+                    clearTimeout(updateStateFnTimeout);
+
+                    updateStateFnTimeout = setTimeout(update, 100);
+                };
+
+                watchEffect(manager._devtools_get_state, {
+                    onTrigger() {
+                        nextTick(() => {
+                            updateStateFn();
+                        });
+                    }
+                });
+
+                watchArray(
+                    manager.layersSorted,
+                    (_cur, _old, added) => {
+                        console.log('L');
+                        api.sendInspectorTree(INSPECTOR_ID);
+
+                        for (const element of added) {
+                            watchEffect(element._devtools_get_state, {
+                                flush: 'post',
+                                onTrigger() {
+                                    updateStateFn();
+                                }
+                            });
+                        }
+                    },
+                    {
+                        immediate: true,
+                        deep: false
                     }
                 );
-                watch([manager.layers, manager.timelineElements], () => {
-                    api.sendInspectorState(INSPECTOR_ID);
-                    api.sendInspectorTree(INSPECTOR_ID);
-                });
+                watchArray(
+                    computed(() => Array.from(manager.timelineElements.values())),
+                    (_cur, _old, added) => {
+                        api.sendInspectorTree(INSPECTOR_ID);
+
+                        for (const element of added) {
+                            if (element.devtoolsState) {
+                                watchEffect(element.devtoolsState, {
+                                    onTrigger() {
+                                        updateStateFn();
+                                    }
+                                });
+                            }
+                        }
+                    },
+                    {
+                        immediate: true,
+                        deep: false
+                    }
+                );
+
                 api.sendInspectorTree(INSPECTOR_ID);
                 return () => {
                     managers.delete(id);
@@ -277,17 +302,6 @@ export function setupDevtools(app: App) {
             };
 
             __DEVTOOLS_AVAILABLE__.value = true;
-            // setInterval(() => {
-            //     api.sendInspectorTree(INSPECTOR_ID);
-            // }, 1000);
-
-            // watchDeep(
-            //     managers,
-            //     () => {
-            //         api.sendInspectorTree(INSPECTOR_ID);
-            //     },
-            //     {}
-            // );
         }
     );
 }
