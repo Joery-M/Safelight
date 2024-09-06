@@ -128,7 +128,7 @@ export class TimelineManager {
     public maxZoom = ref(300);
 
     /* Internal settings */
-    public _pointerOut = ref(true);
+    public pointerOut = ref(true);
     private canvasHeight = ref(100);
     private canvasWidth = ref(100);
     private paneResizing = ref(false);
@@ -181,6 +181,9 @@ export class TimelineManager {
             ----- Listen to user events ------
         */
         useEventListener('pointerdown', (ev) => {
+            if (!this.pointerOut.value) {
+                ev.preventDefault();
+            }
             const x = ev.clientX - bounds.left.value;
             const y = ev.clientY - bounds.top.value;
             const ms = this.pxToMs(x);
@@ -192,6 +195,9 @@ export class TimelineManager {
             });
         });
         useEventListener('pointerup', (ev) => {
+            if (!this.pointerOut.value) {
+                ev.preventDefault();
+            }
             const x = ev.clientX - bounds.left.value;
             const y = ev.clientY - bounds.top.value;
             const ms = this.pxToMs(x);
@@ -203,6 +209,9 @@ export class TimelineManager {
             });
         });
         useEventListener('pointermove', (ev) => {
+            if (!this.pointerOut.value) {
+                ev.preventDefault();
+            }
             const x = ev.clientX - bounds.left.value;
             const y = ev.clientY - bounds.top.value;
             const ms = this.pxToMs(x);
@@ -213,7 +222,7 @@ export class TimelineManager {
                 canvas
             });
         });
-        useEventListener('click', (ev) => {
+        useEventListener(canvas, 'click', (ev) => {
             const x = ev.clientX - bounds.left.value;
             const y = ev.clientY - bounds.top.value;
             const ms = this.pxToMs(x);
@@ -230,18 +239,19 @@ export class TimelineManager {
         syncRef(bounds.height, this.canvasHeight, { direction: 'ltr' });
 
         // Prevent browser zooming
-
-        useEventListener(['mousemove', 'mouseenter', 'mouseover'], (ev) => {
-            if (ev.target) {
-                this._pointerOut.value = canvas !== ev.target;
+        useEventListener(
+            canvas,
+            ['pointerover', 'pointerleave', 'pointerout', 'pointerenter', 'pointermove'],
+            (ev) => {
+                this.pointerOut.value = ev.type == 'pointerleave' || ev.type == 'pointerout';
             }
-        });
+        );
 
         // Mouse wheel zoom and pan
         useEventListener(
             'wheel',
             (ev) => {
-                if (!this._pointerOut.value) {
+                if (!this.pointerOut.value) {
                     ev.preventDefault();
                 } else {
                     return;
@@ -304,7 +314,7 @@ export class TimelineManager {
                 }
             });
             this.events.on('mouseDown', ({ mouseData: { x } }) => {
-                if (!this._pointerOut.value) {
+                if (!this.pointerOut.value) {
                     const distToHandle = x - this.layerPaneWidth.value;
                     if (Math.abs(distToHandle) < 2) {
                         paneResizeXStart = distToHandle;
@@ -322,7 +332,7 @@ export class TimelineManager {
                 }
             });
             this.events.on('mouseClick', ({ mouseData: { x } }) => {
-                if (!this._pointerOut.value) {
+                if (!this.pointerOut.value) {
                     const distToHandle = x - this.layerPaneWidth.value;
                     if (Math.abs(distToHandle) < 2) {
                         if (Date.now() - lastClick < 500) {
@@ -582,7 +592,7 @@ export class TimelineManager {
                 },
                 {
                     key: 'Pointer inside canvas',
-                    value: !this._pointerOut.value,
+                    value: !this.pointerOut.value,
                     objectType: 'computed',
                     editable: false
                 },

@@ -106,6 +106,7 @@ import {
     TimelineCursorElement,
     TimelineGrid,
     TimelineLayer,
+    TimelineScrollbar,
     VideoTimelineElement
 } from '@safelight/timeline/elements';
 import { watchImmediate } from '@vueuse/core';
@@ -151,6 +152,7 @@ onMounted(() => {
 
         const grid = new TimelineGrid();
         const handle = new TimelineCursorElement();
+        const scrollbar = new TimelineScrollbar();
         watchImmediate(fpsMS, (f) => (handle.frameInterval.value = f));
 
         grid.steps.push(
@@ -170,6 +172,7 @@ onMounted(() => {
 
         manager.value!.addElement(grid);
         manager.value!.addElement(handle);
+        manager.value!.addElement(scrollbar);
 
         watch(
             isItemActive,
