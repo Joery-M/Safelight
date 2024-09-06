@@ -102,7 +102,13 @@
 <script lang="ts" setup>
 import { PhArrowLeft } from '@phosphor-icons/vue';
 import { createTimelineManager, type CreateTimelineFn } from '@safelight/timeline';
-import { TimelineGrid, TimelineLayer, VideoTimelineElement } from '@safelight/timeline/elements';
+import {
+    TimelineCursorElement,
+    TimelineGrid,
+    TimelineLayer,
+    VideoTimelineElement
+} from '@safelight/timeline/elements';
+import { watchImmediate } from '@vueuse/core';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import Slider from 'primevue/slider';
@@ -144,6 +150,8 @@ onMounted(() => {
         manager.value!.addLayer(layer3);
 
         const grid = new TimelineGrid();
+        const handle = new TimelineCursorElement();
+        watchImmediate(fpsMS, (f) => (handle.frameInterval.value = f));
 
         grid.steps.push(
             {
@@ -161,6 +169,7 @@ onMounted(() => {
         );
 
         manager.value!.addElement(grid);
+        manager.value!.addElement(handle);
 
         watch(
             isItemActive,
