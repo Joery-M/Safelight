@@ -57,7 +57,7 @@ export class TimelineGrid implements TimelineElement {
                     const loopedOffset = manager._offsetX.value % intervalPx;
                     const lineOffset = curX * intervalPx;
 
-                    const x = manager.layerPaneWidth.value + (lineOffset - loopedOffset) - 0.75;
+                    const x = manager.layerPaneWidth.value + (lineOffset - loopedOffset) - 1.5;
                     ctx.fillRect(x, 0, 1.5, viewportHeight);
                 }
                 ctx.restore();

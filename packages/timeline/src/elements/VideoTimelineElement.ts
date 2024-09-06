@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { TimelineElementTypes, TimelineItemElement } from '..';
 
 export class VideoTimelineElement implements TimelineItemElement {
@@ -9,17 +9,27 @@ export class VideoTimelineElement implements TimelineItemElement {
     start = ref(0);
     end = ref(1000);
 
+    fps = ref(1);
+
+    private startSnapped = computed(
+        () => Math.ceil(this.start.value / this.fps.value) * this.fps.value
+    );
+    private endSnapped = computed(
+        () => Math.ceil(this.end.value / this.fps.value) * this.fps.value
+    );
+
     render: TimelineItemElement['render'] = ({ ctx, manager, container }) => {
         // Offset
         const offset =
-            manager.msToPx(Math.min(this.start.value, this.end.value)) - manager._offsetX.value;
+            manager.msToPx(Math.min(this.startSnapped.value, this.endSnapped.value)) -
+            manager._offsetX.value;
         ctx.translate(offset, 0);
 
         // Square
         const elemWidth = manager.msToPx(
-            this.start.value < this.end.value
-                ? Math.abs(this.end.value - this.start.value)
-                : Math.abs(this.start.value - this.end.value)
+            this.startSnapped.value < this.endSnapped.value
+                ? Math.abs(this.endSnapped.value - this.startSnapped.value)
+                : Math.abs(this.startSnapped.value - this.endSnapped.value)
         );
         this.tempHue += 10;
         this.tempHue %= 360;

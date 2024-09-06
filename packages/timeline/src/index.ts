@@ -122,6 +122,7 @@ export class TimelineManager {
     public invertHorizontalScroll = ref(true);
     public alignment = ref<TimelineAlignment>('bottom');
     public defaultLayerHeight = ref(32);
+    public maxZoom = ref(300);
 
     /* Internal settings */
     public _pointerOut = ref(true);
@@ -430,8 +431,8 @@ export class TimelineManager {
         const center = size * cursorPosition + this.viewport.start;
 
         let newSize = size - this.pxToMs(delta);
-        if (newSize < 50) {
-            newSize = 50;
+        if (newSize < this.maxZoom.value) {
+            newSize = this.maxZoom.value;
         }
 
         let start = center - newSize * cursorPosition;
