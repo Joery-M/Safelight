@@ -135,11 +135,6 @@ export class TimelineManager {
     public windowDPI = useDevicePixelRatio().pixelRatio;
     public defaultLayerPaneWidth = ref(128);
     public layerPaneWidth = ref(128);
-    /**
-     * Change the speed of vertical scrolling
-     */
-    // Magic number, lets goooo
-    private constantYScale = 0.5;
     private changedLayerPaneWidth = ref(false);
 
     /* Computed */
@@ -486,14 +481,14 @@ export class TimelineManager {
             totalHeight += curHeight + 1;
         }
 
-        const offset =
-            totalHeight +
-            (includeOffset ? -this.viewportSmooth.yPos.value * this.constantYScale : 0);
+        if (includeOffset) {
+            totalHeight += includeOffset ? -this.viewportSmooth.yPos.value : 0;
+        }
 
         if (this.alignment.value == 'bottom' && useAlignment) {
-            return this.canvasHeight.value - offset - currentHeight;
+            return this.canvasHeight.value - totalHeight - currentHeight;
         } else {
-            return offset;
+            return totalHeight;
         }
     }
 
@@ -555,6 +550,7 @@ export class TimelineManager {
     }
 
     moveY(delta: number) {
+        delta /= 2;
         if (this.alignment.value == 'bottom') {
             this.viewport.yPos -= delta;
             if (this.viewport.yPos < 0) {

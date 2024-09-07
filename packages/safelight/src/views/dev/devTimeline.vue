@@ -10,7 +10,7 @@
             </RouterLink>
         </template>
         <template #content>
-            <canvas ref="canvas" style="width: 100%; height: 200px" />
+            <canvas ref="canvas" style="width: 100%; height: 400px" />
             <input v-model="invertScrollAxes" type="checkbox" />
             <label> Trackpad mode </label>
             <div>
@@ -107,7 +107,6 @@ import {
     TimelineGrid,
     TimelineLayer,
     TimelineScrollbarHoriz,
-    TimelineScrollbarVert,
     VideoTimelineElement
 } from '@safelight/timeline/elements';
 import { watchImmediate } from '@vueuse/core';
@@ -164,7 +163,6 @@ onMounted(() => {
         const grid = new TimelineGrid();
         const handle = new TimelineCursorElement();
         const scrollbarX = new TimelineScrollbarHoriz();
-        const scrollbarY = new TimelineScrollbarVert();
 
         watchImmediate(fpsMS, (f) => (handle.frameInterval.value = f));
 
@@ -185,8 +183,7 @@ onMounted(() => {
 
         manager.value!.addElement(grid);
         manager.value!.addElement(handle);
-        // manager.value!.addElement(scrollbarX);
-        manager.value!.addElement(scrollbarY);
+        manager.value!.addElement(scrollbarX);
 
         watch(
             isItemActive,

@@ -130,6 +130,12 @@ export class TimelineLayer {
 
     public _devtools_get_state = (): CustomInspectorState => {
         return {
+            Positioning: [
+                {
+                    key: 'Offset Y',
+                    value: this.manager?.LayerToYPosition(this.index.value, false, true)
+                }
+            ],
             'Render time': [
                 {
                     key: 'layer ms',

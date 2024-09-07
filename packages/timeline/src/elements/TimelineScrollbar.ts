@@ -98,42 +98,6 @@ export class TimelineScrollbarHoriz implements TimelineElement {
     };
 }
 
-export class TimelineScrollbarVert extends TimelineScrollbarHoriz {
-    name = 'Vertical scrollbar';
-    render: TimelineElement['render'] = ({ ctx, manager }) => {
-        const viewportHeight = ctx.canvas.height / manager.windowDPI.value;
-
-        const start = manager.viewportSmooth.yPos.value;
-        const end = manager.viewportSmooth.yPos.value + viewportHeight;
-        const highestLayerY = -manager.LayerToYPosition(manager.layers.size);
-        const max = Math.max(start, highestLayerY);
-        console.log(start, end, max);
-
-        const viewportWidth =
-            ctx.canvas.width / manager.windowDPI.value - manager.layerPaneWidth.value;
-        ctx.save();
-        ctx.translate(manager.layerPaneWidth.value, 0);
-        ctx.strokeStyle = `rgba(84, 84, 84, ${this.opacity.value})`;
-
-        ctx.beginPath();
-        this.startPx.value = range(0, max, 0, viewportHeight, start);
-        this.endPx.value = range(0, max, 0, viewportHeight, end);
-
-        ctx.moveTo(
-            viewportWidth - this.lineThickness.value,
-            this.startPx.value + this.lineThickness.value / 2
-        );
-        ctx.lineTo(
-            viewportWidth - this.lineThickness.value,
-            this.endPx.value - this.lineThickness.value / 2
-        );
-        ctx.lineWidth = this.lineThickness.value;
-        ctx.lineCap = 'round';
-        ctx.stroke();
-        ctx.restore();
-    };
-}
-
 const lerp = (x: number, y: number, a: number) => x * (1 - a) + y * a;
 const clamp = (a: number, min = 0, max = 1) => Math.min(max, Math.max(min, a));
 const invlerp = (x: number, y: number, a: number) => clamp((a - x) / (y - x));
