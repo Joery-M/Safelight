@@ -1,33 +1,44 @@
 import { CustomInspectorState } from '@vue/devtools-api';
-import { useClamp } from '@vueuse/math';
 import { computed, ref } from 'vue';
 import { TimelineElement } from '..';
+import { useSmoothNum } from '../tools/useSmoothNum';
 
-export class TimelineScrollbar implements TimelineElement {
-    name = 'Scrollbar';
+export class TimelineScrollbarHoriz implements TimelineElement {
+    name = 'Horizontal scrollbar';
 
-    private startPx = ref(0);
-    private endPx = ref(0);
-    private viewportHeight = ref(0);
-    private mouseX = ref(0);
-    private mouseY = ref(0);
-    private opacity = computed(() => {
-        const x1 = useClamp(this.mouseX.value, this.startPx.value, this.endPx.value).value;
-        const y1 = this.viewportHeight.value - 5;
-
-        const x2 = this.mouseX.value;
-        const y2 = this.mouseY.value;
-
-        const a = x1 - x2;
-        const b = y1 - y2;
-
-        return Math.floor(Math.min(2 / Math.sqrt(a * a + b * b), 1) * 100);
-    });
+    protected startPx = ref(0);
+    protected endPx = ref(0);
+    protected scrollbarHidden = ref(true);
+    protected lineThickness = ref(5);
+    protected opacity = useSmoothNum(
+        computed(() => (this.scrollbarHidden.value ? 0 : 1)),
+        { stepPerc: 0.3 }
+    );
 
     init: TimelineElement['init'] = (manager) => {
-        manager.events.on('mouseMove', ({ mouseData }) => {
-            this.mouseX.value = mouseData.x - manager.layerPaneWidth.value;
-            this.mouseY.value = mouseData.y;
+        let hiddenTimer: ReturnType<typeof setTimeout>;
+
+        const resetHiddenTimer = () => {
+            clearTimeout(hiddenTimer);
+            this.scrollbarHidden.value = false;
+            hiddenTimer = setTimeout(() => {
+                this.scrollbarHidden.value = true;
+            }, 2500);
+        };
+
+        manager.events.on('mouseMove', () => {
+            if (!manager.pointerOut.value) {
+                resetHiddenTimer();
+            } else {
+                clearTimeout(hiddenTimer);
+                hiddenTimer = setTimeout(() => {
+                    this.scrollbarHidden.value = true;
+                }, 500);
+            }
+        });
+
+        manager.events.on('pan', () => {
+            resetHiddenTimer();
         });
     };
 
@@ -38,7 +49,7 @@ export class TimelineScrollbar implements TimelineElement {
 
         const viewportWidth =
             ctx.canvas.width / manager.windowDPI.value - manager.layerPaneWidth.value;
-        this.viewportHeight.value = ctx.canvas.height / manager.windowDPI.value;
+        const viewportHeight = ctx.canvas.height / manager.windowDPI.value;
         ctx.save();
         ctx.translate(manager.layerPaneWidth.value, 0);
         ctx.strokeStyle = `rgba(84, 84, 84, ${this.opacity.value})`;
@@ -47,9 +58,15 @@ export class TimelineScrollbar implements TimelineElement {
         this.startPx.value = range(manager.leftBoundary.value, max, 0, viewportWidth, start);
         this.endPx.value = range(manager.leftBoundary.value, max, 0, viewportWidth, end);
 
-        ctx.moveTo(this.startPx.value, this.viewportHeight.value - 5);
-        ctx.lineTo(this.endPx.value, this.viewportHeight.value - 5);
-        ctx.lineWidth = 5;
+        ctx.moveTo(
+            this.startPx.value + this.lineThickness.value / 2,
+            viewportHeight - this.lineThickness.value
+        );
+        ctx.lineTo(
+            this.endPx.value - this.lineThickness.value / 2,
+            viewportHeight - this.lineThickness.value
+        );
+        ctx.lineWidth = this.lineThickness.value;
         ctx.lineCap = 'round';
         ctx.stroke();
         ctx.restore();
@@ -59,15 +76,61 @@ export class TimelineScrollbar implements TimelineElement {
         return {
             opacity: [
                 {
-                    key: 'mouse',
-                    value: this.mouseX.value
+                    key: 'is hidden',
+                    value: this.scrollbarHidden.value
                 },
                 {
                     key: 'opacity',
                     value: this.opacity.value
                 }
+            ],
+            position: [
+                {
+                    key: 'start',
+                    value: this.startPx.value
+                },
+                {
+                    key: 'end',
+                    value: this.endPx.value
+                }
             ]
         };
+    };
+}
+
+export class TimelineScrollbarVert extends TimelineScrollbarHoriz {
+    name = 'Vertical scrollbar';
+    render: TimelineElement['render'] = ({ ctx, manager }) => {
+        const viewportHeight = ctx.canvas.height / manager.windowDPI.value;
+
+        const start = manager.viewportSmooth.yPos.value;
+        const end = manager.viewportSmooth.yPos.value + viewportHeight;
+        const highestLayerY = -manager.LayerToYPosition(manager.layers.size);
+        const max = Math.max(start, highestLayerY);
+        console.log(start, end, max);
+
+        const viewportWidth =
+            ctx.canvas.width / manager.windowDPI.value - manager.layerPaneWidth.value;
+        ctx.save();
+        ctx.translate(manager.layerPaneWidth.value, 0);
+        ctx.strokeStyle = `rgba(84, 84, 84, ${this.opacity.value})`;
+
+        ctx.beginPath();
+        this.startPx.value = range(0, max, 0, viewportHeight, start);
+        this.endPx.value = range(0, max, 0, viewportHeight, end);
+
+        ctx.moveTo(
+            viewportWidth - this.lineThickness.value,
+            this.startPx.value + this.lineThickness.value / 2
+        );
+        ctx.lineTo(
+            viewportWidth - this.lineThickness.value,
+            this.endPx.value - this.lineThickness.value / 2
+        );
+        ctx.lineWidth = this.lineThickness.value;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+        ctx.restore();
     };
 }
 

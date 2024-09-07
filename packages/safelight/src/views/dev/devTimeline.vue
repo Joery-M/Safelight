@@ -106,7 +106,8 @@ import {
     TimelineCursorElement,
     TimelineGrid,
     TimelineLayer,
-    TimelineScrollbar,
+    TimelineScrollbarHoriz,
+    TimelineScrollbarVert,
     VideoTimelineElement
 } from '@safelight/timeline/elements';
 import { watchImmediate } from '@vueuse/core';
@@ -143,16 +144,28 @@ onMounted(() => {
         const layer1 = new TimelineLayer();
         const layer2 = new TimelineLayer();
         const layer3 = new TimelineLayer();
+        const layer4 = new TimelineLayer();
+        const layer5 = new TimelineLayer();
+        const layer6 = new TimelineLayer();
+        const layer7 = new TimelineLayer();
+        const layer8 = new TimelineLayer();
 
         const layers = [layer1, layer2, layer3];
 
         manager.value!.addLayer(layer1);
         manager.value!.addLayer(layer2);
         manager.value!.addLayer(layer3);
+        manager.value!.addLayer(layer4);
+        manager.value!.addLayer(layer5);
+        manager.value!.addLayer(layer6);
+        manager.value!.addLayer(layer7);
+        manager.value!.addLayer(layer8);
 
         const grid = new TimelineGrid();
         const handle = new TimelineCursorElement();
-        const scrollbar = new TimelineScrollbar();
+        const scrollbarX = new TimelineScrollbarHoriz();
+        const scrollbarY = new TimelineScrollbarVert();
+
         watchImmediate(fpsMS, (f) => (handle.frameInterval.value = f));
 
         grid.steps.push(
@@ -172,7 +185,8 @@ onMounted(() => {
 
         manager.value!.addElement(grid);
         manager.value!.addElement(handle);
-        manager.value!.addElement(scrollbar);
+        // manager.value!.addElement(scrollbarX);
+        manager.value!.addElement(scrollbarY);
 
         watch(
             isItemActive,

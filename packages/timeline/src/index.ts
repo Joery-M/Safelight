@@ -283,6 +283,13 @@ export class TimelineManager {
             { passive: false }
         );
 
+        watch(
+            [this.viewportSmooth.start, this.viewportSmooth.end, this.viewportSmooth.yPos],
+            () => {
+                this.events.emit('pan', this);
+            }
+        );
+
         watch(this.defaultLayerPaneWidth, () => {
             if (!this.changedLayerPaneWidth.value) {
                 this.layerPaneWidth.value = this.defaultLayerPaneWidth.value;
@@ -472,7 +479,7 @@ export class TimelineManager {
         includeOffset = false,
         useAlignment = true
     ) {
-        const currentHeight = this.layerHeights.value[layer];
+        const currentHeight = this.layerHeights.value[layer] ?? this.defaultLayerHeight.value;
         let totalHeight = includeCurrent ? currentHeight : 0;
         for (let i = 0; i < layer; i++) {
             const curHeight = this.layerHeights.value[i] ?? this.defaultLayerHeight;
@@ -674,7 +681,7 @@ interface TimelineEvents {
             canvas: HTMLCanvasElement;
         }
     ];
-    scroll: [manager: TimelineManager];
+    zoom: [manager: TimelineManager];
     pan: [manager: TimelineManager];
     unmount: [manager: TimelineManager];
 }

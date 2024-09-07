@@ -10,7 +10,7 @@ export class TimelineCursorElement implements TimelineElement {
     frameInterval = ref(1);
 
     public cursor = computed(
-        () => Math.round(this.cursorPos.value / this.frameInterval.value) * this.frameInterval.value
+        () => Math.floor(this.cursorPos.value / this.frameInterval.value) * this.frameInterval.value
     );
     /**
      * Cursor position in milliseconds
