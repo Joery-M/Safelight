@@ -116,18 +116,6 @@ export function setupDevtools(app: App) {
                             ];
                             if (!element) break;
                             payload.state = {
-                                item: [
-                                    {
-                                        key: 'start',
-                                        value: element.start.value,
-                                        editable: false
-                                    },
-                                    {
-                                        key: 'end',
-                                        value: element.end.value,
-                                        editable: false
-                                    }
-                                ],
                                 rendering: [
                                     {
                                         key: 'Render time (ms)',
@@ -151,7 +139,8 @@ export function setupDevtools(app: App) {
                                                     100
                                             ) + '%'
                                     }
-                                ]
+                                ],
+                                ...(element.devtoolsState ? element.devtoolsState() : {})
                             };
                             break;
                         }
@@ -257,13 +246,32 @@ export function setupDevtools(app: App) {
                     (_cur, _old, added) => {
                         api.sendInspectorTree(INSPECTOR_ID);
 
-                        for (const element of added) {
-                            watchEffect(element._devtools_get_state, {
+                        for (const layer of added) {
+                            watchEffect(layer._devtools_get_state, {
                                 flush: 'post',
                                 onTrigger() {
                                     updateStateFn();
                                 }
                             });
+
+                            const elems = computed(() => [...layer.elements.values()]);
+                            watchArray(
+                                elems,
+                                (_cur, _old, added) => {
+                                    api.sendInspectorTree(INSPECTOR_ID);
+                                    for (const item of added) {
+                                        if (item.devtoolsState) {
+                                            watchEffect(item.devtoolsState, {
+                                                flush: 'post',
+                                                onTrigger() {
+                                                    updateStateFn();
+                                                }
+                                            });
+                                        }
+                                    }
+                                },
+                                { immediate: true }
+                            );
                         }
                     },
                     {

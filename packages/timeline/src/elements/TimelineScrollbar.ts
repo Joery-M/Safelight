@@ -1,6 +1,6 @@
 import { CustomInspectorState } from '@vue/devtools-api';
 import { computed, ref } from 'vue';
-import { TimelineElement } from '..';
+import { TimelineElement, TimelineElementRenderPayload } from '..';
 import { useSmoothNum } from '../tools/useSmoothNum';
 
 export class TimelineScrollbarHoriz implements TimelineElement {
@@ -42,7 +42,7 @@ export class TimelineScrollbarHoriz implements TimelineElement {
         });
     };
 
-    render: TimelineElement['render'] = ({ ctx, manager }) => {
+    render({ ctx, manager }: TimelineElementRenderPayload) {
         if (this.opacity.value == 0) {
             return;
         }
@@ -50,9 +50,8 @@ export class TimelineScrollbarHoriz implements TimelineElement {
         const end = manager.viewportSmooth.end.value;
         const max = manager._maxWidth.value + manager.rightPadding.value;
 
-        const viewportWidth =
-            ctx.canvas.width / manager.windowDPI.value - manager.layerPaneWidth.value;
-        const viewportHeight = ctx.canvas.height / manager.windowDPI.value;
+        const viewportWidth = manager.canvasWidth.value - manager.layerPaneWidth.value;
+        const viewportHeight = manager.canvasHeight.value;
         ctx.save();
         ctx.translate(manager.layerPaneWidth.value, 0);
         ctx.strokeStyle = `rgba(84, 84, 84, ${this.opacity.value})`;
@@ -73,7 +72,7 @@ export class TimelineScrollbarHoriz implements TimelineElement {
         ctx.lineCap = 'round';
         ctx.stroke();
         ctx.restore();
-    };
+    }
 
     devtoolsState?: (() => CustomInspectorState) | undefined = () => {
         return {

@@ -1,7 +1,7 @@
 import { CustomInspectorState } from '@vue/devtools-api';
 import { MaybeRefOrGetter, toValue } from '@vueuse/core';
 import { computed, ref } from 'vue';
-import { TimelineElement, TimelineManager } from '..';
+import { TimelineElement, TimelineElementRenderPayload, TimelineManager } from '..';
 import { useSmoothNum } from '../tools/useSmoothNum';
 
 export class TimelineCursorElement implements TimelineElement {
@@ -10,7 +10,7 @@ export class TimelineCursorElement implements TimelineElement {
     frameInterval = ref(1);
 
     public cursor = computed(
-        () => Math.floor(this.cursorPos.value / this.frameInterval.value) * this.frameInterval.value
+        () => Math.round(this.cursorPos.value / this.frameInterval.value) * this.frameInterval.value
     );
     /**
      * Cursor position in milliseconds
@@ -41,7 +41,8 @@ export class TimelineCursorElement implements TimelineElement {
                 return;
             }
 
-            const mouseX = mouseData.x - manager.layerPaneWidth.value + manager._offsetX.value;
+            const mouseX =
+                mouseData.x - manager.layerPaneWidth.value + manager.viewportOffsetX.value;
 
             if (this.isDragging.value) {
                 const offset = manager.pxToMs(mouseX - cursorMoveXstart);
@@ -62,14 +63,15 @@ export class TimelineCursorElement implements TimelineElement {
             }
         });
         manager.events.on('mouseDown', ({ mouseData }) => {
+            if (!mouseData.isInsideCanvas) return;
             if (mouseData.y > 10) {
                 manager.cursor.delete('cursor');
                 return;
             }
 
-            const mouseX = mouseData.x - manager.layerPaneWidth.value + manager._offsetX.value;
+            const mouseX = mouseData.x - manager.layerPaneWidth.value;
 
-            this.moveCursor(manager.pxToMs(mouseX));
+            this.moveCursor(manager.pxToMs(mouseX, true));
 
             if (Math.abs(mouseX - manager.msToPx(this.cursorPos.value)) <= 9.5) {
                 cursorMoveXstart = mouseX;
@@ -83,7 +85,8 @@ export class TimelineCursorElement implements TimelineElement {
             if (this.isDragging.value) {
                 this.isDragging.value = false;
 
-                const mouseX = mouseData.x - manager.layerPaneWidth.value + manager._offsetX.value;
+                const mouseX =
+                    mouseData.x - manager.layerPaneWidth.value + manager.viewportOffsetX.value;
                 if (
                     Math.abs(mouseX - manager.msToPx(this.cursorPos.value)) > 9.5 &&
                     mouseData.y > 10
@@ -94,20 +97,16 @@ export class TimelineCursorElement implements TimelineElement {
         });
     }
 
-    render: TimelineElement['render'] = ({ ctx, manager }) => {
-        const offsetX =
-            manager.msToPx(this.cursorPosSmooth.value) -
-            manager._offsetX.value +
-            manager.layerPaneWidth.value -
-            10;
+    render({ ctx, manager }: TimelineElementRenderPayload) {
+        const offsetX = manager.msToPx(this.cursorPosSmooth.value, true, true) - 10;
         if (offsetX < manager.layerPaneWidth.value - 19) {
             this.isRendering.value = false;
             return;
         }
         this.isRendering.value = true;
 
-        const viewportWidth = ctx.canvas.width / manager.windowDPI.value;
-        const viewportHeight = ctx.canvas.height / manager.windowDPI.value;
+        const viewportWidth = manager.canvasWidth.value;
+        const viewportHeight = manager.canvasHeight.value;
 
         ctx.save();
         ctx.beginPath();
@@ -166,7 +165,7 @@ export class TimelineCursorElement implements TimelineElement {
         ctx.closePath();
         ctx.fill();
         ctx.restore();
-    };
+    }
 
     devtoolsState = (): CustomInspectorState => {
         return {

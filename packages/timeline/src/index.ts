@@ -61,7 +61,7 @@ export interface CreateTimelineFn {
 export class TimelineManager {
     public __RENDER_TIME__ = ref(0);
     private __FPS_LIST = reactive<number[]>([]);
-    public __FPS__ = useRound(useAverage(this.__FPS_LIST));
+    private __FPS__ = useRound(useAverage(this.__FPS_LIST));
 
     public timelineElements = shallowReactive(new Set<TimelineElement>());
     public layers = shallowReactive(new Set<TimelineLayer>());
@@ -129,10 +129,10 @@ export class TimelineManager {
 
     /* Internal settings */
     public pointerOut = ref(true);
-    private canvasHeight = ref(100);
-    private canvasWidth = ref(100);
+    public canvasHeight = ref(100);
+    public canvasWidth = ref(100);
+    private windowDPI = useDevicePixelRatio().pixelRatio;
     private paneResizing = ref(false);
-    public windowDPI = useDevicePixelRatio().pixelRatio;
     public defaultLayerPaneWidth = ref(128);
     public layerPaneWidth = ref(128);
     private changedLayerPaneWidth = ref(false);
@@ -142,7 +142,7 @@ export class TimelineManager {
     /**
      * Offset from left boundary of timeline in pixels
      */
-    public _offsetX = computed(() => this.msToPx(this.viewportSmooth.start.value));
+    public viewportOffsetX = computed(() => this.msToPx(this.viewportSmooth.start.value));
     public _maxWidth = computed(() => {
         // So the view doesn't snap when moving outside the max width, also use the current end as a max
         let maxRight = this.viewport.end - this.rightPadding.value;
@@ -157,7 +157,7 @@ export class TimelineManager {
     });
 
     public layersSorted = computed(() =>
-        Array.from(this.layers.values()).sort((a, b) => b.index.value - a.index.value)
+        Array.from(this.layers.values()).sort((a, b) => a.index.value - b.index.value)
     );
 
     private layerHeights = computed(() => this.layersSorted.value.map((l) => l.height.value));
@@ -175,17 +175,38 @@ export class TimelineManager {
         /* 
             ----- Listen to user events ------
         */
+
+        const getMouseData = (ev: MouseEvent | PointerEvent): MouseEventData => {
+            const x = ev.clientX - bounds.left.value;
+            const y = ev.clientY - bounds.top.value;
+            const ms = this.pxToMs(x, true, true);
+            const isInsideCanvas =
+                x >= 0 && x < bounds.width.value && y >= 0 && y < bounds.height.value;
+
+            const mouseY = this.canvasHeight.value - (y - this.viewportSmooth.yPos.value);
+            const layer = !isInsideCanvas
+                ? undefined
+                : this.layersSorted.value.find((layer, i) => {
+                      const layerY = this.LayerToYPosition(i, true, true, false);
+                      return layerY > mouseY && mouseY < layerY + layer.height.value;
+                  });
+
+            return Object.freeze<MouseEventData>({
+                ms,
+                x,
+                y,
+                isInsideCanvas,
+                hoverLayer: layer
+            });
+        };
         useEventListener('pointerdown', (ev) => {
             if (!this.pointerOut.value) {
                 ev.preventDefault();
             }
-            const x = ev.clientX - bounds.left.value;
-            const y = ev.clientY - bounds.top.value;
-            const ms = this.pxToMs(x);
             this.events.emit('mouseDown', {
                 ev: ev,
                 manager: this,
-                mouseData: Object.freeze({ ms, x, y }),
+                mouseData: getMouseData(ev),
                 canvas
             });
         });
@@ -193,13 +214,10 @@ export class TimelineManager {
             if (!this.pointerOut.value) {
                 ev.preventDefault();
             }
-            const x = ev.clientX - bounds.left.value;
-            const y = ev.clientY - bounds.top.value;
-            const ms = this.pxToMs(x);
             this.events.emit('mouseUp', {
                 ev: ev,
                 manager: this,
-                mouseData: Object.freeze({ ms, x, y }),
+                mouseData: getMouseData(ev),
                 canvas
             });
         });
@@ -207,24 +225,18 @@ export class TimelineManager {
             if (!this.pointerOut.value) {
                 ev.preventDefault();
             }
-            const x = ev.clientX - bounds.left.value;
-            const y = ev.clientY - bounds.top.value;
-            const ms = this.pxToMs(x);
             this.events.emit('mouseMove', {
                 ev: ev,
                 manager: this,
-                mouseData: Object.freeze({ ms, x, y }),
+                mouseData: getMouseData(ev),
                 canvas
             });
         });
         useEventListener(canvas, 'click', (ev) => {
-            const x = ev.clientX - bounds.left.value;
-            const y = ev.clientY - bounds.top.value;
-            const ms = this.pxToMs(x);
             this.events.emit('mouseClick', {
                 ev: ev,
                 manager: this,
-                mouseData: Object.freeze({ ms, x, y }),
+                mouseData: getMouseData(ev),
                 canvas
             });
         });
@@ -342,6 +354,7 @@ export class TimelineManager {
                             requestedSize = this.defaultLayerPaneWidth.value;
                             startSize = this.defaultLayerPaneWidth.value;
                             lastClick = 0;
+                            this.cursor.delete('layerPane');
                         } else {
                             lastClick = Date.now();
                         }
@@ -459,14 +472,27 @@ export class TimelineManager {
         Even though the original code is written for Pixi (which i have considered using), it still works beautifully here.
     */
 
-    pxToMs = (pixel: number) =>
-        (pixel / (this.canvasWidth.value - this.layerPaneWidth.value)) *
-        (this.viewportSmooth.end.value - this.viewportSmooth.start.value);
+    pxToMs(pixel: number, offset = false, layerPane = false) {
+        if (offset) pixel += this.viewportOffsetX.value;
+        if (layerPane) pixel -= this.layerPaneWidth.value;
 
-    msToPx = (time: number) =>
-        ((time - this.leftBoundary.value) /
-            (this.viewportSmooth.end.value - this.viewportSmooth.start.value)) *
-        (this.canvasWidth.value - this.layerPaneWidth.value);
+        return (
+            (pixel / (this.canvasWidth.value - this.layerPaneWidth.value)) *
+            (this.viewportSmooth.end.value - this.viewportSmooth.start.value)
+        );
+    }
+
+    msToPx(time: number, offset = false, layerPane = false) {
+        if (offset) time -= this.viewportSmooth.start.value;
+
+        let res =
+            ((time - this.leftBoundary.value) /
+                (this.viewportSmooth.end.value - this.viewportSmooth.start.value)) *
+            (this.canvasWidth.value - this.layerPaneWidth.value);
+
+        if (layerPane) res += this.layerPaneWidth.value;
+        return res;
+    }
 
     LayerToYPosition(
         layer: number,
@@ -589,7 +615,7 @@ export class TimelineManager {
                 },
                 {
                     key: 'X offset',
-                    value: this._offsetX.value,
+                    value: this.viewportOffsetX.value,
                     objectType: 'reactive',
                     editable: true
                 },
@@ -645,38 +671,10 @@ export class TimelineManager {
 }
 
 interface TimelineEvents {
-    mouseDown: [
-        payload: {
-            ev: PointerEvent;
-            manager: TimelineManager;
-            mouseData: MouseEventData;
-            canvas: HTMLCanvasElement;
-        }
-    ];
-    mouseUp: [
-        payload: {
-            ev: PointerEvent;
-            manager: TimelineManager;
-            mouseData: MouseEventData;
-            canvas: HTMLCanvasElement;
-        }
-    ];
-    mouseMove: [
-        payload: {
-            ev: PointerEvent;
-            manager: TimelineManager;
-            mouseData: MouseEventData;
-            canvas: HTMLCanvasElement;
-        }
-    ];
-    mouseClick: [
-        payload: {
-            ev: MouseEvent;
-            manager: TimelineManager;
-            mouseData: MouseEventData;
-            canvas: HTMLCanvasElement;
-        }
-    ];
+    mouseDown: [payload: MouseEventPayload];
+    mouseUp: [payload: MouseEventPayload];
+    mouseMove: [payload: MouseEventPayload];
+    mouseClick: [payload: MouseEventPayload<true>];
     zoom: [manager: TimelineManager];
     pan: [manager: TimelineManager];
     unmount: [manager: TimelineManager];
@@ -686,6 +684,15 @@ export interface MouseEventData {
     x: number;
     y: number;
     ms: number;
+    isInsideCanvas: boolean;
+    hoverLayer?: TimelineLayer;
+}
+
+export interface MouseEventPayload<isClick = false> {
+    ev: isClick extends true ? MouseEvent : PointerEvent;
+    manager: TimelineManager;
+    mouseData: MouseEventData;
+    canvas: HTMLCanvasElement;
 }
 
 export interface TimelineElement {
@@ -695,11 +702,7 @@ export interface TimelineElement {
      */
     renderStep?: 'before' | 'after';
     init?: (manager: TimelineManager) => any;
-    render: (payload: {
-        ctx: CanvasRenderingContext2D;
-        manager: TimelineManager;
-        isQueued: boolean;
-    }) => any;
+    render: (payload: TimelineElementRenderPayload) => any;
 
     devtoolsState?: () => CustomInspectorState;
 }
@@ -707,14 +710,9 @@ export interface TimelineElement {
 export interface TimelineItemElement {
     start: Ref<number>;
     end: Ref<number>;
-    init?: (layer: TimelineLayer) => any;
-    render: (payload: {
-        ctx: CanvasRenderingContext2D;
-        layer: TimelineLayer;
-        manager: TimelineManager;
-        isQueued: boolean;
-        container: Readonly<ItemContainer>;
-    }) => any;
+    init?: (payload: TimelineItemInitPayload) => any;
+    render: (payload: TimelineItemRenderPayload) => any;
+    devtoolsState?: () => CustomInspectorState;
 }
 
 export type TimelineAlignment = 'top' | 'bottom';
@@ -726,4 +724,21 @@ export interface ItemContainer {
     bottom: number;
     width: number;
     height: number;
+}
+
+export interface TimelineElementRenderPayload {
+    ctx: CanvasRenderingContext2D;
+    manager: TimelineManager;
+    isQueued: boolean;
+}
+export interface TimelineItemRenderPayload {
+    ctx: CanvasRenderingContext2D;
+    layer: TimelineLayer;
+    manager: TimelineManager;
+    isQueued: boolean;
+    container: Readonly<ItemContainer>;
+}
+export interface TimelineItemInitPayload {
+    layer: TimelineLayer;
+    manager: TimelineManager;
 }

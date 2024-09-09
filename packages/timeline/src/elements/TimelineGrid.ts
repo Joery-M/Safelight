@@ -7,7 +7,7 @@ import {
     ShallowRef,
     toValue
 } from 'vue';
-import { TimelineElement } from '..';
+import { TimelineElement, TimelineElementRenderPayload } from '..';
 
 export class TimelineGrid implements TimelineElement {
     name = 'Grid';
@@ -23,7 +23,7 @@ export class TimelineGrid implements TimelineElement {
     private stepsSorted = computed(() =>
         this.steps.sort((a, b) => toValue(a.interval) - toValue(b.interval))
     );
-    render: TimelineElement['render'] = ({ ctx, manager }) => {
+    render({ ctx, manager }: TimelineElementRenderPayload) {
         for (let i = 0; i < this.stepsSorted.value.length; i++) {
             const step = this.stepsSorted.value[i];
 
@@ -43,8 +43,8 @@ export class TimelineGrid implements TimelineElement {
 
             ctx.fillStyle = `white`;
             if (opacity > 0) {
-                const viewportWidth = ctx.canvas.width / manager.windowDPI.value;
-                const viewportHeight = ctx.canvas.height / manager.windowDPI.value;
+                const viewportWidth = manager.canvasWidth.value;
+                const viewportHeight = manager.canvasHeight.value;
 
                 ctx.save();
                 ctx.beginPath();
@@ -54,7 +54,7 @@ export class TimelineGrid implements TimelineElement {
                 ctx.globalAlpha = opacity;
                 // 1 extra for at the start, another extra for at the end
                 for (let curX = 0; curX < Math.ceil(viewportWidth / intervalPx) + 2; curX++) {
-                    const loopedOffset = manager._offsetX.value % intervalPx;
+                    const loopedOffset = manager.viewportOffsetX.value % intervalPx;
                     const lineOffset = curX * intervalPx;
 
                     const x = manager.layerPaneWidth.value + (lineOffset - loopedOffset) - 1.5;
@@ -63,7 +63,7 @@ export class TimelineGrid implements TimelineElement {
                 ctx.restore();
             }
         }
-    };
+    }
 }
 
 const lerp = (x: number, y: number, a: number) => x * (1 - a) + y * a;

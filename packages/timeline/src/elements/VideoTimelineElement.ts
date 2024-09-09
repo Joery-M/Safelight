@@ -1,33 +1,23 @@
-import { computed, ref } from 'vue';
-import { TimelineItemElement } from '..';
+import { CustomInspectorState } from '@vue/devtools-api';
+import { TimelineItemElement, TimelineItemRenderPayload } from '..';
+import { MoveableTimelineItem } from './MoveableTimelineItem';
 
-export class VideoTimelineElement implements TimelineItemElement {
+export class VideoTimelineElement extends MoveableTimelineItem implements TimelineItemElement {
     private tempHue = 0;
+    protected id = crypto.randomUUID();
 
-    start = ref(0);
-    end = ref(1000);
-
-    frameInterval = ref(1);
-
-    private startSnapped = computed(
-        () => Math.ceil(this.start.value / this.frameInterval.value) * this.frameInterval.value
-    );
-    private endSnapped = computed(
-        () => Math.ceil(this.end.value / this.frameInterval.value) * this.frameInterval.value
-    );
-
-    render: TimelineItemElement['render'] = ({ ctx, manager, container }) => {
+    render = (payload: TimelineItemRenderPayload) => {
+        const { ctx, manager, container } = payload;
         // Offset
-        const offset =
-            manager.msToPx(Math.min(this.startSnapped.value, this.endSnapped.value)) -
-            manager._offsetX.value;
+        const offset = manager.msToPx(Math.min(this.start.value, this.end.value), true);
+        ctx.save();
         ctx.translate(offset, 0);
 
         // Square
         const elemWidth = manager.msToPx(
-            this.startSnapped.value < this.endSnapped.value
-                ? Math.abs(this.endSnapped.value - this.startSnapped.value)
-                : Math.abs(this.startSnapped.value - this.endSnapped.value)
+            this.start.value < this.end.value
+                ? Math.abs(this.end.value - this.start.value)
+                : Math.abs(this.start.value - this.end.value)
         );
         this.tempHue += 10;
         this.tempHue %= 360;
@@ -43,8 +33,44 @@ export class VideoTimelineElement implements TimelineItemElement {
             elemWidth / 2 - textSize.width / 2,
             container.height / 2 + textSize.hangingBaseline / 2
         );
+        super.render(payload);
 
-        // Move back
-        ctx.translate(-offset, -container.top);
+        ctx.restore();
+    };
+
+    devtoolsState = (): CustomInspectorState => {
+        const state = {
+            item: [
+                {
+                    key: 'start',
+                    value: this.start?.value,
+                    editable: false
+                },
+                {
+                    key: 'end',
+                    value: this.end?.value,
+                    editable: false
+                }
+            ],
+            interaction: [
+                {
+                    key: 'Cursor inside',
+                    value: this.cursorInside.value
+                },
+                {
+                    key: 'isDragging',
+                    value: this.isDragging.value
+                },
+                {
+                    key: 'dragLastX',
+                    value: this.dragLastX.value
+                },
+                {
+                    key: 'dragIdealX',
+                    value: this.dragIdealX.value
+                }
+            ]
+        };
+        return state;
     };
 }

@@ -1,4 +1,5 @@
 import { CustomInspectorState } from '@vue/devtools-api';
+import { watchArray } from '@vueuse/core';
 import { computed, ref, shallowReactive } from 'vue';
 import { ItemContainer, TimelineItemElement, TimelineManager } from '..';
 import { canvasRestore, canvasSave } from '../tools/canvasState';
@@ -40,15 +41,30 @@ export class TimelineLayer {
     public init(manager: TimelineManager) {
         this.manager = manager;
         this.height.value = manager.defaultLayerHeight.value;
+
+        const elemArr = computed(() => [...this.elements.values()]);
+        watchArray(
+            elemArr,
+            (_cur, _old, added, removed) => {
+                if (removed)
+                    for (const elem of removed) {
+                        this.__ELEMENT_RENDER_TIME__.delete(elem);
+                    }
+                for (const elem of added) {
+                    if (elem['init']) elem.init({ layer: this, manager });
+                }
+            },
+            { immediate: true, deep: false }
+        );
     }
 
     public render(ctx: CanvasRenderingContext2D, manager: TimelineManager) {
-        let state = canvasSave(ctx);
+        ctx.save();
         ctx.fillStyle = '#18181b';
         const offsetY = manager.LayerToYPosition(this.index.value, false, true);
 
         /* Render elements */
-        const viewportWidth = ctx.canvas.width / manager.windowDPI.value;
+        const viewportWidth = manager.canvasWidth.value;
 
         const container = Object.freeze<ItemContainer>({
             bottom: ctx.canvas.height - (offsetY + this.height.value),
@@ -59,12 +75,20 @@ export class TimelineLayer {
             width: viewportWidth - manager.layerPaneWidth.value
         });
 
-        canvasRestore(ctx, state);
+        ctx.restore();
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(
+            manager.layerPaneWidth.value,
+            0,
+            manager.canvasWidth.value - manager.layerPaneWidth.value,
+            manager.canvasHeight.value
+        );
+        ctx.clip();
         ctx.translate(manager.layerPaneWidth.value, offsetY);
-        state = canvasSave(ctx);
 
         for (const element of this.elements) {
-            canvasRestore(ctx, state);
             if (import.meta.env.DEV) {
                 const start = performance.now();
                 element.render({
@@ -86,8 +110,7 @@ export class TimelineLayer {
                 });
             }
         }
-        canvasRestore(ctx, state);
-        ctx.translate(-manager.layerPaneWidth.value, -offsetY);
+        ctx.restore();
 
         ctx.fillStyle = '#18181b';
         // Layer pane
