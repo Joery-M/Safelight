@@ -1,14 +1,19 @@
-import { MaybeRefOrGetter, readonly, ref, toRef, watch } from 'vue';
+import { MaybeRefOrGetter } from '@vueuse/core';
+import { readonly, ref, toRef, toValue, watch } from 'vue';
 
 export function useSmoothNum(
     source: MaybeRefOrGetter<number>,
-    options: { stepPerc?: MaybeRefOrGetter<number>; snapOffset?: MaybeRefOrGetter<number> } = {}
+    options: {
+        stepPerc?: MaybeRefOrGetter<number>;
+        snapOffset?: MaybeRefOrGetter<number>;
+        startingValue?: MaybeRefOrGetter<number>;
+    } = {}
 ) {
     const sourceVal = toRef(source);
     const stepPercVal = toRef(options?.stepPerc ?? 0.5);
     const snapOffsetVal = toRef(options?.snapOffset ?? 0.000001);
 
-    const outputVal = ref(sourceVal.value);
+    const outputVal = ref(toValue(options.startingValue) ?? sourceVal.value);
 
     // Instant return in test
     if (__TEST__) {
