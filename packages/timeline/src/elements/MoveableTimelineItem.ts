@@ -1,9 +1,9 @@
 import { ref, watch } from 'vue';
-import { TimelineItemElement, TimelineItemInitPayload, TimelineItemRenderPayload } from '..';
+import { TimelineItem, TimelineItemInitPayload, TimelineItemRenderPayload } from '..';
 import { useSteppedRef } from '../tools/useSteppedRef';
 import EventEmitter from 'eventemitter3';
 
-export abstract class MoveableTimelineItem implements TimelineItemElement {
+export abstract class MoveableTimelineItem implements TimelineItem {
     protected cursorInside = ref(false);
     /**
      * ID used internally
@@ -17,9 +17,9 @@ export abstract class MoveableTimelineItem implements TimelineItemElement {
     layer = ref(0);
 
     protected isDragging = ref(false);
-    protected dragLastX = ref(0);
+    private dragLastX = ref(0);
     protected dragIdealX = ref(0);
-    protected dragLastLayer = ref(0);
+    private dragLastLayer = ref(0);
     protected dragIdealLayer = ref(0);
 
     init({ manager, layer }: TimelineItemInitPayload) {
@@ -105,10 +105,10 @@ export abstract class MoveableTimelineItem implements TimelineItemElement {
 
             ctx.globalAlpha = 0.4;
 
-            ctx.fillRect(container.left, -screenSpacePoint.y, 1, manager.canvasHeight.value);
+            ctx.fillRect(container.left - 0.5, -screenSpacePoint.y, 1, manager.canvasHeight.value);
 
             const rightEnd = manager.msToPx(this.end.value - this.start.value);
-            ctx.fillRect(rightEnd, -screenSpacePoint.y, 1, manager.canvasHeight.value);
+            ctx.fillRect(rightEnd - 0.5, -screenSpacePoint.y, 1, manager.canvasHeight.value);
             ctx.restore();
         }
     }

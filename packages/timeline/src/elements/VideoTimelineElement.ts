@@ -1,9 +1,9 @@
 import { CustomInspectorState } from '@vue/devtools-api';
 import EventEmitter from 'eventemitter3';
-import { TimelineItemElement, TimelineItemRenderPayload } from '..';
+import { TimelineItem, TimelineItemRenderPayload } from '..';
 import { MoveableItemEvent, MoveableTimelineItem } from './MoveableTimelineItem';
 
-export class VideoTimelineElement extends MoveableTimelineItem implements TimelineItemElement {
+export class VideoTimelineElement extends MoveableTimelineItem implements TimelineItem {
     private tempHue = 0;
     protected id = crypto.randomUUID();
 
@@ -61,16 +61,8 @@ export class VideoTimelineElement extends MoveableTimelineItem implements Timeli
                     value: this.cursorInside.value
                 },
                 {
-                    key: 'isDragging',
+                    key: 'Is dragging',
                     value: this.isDragging.value
-                },
-                {
-                    key: 'dragLastX',
-                    value: this.dragLastX.value
-                },
-                {
-                    key: 'dragIdealX',
-                    value: this.dragIdealX.value
                 }
             ]
         };

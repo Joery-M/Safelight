@@ -1,19 +1,19 @@
 import { CustomInspectorState } from '@vue/devtools-api';
 import { watchArray } from '@vueuse/core';
 import { computed, ref, shallowReactive, shallowReadonly } from 'vue';
-import { ItemContainer, TimelineItemElement, TimelineManager } from '..';
+import { ItemContainer, TimelineItem, TimelineManager } from '..';
 
 export class TimelineLayer {
     public __RENDER_TIME__ = ref(0);
-    public __ELEMENT_RENDER_TIME__ = shallowReactive(new Map<TimelineItemElement, number>());
+    public __ELEMENT_RENDER_TIME__ = shallowReactive(new Map<TimelineItem, number>());
     public index = ref(0);
     // public elements = shallowReactive(new Set<TimelineItemElement>());
     public elements = shallowReadonly(
         computed(() => {
             if (!this.manager) {
-                return new Set<TimelineItemElement>();
+                return new Set<TimelineItem>();
             } else {
-                const items = new Set<TimelineItemElement>();
+                const items = new Set<TimelineItem>();
                 this.manager.allLayerItems.forEach((i) => {
                     if (i.layer.value == this.index.value) {
                         items.add(i);

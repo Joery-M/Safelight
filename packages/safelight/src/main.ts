@@ -29,9 +29,7 @@ export const pinia = createPinia();
 // Setup timeline devtools
 if (import.meta.env.DEV) {
     import('@safelight/timeline/devtools').then((dev) => {
-        nextTick(() => {
-            dev.setupDevtools(app);
-        });
+        dev.setupDevtools(app);
     });
 }
 

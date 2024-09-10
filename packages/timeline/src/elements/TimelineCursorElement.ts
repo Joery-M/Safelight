@@ -41,8 +41,7 @@ export class TimelineCursorElement implements TimelineElement {
                 return;
             }
 
-            const mouseX =
-                mouseData.x - manager.layerPaneWidth.value + manager.viewportOffsetX.value;
+            const mouseX = mouseData.x - manager.layerPaneWidth.value;
 
             if (this.isDragging.value) {
                 const offset = manager.pxToMs(mouseX - cursorMoveXstart);
@@ -54,7 +53,7 @@ export class TimelineCursorElement implements TimelineElement {
             }
 
             if (
-                Math.abs(mouseX - manager.msToPx(this.cursorPos.value)) <= 9.5 ||
+                Math.abs(mouseX - manager.msToPx(this.cursorPos.value, true)) <= 9.5 ||
                 this.isDragging.value
             ) {
                 manager.cursor.set('cursor', ['ew-resize', 10]);
@@ -73,7 +72,7 @@ export class TimelineCursorElement implements TimelineElement {
 
             this.moveCursor(manager.pxToMs(mouseX, true));
 
-            if (Math.abs(mouseX - manager.msToPx(this.cursorPos.value)) <= 9.5) {
+            if (Math.abs(mouseX - manager.msToPx(this.cursorPos.value, true)) <= 9.5) {
                 cursorMoveXstart = mouseX;
                 this.cursorStartPos.value = this.cursorPos.value;
                 this.idealPos.value = this.cursorPos.value;

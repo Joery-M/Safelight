@@ -11,18 +11,18 @@
         </template>
         <template #content>
             <canvas ref="canvas" style="width: 100%; height: 400px" />
-            <input v-model="invertScrollAxes" type="checkbox" />
-            <label> Trackpad mode </label>
-            <div>
-                <input v-model="isItemActive[0]" type="checkbox" />
-                <input v-model="isItemActive[1]" type="checkbox" />
-                <input v-model="isItemActive[2]" type="checkbox" />
-                <input v-model="isItemActive[3]" type="checkbox" />
-                <input v-model="isItemActive[4]" type="checkbox" />
-                <input v-model="isItemActive[5]" type="checkbox" />
-            </div>
-            <br />
             <template v-if="manager">
+                <input v-model="manager.manager.invertScrollAxes.value" type="checkbox" />
+                <label> Trackpad mode </label>
+                <div>
+                    <input v-model="isItemActive[0]" type="checkbox" />
+                    <input v-model="isItemActive[1]" type="checkbox" />
+                    <input v-model="isItemActive[2]" type="checkbox" />
+                    <input v-model="isItemActive[3]" type="checkbox" />
+                    <input v-model="isItemActive[4]" type="checkbox" />
+                    <input v-model="isItemActive[5]" type="checkbox" />
+                </div>
+                <br />
                 <div>
                     <button @click="manager?.manager?.zoom(100)">Zoom in</button>
                     <button @click="manager?.manager?.zoom(-100)">Zoom out</button>
@@ -47,7 +47,8 @@
                             :range="true"
                             :model-value="[item.item.start.value, item.item.end.value]"
                             :max="
-                                manager.manager._maxWidth.value + manager.manager.rightPadding.value
+                                manager.manager.maxViewWidth.value +
+                                manager.manager.rightPadding.value
                             "
                             style="max-width: 500px"
                             @update:model-value="
@@ -80,7 +81,9 @@
                             manager.manager.viewport.start,
                             manager.manager.viewport.end
                         ]"
-                        :max="manager.manager._maxWidth.value + manager.manager.rightPadding.value"
+                        :max="
+                            manager.manager.maxViewWidth.value + manager.manager.rightPadding.value
+                        "
                         style="max-width: 500px"
                         @update:model-value="
                             ([start, end]) => {
@@ -115,8 +118,6 @@ import Card from 'primevue/card';
 import Slider from 'primevue/slider';
 import { computed, onMounted, reactive, ref, shallowReactive, shallowRef, watch } from 'vue';
 import { RouterLink } from 'vue-router/auto';
-
-const invertScrollAxes = ref(true);
 
 const canvas = ref<HTMLCanvasElement>();
 
@@ -184,10 +185,6 @@ onMounted(() => {
             item.frameInterval.value = fpsMS.value;
             item.layer.value = layer;
             manager.value!.addLayerItem(item);
-
-            item.events.on('layerChange', (newL, oldL) => {
-                console.log(newL, oldL);
-            });
         });
 
         watch(

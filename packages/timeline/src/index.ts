@@ -14,7 +14,6 @@ import {
     watchEffect
 } from 'vue';
 import { TimelineLayer } from './elements/TimelineLayer';
-import { canvasRestore, canvasSave } from './tools/canvasState';
 import { useSmoothNum } from './tools/useSmoothNum';
 
 /**
@@ -88,18 +87,48 @@ export interface CreateTimelineFn {
     addLayer: (layer: TimelineLayer) => void;
     removeLayer: (layer: TimelineLayer) => boolean;
     hasLayer: (layer: TimelineLayer) => boolean;
-    addLayerItem: (item: TimelineItemElement) => void;
-    removeLayerItem: (item: TimelineItemElement) => boolean;
-    hasLayerItem: (item: TimelineItemElement) => boolean;
+    addLayerItem: (item: TimelineItem) => void;
+    removeLayerItem: (item: TimelineItem) => boolean;
+    hasLayerItem: (item: TimelineItem) => boolean;
+}
+
+class ClearableWeakMap<K extends WeakKey = WeakKey, V = any> implements WeakMap<K, V> {
+    private map: WeakMap<K, V>;
+    get [Symbol.toStringTag]() {
+        return this.map[Symbol.toStringTag];
+    }
+
+    constructor(entries?: readonly (readonly [K, V])[] | null) {
+        this.map = new WeakMap<K, V>(entries);
+    }
+
+    delete(key: K): boolean {
+        return this.map.delete(key);
+    }
+    get(key: K): V | undefined {
+        return this.map.get(key);
+    }
+    has(key: K): boolean {
+        return this.map.has(key);
+    }
+    set(key: K, value: V): this {
+        this.map.set(key, value);
+        return this;
+    }
+
+    clearEntries() {
+        this.map = new WeakMap();
+    }
 }
 
 export class TimelineManager {
     public __RENDER_TIME__ = ref(0);
+    public __ELEMENT_RENDER_TIME = reactive(new ClearableWeakMap<TimelineElement, number>());
     private __FPS_LIST = reactive<number[]>([]);
     private __FPS__ = useRound(useAverage(this.__FPS_LIST));
 
     public timelineElements = shallowReactive(new Set<TimelineElement>());
-    public allLayerItems = shallowReactive(new Set<TimelineItemElement>());
+    public allLayerItems = shallowReactive(new Set<TimelineItem>());
     public layers = shallowReactive(new Set<TimelineLayer>());
     /**
      * Currently visible elements.
@@ -156,12 +185,13 @@ export class TimelineManager {
     /* Public settings */
     public rightPadding = ref(5000);
     public leftBoundary = ref(0);
-    public invertScrollAxes = ref(true);
+    public invertScrollAxes = ref(false);
     public invertVerticalScroll = ref(true);
     public invertHorizontalScroll = ref(true);
     public alignment = ref<TimelineAlignment>('bottom');
     public defaultLayerHeight = ref(32);
     public maxZoom = ref(300);
+    public defaultLayerPaneWidth = ref(128);
 
     /* Internal settings */
     public pointerOut = ref(true);
@@ -169,7 +199,6 @@ export class TimelineManager {
     public canvasWidth = ref(100);
     private windowDPI = useDevicePixelRatio().pixelRatio;
     private paneResizing = ref(false);
-    public defaultLayerPaneWidth = ref(128);
     public layerPaneWidth = ref(128);
     private changedLayerPaneWidth = ref(false);
 
@@ -179,7 +208,7 @@ export class TimelineManager {
      * Offset from left boundary of timeline in pixels
      */
     public viewportOffsetX = computed(() => this.msToPx(this.viewportSmooth.start.value));
-    public _maxWidth = computed(() => {
+    public maxViewWidth = computed(() => {
         // So the view doesn't snap when moving outside the max width, also use the current end as a max
         let maxRight = this.viewport.end - this.rightPadding.value;
 
@@ -433,7 +462,7 @@ export class TimelineManager {
         });
 
         watchEffect(() => {
-            if (import.meta.env.DEV) {
+            if (__DEVTOOLS_AVAILABLE__.value) {
                 const start = performance.now();
                 this.renderAll();
                 const end = performance.now();
@@ -480,23 +509,27 @@ export class TimelineManager {
             this.ctx.scale(this.windowDPI.value, this.windowDPI.value);
         }
 
+        this.__ELEMENT_RENDER_TIME.clearEntries();
         this.ctx.font = 'normal 14px "Inter Variable"';
-        const canvasState = canvasSave(this.ctx);
+        this.ctx.save();
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         for (const element of this.timelineElements) {
             if (element.renderStep == 'before') {
-                canvasRestore(this.ctx, canvasState);
-                element.render({ ctx: this.ctx, manager: this, isQueued: false });
+                if (__DEVTOOLS_AVAILABLE__.value) {
+                    const start = performance.now();
+                    element.render({ ctx: this.ctx, manager: this, isQueued: false });
+                    const end = performance.now();
+                    this.__ELEMENT_RENDER_TIME.set(element, end - start);
+                } else {
+                    element.render({ ctx: this.ctx, manager: this, isQueued: false });
+                }
             }
         }
 
         for (const layer of this.layers) {
-            // Restore to last known settings before each render
-            canvasRestore(this.ctx, canvasState);
-
             // If in dev mode, save render time
-            if (import.meta.env.DEV) {
+            if (__DEVTOOLS_AVAILABLE__.value) {
                 const start = performance.now();
                 layer.render(this.ctx, this);
                 const end = performance.now();
@@ -508,10 +541,19 @@ export class TimelineManager {
 
         for (const element of this.timelineElements) {
             if (element.renderStep !== 'before') {
-                canvasRestore(this.ctx, canvasState);
-                element.render({ ctx: this.ctx, manager: this, isQueued: false });
+                if (__DEVTOOLS_AVAILABLE__.value) {
+                    const start = performance.now();
+                    element.render({ ctx: this.ctx, manager: this, isQueued: false });
+                    const end = performance.now();
+                    this.__ELEMENT_RENDER_TIME.set(element, end - start);
+                } else {
+                    element.render({ ctx: this.ctx, manager: this, isQueued: false });
+                }
             }
         }
+
+        // Relying on all uses of ctx.save to also use ctx.restore
+        this.ctx.restore();
     }
 
     /*
@@ -588,8 +630,8 @@ export class TimelineManager {
         }
 
         // Add a bit of padding to the end
-        if (end > this._maxWidth.value + this.rightPadding.value) {
-            end = this._maxWidth.value + this.rightPadding.value;
+        if (end > this.maxViewWidth.value + this.rightPadding.value) {
+            end = this.maxViewWidth.value + this.rightPadding.value;
 
             // Don't allow the start to go past the minTime
             if (start < this.leftBoundary.value) {
@@ -605,7 +647,7 @@ export class TimelineManager {
         let start = this.viewport.start + (delta / this.canvasWidth.value) * size;
         let end = start + size;
 
-        const maxEnd = this._maxWidth.value + this.rightPadding.value;
+        const maxEnd = this.maxViewWidth.value + this.rightPadding.value;
 
         // Add a bit of padding to the end
         if (end > maxEnd) {
@@ -690,7 +732,7 @@ export class TimelineManager {
             items: [
                 {
                     key: 'Items end',
-                    value: this._maxWidth.value,
+                    value: this.maxViewWidth.value,
                     objectType: 'computed'
                 }
             ],
@@ -760,7 +802,7 @@ export interface TimelineElement {
     devtoolsState?: () => CustomInspectorState;
 }
 
-export interface TimelineItemElement {
+export interface TimelineItem {
     layer: Ref<number>;
     start: Ref<number>;
     end: Ref<number>;

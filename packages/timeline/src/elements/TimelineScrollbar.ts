@@ -48,7 +48,7 @@ export class TimelineScrollbarHoriz implements TimelineElement {
         }
         const start = manager.viewportSmooth.start.value;
         const end = manager.viewportSmooth.end.value;
-        const max = manager._maxWidth.value + manager.rightPadding.value;
+        const max = manager.maxViewWidth.value + manager.rightPadding.value;
 
         const viewportWidth = manager.canvasWidth.value - manager.layerPaneWidth.value;
         const viewportHeight = manager.canvasHeight.value;
