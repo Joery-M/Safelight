@@ -1,10 +1,13 @@
 import { CustomInspectorState } from '@vue/devtools-api';
+import EventEmitter from 'eventemitter3';
 import { TimelineItemElement, TimelineItemRenderPayload } from '..';
-import { MoveableTimelineItem } from './MoveableTimelineItem';
+import { MoveableItemEvent, MoveableTimelineItem } from './MoveableTimelineItem';
 
 export class VideoTimelineElement extends MoveableTimelineItem implements TimelineItemElement {
     private tempHue = 0;
     protected id = crypto.randomUUID();
+
+    public events = new EventEmitter<MoveableItemEvent>();
 
     render = (payload: TimelineItemRenderPayload) => {
         const { ctx, manager, container } = payload;

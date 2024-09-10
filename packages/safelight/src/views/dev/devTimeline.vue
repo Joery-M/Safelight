@@ -135,9 +135,6 @@ const fpsMS = computed(() => 1000 / fps.value);
 
 onMounted(() => {
     if (canvas.value) {
-        items.forEach((item) => {
-            item.item.frameInterval.value = fpsMS.value;
-        });
         manager.value = createTimelineManager(canvas.value);
 
         const layer1 = new TimelineLayer();
@@ -148,8 +145,6 @@ onMounted(() => {
         const layer6 = new TimelineLayer();
         const layer7 = new TimelineLayer();
         const layer8 = new TimelineLayer();
-
-        const layers = [layer1, layer2, layer3];
 
         manager.value!.addLayer(layer1);
         manager.value!.addLayer(layer2);
@@ -177,13 +172,23 @@ onMounted(() => {
                 interval: 1000
             },
             {
-                interval: 1000
+                interval: 10000
             }
         );
 
         manager.value!.addElement(grid);
         manager.value!.addElement(handle);
         manager.value!.addElement(scrollbarX);
+
+        items.forEach(({ item, layer }) => {
+            item.frameInterval.value = fpsMS.value;
+            item.layer.value = layer;
+            manager.value!.addLayerItem(item);
+
+            item.events.on('layerChange', (newL, oldL) => {
+                console.log(newL, oldL);
+            });
+        });
 
         watch(
             isItemActive,
@@ -192,15 +197,13 @@ onMounted(() => {
                     const item = items[i];
                     const active = isItemActive[i];
 
-                    const layer = layers[item.layer];
-
                     if (active) {
-                        if (!layer.elements.has(item.item)) {
-                            layer.elements.add(item.item);
+                        if (!manager.value!.hasLayerItem(item.item)) {
+                            manager.value!.addLayerItem(item.item);
                         }
                     } else {
-                        if (layer.elements.has(item.item)) {
-                            layer.elements.delete(item.item);
+                        if (manager.value!.hasLayerItem(item.item)) {
+                            manager.value!.removeLayerItem(item.item);
                         }
                     }
                 }

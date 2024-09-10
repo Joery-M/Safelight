@@ -1,14 +1,28 @@
 import { CustomInspectorState } from '@vue/devtools-api';
 import { watchArray } from '@vueuse/core';
-import { computed, ref, shallowReactive } from 'vue';
+import { computed, ref, shallowReactive, shallowReadonly } from 'vue';
 import { ItemContainer, TimelineItemElement, TimelineManager } from '..';
-import { canvasRestore, canvasSave } from '../tools/canvasState';
 
 export class TimelineLayer {
     public __RENDER_TIME__ = ref(0);
     public __ELEMENT_RENDER_TIME__ = shallowReactive(new Map<TimelineItemElement, number>());
     public index = ref(0);
-    public elements = shallowReactive(new Set<TimelineItemElement>());
+    // public elements = shallowReactive(new Set<TimelineItemElement>());
+    public elements = shallowReadonly(
+        computed(() => {
+            if (!this.manager) {
+                return new Set<TimelineItemElement>();
+            } else {
+                const items = new Set<TimelineItemElement>();
+                this.manager.allLayerItems.forEach((i) => {
+                    if (i.layer.value == this.index.value) {
+                        items.add(i);
+                    }
+                });
+                return items;
+            }
+        })
+    );
 
     /**
      * Height of the layer
@@ -30,7 +44,7 @@ export class TimelineLayer {
 
     public maxEnd = computed(() => {
         let maxRight = 0;
-        for (const element of this.elements) {
+        for (const element of this.elements.value) {
             if ((element.end.value || 0) > maxRight) {
                 maxRight = parseFloat(element.end.value as any);
             }
@@ -42,7 +56,7 @@ export class TimelineLayer {
         this.manager = manager;
         this.height.value = manager.defaultLayerHeight.value;
 
-        const elemArr = computed(() => [...this.elements.values()]);
+        const elemArr = computed(() => [...this.elements.value.values()]);
         watchArray(
             elemArr,
             (_cur, _old, added, removed) => {
@@ -88,7 +102,7 @@ export class TimelineLayer {
         ctx.clip();
         ctx.translate(manager.layerPaneWidth.value, offsetY);
 
-        for (const element of this.elements) {
+        for (const element of this.elements.value) {
             if (import.meta.env.DEV) {
                 const start = performance.now();
                 element.render({

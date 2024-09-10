@@ -29,11 +29,17 @@ export function createTimelineManager(canvas: HTMLCanvasElement): CreateTimeline
 
     return {
         manager,
-        addElement(element: TimelineElement) {
+        addElement(element) {
             manager.timelineElements.add(element);
             if (element['init']) element.init(manager);
         },
-        addLayer(layer: TimelineLayer) {
+        removeElement(element) {
+            return manager.timelineElements.delete(element);
+        },
+        hasElement(element) {
+            return manager.timelineElements.has(element);
+        },
+        addLayer(layer) {
             let maxIndex = 0;
             let indexTaken = false;
             manager.layers.forEach((l) => {
@@ -48,6 +54,28 @@ export function createTimelineManager(canvas: HTMLCanvasElement): CreateTimeline
 
             manager.layers.add(layer);
             layer.init(manager);
+        },
+        removeLayer(layer) {
+            const success = manager.layers.delete(layer);
+            if (!success) {
+                return false;
+            }
+
+            // TODO: Re-organize layers to close gaps
+
+            return true;
+        },
+        hasLayer(layer) {
+            return manager.layers.has(layer);
+        },
+        addLayerItem(item) {
+            manager.allLayerItems.add(item);
+        },
+        removeLayerItem(item) {
+            return manager.allLayerItems.delete(item);
+        },
+        hasLayerItem(item) {
+            return manager.allLayerItems.has(item);
         }
     };
 }
@@ -55,7 +83,14 @@ export function createTimelineManager(canvas: HTMLCanvasElement): CreateTimeline
 export interface CreateTimelineFn {
     manager: TimelineManager;
     addElement: (element: TimelineElement) => void;
+    removeElement: (element: TimelineElement) => boolean;
+    hasElement: (element: TimelineElement) => boolean;
     addLayer: (layer: TimelineLayer) => void;
+    removeLayer: (layer: TimelineLayer) => boolean;
+    hasLayer: (layer: TimelineLayer) => boolean;
+    addLayerItem: (item: TimelineItemElement) => void;
+    removeLayerItem: (item: TimelineItemElement) => boolean;
+    hasLayerItem: (item: TimelineItemElement) => boolean;
 }
 
 export class TimelineManager {
@@ -64,6 +99,7 @@ export class TimelineManager {
     private __FPS__ = useRound(useAverage(this.__FPS_LIST));
 
     public timelineElements = shallowReactive(new Set<TimelineElement>());
+    public allLayerItems = shallowReactive(new Set<TimelineItemElement>());
     public layers = shallowReactive(new Set<TimelineLayer>());
     /**
      * Currently visible elements.
@@ -184,19 +220,35 @@ export class TimelineManager {
                 x >= 0 && x < bounds.width.value && y >= 0 && y < bounds.height.value;
 
             const mouseY = this.canvasHeight.value - (y - this.viewportSmooth.yPos.value);
-            const layer = !isInsideCanvas
+
+            let hoverLayerIndex = 0;
+            {
+                const maxText = 10000;
+                while (hoverLayerIndex < maxText) {
+                    const layerY = this.LayerToYPosition(hoverLayerIndex, false, true, false);
+                    const nextLayerY = this.LayerToYPosition(hoverLayerIndex, true, true, false);
+                    if (hoverLayerIndex == 0 && mouseY < layerY) {
+                        break;
+                    }
+                    if (layerY >= mouseY && mouseY <= nextLayerY) {
+                        break;
+                    }
+                    hoverLayerIndex++;
+                }
+                hoverLayerIndex--;
+            }
+
+            const hoverLayer = !isInsideCanvas
                 ? undefined
-                : this.layersSorted.value.find((layer, i) => {
-                      const layerY = this.LayerToYPosition(i, true, true, false);
-                      return layerY > mouseY && mouseY < layerY + layer.height.value;
-                  });
+                : this.layersSorted.value[hoverLayerIndex];
 
             return Object.freeze<MouseEventData>({
                 ms,
                 x,
                 y,
                 isInsideCanvas,
-                hoverLayer: layer
+                hoverLayerIndex,
+                hoverLayer
             });
         };
         useEventListener('pointerdown', (ev) => {
@@ -503,7 +555,7 @@ export class TimelineManager {
         const currentHeight = this.layerHeights.value[layer] ?? this.defaultLayerHeight.value;
         let totalHeight = includeCurrent ? currentHeight : 0;
         for (let i = 0; i < layer; i++) {
-            const curHeight = this.layerHeights.value[i] ?? this.defaultLayerHeight;
+            const curHeight = this.layerHeights.value[i] ?? this.defaultLayerHeight.value;
             totalHeight += curHeight + 1;
         }
 
@@ -685,6 +737,7 @@ export interface MouseEventData {
     y: number;
     ms: number;
     isInsideCanvas: boolean;
+    hoverLayerIndex: number;
     hoverLayer?: TimelineLayer;
 }
 
@@ -708,6 +761,7 @@ export interface TimelineElement {
 }
 
 export interface TimelineItemElement {
+    layer: Ref<number>;
     start: Ref<number>;
     end: Ref<number>;
     init?: (payload: TimelineItemInitPayload) => any;

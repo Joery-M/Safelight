@@ -46,7 +46,7 @@ export function setupDevtools(app: App) {
                                     return {
                                         id: 'layer::' + id + '::' + layer.index.value,
                                         label: `Layer ${layer.index.value + 1}`,
-                                        children: Array.from(layer.elements.values()).map(
+                                        children: Array.from(layer.elements.value.values()).map(
                                             (_element, i) => {
                                                 return {
                                                     id:
@@ -111,7 +111,7 @@ export function setupDevtools(app: App) {
                                 (l) => l.index.value == parseInt(extraInfo.split(';')[0])
                             );
                             if (!layer) break;
-                            const element = Array.from(layer.elements.values())[
+                            const element = Array.from(layer.elements.value.values())[
                                 parseInt(extraInfo.split(';')[1])
                             ];
                             if (!element) break;
@@ -254,7 +254,7 @@ export function setupDevtools(app: App) {
                                 }
                             });
 
-                            const elems = computed(() => [...layer.elements.values()]);
+                            const elems = computed(() => [...layer.elements.value.values()]);
                             watchArray(
                                 elems,
                                 (_cur, _old, added) => {

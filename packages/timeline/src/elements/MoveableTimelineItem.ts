@@ -1,6 +1,7 @@
 import { ref, watch } from 'vue';
 import { TimelineItemElement, TimelineItemInitPayload, TimelineItemRenderPayload } from '..';
 import { useSteppedRef } from '../tools/useSteppedRef';
+import EventEmitter from 'eventemitter3';
 
 export abstract class MoveableTimelineItem implements TimelineItemElement {
     protected cursorInside = ref(false);
@@ -8,33 +9,52 @@ export abstract class MoveableTimelineItem implements TimelineItemElement {
      * ID used internally
      */
     protected abstract id: string;
+    public abstract events: EventEmitter<MoveableItemEvent>;
 
     frameInterval = ref(1);
     start = useSteppedRef(0, this.frameInterval);
     end = ref(1000);
+    layer = ref(0);
 
     protected isDragging = ref(false);
     protected dragLastX = ref(0);
     protected dragIdealX = ref(0);
+    protected dragLastLayer = ref(0);
+    protected dragIdealLayer = ref(0);
 
     init({ manager, layer }: TimelineItemInitPayload) {
         let lastMouseX = 0;
         manager.events.on('mouseMove', ({ mouseData }) => {
-            if (mouseData.isInsideCanvas) {
-                this.cursorInside.value =
-                    mouseData.ms >= this.start.value &&
-                    mouseData.ms <= this.end.value &&
-                    mouseData.hoverLayer?.index.value === layer.index.value;
-            }
+            this.cursorInside.value =
+                mouseData.isInsideCanvas &&
+                mouseData.ms >= this.start.value &&
+                mouseData.ms <= this.end.value &&
+                mouseData.hoverLayer?.index.value === layer.index.value;
 
             if (this.isDragging.value) {
                 lastMouseX = mouseData.x;
+                const oldLayer = this.layer.value;
                 this.dragIdealX.value += mouseData.ms - this.dragLastX.value;
+                this.dragIdealLayer.value = mouseData.hoverLayerIndex;
 
                 this.dragLastX.value = mouseData.ms;
                 const size = this.end.value - this.start.value;
-                this.start.value = this.dragIdealX.value;
+                const oldStart = this.start.value;
+                const oldEnd = this.start.value;
+                this.start.value = Math.max(this.dragIdealX.value, manager.leftBoundary.value);
                 this.end.value = this.start.value + size;
+                this.layer.value = Math.max(
+                    0,
+                    Math.min(this.dragIdealLayer.value, manager.layers.size - 1)
+                );
+
+                if (oldLayer !== this.layer.value) {
+                    this.events.emit('layerChange', this.layer.value, oldLayer);
+                }
+
+                if (this.start.value !== oldStart || this.end.value !== oldEnd) {
+                    this.events.emit('move', this.start.value, this.end.value);
+                }
             }
         });
 
@@ -54,6 +74,8 @@ export abstract class MoveableTimelineItem implements TimelineItemElement {
             if (this.cursorInside.value) {
                 this.dragLastX.value = mouseData.ms;
                 this.dragIdealX.value = this.start.value;
+                this.dragLastLayer.value = layer.index.value;
+                this.dragIdealLayer.value = mouseData.hoverLayerIndex;
                 lastMouseX = mouseData.x;
                 this.isDragging.value = true;
             }
@@ -76,14 +98,23 @@ export abstract class MoveableTimelineItem implements TimelineItemElement {
 
     render({ ctx, container, manager }: TimelineItemRenderPayload) {
         if (this.isDragging.value) {
+            ctx.save();
             const screenSpacePoint = ctx
                 .getTransform()
                 .transformPoint({ x: container.left, y: container.top });
+
+            ctx.globalAlpha = 0.4;
 
             ctx.fillRect(container.left, -screenSpacePoint.y, 1, manager.canvasHeight.value);
 
             const rightEnd = manager.msToPx(this.end.value - this.start.value);
             ctx.fillRect(rightEnd, -screenSpacePoint.y, 1, manager.canvasHeight.value);
+            ctx.restore();
         }
     }
+}
+
+export interface MoveableItemEvent {
+    layerChange: [newLayer: number, oldLayer: number];
+    move: [newStart: number, newEnd: number];
 }
