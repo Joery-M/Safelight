@@ -1,20 +1,18 @@
-/* eslint-disable no-dupe-class-members */
 import type BaseProject from '@safelight/shared/base/Project';
 import { ProjectFeatures, type ProjectType } from '@safelight/shared/base/Project';
 import BaseStorageController, { Storage, type StoredProject } from '@safelight/shared/base/Storage';
 import { DateTime } from 'luxon';
-import { ref, shallowRef } from 'vue';
+import { computed, shallowRef } from 'vue';
 
 export class CurrentProject {
     // see #14 for why
     public static project = shallowRef<BaseProject>();
-    public static isLoaded = ref(false);
+    public static isLoaded = computed(() => !!this.project.value);
 
     public static async openProject(
         selectedProject: StoredProject | SessionProject,
         goToEditor = true
     ) {
-        this.isLoaded.value = false;
         const storageType = await this.getStorageControllerForProject(selectedProject.type);
         if (!storageType) {
             throw new Error('Could not find storage controller for project type');
@@ -28,7 +26,6 @@ export class CurrentProject {
             this.setProject(project);
             this.setSessionProject(selectedProject);
             if (goToEditor) await this.toEditor();
-            this.isLoaded.value = true;
         } else {
             console.error('Could not load project');
         }
@@ -81,7 +78,6 @@ export class CurrentProject {
 
     public static setProject(newProject: BaseProject) {
         this.project.value = newProject;
-        this.isLoaded.value = true;
     }
 
     public static setSessionProject(project: StoredProject | BaseProject | SessionProject) {
