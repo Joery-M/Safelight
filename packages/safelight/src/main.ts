@@ -1,5 +1,5 @@
 import { createPinia } from 'pinia';
-import { createApp, nextTick } from 'vue';
+import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router/auto';
 import { routes } from 'vue-router/auto-routes';
 import App from './App.vue';

@@ -15,7 +15,7 @@ export class TimelineCursorElement implements TimelineElement {
     /**
      * Cursor position in milliseconds
      */
-    private cursorPos = ref(100);
+    public cursorPos = ref(100);
     private cursorPosSmooth = useSmoothNum(this.cursor, {
         stepPerc: 0.7,
         snapOffset: computed(() => 1000 / this.frameInterval.value + 1)

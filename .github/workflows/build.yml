@@ -34,8 +34,8 @@ jobs:
             - name: Build Darkroom
               run: pnpm build:darkroom
 
-            - name: Build Timeline
-              run: pnpm build:timeline
+            # - name: Build Timeline
+            #   run: pnpm build:timeline
 
             - name: Build safelight
               run: pnpm build:safelight

@@ -1,12 +1,5 @@
-import {
-    computed,
-    ComputedRef,
-    MaybeRefOrGetter,
-    ref,
-    shallowReactive,
-    ShallowRef,
-    toValue
-} from 'vue';
+import { MaybeRefOrGetter, toValue } from '@vueuse/core';
+import { computed, ref, shallowReactive } from 'vue';
 import { TimelineElement, TimelineElementRenderPayload } from '..';
 
 export class TimelineGrid implements TimelineElement {
@@ -76,13 +69,13 @@ export interface GridStep {
     /**
      * How often the line is rendered
      */
-    interval: MaybeRefOrGetter<number> | ComputedRef<number> | ShallowRef<number>;
+    interval: MaybeRefOrGetter<number>;
     /**
      * How wide the interval has to be (in pixels) to start fading in
      */
-    fadeStart?: MaybeRefOrGetter<number> | ComputedRef<number> | ShallowRef<number>;
+    fadeStart?: MaybeRefOrGetter<number>;
     /**
      * How wide the interval has to be (in pixels) to finish fading in
      */
-    fadeEnd?: MaybeRefOrGetter<number> | ComputedRef<number> | ShallowRef<number>;
+    fadeEnd?: MaybeRefOrGetter<number>;
 }

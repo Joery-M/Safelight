@@ -317,7 +317,7 @@ export function setupDevtools(app: App) {
                 api.sendInspectorTree(INSPECTOR_ID);
                 return () => {
                     managers.delete(id);
-                    api.sendInspectorTree(INSPECTOR_ID);
+                    api.sendInspectorState(INSPECTOR_ID);
                 };
             };
 
