@@ -43,7 +43,7 @@
         "@types/path-browserify": "^1.0.3",
         "@vitest/browser": "^2.0.5",
         "@vitest/ui": "^2.0.5",
-        "playwright": "^1.46.1",
+        "playwright": "^1.47.0",
         "rimraf": "^6.0.1",
         "typescript": "^5.5.4",
         "vite": "^5.4.2",
