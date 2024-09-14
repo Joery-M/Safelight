@@ -1,5 +1,11 @@
 import { CustomInspectorNode, CustomInspectorState } from '@vue/devtools-api';
-import { MaybeRefOrGetter, syncRef, useDevicePixelRatio, useElementBounding, useEventListener } from '@vueuse/core';
+import {
+    MaybeRefOrGetter,
+    syncRef,
+    useDevicePixelRatio,
+    useElementBounding,
+    useEventListener
+} from '@vueuse/core';
 import { useAverage, useRound } from '@vueuse/math';
 import EventEmitter from 'eventemitter3';
 import {
