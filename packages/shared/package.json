@@ -29,12 +29,10 @@
         "happy-dom": "^15.7.3"
     },
     "peerDependencies": {
-        "@phosphor-icons/vue": "~2",
-        "@vueuse/core": "~10",
-        "@vueuse/rxjs": "~10",
-        "@vueuse/shared": "~10",
-        "primevue": "~3",
-        "vue": "~3",
-        "vue-i18n": "next"
+        "@phosphor-icons/vue": "^2.2.1",
+        "@vueuse/core": "^11.0.3",
+        "@vueuse/rxjs": "^11.0.3",
+        "vue": "^3.5.4",
+        "vue-i18n": "10.0.0"
     }
 }
