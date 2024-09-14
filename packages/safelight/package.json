@@ -73,6 +73,7 @@
         "vue-tsc": "^2.1.6"
     },
     "peerDependencies": {
+        "eventemitter3": "~5",
         "mediainfo.js": "~0"
     }
 }

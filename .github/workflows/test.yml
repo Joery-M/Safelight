@@ -57,5 +57,6 @@ jobs:
             - name: Test shared
               run: pnpm test:shared
 
-            - name: Test timeline
-              run: pnpm test:timeline
+            # Skip since node-canvas doesn't work on GitHub actions
+            # - name: Test timeline
+            #   run: pnpm test:timeline

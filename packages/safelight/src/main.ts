@@ -26,6 +26,13 @@ const app = createApp(App);
 
 export const pinia = createPinia();
 
+// Setup timeline devtools
+if (import.meta.env.DEV) {
+    import('@safelight/timeline/devtools').then((dev) => {
+        dev.setupDevtools(app);
+    });
+}
+
 const mainTheme = definePreset(Aura, {
     semantic: {
         primary: {
