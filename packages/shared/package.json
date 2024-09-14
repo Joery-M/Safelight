@@ -35,7 +35,6 @@
         "@vueuse/shared": "~10",
         "primevue": "~3",
         "vue": "~3",
-        "vue-i18n": "next",
-        "@safelight/safelight": "workspace:^"
+        "vue-i18n": "next"
     }
 }

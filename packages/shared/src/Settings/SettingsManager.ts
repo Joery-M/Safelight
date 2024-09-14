@@ -1,14 +1,5 @@
 import { getByPath, setByPath } from 'dot-path-value';
-import { useDialog } from 'primevue/usedialog';
-import {
-    computed,
-    defineAsyncComponent,
-    reactive,
-    toRaw,
-    type Component,
-    type ComputedRef,
-    type Raw
-} from 'vue';
+import { computed, reactive, toRaw, type Component, type ComputedRef, type Raw } from 'vue';
 
 export class SettingsManager {
     private static defaultNamespaces: SettingsNamespaceDefinition[] = [];
@@ -84,31 +75,6 @@ export class SettingsManager {
         setByPath(this.currentSettings, combinedPath, value);
 
         this.saveSettingsDebounced();
-    }
-
-    public static async openSettings(dialog: ReturnType<typeof useDialog>, namespace?: string) {
-        const settingsComponent = defineAsyncComponent(
-            () => import('@safelight/safelight/src/components/Menu/Settings/Settings.vue')
-        );
-        dialog.open(settingsComponent, {
-            data: {
-                namespace
-            },
-            props: {
-                header: 'Settings',
-                style: {
-                    width: '75vw',
-                    height: '80vh'
-                },
-                pt: { content: { style: { height: '100%' } } },
-                breakpoints: {
-                    '960px': '80vw',
-                    '640px': '90vw'
-                },
-                modal: true,
-                draggable: false
-            }
-        });
     }
 
     public static downloadSettings() {

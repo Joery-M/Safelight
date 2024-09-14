@@ -43,14 +43,13 @@ import { CurrentProject } from '@/stores/currentProject';
 import { useEditor } from '@/stores/useEditor';
 import { useProject } from '@/stores/useProject';
 import { PhFile, PhGear, PhSignOut } from '@phosphor-icons/vue';
-import { SettingsManager } from '@safelight/shared/Settings/SettingsManager';
 import ConfirmDialog from 'primevue/confirmdialog';
 import Menubar from 'primevue/menubar';
 import type { MenuItem } from 'primevue/menuitem';
 import Toolbar from 'primevue/toolbar';
 import { useConfirm } from 'primevue/useconfirm';
 import { useDialog } from 'primevue/usedialog';
-import { onBeforeUnmount, onMounted, watch } from 'vue';
+import { defineAsyncComponent, onBeforeUnmount, onMounted, watch } from 'vue';
 
 const project = useProject();
 const editor = useEditor();
@@ -70,7 +69,25 @@ const menuItems: MenuItem[] = [
                 icon: PhGear as any,
                 disabled: false,
                 command: () => {
-                    SettingsManager.openSettings(dialog);
+                    const settingsComponent = defineAsyncComponent(
+                        () => import('../../components/Menu/Settings/Settings.vue')
+                    );
+                    dialog.open(settingsComponent, {
+                        props: {
+                            header: 'Settings',
+                            style: {
+                                width: '75vw',
+                                height: '80vh'
+                            },
+                            pt: { content: { style: { height: '100%' } } },
+                            breakpoints: {
+                                '960px': '80vw',
+                                '640px': '90vw'
+                            },
+                            modal: true,
+                            draggable: false
+                        }
+                    });
                 }
             },
             {
