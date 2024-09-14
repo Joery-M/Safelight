@@ -1,6 +1,6 @@
 import { CustomInspectorNode, CustomInspectorState } from '@vue/devtools-api';
 import { toValue, watchArray } from '@vueuse/core';
-import { computed, ref, shallowReactive, shallowReadonly } from 'vue';
+import { computed, readonly, ref, shallowReactive } from 'vue';
 import { __DEVTOOLS_AVAILABLE__, ItemContainer, TimelineItem, TimelineManager } from '..';
 
 export class TimelineLayer {
@@ -8,7 +8,7 @@ export class TimelineLayer {
     public __ELEMENT_RENDER_TIME__ = shallowReactive(new Map<TimelineItem, number>());
     public index = ref(0);
     // public elements = shallowReactive(new Set<TimelineItemElement>());
-    public elements = shallowReadonly(
+    public elements = readonly(
         computed(() => {
             if (!this.manager) {
                 return new Set<TimelineItem>();

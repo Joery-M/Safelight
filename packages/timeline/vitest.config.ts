@@ -10,7 +10,7 @@ export default defineProject({
         reporters: process.env.GITHUB_ACTIONS ? ['default', 'github-actions'] : ['default'],
         globals: true,
         name: 'timeline',
-        environment: 'happy-dom',
+        environment: 'jsdom',
         ui: true,
         open: false,
         api: {

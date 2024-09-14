@@ -26,7 +26,7 @@
   },
   "types": "./dist/index.d.ts",
   "scripts": {
-    "test": "vitest",
+    "test": "vitest --ui",
     "test:run": "vitest run --ui false"
   },
   "dependencies": {
@@ -41,7 +41,9 @@
     "@types/node": "^22.5.5",
     "@vue/test-utils": "^2.4.5",
     "@vue/tsconfig": "^0.5.1",
+    "canvas": "^2.11.2",
     "happy-dom": "^15.7.4",
+    "jsdom": "^25.0.0",
     "typescript": "^5.6.2",
     "vitest": "^2.1.1",
     "vue-tsc": "^2.1.6"

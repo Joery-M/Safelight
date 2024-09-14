@@ -136,12 +136,6 @@ export class TimelineManager {
     public timelineElements = shallowReactive(new Set<TimelineElement>());
     public allLayerItems = shallowReactive(new Set<TimelineItem>());
     public layers = shallowReactive(new Set<TimelineLayer>());
-    /**
-     * Currently visible elements.
-     *
-     * Is assigned before rendering.
-     */
-    public visibleElements = new WeakSet<TimelineElement>();
 
     /**
      * Current cursor for the user
@@ -203,7 +197,7 @@ export class TimelineManager {
     public pointerOut = ref(true);
     public canvasHeight = ref(100);
     public canvasWidth = ref(100);
-    private windowDPI = useDevicePixelRatio().pixelRatio;
+    private windowDPI = __TEST__ ? 1 : useDevicePixelRatio().pixelRatio;
     private paneResizing = ref(false);
     public layerPaneWidth = ref(128);
     private changedLayerPaneWidth = ref(false);
