@@ -304,6 +304,9 @@ importers:
       '@phosphor-icons/vue':
         specifier: ~2
         version: 2.2.1(vue@3.4.31(typescript@5.6.2))
+      '@safelight/safelight':
+        specifier: workspace:^
+        version: link:../safelight
       '@vueuse/core':
         specifier: ~10
         version: 10.11.0(vue@3.4.31(typescript@5.6.2))
