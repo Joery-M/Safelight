@@ -1,5 +1,5 @@
-import { CustomInspectorState } from '@vue/devtools-api';
-import { syncRef, useDevicePixelRatio, useElementBounding, useEventListener } from '@vueuse/core';
+import { CustomInspectorNode, CustomInspectorState } from '@vue/devtools-api';
+import { MaybeRefOrGetter, syncRef, useDevicePixelRatio, useElementBounding, useEventListener } from '@vueuse/core';
 import { useAverage, useRound } from '@vueuse/math';
 import EventEmitter from 'eventemitter3';
 import {
@@ -518,11 +518,11 @@ export class TimelineManager {
             if (element.renderStep == 'before') {
                 if (__DEVTOOLS_AVAILABLE__.value) {
                     const start = performance.now();
-                    element.render({ ctx: this.ctx, manager: this, isQueued: false });
+                    element.render({ ctx: this.ctx, manager: this });
                     const end = performance.now();
                     this.__ELEMENT_RENDER_TIME.set(element, end - start);
                 } else {
-                    element.render({ ctx: this.ctx, manager: this, isQueued: false });
+                    element.render({ ctx: this.ctx, manager: this });
                 }
             }
         }
@@ -543,11 +543,11 @@ export class TimelineManager {
             if (element.renderStep !== 'before') {
                 if (__DEVTOOLS_AVAILABLE__.value) {
                     const start = performance.now();
-                    element.render({ ctx: this.ctx, manager: this, isQueued: false });
+                    element.render({ ctx: this.ctx, manager: this });
                     const end = performance.now();
                     this.__ELEMENT_RENDER_TIME.set(element, end - start);
                 } else {
-                    element.render({ ctx: this.ctx, manager: this, isQueued: false });
+                    element.render({ ctx: this.ctx, manager: this });
                 }
             }
         }
@@ -762,6 +762,34 @@ export class TimelineManager {
             ]
         };
     };
+
+    public _devtools_get_tree = (id: string): CustomInspectorNode => {
+        return {
+            id: 'timeline::' + id,
+            label: `Timeline (${id})`,
+            children: [
+                ...this.layersSorted.value.map((layer) => layer._devtools_get_tree(id)),
+                {
+                    id: 'items::' + id,
+                    label: 'Items',
+                    children: Array.from(this.timelineElements).map((elem, i) => ({
+                        id: 'item::' + id + '::' + i,
+                        label: elem.name,
+                        tags:
+                            elem.renderStep == 'before'
+                                ? [
+                                      {
+                                          label: 'Background',
+                                          backgroundColor: 0x2b65e8,
+                                          textColor: 0x000000
+                                      }
+                                  ]
+                                : []
+                    }))
+                }
+            ]
+        };
+    };
 }
 
 interface TimelineEvents {
@@ -806,9 +834,11 @@ export interface TimelineItem {
     layer: Ref<number>;
     start: Ref<number>;
     end: Ref<number>;
+    renderMargin?: MaybeRefOrGetter<number>;
     init?: (payload: TimelineItemInitPayload) => any;
     render: (payload: TimelineItemRenderPayload) => any;
     devtoolsState?: () => CustomInspectorState;
+    devtoolsTree?: (id: string, hidden: boolean, itemIndex: number) => CustomInspectorNode;
 }
 
 export type TimelineAlignment = 'top' | 'bottom';
@@ -825,13 +855,11 @@ export interface ItemContainer {
 export interface TimelineElementRenderPayload {
     ctx: CanvasRenderingContext2D;
     manager: TimelineManager;
-    isQueued: boolean;
 }
 export interface TimelineItemRenderPayload {
     ctx: CanvasRenderingContext2D;
     layer: TimelineLayer;
     manager: TimelineManager;
-    isQueued: boolean;
     container: Readonly<ItemContainer>;
 }
 export interface TimelineItemInitPayload {

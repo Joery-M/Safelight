@@ -97,8 +97,10 @@ export class TimelineCursorElement implements TimelineElement {
     }
 
     render({ ctx, manager }: TimelineElementRenderPayload) {
-        const offsetX = manager.msToPx(this.cursorPosSmooth.value, true, true) - 10;
-        if (offsetX < manager.layerPaneWidth.value - 19) {
+        if (
+            this.cursorPosSmooth.value < manager.viewportSmooth.start.value - 20 ||
+            this.cursorPosSmooth.value > manager.viewportSmooth.end.value + 20
+        ) {
             this.isRendering.value = false;
             return;
         }
@@ -106,6 +108,8 @@ export class TimelineCursorElement implements TimelineElement {
 
         const viewportWidth = manager.canvasWidth.value;
         const viewportHeight = manager.canvasHeight.value;
+
+        const offsetX = manager.msToPx(this.cursorPosSmooth.value, true, true) - 10;
 
         ctx.save();
         ctx.beginPath();

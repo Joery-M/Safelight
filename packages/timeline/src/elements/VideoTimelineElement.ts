@@ -68,4 +68,20 @@ export class VideoTimelineElement extends MoveableTimelineItem implements Timeli
         };
         return state;
     };
+
+    devtoolsTree = (id: string, hidden: boolean, index: number) => {
+        return {
+            id: 'element::' + id + ';' + index,
+            label: 'Element ' + index,
+            tags: hidden
+                ? [
+                      {
+                          label: 'Hidden',
+                          backgroundColor: 0x181818,
+                          textColor: 0xc9c9c9
+                      }
+                  ]
+                : []
+        };
+    };
 }

@@ -1,7 +1,7 @@
-import { CustomInspectorState } from '@vue/devtools-api';
-import { watchArray } from '@vueuse/core';
+import { CustomInspectorNode, CustomInspectorState } from '@vue/devtools-api';
+import { toValue, watchArray } from '@vueuse/core';
 import { computed, ref, shallowReactive, shallowReadonly } from 'vue';
-import { ItemContainer, TimelineItem, TimelineManager } from '..';
+import { __DEVTOOLS_AVAILABLE__, ItemContainer, TimelineItem, TimelineManager } from '..';
 
 export class TimelineLayer {
     public __RENDER_TIME__ = ref(0);
@@ -102,26 +102,39 @@ export class TimelineLayer {
         ctx.clip();
         ctx.translate(manager.layerPaneWidth.value, offsetY);
 
+        const viewStart = manager.viewportSmooth.start.value;
+        const viewEnd = manager.viewportSmooth.end.value;
+
         for (const element of this.elements.value) {
-            if (import.meta.env.DEV) {
-                const start = performance.now();
-                element.render({
-                    ctx,
-                    isQueued: false,
-                    container,
-                    layer: this,
-                    manager: manager
-                });
-                const end = performance.now();
-                this.__ELEMENT_RENDER_TIME__.set(element, end - start);
+            const elemStart = element.start.value - (toValue(element.renderMargin) ?? 0);
+            const elemEnd = element.end.value + (toValue(element.renderMargin) ?? 0);
+
+            if (__DEVTOOLS_AVAILABLE__.value) {
+                if (elemStart <= viewEnd && viewStart <= elemEnd) {
+                    const start = performance.now();
+                    element.render({
+                        ctx,
+                        container,
+                        layer: this,
+                        manager: manager
+                    });
+                    const end = performance.now();
+                    this.__ELEMENT_RENDER_TIME__.set(element, end - start);
+                } else {
+                    this.__ELEMENT_RENDER_TIME__.set(element, NaN);
+                }
             } else {
-                element.render({
-                    ctx,
-                    isQueued: false,
-                    container,
-                    layer: this,
-                    manager: manager
-                });
+                if (
+                    elemStart <= manager.viewportSmooth.end.value &&
+                    manager.viewportSmooth.start.value <= elemEnd
+                ) {
+                    element.render({
+                        ctx,
+                        container,
+                        layer: this,
+                        manager: manager
+                    });
+                }
             }
         }
         ctx.restore();
@@ -201,6 +214,23 @@ export class TimelineLayer {
                         ) + '%'
                 }
             ]
+        };
+    };
+
+    public _devtools_get_tree = (id: string) => {
+        return {
+            id: 'layer::' + id + '::' + this.index.value,
+            label: `Layer ${this.index.value + 1}`,
+            children: Array.from(this.elements.value)
+                .map<CustomInspectorNode | undefined>((element, i) => {
+                    if (element.devtoolsTree) {
+                        const hidden = isNaN(this.__ELEMENT_RENDER_TIME__.get(element) ?? 0);
+                        return element.devtoolsTree(id + '::' + this.index.value, hidden, i);
+                    } else {
+                        return undefined;
+                    }
+                })
+                .filter((i) => i !== undefined)
         };
     };
 }

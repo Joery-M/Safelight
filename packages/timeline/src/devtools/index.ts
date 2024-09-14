@@ -38,52 +38,7 @@ export function setupDevtools(app: App) {
                         if (!id.includes(payload.filter)) {
                             continue;
                         }
-                        payload.rootNodes.push({
-                            id: 'timeline::' + id,
-                            label: `Timeline (${id})`,
-                            children: [
-                                ...manager.layersSorted.value.map((layer) => {
-                                    return {
-                                        id: 'layer::' + id + '::' + layer.index.value,
-                                        label: `Layer ${layer.index.value + 1}`,
-                                        children: Array.from(layer.elements.value).map(
-                                            (_element, i) => {
-                                                return {
-                                                    id:
-                                                        'element::' +
-                                                        id +
-                                                        '::' +
-                                                        layer.index.value +
-                                                        ';' +
-                                                        i,
-                                                    label: 'Element ' + i
-                                                };
-                                            }
-                                        )
-                                    };
-                                }),
-                                {
-                                    id: 'items::' + id,
-                                    label: 'Items',
-                                    children: Array.from(manager.timelineElements).map(
-                                        (elem, i) => ({
-                                            id: 'item::' + id + '::' + i,
-                                            label: elem.name,
-                                            tags:
-                                                elem.renderStep == 'before'
-                                                    ? [
-                                                          {
-                                                              label: 'Background',
-                                                              backgroundColor: 0x2b65e8,
-                                                              textColor: 0x000000
-                                                          }
-                                                      ]
-                                                    : []
-                                        })
-                                    )
-                                }
-                            ]
-                        });
+                        payload.rootNodes.push(manager._devtools_get_tree(id));
                     }
                 }
             });
@@ -115,31 +70,39 @@ export function setupDevtools(app: App) {
                                 parseInt(extraInfo.split(';')[1])
                             ];
                             if (!element) break;
+                            const isHidden = isNaN(layer.__ELEMENT_RENDER_TIME__.get(element) ?? 0);
                             payload.state = {
-                                rendering: [
-                                    {
-                                        key: 'Render time (ms)',
-                                        value: layer.__ELEMENT_RENDER_TIME__.get(element) ?? NaN
-                                    },
-                                    {
-                                        key: 'Render time (% of layer)',
-                                        value:
-                                            Math.round(
-                                                ((layer.__ELEMENT_RENDER_TIME__.get(element) ?? 0) /
-                                                    layer.__RENDER_TIME__.value) *
-                                                    100
-                                            ) + '%'
-                                    },
-                                    {
-                                        key: 'Render time (% of timeline)',
-                                        value:
-                                            Math.round(
-                                                ((layer.__ELEMENT_RENDER_TIME__.get(element) ?? 0) /
-                                                    manager.__RENDER_TIME__.value) *
-                                                    100
-                                            ) + '%'
-                                    }
-                                ],
+                                rendering: !isHidden
+                                    ? [
+                                          {
+                                              key: 'Render time (ms)',
+                                              value:
+                                                  layer.__ELEMENT_RENDER_TIME__.get(element) ?? NaN
+                                          },
+                                          {
+                                              key: 'Render time (% of layer)',
+                                              value:
+                                                  Math.round(
+                                                      ((layer.__ELEMENT_RENDER_TIME__.get(
+                                                          element
+                                                      ) ?? 0) /
+                                                          layer.__RENDER_TIME__.value) *
+                                                          100
+                                                  ) + '%'
+                                          },
+                                          {
+                                              key: 'Render time (% of timeline)',
+                                              value:
+                                                  Math.round(
+                                                      ((layer.__ELEMENT_RENDER_TIME__.get(
+                                                          element
+                                                      ) ?? 0) /
+                                                          manager.__RENDER_TIME__.value) *
+                                                          100
+                                                  ) + '%'
+                                          }
+                                      ]
+                                    : [],
                                 ...(element.devtoolsState ? element.devtoolsState() : {})
                             };
                             break;
@@ -164,22 +127,26 @@ export function setupDevtools(app: App) {
                                 parseInt(extraInfo)
                             );
                             if (!elem) return;
+                            const isHidden = isNaN(manager.__ELEMENT_RENDER_TIME.get(elem) ?? 0);
                             payload.state = {
-                                rendering: [
-                                    {
-                                        key: 'Render time (ms)',
-                                        value: manager.__ELEMENT_RENDER_TIME.get(elem) ?? NaN
-                                    },
-                                    {
-                                        key: 'Render time (% of timeline)',
-                                        value:
-                                            Math.round(
-                                                ((manager.__ELEMENT_RENDER_TIME.get(elem) ?? 0) /
-                                                    manager.__RENDER_TIME__.value) *
-                                                    100
-                                            ) + '%'
-                                    }
-                                ],
+                                rendering: !isHidden
+                                    ? [
+                                          {
+                                              key: 'Render time (ms)',
+                                              value: manager.__ELEMENT_RENDER_TIME.get(elem) ?? NaN
+                                          },
+                                          {
+                                              key: 'Render time (% of timeline)',
+                                              value:
+                                                  Math.round(
+                                                      ((manager.__ELEMENT_RENDER_TIME.get(elem) ??
+                                                          0) /
+                                                          manager.__RENDER_TIME__.value) *
+                                                          100
+                                                  ) + '%'
+                                          }
+                                      ]
+                                    : [],
                                 ...(elem.devtoolsState ? elem.devtoolsState() : {})
                             };
                             break;
@@ -226,13 +193,9 @@ export function setupDevtools(app: App) {
             registerTimelineManager = (manager: TimelineManager) => {
                 const id = crypto.randomUUID().split('-')[0];
 
-                manager.events.on('unmount', () => {
-                    managers.delete(id);
-                    api.sendInspectorTree(INSPECTOR_ID);
-                });
-
                 managers.set(id, manager);
 
+                // Throttled update state
                 let updateStateFnTimeout: ReturnType<typeof setTimeout>;
                 let lastUpdateState = 0;
                 const updateStateFn = () => {
@@ -248,6 +211,22 @@ export function setupDevtools(app: App) {
 
                     updateStateFnTimeout = setTimeout(update, 16);
                 };
+                // Throttled update tree
+                let updateTreeFnTimeout: ReturnType<typeof setTimeout>;
+                let lastUpdateTree = 0;
+                const updateTreeFn = () => {
+                    const update = () => {
+                        api.sendInspectorTree(INSPECTOR_ID);
+                        lastUpdateTree = performance.now();
+                    };
+
+                    if (lastUpdateTree < performance.now() - 16) {
+                        update();
+                    }
+                    clearTimeout(updateTreeFnTimeout);
+
+                    updateTreeFnTimeout = setTimeout(update, 16);
+                };
 
                 watchEffect(manager._devtools_get_state, {
                     onTrigger() {
@@ -258,8 +237,6 @@ export function setupDevtools(app: App) {
                 watchArray(
                     manager.layersSorted,
                     (_cur, _old, added) => {
-                        api.sendInspectorTree(INSPECTOR_ID);
-
                         for (const layer of added) {
                             watchEffect(layer._devtools_get_state, {
                                 flush: 'post',
@@ -277,8 +254,6 @@ export function setupDevtools(app: App) {
                 watchArray(
                     computed(() => Array.from(manager.timelineElements)),
                     (_cur, _old, added) => {
-                        api.sendInspectorTree(INSPECTOR_ID);
-
                         for (const element of added) {
                             if (element.devtoolsState) {
                                 watchEffect(element.devtoolsState, {
@@ -299,7 +274,6 @@ export function setupDevtools(app: App) {
                 watchArray(
                     elems,
                     (_cur, _old, added) => {
-                        api.sendInspectorTree(INSPECTOR_ID);
                         for (const item of added) {
                             if (item.devtoolsState) {
                                 watchEffect(item.devtoolsState, {
@@ -314,10 +288,18 @@ export function setupDevtools(app: App) {
                     { immediate: true, deep: false }
                 );
 
+                watchEffect(manager._devtools_get_tree.bind(undefined, id), {
+                    flush: 'post',
+                    onTrigger() {
+                        updateTreeFn();
+                    }
+                });
+
                 api.sendInspectorTree(INSPECTOR_ID);
                 return () => {
                     managers.delete(id);
                     api.sendInspectorState(INSPECTOR_ID);
+                    api.sendInspectorTree(INSPECTOR_ID);
                 };
             };
 
