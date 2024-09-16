@@ -197,7 +197,7 @@ export class TimelineManager {
     public pointerOut = ref(true);
     public canvasHeight = ref(100);
     public canvasWidth = ref(100);
-    private windowDPI = __TEST__ ? 1 : useDevicePixelRatio().pixelRatio;
+    private windowDPI = __TEST__ ? computed(() => 1) : useDevicePixelRatio().pixelRatio;
     private paneResizing = ref(false);
     public layerPaneWidth = ref(128);
     private changedLayerPaneWidth = ref(false);
