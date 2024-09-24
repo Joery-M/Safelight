@@ -181,8 +181,8 @@ importers:
         specifier: ^4.0.8
         version: 4.0.8
       dot-path-value:
-        specifier: ^0.0.10
-        version: 0.0.10
+        specifier: ^0.0.11
+        version: 0.0.11
       eventemitter3:
         specifier: ~5
         version: 5.0.1
@@ -320,8 +320,8 @@ importers:
         specifier: ^4.0.8
         version: 4.0.8
       dot-path-value:
-        specifier: ^0.0.10
-        version: 0.0.10
+        specifier: ^0.0.11
+        version: 0.0.11
       hash-wasm:
         specifier: ^4.11.0
         version: 4.11.0
@@ -2019,8 +2019,8 @@ packages:
   dom-accessibility-api@0.5.16:
     resolution: {integrity: sha512-X7BJ2yElsnOJ30pZF4uIIDfBEVgF4XEBxL9Bxhy6dnrm5hkzqmsWHGTiHqRiITNhMyFLyAiWndIJP7Z1NTteDg==}
 
-  dot-path-value@0.0.10:
-    resolution: {integrity: sha512-MrVpDoFwk1xjeM0sGRuei7N3LQOylJ9iamgfxAQwPY0hPnDHL981hM/KpoQwFHMckgjZvJA0MyH7VN//ernFFA==}
+  dot-path-value@0.0.11:
+    resolution: {integrity: sha512-b50GgITocbLSGMwfHrSLHToA/voYHRhPqHmMIVwDVyNJVAi9+MkL0pG3y7LD3PNlSE5XDlHs6sSWJb+ny+PyAQ==}
 
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
@@ -5581,7 +5581,7 @@ snapshots:
 
   dom-accessibility-api@0.5.16: {}
 
-  dot-path-value@0.0.10: {}
+  dot-path-value@0.0.11: {}
 
   eastasianwidth@0.2.0: {}
 
