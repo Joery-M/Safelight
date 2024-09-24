@@ -35,7 +35,7 @@
     "@vueuse/gesture": "^2.0.0",
     "@vueuse/math": "^11.1.0",
     "eventemitter3": "^5.0.1",
-    "vue": "^3.5.6"
+    "vue": "^3.5.8"
   },
   "devDependencies": {
     "@types/node": "^22.5.5",
