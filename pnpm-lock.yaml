@@ -19,7 +19,7 @@ importers:
         version: 5.1.4(vite@5.4.6(@types/node@22.5.5)(lightningcss@1.27.0)(sass@1.79.1))(vue@3.5.8(typescript@5.6.2))
       '@vitest/browser':
         specifier: ^2.1.1
-        version: 2.1.1(@vitest/spy@2.1.1)(playwright@1.47.1)(typescript@5.6.2)(vite@5.4.6(@types/node@22.5.5)(lightningcss@1.27.0)(sass@1.79.1))(vitest@2.1.1)
+        version: 2.1.1(@vitest/spy@2.1.1)(playwright@1.47.2)(typescript@5.6.2)(vite@5.4.6(@types/node@22.5.5)(lightningcss@1.27.0)(sass@1.79.1))(vitest@2.1.1)
       '@vitest/ui':
         specifier: ^2.1.1
         version: 2.1.1(vitest@2.1.1)
@@ -117,13 +117,13 @@ importers:
         version: 1.0.3
       '@vitest/browser':
         specifier: ^2.1.1
-        version: 2.1.1(@vitest/spy@2.1.1)(playwright@1.47.1)(typescript@5.6.2)(vite@5.4.6(@types/node@22.5.5)(lightningcss@1.27.0)(sass@1.79.1))(vitest@2.1.1)
+        version: 2.1.1(@vitest/spy@2.1.1)(playwright@1.47.2)(typescript@5.6.2)(vite@5.4.6(@types/node@22.5.5)(lightningcss@1.27.0)(sass@1.79.1))(vitest@2.1.1)
       '@vitest/ui':
         specifier: ^2.1.1
         version: 2.1.1(vitest@2.1.1)
       playwright:
-        specifier: ^1.47.0
-        version: 1.47.1
+        specifier: ^1.47.2
+        version: 1.47.2
       rimraf:
         specifier: ^6.0.1
         version: 6.0.1
@@ -3005,13 +3005,13 @@ packages:
   pkg-types@1.1.1:
     resolution: {integrity: sha512-ko14TjmDuQJ14zsotODv7dBlwxKhUKQEhuhmbqo1uCi9BB0Z2alo/wAXg6q1dTR5TyuqYyWhjtfe/Tsh+X28jQ==}
 
-  playwright-core@1.47.1:
-    resolution: {integrity: sha512-i1iyJdLftqtt51mEk6AhYFaAJCDx0xQ/O5NU8EKaWFgMjItPVma542Nh/Aq8aLCjIJSzjaiEQGW/nyqLkGF1OQ==}
+  playwright-core@1.47.2:
+    resolution: {integrity: sha512-3JvMfF+9LJfe16l7AbSmU555PaTl2tPyQsVInqm3id16pdDfvZ8TTZ/pyzmkbDrZTQefyzU7AIHlZqQnxpqHVQ==}
     engines: {node: '>=18'}
     hasBin: true
 
-  playwright@1.47.1:
-    resolution: {integrity: sha512-SUEKi6947IqYbKxRiqnbUobVZY4bF1uu+ZnZNJX9DfU1tlf2UhWfvVjLf01pQx9URsOr18bFVUKXmanYWhbfkw==}
+  playwright@1.47.2:
+    resolution: {integrity: sha512-nx1cLMmQWqmA3UsnjaaokyoUpdVaaDhJhMoxX2qj3McpjnsqFHs516QAKYhqHAgOP+oCFTEOCOAaD1RgD/RQfA==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -4931,7 +4931,7 @@ snapshots:
       vite: 5.4.6(@types/node@22.5.5)(lightningcss@1.27.0)(sass@1.79.1)
       vue: 3.5.8(typescript@5.6.2)
 
-  '@vitest/browser@2.1.1(@vitest/spy@2.1.1)(playwright@1.47.1)(typescript@5.6.2)(vite@5.4.6(@types/node@22.5.5)(lightningcss@1.27.0)(sass@1.79.1))(vitest@2.1.1)':
+  '@vitest/browser@2.1.1(@vitest/spy@2.1.1)(playwright@1.47.2)(typescript@5.6.2)(vite@5.4.6(@types/node@22.5.5)(lightningcss@1.27.0)(sass@1.79.1))(vitest@2.1.1)':
     dependencies:
       '@testing-library/dom': 10.4.0
       '@testing-library/user-event': 14.5.2(@testing-library/dom@10.4.0)
@@ -4944,7 +4944,7 @@ snapshots:
       vitest: 2.1.1(@types/node@22.5.5)(@vitest/browser@2.1.1)(@vitest/ui@2.1.1)(happy-dom@15.7.4)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.27.0)(msw@2.3.5(typescript@5.6.2))(sass@1.79.1)
       ws: 8.18.0
     optionalDependencies:
-      playwright: 1.47.1
+      playwright: 1.47.2
     transitivePeerDependencies:
       - '@vitest/spy'
       - bufferutil
@@ -6612,11 +6612,11 @@ snapshots:
       mlly: 1.7.1
       pathe: 1.1.2
 
-  playwright-core@1.47.1: {}
+  playwright-core@1.47.2: {}
 
-  playwright@1.47.1:
+  playwright@1.47.2:
     dependencies:
-      playwright-core: 1.47.1
+      playwright-core: 1.47.2
     optionalDependencies:
       fsevents: 2.3.2
 
@@ -7236,7 +7236,7 @@ snapshots:
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 22.5.5
-      '@vitest/browser': 2.1.1(@vitest/spy@2.1.1)(playwright@1.47.1)(typescript@5.6.2)(vite@5.4.6(@types/node@22.5.5)(lightningcss@1.27.0)(sass@1.79.1))(vitest@2.1.1)
+      '@vitest/browser': 2.1.1(@vitest/spy@2.1.1)(playwright@1.47.2)(typescript@5.6.2)(vite@5.4.6(@types/node@22.5.5)(lightningcss@1.27.0)(sass@1.79.1))(vitest@2.1.1)
       '@vitest/ui': 2.1.1(vitest@2.1.1)
       happy-dom: 15.7.4
       jsdom: 25.0.1(canvas@2.11.2)
