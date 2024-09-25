@@ -1,7 +1,0 @@
-{
-    "root": false,
-    "rules": {
-        // Allowed in dev
-        "@intlify/vue-i18n/no-raw-text": "off"
-    }
-}
