@@ -15,7 +15,7 @@
         "
     >
         <div
-            class="bg-checkerboard relative flex aspect-video w-full items-center justify-center overflow-clip rounded-t-md"
+            class="bg-checkerboard relative flex aspect-video w-full items-center justify-center text-clip rounded-t-md"
         >
             <img
                 v-if="item.previewImage.value"

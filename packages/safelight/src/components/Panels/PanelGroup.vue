@@ -6,7 +6,7 @@
                 <template #item="{ item, props, index }">
                     <a
                         v-bind="props.action"
-                        class="align-items-center flex min-w-36 gap-1 p-2 pl-2 pr-1"
+                        class="align-items-center flex min-w-36 gap-1 p-2 pr-1"
                         @click="activeIndex = index"
                     >
                         <component :is="item.icon" class="mr-2" />
