@@ -1,6 +1,89 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended"
+  "enabledManagers": ["npm"],
+  "extends": ["config:recommended"],
+  "packageRules": [
+    {
+      "groupName": "Minor updates",
+      "matchPackageNames": [
+        "@codemirror/lang-javascript",
+        "@endo/static-module-record",
+        "@quantco/pnpm-licenses",
+        "@tsconfig/node20",
+        "dot-path-value",
+        "fuzzysearch",
+        "luxon",
+        "mediainfo.js",
+        "strip-ansi",
+        "uuid"
+      ],
+      "extends": ["schedule:earlyMondays"],
+      "minor": true,
+      "major": true
+    },
+    {
+      "groupName": "types",
+      "matchPackageNames": ["@babel/types", "@types/*"],
+      "extends": ["schedule:earlyMondays"]
+    },
+    {
+      "groupName": "Build tools",
+      "matchPackageNames": [
+        "@vitejs/plugin-vue",
+        "@vue/*",
+        "autoprefixer",
+        "browserslist",
+        "lightningcss",
+        "postcss",
+        "rimraf",
+        "rollup-plugin-visualizer",
+        "sass",
+        "tailwindcss",
+        "tsx",
+        "unplugin-turbo-console",
+        "vite-*",
+        "vite",
+        "typescript"
+      ],
+      "extends": ["schedule:earlyMondays"]
+    },
+    {
+      "groupName": "Vitest",
+      "matchPackageNames": [
+        "@vitest/*",
+        "fake-indexeddb",
+        "happy-dom",
+        "playwright",
+        "timer-shim",
+        "vitest"
+      ],
+      "extends": ["schedule:earlyMondays"]
+    },
+    {
+      "groupName": "Vue",
+      "matchPackageNames": [
+        "@vue/*",
+        "unplugin-vue-router",
+        "vue-*",
+        "vue",
+        "@vueuse/*"
+      ],
+      "extends": ["schedule:earlyMondays"]
+    },
+    {
+      "groupName": "Lint",
+      "matchPackageNames": [
+        "@eslint*",
+        "@typescript-eslint/*",
+        "eslint-*",
+        "@intlify/eslint-plugin-vue-i18n",
+        "eslint",
+        "typescript-eslint",
+        "prettier*"
+      ],
+      "extends": ["schedule:earlyMondays"],
+      "patch": true,
+      "minor": true
+    }
   ]
 }
