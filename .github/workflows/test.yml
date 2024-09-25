@@ -28,22 +28,9 @@ jobs:
                   node-version: ${{ matrix.node-version }}
                   cache: 'pnpm'
 
-            - name: Get installed Playwright version
-              run: echo "PLAYWRIGHT_VERSION=$(cat pnpm-lock.yaml | grep 'playwright@' | sed -r 's/^.*playwright@([0-9.]*)\).*/\1/' | head -1)" >> $GITHUB_ENV
-
             - name: Install dependencies
-              run: pnpm install --ignore-scripts --frozen-lockfile
-
-            - uses: actions/cache@v3
-              name: Setup playwright cache
-              id: playwright-cache
-              with:
-                  path: '~/.cache/ms-playwright'
-                  key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
-
-            - name: Install dependencies
-              if: steps.playwright-cache.outputs.cache-hit != 'true'
               run: pnpm install --frozen-lockfile
+            # if: steps.playwright-cache.outputs.cache-hit != 'true'
 
             - name: Build Darkroom
               run: pnpm build:darkroom
@@ -56,7 +43,3 @@ jobs:
 
             - name: Test shared
               run: pnpm test:shared
-
-            # Skip since node-canvas doesn't work on GitHub actions
-            # - name: Test timeline
-            #   run: pnpm test:timeline
