@@ -100,7 +100,6 @@ export default class IndexedDbStorageController extends BaseStorageController {
         const existingProject = await this.db.project.get({ id: project.id });
 
         // Remove created so it can't be overridden
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { created, ...restProject } = project;
 
         const storableProject: StoredProject = {

@@ -44,7 +44,7 @@ export class SettingsManager {
         const pathArray = Array.isArray(path) ? path : path.split('.');
 
         // Loop through path array to find nested namespace
-        return pathArray.reduce((ns, path, curIndex) => {
+        return pathArray.reduce((ns, _path, curIndex) => {
             if (!ns) return;
 
             const childNs = ns?.childNamespaces?.find(

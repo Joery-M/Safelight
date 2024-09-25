@@ -16,7 +16,6 @@ export async function getFileInfo(file: File) {
             });
 
         MediaInfoFactory({
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             locateFile(_url, _scriptDirectory) {
                 return MediaInfoWasmUrl;
             }
