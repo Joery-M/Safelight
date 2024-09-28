@@ -10,7 +10,7 @@ import BaseProject, {
 import { Storage } from '../base/Storage';
 import Media from '../Media/Media';
 import MediaManager from '../Storage/MediaManager';
-import SimpleTimeline, { type SimpleTimelineConfig } from '../Timeline/SimpleTimeline';
+import SimpleTimeline, { type SimpleTimelineConfig } from '../Timeline/Timeline';
 
 export default class SimpleProject
     extends BaseProject

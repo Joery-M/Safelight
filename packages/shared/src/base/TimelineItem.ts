@@ -1,17 +1,14 @@
 import { v4 as uuidv4 } from 'uuid';
 import { ref, shallowReactive } from 'vue';
-import type SimpleTimeline from '../Timeline/SimpleTimeline';
-import type AudioTimelineItem from '../TimelineItem/AudioTimelineItem';
-import type VideoTimelineItem from '../TimelineItem/VideoTimelineItem';
-import type { TimelineItemMedia } from '../TimelineItem/interfaces';
+import type SimpleTimeline from '../Timeline/Timeline';
 
-export default abstract class BaseTimelineItem {
+export abstract class TimelineItem {
     public id = uuidv4();
     public type: TimelineItemType = 'Base';
 
     public name = ref('');
 
-    public linkedItems = shallowReactive(new Set<BaseTimelineItem>());
+    public linkedItems = shallowReactive(new Set<TimelineItem>());
 
     private lastStart = ref(0);
     private lastEnd = ref(0);
@@ -82,7 +79,7 @@ export default abstract class BaseTimelineItem {
         this.timeline.itemDropped(this);
     }
 
-    public onDroppedOn(otherItem: BaseTimelineItem) {
+    public onDroppedOn(otherItem: TimelineItem) {
         if (otherItem.end.value > this.start.value && otherItem.start.value < this.start.value) {
             // ▼  [====]    < Other item
             // ▼    [=====] < This item
@@ -134,14 +131,6 @@ export default abstract class BaseTimelineItem {
             item.linkedItems.delete(this);
         });
     }
-
-    isBaseTimelineItem = (): this is BaseTimelineItem => this.type === 'Base';
-    isVideo = (): this is VideoTimelineItem => this.type === 'Video';
-    isAudio = (): this is AudioTimelineItem => this.type === 'Audio';
-    // Implement
-    isImage = (): this is AudioTimelineItem => this.type === 'Image';
-
-    hasMedia = (): this is typeof this & TimelineItemMedia => false;
 }
 
 export type TimelineItemType = 'Base' | 'Video' | 'Audio' | 'Image' | 'EffectLayer';

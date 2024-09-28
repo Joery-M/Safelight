@@ -2,7 +2,7 @@ import { Subject } from 'rxjs';
 import { isReactive, isRef, ref, type ComputedRef, type Ref, type ShallowReactive } from 'vue';
 import type Media from '../Media/Media';
 import type SimpleProject from '../Project/SimpleProject';
-import type SimpleTimeline from '../Timeline/SimpleTimeline';
+import type SimpleTimeline from '../Timeline/Timeline';
 import type { SaveResults } from './Storage';
 
 export default abstract class BaseProject {

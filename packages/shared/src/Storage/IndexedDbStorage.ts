@@ -8,9 +8,9 @@ import type {
 } from '../base/Storage';
 import BaseStorageController from '../base/Storage';
 import type BaseTimeline from '../base/Timeline';
-import Media from '../Media/Media';
+import { MediaItem } from '../Media/Media';
 import SimpleProject from '../Project/SimpleProject';
-import SimpleTimeline from '../Timeline/SimpleTimeline';
+import SimpleTimeline from '../Timeline/Timeline';
 import AudioTimelineItem from '../TimelineItem/AudioTimelineItem';
 import VideoTimelineItem from '../TimelineItem/VideoTimelineItem';
 import { NotificationService } from '../UI/Notifications/NotificationService';
@@ -124,7 +124,7 @@ export default class IndexedDbStorageController extends BaseStorageController {
         });
     }
 
-    async SaveMedia(media: Media | StoredMedia): Promise<SaveResults> {
+    async SaveMedia(media: MediaItem | StoredMedia): Promise<SaveResults> {
         this.checkPersistentStorage();
         const storedMedia: StoredMedia =
             'data' in media
@@ -153,17 +153,12 @@ export default class IndexedDbStorageController extends BaseStorageController {
             return 'Error';
         }
     }
-    LoadMedia(mediaId: string): Promise<Media | undefined> {
-        return new Promise((resolve, reject) => {
-            this.db.media
-                .get({ id: mediaId })
-                .then((storedMedia) => {
-                    resolve(storedMedia ? this.storedMediaToMedia(storedMedia) : undefined);
-                })
-                .catch(reject);
-        });
+    async LoadMedia<M extends MediaItem>(mediaId: string): Promise<M | undefined> {
+        const storedMedia = await this.db.media.get({ id: mediaId });
+
+        return storedMedia ? this.storedMediaToMedia(storedMedia) : undefined;
     }
-    async getMediaFromHash(hash: string): Promise<Media | undefined> {
+    async getMediaFromHash(hash: string): Promise<MediaItem | undefined> {
         const m = await this.db.media.get({
             contentHash: hash
         });
@@ -181,7 +176,7 @@ export default class IndexedDbStorageController extends BaseStorageController {
     }
 
     private storedMediaToMedia(storedMedia: StoredMedia) {
-        const media = new Media();
+        const media = new MediaItem();
         media.name.value = storedMedia.name;
         media.id = storedMedia.id;
 
