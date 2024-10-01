@@ -10,6 +10,7 @@ on:
 jobs:
     build-all:
         runs-on: ubuntu-latest
+        if: ${{ github.triggering_actor != 'dependabot[bot]' }}
 
         strategy:
             matrix:
@@ -33,8 +34,8 @@ jobs:
             - name: Build Darkroom
               run: pnpm build:darkroom
 
-            - name: Build Timeline
-              run: pnpm build:timeline
+            # - name: Build Timeline
+            #   run: pnpm build:timeline
 
             - name: Build JsWebm
               run: pnpm build:jswebm

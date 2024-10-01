@@ -1,0 +1,25 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "enabledManagers": ["npm"],
+    "extends": ["config:recommended"],
+    "packageRules": [
+        {
+            "extends": ["packages:vite"],
+            "groupName": "Vite packages"
+        },
+        {
+            "extends": ["monorepo:vitest", "monorepo:playwright"],
+            "groupName": "Testing"
+        },
+        {
+            "extends": ["monorepo:vue"],
+            "groupName": "Vue"
+        },
+        {
+            "matchPackagePatterns": ["*"],
+            "matchUpdateTypes": ["minor", "patch"],
+            "groupName": "All non-major dependencies",
+            "groupSlug": "all-minor-patch"
+        }
+    ]
+}

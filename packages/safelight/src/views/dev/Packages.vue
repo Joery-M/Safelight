@@ -95,7 +95,7 @@
                                                 }}
                                             </a>
                                         </span>
-                                        <div class="mt-2 line-clamp-3 flex-grow">
+                                        <div class="mt-2 line-clamp-3 grow">
                                             {{ item.description }}
                                         </div>
                                         <div class="flex-column mt-4 flex gap-4">

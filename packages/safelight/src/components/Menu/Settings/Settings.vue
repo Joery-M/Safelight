@@ -2,7 +2,7 @@
     <div class="flex h-full">
         <div class="tree">
             <Tree
-                v-model:expandedKeys="expandedKeys"
+                v-model:expanded-keys="expandedKeys"
                 class="min-w-64"
                 :selection-keys="{ [selectedPath]: true }"
                 :value="tree"

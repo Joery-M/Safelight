@@ -13,9 +13,9 @@
     "dependencies": {
         "@safelight/tswebm": "workspace:^",
         "dexie": "^4.0.8",
-        "dot-path-value": "^0.0.10",
+        "dot-path-value": "^0.0.11",
         "hash-wasm": "^4.11.0",
-        "luxon": "^3.4.4",
+        "luxon": "^3.5.0",
         "mediainfo.js": "^0.3.2",
         "mime-matcher": "^1.0.5",
         "mp4box": "^0.5.2",
@@ -28,16 +28,13 @@
         "@types/uuid": "^10.0.0",
         "@vue/tsconfig": "^0.5.1",
         "fake-indexeddb": "^6.0.0",
-        "happy-dom": "^14.12.3"
+        "happy-dom": "^15.7.4"
     },
     "peerDependencies": {
-        "@phosphor-icons/vue": "~2",
-        "@safelight/safelight": "workspace:^",
-        "@vueuse/core": "~10",
-        "@vueuse/rxjs": "~10",
-        "@vueuse/shared": "~10",
-        "primevue": "~3",
-        "vue": "~3",
-        "vue-i18n": "next"
+        "@phosphor-icons/vue": "^2.2.1",
+        "@vueuse/core": "^11.0.3",
+        "@vueuse/rxjs": "^11.0.3",
+        "vue": "^3.5.4",
+        "vue-i18n": "10.0.3"
     }
 }

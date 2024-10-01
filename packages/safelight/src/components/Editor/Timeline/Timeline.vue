@@ -1,106 +1,157 @@
 <template>
-    <SLTimeline
-        v-if="timeline"
-        v-model:items="items"
-        :playback-position="pbPos"
-        :fps="timeline.framerate.value"
-        :invert-scroll-axes="invertScrollAxes.value"
-        :zoom-factor="zoomFactor.value"
-        :alignment="alignment.value"
-        class="timeline h-full"
-        @update:playback-position="setPbPos"
-    />
+    <canvas ref="canvas" class="size-full"></canvas>
 </template>
 
 <script setup lang="ts">
 import { CurrentProject } from '@/stores/currentProject';
+import type BaseTimelineItem from '@safelight/shared/base/TimelineItem';
 import { SettingsManager } from '@safelight/shared/Settings/SettingsManager';
-import Timecode from '@safelight/shared/Timecode';
-import { Timeline as SLTimeline, type TimelineItem } from '@safelight/timeline/source';
-import { v4 as uuidv4 } from 'uuid';
-import { computed, reactive } from 'vue';
+import { createTimelineManager, type CreateTimelineFn } from '@safelight/timeline';
+import { TimelineCursorElement } from '@safelight/timeline/elements/TimelineCursorElement';
+import { TimelineGrid } from '@safelight/timeline/elements/TimelineGrid';
+import { TimelineLayer } from '@safelight/timeline/elements/TimelineLayer';
+import { VideoTimelineElement } from '@safelight/timeline/elements/VideoTimelineElement';
+import { syncRef, watchArray } from '@vueuse/core';
+import { computed, onMounted, ref, shallowReactive, watch, watchEffect } from 'vue';
 
-const ids = new Array(17).fill('').map(() => uuidv4());
+const projectTimeline = computed(() => CurrentProject.project.value?.timeline?.value);
 
-const timeline = computed(() => CurrentProject.project.value?.timeline?.value);
-const pbPos = computed(() =>
-    timeline?.value
-        ? Timecode.fromFrames(timeline.value.pbPos.value, timeline.value.framerate.value)
-        : 0
-);
+const canvas = ref<HTMLCanvasElement>();
+
 const invertScrollAxes = SettingsManager.getSetting<boolean>('editor.timeline.useTrackpad');
-const zoomFactor = SettingsManager.getSetting<number>('editor.timeline.zoomFactor');
-const alignment = SettingsManager.getSetting<'top' | 'bottom'>('editor.timeline.align');
+// const zoomFactor = SettingsManager.getSetting<number>('editor.timeline.zoomFactor');
+// const alignment = SettingsManager.getSetting<'top' | 'bottom'>('editor.timeline.align');
 
-function setPbPos(pb?: number) {
-    if (pb !== undefined && !Number.isNaN(pb) && timeline?.value) {
-        timeline.value.pbPos.value = Timecode.toFrames(pb, timeline.value.framerate.value);
-    }
-}
+const timelineManager = ref<CreateTimelineFn>();
+onMounted(() => {
+    if (canvas.value) {
+        watch(
+            projectTimeline,
+            (projectTimeline, _old, onCleanup) => {
+                console.log(CurrentProject.project.value);
+                if (!projectTimeline) {
+                    return;
+                }
 
-const items = reactive<{ [key: string]: TimelineItem }>({
-    [ids[0]]: {
-        id: ids[0],
-        name: '100 start',
-        start: 1000,
-        duration: 5000,
-        layer: 0
-    },
-    [ids[1]]: {
-        id: ids[1],
-        name: '100 start',
-        start: 1000,
-        duration: 5000,
-        layer: 0
-    },
-    [ids[2]]: {
-        id: ids[2],
-        name: '588 start',
-        start: 5880,
-        duration: 5150,
-        layer: 5
-    },
-    [ids[3]]: {
-        id: ids[3],
-        name: '314 start',
-        start: 3140,
-        duration: 7490,
-        layer: 2
-    },
-    [ids[4]]: {
-        id: ids[4],
-        name: '300 start',
-        start: 3000,
-        duration: 2630,
-        layer: 3
-    },
-    [ids[5]]: {
-        id: ids[5],
-        name: '30 start',
-        start: 300,
-        duration: 7700,
-        layer: 17
-    },
-    [ids[6]]: {
-        id: ids[6],
-        name: '664 start',
-        start: 6640,
-        duration: 2660,
-        layer: 4
-    },
-    [ids[7]]: {
-        id: ids[7],
-        name: '366 start',
-        start: 3660,
-        duration: 1350,
-        layer: 6
-    },
-    [ids[8]]: {
-        id: ids[8],
-        name: '380 start',
-        start: 3800,
-        duration: 4510,
-        layer: 1
+                timelineManager.value = createTimelineManager(canvas.value!);
+
+                const pbCursor = new TimelineCursorElement();
+                const timelineGrid = new TimelineGrid();
+
+                timelineManager.value!.addElement(pbCursor);
+                timelineManager.value!.addElement(timelineGrid);
+
+                onCleanup(() => {
+                    timelineManager.value?.removeElement(pbCursor);
+                    timelineManager.value?.removeElement(timelineGrid);
+                });
+
+                timelineGrid.steps.push(
+                    {
+                        interval: () => projectTimeline.frameDuration.value
+                    },
+                    {
+                        interval: 100
+                    },
+                    {
+                        interval: 1000
+                    },
+                    {
+                        interval: 10000
+                    }
+                );
+
+                watchEffect(() => {
+                    if (projectTimeline) {
+                        pbCursor.frameInterval.value = projectTimeline.frameDuration.value;
+                    }
+                });
+
+                syncRef(pbCursor.cursorPos, projectTimeline.pbPos, {
+                    transform: {
+                        ltr: (val) => Math.round(val / projectTimeline.frameDuration.value),
+                        rtl: (val) => val * projectTimeline.frameDuration.value
+                    }
+                });
+
+                const layers = shallowReactive<TimelineLayer[]>([new TimelineLayer()]);
+
+                onCleanup(() => {
+                    const curLayers = Array.from(
+                        timelineManager.value?.manager.layers.values() ?? []
+                    );
+                    for (const layer of curLayers) {
+                        timelineManager.value?.removeLayer(layer);
+                    }
+                });
+
+                watchArray(
+                    layers,
+                    (_cur, _old, added, removed) => {
+                        for (const layer of added) {
+                            timelineManager.value!.addLayer(layer);
+                        }
+                        if (removed)
+                            for (const layer of removed) {
+                                timelineManager.value!.removeLayer(layer);
+                            }
+                    },
+                    { immediate: true, deep: false }
+                );
+
+                const projectItems = computed(() =>
+                    projectTimeline ? Array.from(projectTimeline.items) : []
+                );
+                const projectItemsToTimelineItems = shallowReactive(
+                    new WeakMap<BaseTimelineItem, VideoTimelineElement>()
+                );
+                watchArray(
+                    projectItems,
+                    (_cur, _old, added, removed) => {
+                        for (const item of added) {
+                            const layerItem = new VideoTimelineElement();
+                            syncRef(item.layer, layerItem.layer);
+
+                            watch(item.layer, (layerIndex) => {
+                                while (layers.length < layerIndex) {
+                                    layers.push(new TimelineLayer());
+                                }
+                            });
+                            timelineManager.value!.addLayerItem(layerItem);
+
+                            projectItemsToTimelineItems.set(item, layerItem);
+                        }
+
+                        if (removed)
+                            for (const item of removed) {
+                                if (projectItemsToTimelineItems.has(item)) {
+                                    timelineManager.value!.removeLayerItem(
+                                        projectItemsToTimelineItems.get(item)!
+                                    );
+                                }
+                            }
+                    },
+                    {
+                        immediate: true
+                    }
+                );
+                onCleanup(() => {
+                    const curItems = Array.from(
+                        timelineManager.value?.manager.allLayerItems.values() ?? []
+                    );
+                    for (const item of curItems) {
+                        timelineManager.value?.removeLayerItem(item);
+                    }
+                });
+
+                // Settings
+                syncRef(invertScrollAxes, timelineManager.value!.manager.invertScrollAxes, {
+                    direction: 'ltr',
+                    immediate: false // dunno why
+                });
+            },
+            { immediate: true }
+        );
     }
 });
 </script>

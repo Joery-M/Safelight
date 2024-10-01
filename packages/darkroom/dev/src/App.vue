@@ -126,9 +126,7 @@ async function execute() {
                 log.value += '\n' + util.format(`${label}: ${time}ms`);
             }
         } as Console,
-        // Couldnt find a simple way of doing this without allowing for time based attacks
-        // eslint-disable-next-line @typescript-eslint/ban-types
-        setTimeout(callback: Function, ms: number) {
+        setTimeout(callback: () => any, ms: number) {
             setTimeout(callback, ms + Math.random() * 2 - 1);
         }
     });

@@ -33,33 +33,33 @@
     },
     "dependencies": {
         "@endo/static-module-record": "^1.1.1",
-        "esbuild-wasm": "^0.23.0",
+        "esbuild-wasm": "^0.24.0",
         "path-browserify": "^1.0.1",
         "rxjs": "^7.8.1",
-        "ses": "^1.4.1"
+        "ses": "^1.8.0"
     },
     "devDependencies": {
         "@tsconfig/node20": "^20.1.4",
-        "@types/path-browserify": "^1.0.2",
-        "@vitest/browser": "^2.0.4",
-        "@vitest/ui": "^2.0.4",
-        "playwright": "^1.45.3",
+        "@types/path-browserify": "^1.0.3",
+        "@vitest/browser": "^2.1.1",
+        "@vitest/ui": "^2.1.1",
+        "playwright": "^1.47.2",
         "rimraf": "^6.0.1",
-        "typescript": "^5.5.4",
-        "vite": "^5.3.5",
-        "vite-plugin-dts": "^3.9.1",
-        "vitest": "^2.0.4"
+        "typescript": "^5.6.2",
+        "vite": "^5.4.7",
+        "vite-plugin-dts": "^4.2.2",
+        "vitest": "^2.1.1"
     },
     "optionalDependencies": {
         "@codemirror/lang-javascript": "^6.2.2",
-        "@types/node": "^20.14.12",
-        "@vitejs/plugin-vue": "^5.1.0",
+        "@types/node": "^22.7.0",
+        "@vitejs/plugin-vue": "^5.1.4",
         "@vue/tsconfig": "^0.5.1",
-        "@vueuse/core": "^10.11.0",
-        "@vueuse/rxjs": "^10.11.0",
+        "@vueuse/core": "^11.1.0",
+        "@vueuse/rxjs": "^11.1.0",
         "timer-shim": "^0.3.0",
         "util": "^0.12.5",
-        "vite-plugin-mkcert": "^1.17.5",
+        "vite-plugin-mkcert": "^1.17.6",
         "vue-codemirror": "^6.1.1"
     }
 }

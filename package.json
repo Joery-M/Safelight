@@ -9,7 +9,6 @@
     "build": "pnpm \"/build:(?!(packages)|(safelight))/\" && pnpm build:safelight",
     "build:packages": "pnpm \"/build:(?!(packages)|(safelight))/\"",
     "build:darkroom": "cd packages/darkroom && pnpm build",
-    "build:timeline": "cd packages/timeline && pnpm build",
     "build:safelight": "cd packages/safelight && pnpm build",
     "build:jswebm": "cd packages/jswebm && pnpm build",
     "test": "pnpm run -r --parallel \"/test:run.*/\"",
@@ -32,22 +31,25 @@
     "packages/plugin-types"
   ],
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^7.17.0",
-    "@typescript-eslint/parser": "^7.17.0",
-    "@vitejs/plugin-vue": "^5.1.0",
-    "@vitest/browser": "^2.0.4",
-    "@vitest/ui": "^2.0.4",
-    "eslint": "^8.57.0",
+    "@eslint/js": "^9.11.1",
+    "@intlify/eslint-plugin-vue-i18n": "^3.0.0",
+    "@types/eslint__js": "^8.42.3",
+    "@vitejs/plugin-vue": "^5.1.4",
+    "@vitest/browser": "^2.1.1",
+    "@vitest/ui": "^2.1.1",
+    "eslint": "^9.11.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-tailwindcss": "^3.17.4",
-    "eslint-plugin-vue": "^9.27.0",
+    "eslint-plugin-vue": "^9.28.0",
+    "globals": "^15.9.0",
     "prettier": "^3.3.3",
-    "prettier-plugin-tailwindcss": "^0.6.5",
-    "typescript-eslint": "^7.17.0",
-    "vite": "^5.3.5",
-    "vitest": "^2.0.4",
-    "vue": "^3.4.34"
+    "prettier-plugin-tailwindcss": "^0.6.6",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.7.0",
+    "vite": "^5.4.7",
+    "vitest": "^2.1.1",
+    "vue": "^3.5.8"
   },
-  "packageManager": "pnpm@8.15.8+sha256.691fe176eea9a8a80df20e4976f3dfb44a04841ceb885638fe2a26174f81e65e"
+  "packageManager": "pnpm@9.11.0+sha512.0a203ffaed5a3f63242cd064c8fb5892366c103e328079318f78062f24ea8c9d50bc6a47aa3567cabefd824d170e78fa2745ed1f16b132e16436146b7688f19b"
 }

@@ -90,6 +90,8 @@ declare module 'vue-i18n' {
     outputFile += jsonRes;
     // Finishing touches
     outputFile += `\n}\n`;
+    // LF to CRLF
+    outputFile = outputFile.replace(/(?<!\r)\n/g, '\r\n');
 
     // No need to wait for finishing writing, if it does take long, skip it
     writeFile(output, outputFile.replaceAll('\n', '\r\n'), { signal: AbortSignal.timeout(100) });
