@@ -696,6 +696,7 @@ export enum MatroskaElements {
      * The `TrackType` defines the type of each frame found in the `Track`.
      * The value **SHOULD** be stored on 1 octet.
      *
+     * @range not 0
      * @maxOccurs 1
      * @minOccurs 1
      * @id 0x83
@@ -799,7 +800,7 @@ export enum MatroskaElements {
     /**
      * @interface {@link Elements.FlagLacing}
      * @definition
-     * Set to 1 if the track **MAY** contain blocks that use lacing. When set to 0, all blocks **MUST** have their lacing flags set to "no lacing"; see (#block-lacing) on `Block` Lacing.
+     * Set to 1 if the track **MAY** contain blocks that use lacing. When set to 0, all blocks **MUST** have their lacing flags set to "no lacing"; see (#block-lacing) on 'Block' Lacing.
      *
      * @default 1
      * @range 0-1
@@ -2015,6 +2016,7 @@ export enum MatroskaElements {
      * Values (big-endian) can be OR'ed.
      *
      * @default 1
+     * @range not 0
      * @maxOccurs 1
      * @minOccurs 1
      * @id 0x5032
@@ -2115,6 +2117,7 @@ export enum MatroskaElements {
      * @definition
      * The AES cipher mode used in the encryption.
      *
+     * @range not 0
      * @minver 4
      * @maxOccurs 1
      * @minOccurs 1
@@ -2738,8 +2741,6 @@ export enum MatroskaElements {
      * @interface {@link Elements.ChapProcessCodecID}
      * @definition
      * Contains the type of the codec used for processing.
-     * A value of 0 means built-in Matroska processing (to be defined), and a value of 1 means the DVD command set is used; see (#menu-features) on DVD menus.
-     * More codec IDs can be added later.
      *
      * @default 0
      * @maxOccurs 1
@@ -2821,7 +2822,12 @@ export enum MatroskaElements {
      * @definition
      * A number to indicate the logical level of the target.
      *
+     * @usage notes
+     * The `TargetTypeValue` values are meant to be compared.
+     *     Higher values **MUST** correspond to a logical level that contains the lower logical level `TargetTypeValue` values.
+     *
      * @default 50
+     * @range not 0
      * @maxOccurs 1
      * @minOccurs 1
      * @id 0x68CA
@@ -3782,6 +3788,7 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         path: '\\Segment\\Tracks\\TrackEntry\\TrackType',
         id: '0x83',
         type: ElementType.Uinteger,
+        range: 'not 0',
         minOccurs: '1',
         maxOccurs: '1',
         pathArray: [
@@ -5164,8 +5171,8 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         path: '\\Segment\\Tracks\\TrackEntry\\Video\\Projection\\ProjectionPoseYaw',
         id: '0x7673',
         type: ElementType.Float,
-        range: '>= -0xB4p+0, <= 0xB4p+0',
         minver: '4',
+        range: '>= -0xB4p+0, <= 0xB4p+0',
         default: '0x0p+0',
         minOccurs: '1',
         maxOccurs: '1',
@@ -5567,6 +5574,7 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         path: '\\Segment\\Tracks\\TrackEntry\\ContentEncodings\\ContentEncoding\\ContentEncodingScope',
         id: '0x5032',
         type: ElementType.Uinteger,
+        range: 'not 0',
         default: '1',
         minOccurs: '1',
         maxOccurs: '1',
@@ -5717,6 +5725,7 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         id: '0x47E8',
         type: ElementType.Uinteger,
         minver: '4',
+        range: 'not 0',
         minOccurs: '1',
         maxOccurs: '1',
         pathArray: [
@@ -6403,8 +6412,8 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         path: '\\Segment\\Chapters\\EditionEntry\\+ChapterAtom\\ChapterSkipType',
         id: '0x4588',
         type: ElementType.Uinteger,
-        maxOccurs: '1',
         minver: '5',
+        maxOccurs: '1',
         pathArray: [
             MatroskaElements.Segment,
             MatroskaElements.Chapters,
@@ -6673,6 +6682,7 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
         path: '\\Segment\\Tags\\Tag\\Targets\\TargetTypeValue',
         id: '0x68CA',
         type: ElementType.Uinteger,
+        range: 'not 0',
         default: '50',
         minOccurs: '1',
         maxOccurs: '1',
@@ -7434,20 +7444,7 @@ export namespace Elements {
      * @minOccurs 1
      * @id 0x69BF
      */
-    export enum ChapterTranslateCodec {
-        /**
-         * @definition
-         * Chapter commands using the Matroska Script codec.
-         *
-         */
-        MatroskaScript = 0,
-        /**
-         * @definition
-         * Chapter commands using the DVD-like codec.
-         *
-         */
-        DvdMenu = 1
-    }
+    export type ChapterTranslateCodec = number;
 
     /**
      * @definition
@@ -8010,6 +8007,7 @@ export namespace Elements {
      * The `TrackType` defines the type of each frame found in the `Track`.
      * The value **SHOULD** be stored on 1 octet.
      *
+     * @range not 0
      * @maxOccurs 1
      * @minOccurs 1
      * @id 0x83
@@ -8162,7 +8160,7 @@ export namespace Elements {
 
     /**
      * @definition
-     * Set to 1 if the track **MAY** contain blocks that use lacing. When set to 0, all blocks **MUST** have their lacing flags set to "no lacing"; see (#block-lacing) on `Block` Lacing.
+     * Set to 1 if the track **MAY** contain blocks that use lacing. When set to 0, all blocks **MUST** have their lacing flags set to "no lacing"; see (#block-lacing) on 'Block' Lacing.
      *
      * @default 1
      * @range 0-1
@@ -8526,20 +8524,7 @@ export namespace Elements {
      * @minOccurs 1
      * @id 0x66BF
      */
-    export enum TrackTranslateCodec {
-        /**
-         * @definition
-         * Chapter commands using the Matroska Script codec.
-         *
-         */
-        MatroskaScript = 0,
-        /**
-         * @definition
-         * Chapter commands using the DVD-like codec.
-         *
-         */
-        DvdMenu = 1
-    }
+    export type TrackTranslateCodec = number;
 
     /**
      * @definition
@@ -9917,6 +9902,7 @@ export namespace Elements {
      * Values (big-endian) can be OR'ed.
      *
      * @default 1
+     * @range not 0
      * @maxOccurs 1
      * @minOccurs 1
      * @id 0x5032
@@ -9927,13 +9913,13 @@ export namespace Elements {
          * All frame contents, excluding lacing data.
          *
          */
-        Block = 1,
+        Block = 0x1,
         /**
          * @definition
          * The track's `CodecPrivate` data.
          *
          */
-        Private = 2,
+        Private = 0x2,
         /**
          * @definition
          * The next ContentEncoding (next `ContentEncodingOrder`; the data inside `ContentCompression` and/or `ContentEncryption`).
@@ -9942,7 +9928,7 @@ export namespace Elements {
          * This value **SHOULD NOT** be used, as it's not supported by players.
          *
          */
-        Next = 4
+        Next = 0x4
     }
 
     /**
@@ -10130,6 +10116,7 @@ export namespace Elements {
      * @definition
      * The AES cipher mode used in the encryption.
      *
+     * @range not 0
      * @minver 4
      * @maxOccurs 1
      * @minOccurs 1
@@ -10892,15 +10879,26 @@ export namespace Elements {
     /**
      * @definition
      * Contains the type of the codec used for processing.
-     * A value of 0 means built-in Matroska processing (to be defined), and a value of 1 means the DVD command set is used; see (#menu-features) on DVD menus.
-     * More codec IDs can be added later.
      *
      * @default 0
      * @maxOccurs 1
      * @minOccurs 1
      * @id 0x6955
      */
-    export type ChapProcessCodecID = number;
+    export enum ChapProcessCodecID {
+        /**
+         * @definition
+         * Chapter commands using the Matroska Script codec.
+         *
+         */
+        MatroskaScript = 0,
+        /**
+         * @definition
+         * Chapter commands using the DVD-like codec.
+         *
+         */
+        DvdMenu = 1
+    }
 
     /**
      * @definition
@@ -11000,7 +10998,12 @@ export namespace Elements {
      * @definition
      * A number to indicate the logical level of the target.
      *
+     * @usage notes
+     * The `TargetTypeValue` values are meant to be compared.
+     *     Higher values **MUST** correspond to a logical level that contains the lower logical level `TargetTypeValue` values.
+     *
      * @default 50
+     * @range not 0
      * @maxOccurs 1
      * @minOccurs 1
      * @id 0x68CA
@@ -11008,34 +11011,10 @@ export namespace Elements {
     export enum TargetTypeValue {
         /**
          * @definition
-         * The highest hierarchical level that tags can describe.
+         * The lowest hierarchy found in music or movies.
          *
          */
-        Collection = 70,
-        /**
-         * @definition
-         * A list of lower levels grouped together.
-         *
-         */
-        EditionIssueVolumeOpusSeasonSequel = 60,
-        /**
-         * @definition
-         * The most common grouping level of music and video (e.g., an episode for TV series).
-         *
-         */
-        AlbumOperaConcertMovieEpisode = 50,
-        /**
-         * @definition
-         * When an album or episode has different logical parts.
-         *
-         */
-        PartSession = 40,
-        /**
-         * @definition
-         * The common parts of an album or movie.
-         *
-         */
-        TrackSongChapter = 30,
+        Shot = 10,
         /**
          * @definition
          * Corresponds to parts of a track for audio, such as a movement or scene in a movie.
@@ -11044,10 +11023,34 @@ export namespace Elements {
         SubtrackMovementScene = 20,
         /**
          * @definition
-         * The lowest hierarchy found in music or movies.
+         * The common parts of an album or movie.
          *
          */
-        Shot = 10
+        TrackSongChapter = 30,
+        /**
+         * @definition
+         * When an album or episode has different logical parts.
+         *
+         */
+        PartSession = 40,
+        /**
+         * @definition
+         * The most common grouping level of music and video (e.g., an episode for TV series).
+         *
+         */
+        AlbumOperaConcertMovieEpisode = 50,
+        /**
+         * @definition
+         * A list of lower levels grouped together.
+         *
+         */
+        EditionIssueVolumeOpusSeasonSequel = 60,
+        /**
+         * @definition
+         * The highest hierarchical level that tags can describe.
+         *
+         */
+        Collection = 70
     }
 
     /**

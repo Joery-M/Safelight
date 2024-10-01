@@ -1,3 +1,5 @@
+import { Observable } from 'rxjs';
+
 export class VideoDemuxer {
     private static demuxers: { [mime: string]: (() => Promise<BaseDemuxer | undefined>)[] } = {};
 
@@ -31,45 +33,35 @@ export class VideoDemuxer {
         return this.demuxer !== undefined;
     }
 
-    async demux(): Promise<DemuxedVideoTrack[] | undefined> {
+    demux() {
         if (!this.demuxer || !this.file) {
             return;
         }
-
         return this.demuxer.DemuxFile(this.file);
     }
 }
 
-// Possible to add more info here if needed, e.g. color space, frame duration
+export type DemuxerOutput = DemuxedVideoTrack | DemuxedAudioTrack | DemuxedChunk[];
+
 export interface DemuxedVideoTrack {
-    id: number;
-    width: number;
-    height: number;
-    codec: string;
-    sampleCount: number;
-    description?: AllowSharedBufferSource;
-    segments: DemuxedVideoSegment[];
+    type: 'video';
+    trackIndex: number;
+    decoderConfig: VideoDecoderConfig;
+}
+export interface DemuxedAudioTrack {
+    type: 'audio';
+    trackIndex: number;
+    decoderConfig: AudioDecoderConfig;
 }
 
-/**
- * A segment representing a range of video chunks that starts with an keyframe
- */
-export interface DemuxedVideoSegment {
-    samples: EncodedVideoChunk[];
-    /**
-     * @unit microseconds
-     */
-    timestamp: number;
-    /**
-     * End of this segment including duration of last chunk
-     *
-     * @unit microseconds
-     */
-    timestampEnd: number;
+export interface DemuxedChunk<ChunkType = EncodedAudioChunk | EncodedVideoChunk> {
+    type: 'chunk';
+    trackIndex: number;
+    chunk: ChunkType;
 }
 
 export interface BaseDemuxer {
-    DemuxFile: (file: File) => Promise<DemuxedVideoTrack[] | undefined>;
+    DemuxFile: (file: File) => Observable<DemuxerOutput>;
 }
 
 // Load default demuxers

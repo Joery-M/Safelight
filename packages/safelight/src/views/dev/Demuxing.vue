@@ -52,6 +52,11 @@
                 </li>
             </ol>
         </template>
+        <ul>
+            <li v-for="track in trackNum.entries()" :key="track[0]">
+                {{ track[0] }}: {{ track[1] }}
+            </li>
+        </ul>
     </Panel>
 </template>
 
@@ -62,7 +67,7 @@ import { useFileDialog, useIntervalFn } from '@vueuse/core';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import Panel from 'primevue/panel';
-import { ref } from 'vue';
+import { reactive, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 
 const fileDialog = useFileDialog({
@@ -77,8 +82,10 @@ const endTime = ref<number>();
 const clock = ref(0);
 useIntervalFn(() => {
     clock.value++;
-}, 100);
+    clock.value %= 1000;
+}, 10);
 const tracks = ref<DemuxedVideoTrack[]>();
+const trackNum = reactive(new Map<number, number>());
 
 fileDialog.onChange((fileList) => {
     if (!fileList || fileList.length == 0) return;
@@ -99,12 +106,28 @@ async function loadFile(source: File) {
     const success = await demuxer.loadFile(source);
     if (success) {
         progress.value = 'Loaded';
+        trackNum.clear();
         demuxFn = async () => {
             startTime.value = Date.now();
             progress.value = 'Start demux';
-            const res = await demuxer.demux();
+            const res = demuxer.demux();
             progress.value = `Demuxed ${res !== undefined}`;
-            tracks.value = res;
+            res?.subscribe({
+                complete() {
+                    console.log('A');
+                },
+                next: (val) => {
+                    if (Array.isArray(val)) {
+                        val.forEach((val) => {
+                            trackNum.set(val.trackIndex, (trackNum.get(val.trackIndex) ?? 0) + 1);
+                        });
+                    } else if (val.type == 'video' || val.type == 'audio') {
+                        trackNum.set(val.trackIndex, 0);
+                        console.log(val);
+                    }
+                }
+            });
+            // tracks.value = res;
             fileDialog.reset();
             endTime.value = Date.now();
         };

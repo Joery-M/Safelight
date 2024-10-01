@@ -7,7 +7,6 @@ export class WebmReader {
     private reader: DataReader;
     private events = new EventEmitter<ReaderEvents>();
 
-    /* eslint-disable prettier/prettier */
     public readonly on: EventEmitter<ReaderEvents>['on'] = (...args) => this.events.on(...args);
     public readonly off: EventEmitter<ReaderEvents>['off'] = (...args) => this.events.off(...args);
     // prettier-ignore
@@ -16,7 +15,6 @@ export class WebmReader {
     public readonly addListener: EventEmitter<ReaderEvents>['addListener'] = (...args) => this.events.addListener(...args);
     // prettier-ignore
     public readonly removeListener: EventEmitter<ReaderEvents>['removeListener'] = (...args) => this.events.removeListener(...args);
-    /* eslint-enable prettier/prettier */
 
     appendChunk(buffer: ArrayBufferLike) {
         this.reader.appendBuffer(buffer);
@@ -44,7 +42,6 @@ export class WebmReader {
      * @param [single=false] Only read 1 element
      */
     readElements<ElementId extends keyof ElementEventMap = keyof ElementEventMap>(single = false) {
-        // eslint-disable-next-line no-constant-condition
         loop: while (true) {
             let element: EbmlElementTag | undefined;
 
@@ -98,7 +95,7 @@ export class WebmReader {
                 default:
                     if (!(element.elementId in ElementInfo)) {
                         // Exclude isMaster, since it isn't known for unknown elements
-                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
                         const { isMaster, ...elemWithoutMaster } = element;
                         this.events.emit('unknownElement', {
                             element: elemWithoutMaster,

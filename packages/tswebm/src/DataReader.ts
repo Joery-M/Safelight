@@ -286,28 +286,26 @@ export class DataReader {
             const elem = ElementInfo[id];
             if (!elem) return [];
 
-            return (
-                Object.entries(ElementInfo)
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    .filter(([_, path]) => {
-                        if (!path) return false;
+            return Object.entries(ElementInfo)
 
-                        if (path.pathArray.length == elem.pathArray.length) {
-                            // Count how many wrong branches, allow only 1
-                            let wrongBranches = 0;
-                            for (let i = 0; i < path.pathArray.length; i++) {
-                                if (path.pathArray[i] !== elem.pathArray[i]) {
-                                    wrongBranches++;
-                                    if (wrongBranches > 1) {
-                                        return false;
-                                    }
+                .filter(([_, path]) => {
+                    if (!path) return false;
+
+                    if (path.pathArray.length == elem.pathArray.length) {
+                        // Count how many wrong branches, allow only 1
+                        let wrongBranches = 0;
+                        for (let i = 0; i < path.pathArray.length; i++) {
+                            if (path.pathArray[i] !== elem.pathArray[i]) {
+                                wrongBranches++;
+                                if (wrongBranches > 1) {
+                                    return false;
                                 }
                             }
-                            return true;
                         }
-                    })
-                    .map(([key]) => parseInt(key))
-            );
+                        return true;
+                    }
+                })
+                .map(([key]) => parseInt(key));
         };
 
         const siblings: number[] = curPath.flatMap((elem) => getSiblings(elem));
