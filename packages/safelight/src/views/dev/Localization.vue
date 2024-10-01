@@ -35,9 +35,7 @@
             <hr />
             <div>
                 <h2>All translations</h2>
-                <p>
-                    {{ $t(Object.keys(previewPath)[0], previewAmount) }}
-                </p>
+                <pre>{{ $t(Object.keys(previewPath)[0], previewAmount) }}</pre>
                 <TreeSelect v-model="previewPath" :options="allPaths" class="w-80 leading-normal">
                     <template #value="{ value }">
                         <template v-if="value[0]"> {{ value[0].key }}</template>

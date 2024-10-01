@@ -24,6 +24,11 @@
                 "created": "Created",
                 "fileType": "File type | File types",
                 "refresh": "Refresh"
+            },
+            "status": {
+                "error": "Error",
+                "errorOccurred": "An error ocurred",
+                "warning": "Warning"
             }
         },
         "project": {
@@ -55,6 +60,16 @@
                 "title": "Monitor",
                 "upload": ""
             }
+        },
+        "storage": {
+            "nonPersistentNotif": {
+                "title": "Project might be deleted",
+                "text": "Your browser might delete data when storing projects locally if it thinks you are running out of storage.\nDo you want to ask the browser to persist data?",
+                "button": "Persist data"
+            }
+        },
+        "notification": {
+            "defaultTitle": "Notification"
         }
     },
     "dateTimeFormat": {

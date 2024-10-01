@@ -24,6 +24,11 @@
                 "created": "Aangemaakt",
                 "fileType": "Bestandstype | Bestandstypen",
                 "refresh": "Herladen"
+            },
+            "status": {
+                "error": "Error",
+                "errorOccurred": "Er is een fout opgetreden",
+                "warning": "Waarschuwing"
             }
         },
         "project": {
@@ -54,6 +59,16 @@
             "monitor": {
                 "title": "Monitor"
             }
+        },
+        "storage": {
+            "nonPersistentNotif": {
+                "title": "Project kan zomaar verwijderd worden",
+                "text": "Uw browser kan uw data verwijderen wanneer het ziet dat u geen opslagruimte meer heeft.\nWilt u de browser vragen om uw data te bewaren?",
+                "button": "Data bewaren"
+            }
+        },
+        "notification": {
+            "defaultTitle": "Melding"
         }
     },
     "dateTimeFormat": {
