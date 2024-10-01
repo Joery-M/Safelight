@@ -1,10 +1,10 @@
 import { useManualRefHistory } from '@vueuse/core';
 import { v4 as uuidv4 } from 'uuid';
 import { computed, ref, shallowReactive } from 'vue';
-import { MediaItem, type MediaItemTypes } from '../Media/Media';
+import { MediaItem, type MediaItemMetadata, type MediaItemTypes } from '../Media/Media';
 import type { TimelineItem } from '../base/TimelineItem';
 
-export default class Timeline extends MediaItem {
+export class Timeline extends MediaItem<TimelineItemMetadata> {
     public id = uuidv4();
     public name = '';
     public type: MediaItemTypes = 'Timeline';
@@ -21,7 +21,7 @@ export default class Timeline extends MediaItem {
         return 1000 / this.framerate.value;
     });
 
-    constructor(config: SimpleTimelineConfig) {
+    constructor(config: TimelineConfig) {
         super();
 
         if (config.name) {
@@ -50,14 +50,7 @@ export default class Timeline extends MediaItem {
         });
     }
 
-    public usesMedia(media: Media) {
-        for (const item of this.items) {
-            return item.hasMedia() && item.media.value == media;
-        }
-        return false;
-    }
-
-    public deleteItem(item: BaseTimelineItem) {
+    public deleteItem(item: TimelineItem) {
         item.Delete();
         return this.items.delete(item);
     }
@@ -129,9 +122,13 @@ export default class Timeline extends MediaItem {
     //#endregion
 }
 
-export interface SimpleTimelineConfig {
+export interface TimelineConfig {
     name?: string;
     width: number;
     height: number;
     framerate: number;
+}
+
+export interface TimelineItemMetadata extends MediaItemMetadata {
+    timelineConfig: TimelineConfig;
 }

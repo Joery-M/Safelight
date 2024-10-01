@@ -1,5 +1,5 @@
 import Dexie, { type Table } from 'dexie';
-import type { StoredMedia, StoredProject, StoredSimpleTimelineItem } from '../base/Storage';
+import type { StoredMedia, StoredProject, StoredSimpleTimelineItem } from '../../base/Storage';
 
 export class SafelightIndexedDB extends Dexie {
     media!: Table<StoredMedia, string>;

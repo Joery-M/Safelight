@@ -1,7 +1,7 @@
 import { IDBKeyRange, indexedDB } from 'fake-indexeddb';
 import { expect, test } from 'vitest';
 import SimpleProject from '../../../src/Project/SimpleProject';
-import IndexedDbStorageController from '../../../src/Storage/IndexedDbStorage';
+import IndexedDbStorageController from '../../../src/Storage/LocalStorage/IndexedDbStorage';
 import { Storage } from '../../../src/base/Storage';
 
 window.indexedDB = indexedDB;

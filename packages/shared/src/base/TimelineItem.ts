@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { ref, shallowReactive } from 'vue';
-import type SimpleTimeline from '../Timeline/Timeline';
+import type { Timeline } from '../Timeline/Timeline';
 
 export abstract class TimelineItem {
     public id = uuidv4();
@@ -20,7 +20,7 @@ export abstract class TimelineItem {
 
     // Might want to change this to BaseTimeline depending on
     // what happens with in terms of other types of timelines
-    private timeline!: SimpleTimeline;
+    private timeline!: Timeline;
 
     /**
      * Whether this timeline item is a ghost.

@@ -10,7 +10,7 @@ import BaseProject, {
 import { Storage } from '../base/Storage';
 import Media from '../Media/Media';
 import MediaManager from '../Storage/MediaManager';
-import SimpleTimeline, { type SimpleTimelineConfig } from '../Timeline/Timeline';
+import { type TimelineConfig, Timeline } from '../Timeline/Timeline';
 
 export default class SimpleProject
     extends BaseProject
@@ -23,7 +23,7 @@ export default class SimpleProject
     public media = shallowReactive<Media[]>([]);
 
     public selectedTimeline = ref<string>();
-    public timelines = shallowReactive<SimpleTimeline[]>([]);
+    public timelines = shallowReactive<Timeline[]>([]);
     // public timeline = computed(() => this.timelines.find(this.selectedTimelineIndex.value)!);
     public timeline = computed(() =>
         this.timelines.find(({ id }) => id == this.selectedTimeline.value)
@@ -50,12 +50,12 @@ export default class SimpleProject
         return this.timelines.some((timeline) => timeline.usesMedia(media));
     }
 
-    public selectTimeline(timeline: SimpleTimeline) {
+    public selectTimeline(timeline: Timeline) {
         this.selectedTimeline.value = timeline.id;
     }
 
-    public createTimeline(config: SimpleTimelineConfig, selectWhenCreated = true): SimpleTimeline {
-        const timeline = new SimpleTimeline(config);
+    public createTimeline(config: TimelineConfig, selectWhenCreated = true): Timeline {
+        const timeline = new Timeline(config);
 
         this.timelines.push(timeline);
 

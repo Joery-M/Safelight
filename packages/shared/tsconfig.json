@@ -9,6 +9,7 @@
         "test/**/*.spec.ts",
         "../../globals.d.ts"
     ],
+    "exclude": ["src/**/*.worker.ts"],
     "compilerOptions": {
         "noEmit": false,
         "moduleResolution": "Bundler",
@@ -19,6 +20,16 @@
         "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
 
-        "types": ["vite/client", "vue-i18n"]
-    }
+        "types": [
+            "vite/client",
+            "vue-i18n",
+            "@types/wicg-file-system-access",
+            "../safelight/types/i18n.d.ts"
+        ]
+    },
+    "references": [
+        {
+            "path": "./tsconfig.workers.json"
+        }
+    ]
 }

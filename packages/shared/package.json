@@ -17,6 +17,7 @@
         "luxon": "^3.5.0",
         "mediainfo.js": "^0.3.2",
         "mime-matcher": "^1.0.5",
+        "opfs-tools": "^0.6.1",
         "rxjs": "^7.8.1",
         "uuid": "^10.0.0"
     },
@@ -24,6 +25,7 @@
         "@tsconfig/node20": "^20.1.4",
         "@types/luxon": "^3.4.2",
         "@types/uuid": "^10.0.0",
+        "@types/wicg-file-system-access": "^2023.10.5",
         "@vue/tsconfig": "^0.5.1",
         "fake-indexeddb": "^6.0.0",
         "happy-dom": "^15.7.4"

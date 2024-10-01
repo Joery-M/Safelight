@@ -1,7 +1,6 @@
 import type { MediaItem, MediaItemTypes } from '../Media/Media';
-import type Timeline from '../Timeline/Timeline';
 import type { default as BaseProject, ProjectType } from './Project';
-import type { TimelineItem, TimelineItemType } from './TimelineItem';
+import type { TimelineItemType } from './TimelineItem';
 
 export default abstract class BaseStorageController {
     public version: string = '0.0.0';
@@ -17,24 +16,20 @@ export default abstract class BaseStorageController {
     abstract SaveMedia(media: MediaItem): Promise<SaveResults>;
     abstract LoadMedia<M extends MediaItem>(mediaId: string): Promise<M | undefined>;
 
-    abstract WriteFile(
-        filePath: string[],
-        data: ArrayBufferLike,
-        start?: number
-    ): Promise<ArrayBuffer | undefined>;
+    abstract GetBaseFilePath(type: FilePathTypes): string[] | undefined;
+    abstract WriteFile(filePath: string[], data: ArrayBufferLike, start?: number): Promise<void>;
     abstract ReadFile(
         filePath: string[],
         start?: number,
         size?: number
     ): Promise<ArrayBuffer | undefined>;
-
-    abstract SaveTimeline(timeline: TimelineItem): Promise<SaveResults>;
-    abstract LoadTimeline(timelineId: string): Promise<Timeline | undefined>;
 }
 
 export class Storage {
     public static async getProjects(): Promise<StoredProject[]> {
-        const storageControllers = [(await import('../Storage/IndexedDbStorage')).default];
+        const storageControllers = [
+            (await import('../Storage/LocalStorage/IndexedDbStorage')).IndexedDbStorageController
+        ];
 
         const getPromises = storageControllers.map((controller) => controller.getProjects());
 
@@ -59,6 +54,7 @@ export class Storage {
 }
 
 export type SaveResults = 'Success' | 'Cancelled' | 'Error' | (string & {});
+export type FilePathTypes = 'media-files' | 'thumbnails' | (string & {});
 
 export interface StoredMedia {
     id: string;

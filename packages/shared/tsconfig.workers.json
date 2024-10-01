@@ -1,0 +1,17 @@
+{
+    "extends": "@vue/tsconfig/tsconfig.dom.json",
+    "include": ["src/**/*.worker.ts"],
+    "compilerOptions": {
+        "noEmit": false,
+        "moduleResolution": "Bundler",
+        "composite": true,
+
+        "verbatimModuleSyntax": true,
+        "lib": ["WebWorker", "ESNext"],
+
+        "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true,
+
+        "types": ["vite/client", "vue-i18n", "@types/wicg-file-system-access"]
+    }
+}
