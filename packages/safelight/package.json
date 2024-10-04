@@ -29,6 +29,7 @@
         "@vueuse/integrations": "^11.1.0",
         "@vueuse/math": "^11.1.0",
         "@vueuse/rxjs": "^11.1.0",
+        "comlink": "^4.4.1",
         "dexie": "^4.0.8",
         "dot-path-value": "^0.0.11",
         "fuzzysearch": "^1.0.3",

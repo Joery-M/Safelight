@@ -75,7 +75,8 @@ export default defineConfig({
             'primevue/usedialog',
             'rxjs',
             'uuid',
-            'eventemitter3'
+            'eventemitter3',
+            'comlink'
         ]
     },
     server: {

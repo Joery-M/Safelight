@@ -73,3 +73,11 @@ VideoDemuxer.RegisterDemuxer(
     'video/quicktime',
     async () => new (await import('./mp4/Mp4Demuxer')).Mp4Demuxer()
 );
+VideoDemuxer.RegisterDemuxer(
+    'video/x-matroska',
+    async () => new (await import('./webm/WebmDemuxer')).WebmDemuxer()
+);
+VideoDemuxer.RegisterDemuxer(
+    'video/webm',
+    async () => new (await import('./webm/WebmDemuxer')).WebmDemuxer()
+);

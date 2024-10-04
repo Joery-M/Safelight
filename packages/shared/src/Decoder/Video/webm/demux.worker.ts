@@ -1,17 +1,21 @@
 import { Elements, MatroskaElements } from '@safelight/tswebm/elements';
 import { WebmReader } from '@safelight/tswebm/WebmReader';
+import { expose } from 'comlink';
 import type { WorkerOutput } from './WebmDemuxer';
 
-async function demux(source: File) {
+export async function demux(source: File, callback: (event: WorkerOutput) => void) {
     const demuxer = new WebmReader({});
 
     const reader = source.stream().getReader();
+
+    const tracksHaveSentData = new Map<number, boolean>();
 
     demuxer.on(MatroskaElements.TrackEntry, (track) => {
         if (track.TrackType == Elements.TrackType.Video) {
             if (track.CodecID) {
             }
-            self.postMessage({
+            tracksHaveSentData.set(track.TrackNumber, true);
+            callback({
                 type: 'video',
                 trackIndex: track.TrackNumber,
                 decoderConfig: {
@@ -19,7 +23,7 @@ async function demux(source: File) {
                 }
             } as WorkerOutput);
         } else if (track.TrackType == Elements.TrackType.Audio && track.Audio) {
-            self.postMessage({
+            callback({
                 type: 'audio',
                 trackIndex: track.TrackNumber,
                 decoderConfig: {
@@ -40,18 +44,12 @@ async function demux(source: File) {
         }
         demuxer.appendChunk(chunk.value);
     }
+
+    callback({
+        type: 'done'
+    });
 }
 
 function getVideoCodecString() {}
 
-self.addEventListener('message', (ev) => {
-    if ('source' in ev.data) {
-        demux(ev.data.source as File)
-            .then(() => {
-                self.postMessage({ type: 'done' });
-            })
-            .catch((error) => {
-                self.postMessage({ type: 'error', error });
-            });
-    }
-});
+expose({ demux });

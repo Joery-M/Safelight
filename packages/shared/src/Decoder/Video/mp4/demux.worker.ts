@@ -8,82 +8,81 @@ import {
     type Sample
 } from 'mp4box';
 
+import * as Comlink from 'comlink';
 import type { DemuxedAudioTrack, DemuxedChunk, DemuxedVideoTrack } from '../VideoDemuxer';
 import type { WorkerOutput } from './Mp4Demuxer';
 
-function demux(source: File) {
-    return new Promise((resolve) => {
-        const file = createFile();
+export function demux(source: File, callback: (event: WorkerOutput) => any) {
+    const file = createFile();
 
-        const reader = source.stream().getReader();
+    const reader = source.stream().getReader();
 
-        const result: (DemuxedVideoTrack | DemuxedAudioTrack)[] = [];
+    const result: (DemuxedVideoTrack | DemuxedAudioTrack)[] = [];
 
-        file.onError = (e: string) => {
-            console.error(e);
-        };
-        file.onReady = (info: MP4Info) => {
-            result.push(...onReady(info, file));
+    file.onError = (e: string) => {
+        console.error(e);
+    };
+    file.onReady = (info: MP4Info) => {
+        result.push(...onReady(info, file));
 
-            for (const track of result) {
-                self.postMessage(track as WorkerOutput);
-                file.setExtractionOptions(track.trackIndex, void 0, void 0);
-                file.start();
-            }
-        };
+        for (const track of result) {
+            callback(track as WorkerOutput);
+            file.setExtractionOptions(track.trackIndex, void 0, void 0);
+            file.start();
+        }
+    };
 
-        readChunk(reader, file, 0).then(() => {
-            file.flush();
-        });
-
-        /**
-         * Its possible for tracks to report the wrong sample count, so this is just a safeguard
-         */
-        let doneTimeout: ReturnType<typeof setTimeout>;
-
-        file.onSamples = (_id: number, _user: any, samples: Sample[]) => {
-            clearTimeout(doneTimeout);
-            doneTimeout = setTimeout(() => {
-                resolve(result);
-            }, 500);
-
-            const chunks: DemuxedChunk[] = [];
-
-            for (const sample of samples) {
-                const type = sample.is_sync ? 'key' : 'delta';
-
-                const track = result.find((t) => t.trackIndex == sample.track_id);
-
-                if (track?.type == 'video') {
-                    const chunk = new EncodedVideoChunk({
-                        type: type,
-                        timestamp: (1e6 * sample.cts) / sample.timescale,
-                        duration: (1e6 * sample.duration) / sample.timescale,
-                        data: sample.data
-                    });
-                    chunks.push({
-                        type: 'chunk',
-                        trackIndex: sample.track_id,
-                        chunk
-                    });
-                } else if (track?.type == 'audio') {
-                    const chunk = new EncodedAudioChunk({
-                        type: type,
-                        timestamp: (1e6 * sample.cts) / sample.timescale,
-                        duration: (1e6 * sample.duration) / sample.timescale,
-                        data: sample.data
-                    });
-                    chunks.push({
-                        type: 'chunk',
-                        trackIndex: sample.track_id,
-                        chunk
-                    });
-                }
-            }
-            self.postMessage(chunks);
-            return;
-        };
+    readChunk(reader, file, 0).then(() => {
+        file.flush();
     });
+
+    /**
+     * Its possible for tracks to report the wrong sample count, so this is just a safeguard
+     */
+    let doneTimeout: ReturnType<typeof setTimeout>;
+
+    file.onSamples = (_id: number, _user: any, samples: Sample[]) => {
+        clearTimeout(doneTimeout);
+        doneTimeout = setTimeout(() => {
+            callback({ type: 'done' });
+        }, 500);
+
+        const chunks: DemuxedChunk[] = [];
+
+        for (const sample of samples) {
+            const type = sample.is_sync ? 'key' : 'delta';
+
+            const track = result.find((t) => t.trackIndex == sample.track_id);
+
+            if (track?.type == 'video') {
+                const chunk = new EncodedVideoChunk({
+                    type: type,
+                    timestamp: (1e6 * sample.cts) / sample.timescale,
+                    duration: (1e6 * sample.duration) / sample.timescale,
+                    data: sample.data
+                });
+                chunks.push({
+                    type: 'chunk',
+                    trackIndex: sample.track_id,
+                    chunk
+                });
+            } else if (track?.type == 'audio') {
+                const chunk = new EncodedAudioChunk({
+                    type: type,
+                    timestamp: (1e6 * sample.cts) / sample.timescale,
+                    duration: (1e6 * sample.duration) / sample.timescale,
+                    data: sample.data
+                });
+                chunks.push({
+                    type: 'chunk',
+                    trackIndex: sample.track_id,
+                    chunk
+                });
+            }
+        }
+        callback(chunks);
+        return;
+    };
 }
 /**
  * Use an existing file reader to read a chunk.
@@ -160,14 +159,6 @@ function getExtradata(entries: any) {
     }
 }
 
-self.addEventListener('message', (ev) => {
-    if ('source' in ev.data) {
-        demux(ev.data.source as File)
-            .then(() => {
-                self.postMessage({ type: 'done' });
-            })
-            .catch((error) => {
-                self.postMessage({ type: 'error', error });
-            });
-    }
+Comlink.expose({
+    demux
 });
