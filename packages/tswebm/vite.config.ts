@@ -21,20 +21,16 @@ export default defineConfig((config) => {
         build: {
             lib: {
                 formats: config.mode == 'development' ? ['es'] : ['es', 'cjs'],
-                entry: resolve(import.meta.dirname, 'src/index.ts'),
+                entry: [
+                    resolve(import.meta.dirname, 'src/index.ts'),
+                    resolve(import.meta.dirname, 'src/elements.ts')
+                ],
                 fileName(format, entryName) {
                     return entryName + (format == 'es' ? '.js' : '.cjs');
                 }
             },
             sourcemap: config.mode == 'development' ? true : 'hidden',
-            minify: false,
-            rollupOptions: {
-                output: {
-                    manualChunks: (id) => {
-                        if (id.endsWith('elements.ts')) return 'elements';
-                    }
-                }
-            }
+            minify: false
         }
     };
 });

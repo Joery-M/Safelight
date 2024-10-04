@@ -17,16 +17,16 @@
     "types": "dist/index.d.ts",
     "exports": {
         "./*": {
-            "default": "./dist/*.js",
-            "require": "./dist/*.cjs",
-            "import": "./dist/*.js",
-            "types": "./dist/*.d.ts"
+            "default": ["./src/*.ts", "./dist/*.js"],
+            "require": ["./dist/*.cjs"],
+            "import": ["./src/*.ts", "./dist/*.js"],
+            "types": ["./src/*.ts", "./dist/*.d.ts"]
         },
         ".": {
-            "default": "./dist/index.js",
-            "require": "./dist/index.cjs",
-            "import": "./dist/index.js",
-            "types": "./dist/index.d.ts"
+            "default": ["./src/index.ts", "./dist/index.js"],
+            "require": ["./dist/index.cjs"],
+            "import": ["./src/index.ts", "./dist/index.js"],
+            "types": ["./src/index.ts", "./dist/index.d.ts"]
         }
     },
     "type": "module",
