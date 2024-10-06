@@ -32,26 +32,6 @@
             </template>
         </p>
         <p>{{ clock }}</p>
-        <template v-if="tracks">
-            <ol>
-                <li v-for="track in tracks" :key="track.id">
-                    {{ track.codec }}, {{ track.width }}x{{ track.height }}
-                    <ul>
-                        <li v-for="segment in track.segments" :key="segment.timestamp">
-                            {{ segment.timestamp }} - {{ segment.timestampEnd }}
-                            <ol>
-                                <li v-for="chunk in segment.samples" :key="chunk.timestamp">
-                                    {{ chunk.type }}:
-                                    <template v-if="chunk.duration">
-                                        {{ chunk.duration / 1000 }}ms
-                                    </template>
-                                </li>
-                            </ol>
-                        </li>
-                    </ul>
-                </li>
-            </ol>
-        </template>
         <ul>
             <li v-for="track in trackNum.entries()" :key="track[0]">
                 {{ track[0] }}: {{ track[1] }}
@@ -114,12 +94,17 @@ async function loadFile(source: File) {
             progress.value = `Demuxed ${res !== undefined}`;
             res?.subscribe({
                 complete() {
-                    console.log('A');
+                    endTime.value = Date.now();
                 },
                 next: (val) => {
                     if (Array.isArray(val)) {
                         val.forEach((val) => {
-                            trackNum.set(val.trackIndex, (trackNum.get(val.trackIndex) ?? 0) + 1);
+                            if (trackNum.has(val.trackIndex)) {
+                                trackNum.set(
+                                    val.trackIndex,
+                                    (trackNum.get(val.trackIndex) ?? 0) + 1
+                                );
+                            }
                         });
                     } else if (val.type == 'video' || val.type == 'audio') {
                         trackNum.set(val.trackIndex, 0);
@@ -129,7 +114,6 @@ async function loadFile(source: File) {
             });
             // tracks.value = res;
             fileDialog.reset();
-            endTime.value = Date.now();
         };
         if (autoDemux.value) {
             demuxFn();

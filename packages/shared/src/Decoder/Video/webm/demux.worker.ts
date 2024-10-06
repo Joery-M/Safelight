@@ -49,7 +49,7 @@ export async function demux(source: File, callback: (event: WorkerOutput) => voi
                                 codec: `vp09.${headerInfo.profile.toString().padStart(2, '0')}.10.${headerInfo.bitDepth.toString().padStart(2, '0')}`,
                                 codedWidth: track.Video!.PixelWidth,
                                 codedHeight: track.Video!.PixelHeight
-                            } as VideoDecoderConfig,
+                            },
                             trackIndex: block.TrackNumber,
                             type: 'video'
                         });
@@ -63,6 +63,46 @@ export async function demux(source: File, callback: (event: WorkerOutput) => voi
 
                     default:
                         break;
+                }
+            } else if (track.TrackType == Elements.TrackType.Audio) {
+                let codecString: string | undefined;
+                if (track.CodecID.startsWith('A_AAC/')) {
+                    codecString = 'aac';
+                } else {
+                    switch (track.CodecID) {
+                        case 'A_MPEG/L3':
+                            codecString = 'mp3';
+                            break;
+                        case 'A_OPUS':
+                            codecString = 'opus';
+                            break;
+                        case 'A_VORBIS':
+                            codecString = 'vorbis';
+                            break;
+                        case 'A_ALAC':
+                            codecString = 'alac';
+                            break;
+                        case 'A_FLAC':
+                            codecString = 'flac';
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+
+                if (codecString) {
+                    callback({
+                        decoderConfig: {
+                            codec: codecString,
+                            numberOfChannels: track.Audio!.Channels,
+                            sampleRate: track.Audio!.SamplingFrequency,
+                            description: track.CodecPrivate
+                        },
+                        trackIndex: block.TrackNumber,
+                        type: 'audio'
+                    });
+                    completeTracks.add(track.TrackNumber);
                 }
             }
         }
