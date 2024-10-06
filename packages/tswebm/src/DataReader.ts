@@ -312,7 +312,7 @@ export class DataReader {
 
         // const pool = workerpool.pool();
 
-        const walkBuffer = (buffer: ArrayBufferLike, siblings: number[], offset: number) => {
+        const walkBuffer = (buffer: ArrayBuffer, siblings: number[], offset: number) => {
             const data = new DataView(buffer);
             const res = this.readElementId(offset, data);
             if (!res) {

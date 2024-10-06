@@ -13,9 +13,9 @@ export class Block {
     TimeStamp: number;
     Flags: number;
 
-    data: ArrayBufferLike;
+    data: ArrayBuffer;
     constructor(
-        public totalBuffer: ArrayBufferLike,
+        public totalBuffer: ArrayBuffer,
         timestampOffset = 0
     ) {
         this.buffer = new DataView(this.totalBuffer);
