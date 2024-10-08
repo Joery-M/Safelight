@@ -1,4 +1,4 @@
-// This file is temporary so i can figure out how to extract the codec string
+// This file is temporary so i can figure out how to extract the VP9 codec string
 
 // VP9
 // https://developer.mozilla.org/en-US/docs/Web/Media/Formats/codecs_parameter#vp9

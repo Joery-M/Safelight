@@ -36,19 +36,19 @@ export async function demux(source: File, callback: (event: WorkerOutput) => voi
 
         if (!isTrackComplete) {
             if (track.TrackType == Elements.TrackType.Video) {
-                const dv = new DataView(block.data);
                 switch (track.CodecID) {
                     case 'V_AV1':
                         break;
                     case 'V_VP9': {
+                        const dv = new DataView(block.data);
                         const headerInfo = decodeVP9Header(dv);
 
                         callback({
                             decoderConfig: {
                                 // It doesn't seem like neither Firefox nor Chromium care about the level. So I just rolled a dice and set it to 1.0
                                 codec: `vp09.${headerInfo.profile.toString().padStart(2, '0')}.10.${headerInfo.bitDepth.toString().padStart(2, '0')}`,
-                                codedWidth: track.Video!.PixelWidth,
-                                codedHeight: track.Video!.PixelHeight
+                                codedWidth: track.Video!.DisplayWidth ?? track.Video!.PixelWidth,
+                                codedHeight: track.Video!.DisplayHeight ?? track.Video!.PixelHeight
                             },
                             trackIndex: block.TrackNumber,
                             type: 'video'
@@ -56,17 +56,43 @@ export async function demux(source: File, callback: (event: WorkerOutput) => voi
                         completeTracks.add(track.TrackNumber);
                         break;
                     }
+                    case 'V_MPEG4/ISO/HEVC':
                     case 'V_MPEGH/ISO/HEVC':
                         break;
-                    case 'V_MPEGH/ISO/AVC':
+                    case 'V_MPEG4/ISO/AVC':
+                    case 'V_MPEGH/ISO/AVC': {
+                        // Technically this already could have been done in the track callback, but eh
+                        if (!track.CodecPrivate) break;
+                        const view = new DataView(track.CodecPrivate);
+                        const codecData = decodeAVCPrivateData(view);
+
+                        if (!codecData) break;
+
+                        const codecString = `avc1.${codecData.profile_idc
+                            .toString(16)
+                            .padStart(2, '0')}${codecData.profile_compat
+                            .toString(16)
+                            .padStart(2, '0')}${codecData.level_idc.toString(16).padStart(2, '0')}`;
+
+                        callback({
+                            decoderConfig: {
+                                codec: codecString,
+                                codedWidth: track.Video!.DisplayWidth ?? track.Video!.PixelWidth,
+                                codedHeight: track.Video!.DisplayHeight ?? track.Video!.PixelHeight
+                            },
+                            trackIndex: block.TrackNumber,
+                            type: 'video'
+                        });
+                        completeTracks.add(track.TrackNumber);
                         break;
+                    }
 
                     default:
                         break;
                 }
             } else if (track.TrackType == Elements.TrackType.Audio) {
                 let codecString: string | undefined;
-                if (track.CodecID.startsWith('A_AAC/')) {
+                if (track.CodecID.startsWith('A_AAC')) {
                     codecString = 'aac';
                 } else {
                     switch (track.CodecID) {
@@ -231,6 +257,26 @@ function decodeAV1Header(data: DataView) {
     }
     // Idk man
     const type = (firstByte >> 7) & 0x1;
+}
+
+/**
+ * @reference https://gitlab.com/mbunkus/mkvtoolnix/-/blob/main/src/common/avc/avcc.cpp?ref_type=heads#L149
+ */
+function decodeAVCPrivateData(buffer: DataView) {
+    if (buffer.byteLength <= 6) return;
+
+    // Skip first, always 1
+    let offset = 1;
+
+    const profile_idc = buffer.getUint8(offset++);
+    const profile_compat = buffer.getUint8(offset++);
+    const level_idc = buffer.getUint8(offset++);
+
+    return {
+        profile_idc,
+        profile_compat,
+        level_idc
+    };
 }
 
 expose({ demux });
