@@ -18,9 +18,91 @@ export async function demux(source: File, callback: (event: WorkerOutput) => voi
     demuxer.on(MatroskaElements.TrackEntry, (track) => {
         if (track.TrackType == Elements.TrackType.Video) {
             tracks.set(track.TrackNumber, track);
+
+            // Set codec string for video codecs that have enough info at the start
+
+            switch (track.CodecID) {
+                case 'V_MPEG4/ISO/HEVC':
+                case 'V_MPEGH/ISO/HEVC':
+                    break;
+                case 'V_MPEG4/ISO/AVC':
+                case 'V_MPEGH/ISO/AVC': {
+                    // Technically this already could have been done in the track callback, but eh
+                    if (!track.CodecPrivate) break;
+                    const view = new DataView(track.CodecPrivate);
+                    const codecData = decodeAVCPrivateData(view);
+
+                    if (!codecData) break;
+
+                    const codecString = `avc1.${codecData.profile_idc
+                        .toString(16)
+                        .padStart(2, '0')}${codecData.profile_compat
+                        .toString(16)
+                        .padStart(2, '0')}${codecData.level_idc.toString(16).padStart(2, '0')}`;
+
+                    callback({
+                        decoderConfig: {
+                            codec: codecString,
+                            codedWidth: track.Video!.DisplayWidth ?? track.Video!.PixelWidth,
+                            codedHeight: track.Video!.DisplayHeight ?? track.Video!.PixelHeight
+                        },
+                        trackIndex: track.TrackNumber,
+                        type: 'video'
+                    });
+                    completeTracks.add(track.TrackNumber);
+                    break;
+                }
+
+                default:
+                    break;
+            }
+
             console.log('Video', track.CodecID);
         } else if (track.TrackType == Elements.TrackType.Audio && track.Audio) {
             tracks.set(track.TrackNumber, track);
+
+            // Set codec string for audio
+
+            let codecString: string | undefined;
+            if (track.CodecID.startsWith('A_AAC')) {
+                codecString = 'aac';
+            } else {
+                switch (track.CodecID) {
+                    case 'A_MPEG/L3':
+                        codecString = 'mp3';
+                        break;
+                    case 'A_OPUS':
+                        codecString = 'opus';
+                        break;
+                    case 'A_VORBIS':
+                        codecString = 'vorbis';
+                        break;
+                    case 'A_ALAC':
+                        codecString = 'alac';
+                        break;
+                    case 'A_FLAC':
+                        codecString = 'flac';
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+            if (codecString) {
+                callback({
+                    decoderConfig: {
+                        codec: codecString,
+                        numberOfChannels: track.Audio!.Channels,
+                        sampleRate: track.Audio!.SamplingFrequency,
+                        description: track.CodecPrivate
+                    },
+                    trackIndex: track.TrackNumber,
+                    type: 'audio'
+                });
+                completeTracks.add(track.TrackNumber);
+            }
+
             console.log('Audio', track.CodecID);
         }
     });
@@ -56,79 +138,9 @@ export async function demux(source: File, callback: (event: WorkerOutput) => voi
                         completeTracks.add(track.TrackNumber);
                         break;
                     }
-                    case 'V_MPEG4/ISO/HEVC':
-                    case 'V_MPEGH/ISO/HEVC':
-                        break;
-                    case 'V_MPEG4/ISO/AVC':
-                    case 'V_MPEGH/ISO/AVC': {
-                        // Technically this already could have been done in the track callback, but eh
-                        if (!track.CodecPrivate) break;
-                        const view = new DataView(track.CodecPrivate);
-                        const codecData = decodeAVCPrivateData(view);
-
-                        if (!codecData) break;
-
-                        const codecString = `avc1.${codecData.profile_idc
-                            .toString(16)
-                            .padStart(2, '0')}${codecData.profile_compat
-                            .toString(16)
-                            .padStart(2, '0')}${codecData.level_idc.toString(16).padStart(2, '0')}`;
-
-                        callback({
-                            decoderConfig: {
-                                codec: codecString,
-                                codedWidth: track.Video!.DisplayWidth ?? track.Video!.PixelWidth,
-                                codedHeight: track.Video!.DisplayHeight ?? track.Video!.PixelHeight
-                            },
-                            trackIndex: block.TrackNumber,
-                            type: 'video'
-                        });
-                        completeTracks.add(track.TrackNumber);
-                        break;
-                    }
 
                     default:
                         break;
-                }
-            } else if (track.TrackType == Elements.TrackType.Audio) {
-                let codecString: string | undefined;
-                if (track.CodecID.startsWith('A_AAC')) {
-                    codecString = 'aac';
-                } else {
-                    switch (track.CodecID) {
-                        case 'A_MPEG/L3':
-                            codecString = 'mp3';
-                            break;
-                        case 'A_OPUS':
-                            codecString = 'opus';
-                            break;
-                        case 'A_VORBIS':
-                            codecString = 'vorbis';
-                            break;
-                        case 'A_ALAC':
-                            codecString = 'alac';
-                            break;
-                        case 'A_FLAC':
-                            codecString = 'flac';
-                            break;
-
-                        default:
-                            break;
-                    }
-                }
-
-                if (codecString) {
-                    callback({
-                        decoderConfig: {
-                            codec: codecString,
-                            numberOfChannels: track.Audio!.Channels,
-                            sampleRate: track.Audio!.SamplingFrequency,
-                            description: track.CodecPrivate
-                        },
-                        trackIndex: block.TrackNumber,
-                        type: 'audio'
-                    });
-                    completeTracks.add(track.TrackNumber);
                 }
             }
         }

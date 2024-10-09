@@ -31,7 +31,11 @@
                 , {{ endTime - startTime }}ms
             </template>
         </p>
-        <p>{{ clock }}</p>
+        <div :class="{ slow: clock - average > 1 }" class="slow-indicator"></div>
+        <p>
+            {{ clock }}, <br />
+            {{ average }}
+        </p>
         <ul>
             <li v-for="track in trackNum.entries()" :key="track[0]">
                 {{ track[0] }}: {{ track[1] }}
@@ -43,16 +47,15 @@
 <script lang="ts" setup>
 import { PhArrowLeft, PhUpload } from '@phosphor-icons/vue';
 import { VideoDemuxer, type DemuxedVideoTrack } from '@safelight/shared/Decoder/Video/VideoDemuxer';
-import { useFileDialog, useIntervalFn } from '@vueuse/core';
+import { useFileDialog } from '@vueuse/core';
+import { useAverage } from '@vueuse/math';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import Panel from 'primevue/panel';
-import { reactive, ref } from 'vue';
+import { onUnmounted, reactive, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 
-const fileDialog = useFileDialog({
-    accept: 'video/*'
-});
+const fileDialog = useFileDialog();
 
 const progress = ref('No file');
 const autoDemux = ref(false);
@@ -60,10 +63,26 @@ const startTime = ref<number>();
 const endTime = ref<number>();
 
 const clock = ref(0);
-useIntervalFn(() => {
-    clock.value++;
-    clock.value %= 1000;
-}, 10);
+let lastTick = performance.now();
+let animFrameCallback: number | undefined;
+const measurements = reactive<number[]>([]);
+const average = useAverage(measurements);
+
+function tick(now: DOMHighResTimeStamp) {
+    clock.value = now - lastTick;
+    lastTick = performance.now();
+    animFrameCallback = requestAnimationFrame(tick);
+
+    measurements.push(clock.value);
+    while (measurements.length > 10000) {
+        measurements.shift();
+    }
+}
+animFrameCallback = requestAnimationFrame(tick);
+
+onUnmounted(() => {
+    if (animFrameCallback) cancelAnimationFrame(animFrameCallback);
+});
 const tracks = ref<DemuxedVideoTrack[]>();
 const trackNum = reactive(new Map<number, number>());
 
@@ -124,3 +143,15 @@ async function loadFile(source: File) {
     }
 }
 </script>
+
+<style lang="scss" scoped>
+.slow-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: green;
+    &.slow {
+        background-color: red;
+    }
+}
+</style>
