@@ -22,11 +22,9 @@ export async function demux(source: File, callback: (event: WorkerOutput) => voi
             // Set codec string for video codecs that have enough info at the start
 
             switch (track.CodecID) {
-                case 'V_MPEG4/ISO/HEVC':
                 case 'V_MPEGH/ISO/HEVC':
                     break;
-                case 'V_MPEG4/ISO/AVC':
-                case 'V_MPEGH/ISO/AVC': {
+                case 'V_MPEG4/ISO/AVC': {
                     // Technically this already could have been done in the track callback, but eh
                     if (!track.CodecPrivate) break;
                     const view = new DataView(track.CodecPrivate);
@@ -56,8 +54,6 @@ export async function demux(source: File, callback: (event: WorkerOutput) => voi
                 default:
                     break;
             }
-
-            console.log('Video', track.CodecID);
         } else if (track.TrackType == Elements.TrackType.Audio && track.Audio) {
             tracks.set(track.TrackNumber, track);
 
@@ -102,8 +98,6 @@ export async function demux(source: File, callback: (event: WorkerOutput) => voi
                 });
                 completeTracks.add(track.TrackNumber);
             }
-
-            console.log('Audio', track.CodecID);
         }
     });
 
@@ -198,6 +192,8 @@ export async function demux(source: File, callback: (event: WorkerOutput) => voi
     });
 }
 
+//#region VP9 header
+
 function decodeVP9Header(data: DataView) {
     const vpx_rb_read_bit = (buffer: DataView, offset = 0) => {
         const p = offset >> 3;
@@ -261,6 +257,8 @@ function decodeVP9Header(data: DataView) {
     };
 }
 
+//#region AV1 header
+
 function decodeAV1Header(data: DataView) {
     const firstByte = data.getInt8(0);
     const forbiddenBit = (firstByte >> 7) & 0x1;
@@ -270,6 +268,8 @@ function decodeAV1Header(data: DataView) {
     // Idk man
     const type = (firstByte >> 7) & 0x1;
 }
+
+//#region AVC private data
 
 /**
  * @reference https://gitlab.com/mbunkus/mkvtoolnix/-/blob/main/src/common/avc/avcc.cpp?ref_type=heads#L149
