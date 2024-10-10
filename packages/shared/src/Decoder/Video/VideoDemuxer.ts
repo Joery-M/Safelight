@@ -1,17 +1,17 @@
 import { Observable } from 'rxjs';
 
 export class VideoDemuxer {
-    private static demuxers: { [mime: string]: (() => Promise<BaseDemuxer | undefined>)[] } = {};
+    private static demuxers = new Map<string, (() => Promise<BaseDemuxer | undefined>)[]>();
 
     static RegisterDemuxer(mimeType: string, demuxer: () => Promise<BaseDemuxer | undefined>) {
-        this.demuxers[mimeType] ||= [];
-        this.demuxers[mimeType].push(demuxer);
+        const existingArr = this.demuxers.get(mimeType) ?? [];
+        this.demuxers.set(mimeType, [...existingArr, demuxer]);
     }
 
     static async GetDemuxer(file: File): Promise<BaseDemuxer | undefined> {
-        console.log(file.type);
-        if (file.type in this.demuxers) {
-            for await (const demuxerProm of this.demuxers[file.type]) {
+        if (this.demuxers.has(file.type)) {
+            const possibleDemuxers = this.demuxers.get(file.type) ?? [];
+            for await (const demuxerProm of possibleDemuxers) {
                 try {
                     const demuxer = await demuxerProm();
                     if (demuxer) {
@@ -41,7 +41,7 @@ export class VideoDemuxer {
     }
 }
 
-export type DemuxerOutput = DemuxedVideoTrack | DemuxedAudioTrack | DemuxedChunk[];
+export type DemuxerOutput = DemuxedVideoTrack | DemuxedAudioTrack | DemuxedChunkArray;
 
 export interface DemuxedVideoTrack {
     type: 'video';
@@ -52,6 +52,11 @@ export interface DemuxedAudioTrack {
     type: 'audio';
     trackIndex: number;
     decoderConfig: AudioDecoderConfig;
+}
+
+export interface DemuxedChunkArray {
+    type: 'chunks';
+    chunks: DemuxedChunk[];
 }
 
 export interface DemuxedChunk<ChunkType = EncodedAudioChunk | EncodedVideoChunk> {

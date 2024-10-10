@@ -11,12 +11,11 @@ export class Mp4Demuxer implements BaseDemuxer {
             worker.demux(
                 source,
                 proxy((event) => {
-                    console.log(event);
-                    if (Array.isArray(event) || event.type !== 'done') {
-                        subscriber.next(event);
-                    } else if (event.type == 'done') {
+                    if (event.type == 'done') {
                         subscriber.complete();
                         worker[releaseProxy]();
+                    } else {
+                        subscriber.next(event);
                     }
                 })
             );

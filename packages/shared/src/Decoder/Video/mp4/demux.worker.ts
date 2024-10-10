@@ -80,7 +80,7 @@ export function demux(source: File, callback: (event: WorkerOutput) => any) {
                 });
             }
         }
-        callback(chunks);
+        callback({ type: 'chunks', chunks });
         return;
     };
 }

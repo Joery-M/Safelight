@@ -116,8 +116,11 @@ async function loadFile(source: File) {
                     endTime.value = Date.now();
                 },
                 next: (val) => {
-                    if (Array.isArray(val)) {
-                        val.forEach((val) => {
+                    if (val.type == 'video' || val.type == 'audio') {
+                        trackNum.set(val.trackIndex, 0);
+                        console.log(val);
+                    } else if (val.type == 'chunks') {
+                        val.chunks.forEach((val) => {
                             if (trackNum.has(val.trackIndex)) {
                                 trackNum.set(
                                     val.trackIndex,
@@ -125,9 +128,6 @@ async function loadFile(source: File) {
                                 );
                             }
                         });
-                    } else if (val.type == 'video' || val.type == 'audio') {
-                        trackNum.set(val.trackIndex, 0);
-                        console.log(val);
                     }
                 }
             });

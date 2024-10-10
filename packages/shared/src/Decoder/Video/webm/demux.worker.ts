@@ -169,7 +169,7 @@ export async function demux(source: File, callback: (event: WorkerOutput) => voi
             });
         }
         if (curIndex >= 1000) {
-            callback(blockBuffer);
+            callback({ type: 'chunks', chunks: blockBuffer });
             blockBuffer = [];
         }
     });
@@ -187,7 +187,7 @@ export async function demux(source: File, callback: (event: WorkerOutput) => voi
     }
 
     if (blockBuffer.length > 0) {
-        callback(blockBuffer);
+        callback({ type: 'chunks', chunks: blockBuffer });
         blockBuffer = [];
     }
 
