@@ -18,6 +18,8 @@ jobs:
 
         steps:
             - uses: actions/checkout@v4
+              with:
+                submodules: recursive
 
             - name: Enable Corepack
               run: corepack enable
@@ -43,3 +45,6 @@ jobs:
 
             - name: Test shared
               run: pnpm test:shared
+
+            - name: Test tswebm
+              run: pnpm test:tswebm

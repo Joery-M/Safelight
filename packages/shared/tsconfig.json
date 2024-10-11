@@ -3,7 +3,7 @@
     "include": [
         "*.d.ts",
         "src/**/*",
-        "types/*.d.ts",
+        "./types/*.d.ts",
         "src/**/*.vue",
         "src/**/*.json",
         "test/**/*.spec.ts",
@@ -19,6 +19,6 @@
         "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
 
-        "types": ["vite/client", "vue-i18n"]
+        "types": ["vite/client", "vue-i18n", "@types/dom-webcodecs"]
     }
 }

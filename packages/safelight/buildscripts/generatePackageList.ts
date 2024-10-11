@@ -17,6 +17,10 @@ const projects = [
         outputFileName: 'packages-timeline.json'
     },
     {
+        projectPath: 'packages/tswebm',
+        outputFileName: 'packages-tswebm.json'
+    },
+    {
         projectPath: '',
         outputFileName: 'packages-workspace.json'
     }
