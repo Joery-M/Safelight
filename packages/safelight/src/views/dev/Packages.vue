@@ -68,6 +68,15 @@
                                                 text-decoration-line: none;
                                             "
                                         >
+                                            <PhDevToLogo
+                                                v-if="item.isDev"
+                                                v-tooltip="{
+                                                    value: 'Development package',
+                                                    pt: { root: { style: 'margin-left: 9px;' } }
+                                                }"
+                                                style="width: 20px"
+                                                class="align-text-top"
+                                            />
                                             {{ item.from }}
                                             <PhArrowSquareOut class="align-text-top" />
                                         </a>
@@ -168,7 +177,13 @@
 </template>
 
 <script setup lang="ts">
-import { PhArrowLeft, PhArrowSquareOut, PhGitBranch, PhHouse } from '@phosphor-icons/vue';
+import {
+    PhArrowLeft,
+    PhArrowSquareOut,
+    PhDevToLogo,
+    PhGitBranch,
+    PhHouse
+} from '@phosphor-icons/vue';
 import { useDebounce, useFetch } from '@vueuse/core';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
@@ -239,6 +254,14 @@ onMounted(() => {
                 ...convertDepsToDepsWithNames(packages.devDependencies, true)
             ];
         });
+    fetch(new URL('@/generated/packages-tswebm.json', import.meta.url))
+        .then((r) => r.json())
+        .then((packages: Packages) => {
+            allPackagesPerProject['tswebm'] = [
+                ...convertDepsToDepsWithNames(packages.dependencies),
+                ...convertDepsToDepsWithNames(packages.devDependencies, true)
+            ];
+        });
 });
 
 function openUrl(link: string) {
@@ -252,15 +275,14 @@ function convertDepsToDepsWithNames(
     if (!deps) {
         return [];
     }
-    // First sort by dev package, then sort by name
-
+    // Add isDev flag, then sort by name, and remove workspace packages
     return Object.entries(deps)
         .map((dep) => ({ ...dep[1], name: dep[0], isDev }))
-        .sort(
-            (a, b) =>
-                +(a.isDev > b.isDev) ||
-                +(a.isDev === b.isDev) - 1 ||
-                a.from.localeCompare(b.from, undefined, { ignorePunctuation: true })
+        .sort((a, b) =>
+            a.from.localeCompare(b.from, undefined, {
+                ignorePunctuation: true,
+                sensitivity: 'base'
+            })
         )
         .filter((dep) => !dep.name.includes('safelight'));
 }

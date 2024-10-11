@@ -11,18 +11,21 @@
         "test:run": "vitest run --ui false"
     },
     "dependencies": {
+        "@safelight/tswebm": "workspace:^",
         "dexie": "^4.0.8",
         "dot-path-value": "^0.0.11",
         "hash-wasm": "^4.11.0",
         "luxon": "^3.5.0",
         "mediainfo.js": "^0.3.2",
         "mime-matcher": "^1.0.5",
+        "mp4box": "^0.5.2",
         "opfs-tools": "^0.6.1",
         "rxjs": "^7.8.1",
         "uuid": "^10.0.0"
     },
     "devDependencies": {
         "@tsconfig/node20": "^20.1.4",
+        "@types/dom-webcodecs": "^0.1.11",
         "@types/luxon": "^3.4.2",
         "@types/uuid": "^10.0.0",
         "@types/wicg-file-system-access": "^2023.10.5",
@@ -34,7 +37,8 @@
         "@phosphor-icons/vue": "^2.2.1",
         "@vueuse/core": "^11.0.3",
         "@vueuse/rxjs": "^11.0.3",
+        "comlink": "^4.4.1",
         "vue": "^3.5.4",
-        "vue-i18n": "10.0.3"
+        "vue-i18n": "10.0.4"
     }
 }

@@ -3,7 +3,7 @@
     "include": [
         "*.d.ts",
         "src/**/*",
-        "types/*.d.ts",
+        "./types/*.d.ts",
         "src/**/*.vue",
         "src/**/*.json",
         "test/**/*.spec.ts",
@@ -23,6 +23,7 @@
         "types": [
             "vite/client",
             "vue-i18n",
+            "@types/dom-webcodecs",
             "@types/wicg-file-system-access",
             "../safelight/types/i18n.d.ts"
         ]

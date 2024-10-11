@@ -37,5 +37,8 @@ jobs:
             # - name: Build Timeline
             #   run: pnpm build:timeline
 
-            - name: Build safelight
+            - name: Build TsWebm
+              run: pnpm build:tswebm
+
+            - name: Build Safelight
               run: pnpm build:safelight

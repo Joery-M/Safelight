@@ -91,7 +91,7 @@ declare module 'vue-i18n' {
     // Finishing touches
     outputFile += `\n}\n`;
     // LF to CRLF
-    outputFile = outputFile.replace(/(?<!\r)\n/g, '\r\n');
+    outputFile = outputFile.replace(/((?<!\r)\n|\r(?!\n))/g, '\r\n');
 
     // No need to wait for finishing writing, if it does take long, skip it
     writeFile(output, outputFile, { signal: AbortSignal.timeout(100) });

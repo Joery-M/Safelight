@@ -1,0 +1,59 @@
+{
+    "name": "@safelight/tswebm",
+    "version": "1.0.0",
+    "author": "Joery Münninghoff",
+    "keywords": [
+        "webm",
+        "matroska"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Joery-M/Safelight"
+    },
+    "contributors": [],
+    "license": "MIT",
+    "main": "dist/index.cjs",
+    "module": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "exports": {
+        "./*": {
+            "default": ["./src/*.ts", "./dist/*.js"],
+            "require": ["./dist/*.cjs"],
+            "import": ["./src/*.ts", "./dist/*.js"],
+            "types": ["./src/*.ts", "./dist/*.d.ts"]
+        },
+        ".": {
+            "default": ["./src/index.ts", "./dist/index.js"],
+            "require": ["./dist/index.cjs"],
+            "import": ["./src/index.ts", "./dist/index.js"],
+            "types": ["./src/index.ts", "./dist/index.d.ts"]
+        }
+    },
+    "type": "module",
+    "scripts": {
+        "dev": "vite build --mode=development --watch",
+        "clean": "rimraf -g ./dist/* ./tsconfig.lib.tsbuildinfo",
+        "build": "pnpm run \"/(clean|generate:elements)/\" && pnpm run --sequential \"/(build:).*/\"",
+        "build:vite": "vite build",
+        "build:tsc": "tsc --emitDeclarationOnly --project tsconfig.lib.json && rm ./tsconfig.lib.tsbuildinfo",
+        "generate:elements": "tsx ./tools/SchemaParser.ts https://raw.githubusercontent.com/ietf-wg-cellar/matroska-specification/master/ebml_matroska.xml && prettier ./src/elements.ts --write --print-width 110",
+        "test": "vitest --ui",
+        "test:run": "vitest run --ui false"
+    },
+    "devDependencies": {
+        "@rollup/plugin-terser": "^0.4.4",
+        "@types/node": "^22.7.0",
+        "@vitest/ui": "^2.1.1",
+        "change-case": "^5.4.4",
+        "eventemitter3": "^5.0.1",
+        "fast-xml-parser": "^4.4.0",
+        "happy-dom": "^15.7.4",
+        "prettier": "^3.3.3",
+        "rimraf": "^6.0.1",
+        "tsx": "^4.19.1",
+        "typescript": "^5.6.2",
+        "vite": "^5.4.7",
+        "vite-plugin-dts": "^4.2.2",
+        "vitest": "^2.1.1"
+    }
+}
