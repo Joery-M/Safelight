@@ -3,12 +3,12 @@ import { Observable } from 'rxjs';
 export class VideoDemuxer {
     private static demuxers = new Map<string, (() => Promise<BaseDemuxer | undefined>)[]>();
 
-    static RegisterDemuxer(mimeType: string, demuxer: () => Promise<BaseDemuxer | undefined>) {
+    static registerDemuxer(mimeType: string, demuxer: () => Promise<BaseDemuxer | undefined>) {
         const existingArr = this.demuxers.get(mimeType) ?? [];
         this.demuxers.set(mimeType, [...existingArr, demuxer]);
     }
 
-    static async GetDemuxer(file: File): Promise<BaseDemuxer | undefined> {
+    static async getDemuxer(file: File): Promise<BaseDemuxer | undefined> {
         if (this.demuxers.has(file.type)) {
             const possibleDemuxers = this.demuxers.get(file.type) ?? [];
             for await (const demuxerProm of possibleDemuxers) {
@@ -28,7 +28,7 @@ export class VideoDemuxer {
     private file?: File;
 
     async loadFile(file: File) {
-        this.demuxer = await VideoDemuxer.GetDemuxer(file);
+        this.demuxer = await VideoDemuxer.getDemuxer(file);
         this.file = file;
         return this.demuxer !== undefined;
     }
@@ -37,7 +37,7 @@ export class VideoDemuxer {
         if (!this.demuxer || !this.file) {
             return;
         }
-        return this.demuxer.DemuxFile(this.file);
+        return this.demuxer.demuxFile(this.file);
     }
 }
 
@@ -66,23 +66,23 @@ export interface DemuxedChunk<ChunkType = EncodedAudioChunk | EncodedVideoChunk>
 }
 
 export interface BaseDemuxer {
-    DemuxFile: (file: File) => Observable<DemuxerOutput>;
+    demuxFile: (file: File) => Observable<DemuxerOutput>;
 }
 
 // Load default demuxers
-VideoDemuxer.RegisterDemuxer(
+VideoDemuxer.registerDemuxer(
     'video/mp4',
     async () => new (await import('./mp4/Mp4Demuxer')).Mp4Demuxer()
 );
-VideoDemuxer.RegisterDemuxer(
+VideoDemuxer.registerDemuxer(
     'video/quicktime',
     async () => new (await import('./mp4/Mp4Demuxer')).Mp4Demuxer()
 );
-VideoDemuxer.RegisterDemuxer(
+VideoDemuxer.registerDemuxer(
     'video/x-matroska',
     async () => new (await import('./webm/WebmDemuxer')).WebmDemuxer()
 );
-VideoDemuxer.RegisterDemuxer(
+VideoDemuxer.registerDemuxer(
     'video/webm',
     async () => new (await import('./webm/WebmDemuxer')).WebmDemuxer()
 );

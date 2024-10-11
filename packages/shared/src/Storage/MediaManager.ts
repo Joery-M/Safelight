@@ -1,14 +1,11 @@
 import { Observable } from 'rxjs';
 
 export default class MediaManager {
-    static StoreMedia(file: File) {
-        return new Observable<LoadMediaProgress>((subscriber) => {
-            // Thanks RxJs, makes sense
-            (async () => {
-                // TODO: implement after #34
-            })();
-        });
+    static storeMedia(file: File) {
+        return new Observable<LoadMediaProgress>((subscriber) => {});
     }
+
+    static generateThumbnail() {}
 }
 
 interface LoadMediaProgress {

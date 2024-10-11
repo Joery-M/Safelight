@@ -16,7 +16,7 @@ export class IndexedDbStorageController extends BaseStorageController {
 
     private db = new SafelightIndexedDB();
 
-    async SaveProject(project: BaseProject, includeTimelines = true): Promise<SaveResults> {
+    async saveProject(project: BaseProject, includeTimelines = true): Promise<SaveResults> {
         this.checkPersistentStorage();
         const existingProject = await this.db.project.get({ id: project.id });
 
@@ -37,7 +37,7 @@ export class IndexedDbStorageController extends BaseStorageController {
             await this.db.project.put(storableProject, project.id);
 
             if (includeTimelines) {
-                const proms = project.timelines.map((timeline) => this.SaveMedia(timeline));
+                const proms = project.timelines.map((timeline) => this.saveMedia(timeline));
                 await Promise.allSettled(proms);
             }
 
@@ -46,7 +46,7 @@ export class IndexedDbStorageController extends BaseStorageController {
             return error.toString();
         }
     }
-    async LoadProject(projectId: string): Promise<BaseProject | undefined> {
+    async loadProject(projectId: string): Promise<BaseProject | undefined> {
         return this.db.project
             .get(projectId)
             .then<SimpleProject | undefined, never>(async (project) => {
@@ -56,7 +56,7 @@ export class IndexedDbStorageController extends BaseStorageController {
                     const proj = new SimpleProject();
                     proj.id = project.id;
                     const mediaFetches = project.media.map(async (m) => {
-                        const media = await this.LoadMedia(m).catch((reason) => {
+                        const media = await this.loadMedia(m).catch((reason) => {
                             console.error('Error loading media into project', reason);
                         });
                         if (media) {
@@ -83,7 +83,7 @@ export class IndexedDbStorageController extends BaseStorageController {
                 }
             });
     }
-    async UpdateStoredProject(
+    async updateStoredProject(
         project: Partial<StoredProject> & Pick<StoredProject, 'id'>
     ): Promise<SaveResults> {
         this.checkPersistentStorage();
@@ -114,7 +114,7 @@ export class IndexedDbStorageController extends BaseStorageController {
         });
     }
 
-    async SaveMedia(media: MediaItem | StoredMedia): Promise<SaveResults> {
+    async saveMedia(media: MediaItem | StoredMedia): Promise<SaveResults> {
         this.checkPersistentStorage();
 
         const storedMedia: StoredMedia =
@@ -122,7 +122,7 @@ export class IndexedDbStorageController extends BaseStorageController {
                 ? {
                       name: media.name,
                       id: media.id,
-                      created: (await media.getMetadata('media'))!.created,
+                      created: media.getMetadata('media')!.created,
                       metadata: await media.serializeMetadata(),
                       type: media.type
                   }
@@ -136,7 +136,7 @@ export class IndexedDbStorageController extends BaseStorageController {
             return 'Error';
         }
     }
-    async LoadMedia<M extends MediaItem>(mediaId: string): Promise<M | undefined> {
+    async loadMedia<M extends MediaItem>(mediaId: string): Promise<M | undefined> {
         const storedMedia = await this.db.media.get({ id: mediaId });
 
         switch (storedMedia?.type) {
@@ -181,7 +181,7 @@ export class IndexedDbStorageController extends BaseStorageController {
         }
     }
 
-    GetBaseFilePath(type: FilePathTypes) {
+    getBaseFilePath(type: FilePathTypes) {
         switch (type) {
             case 'media-files':
                 return ['media', 'files'];
@@ -192,7 +192,7 @@ export class IndexedDbStorageController extends BaseStorageController {
         }
     }
 
-    async ReadFile(filePath: string[], start = 0, size?: number): Promise<ArrayBuffer | undefined> {
+    async readFile(filePath: string[], start = 0, size?: number): Promise<ArrayBuffer | undefined> {
         const file = opfsTools.file(filePath.join('/'), 'r');
         const reader = await file.createReader();
 
@@ -202,15 +202,22 @@ export class IndexedDbStorageController extends BaseStorageController {
         return reader.read(size, { at: start });
     }
 
-    async WriteFile(filePath: string[], data: ArrayBufferLike, start?: number) {
-        const writer = await opfsTools.file(filePath.join('/'), 'rw').createWriter();
+    async writeFile(filePath: string[], data: ArrayBuffer, start?: number) {
+        const file = opfsTools.file(filePath.join('/'), 'rw');
 
-        const buff = Buffer.from(data);
         if (start) {
-            writer.write(buff, { at: start });
+            const writer = await file.createWriter();
+            writer.write(data, { at: start });
         } else {
-            writer.write(buff);
+            await file.remove();
+            const writer = await file.createWriter();
+            writer.write(data);
         }
+    }
+
+    async DeleteFile(filePath: string[]) {
+        const file = opfsTools.file(filePath.join('/'));
+        await file.remove();
     }
 
     private notificationShown = false;

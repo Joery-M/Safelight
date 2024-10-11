@@ -4,7 +4,7 @@ import { type BaseDemuxer, type DemuxerOutput } from '../VideoDemuxer';
 import DemuxWorker from './demux.worker?worker';
 
 export class Mp4Demuxer implements BaseDemuxer {
-    DemuxFile(source: File) {
+    demuxFile(source: File) {
         const worker = wrap<typeof import('./demux.worker')>(new DemuxWorker());
 
         return new Observable<DemuxerOutput>((subscriber) => {

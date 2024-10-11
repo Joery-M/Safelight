@@ -19,7 +19,7 @@
                 :disabled="!(!fileDialog.files.value || fileDialog.files.value.length == 0)"
                 @click="fileDialog.open()"
             >
-                <PhUpload />&nbsp; Upload
+                <PhUpload />Upload
             </Button>
             <Button :disabled="progress !== 'Loaded' || !demuxFn" @click="if (demuxFn) demuxFn();">
                 Demux

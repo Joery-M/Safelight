@@ -126,7 +126,7 @@ async function setProjectName(newName: string, project: StoredProject) {
         return;
     }
     const storage = await CurrentProject.getStorageControllerForProject(project);
-    await storage?.UpdateStoredProject({ id: project.id, name: newName });
+    await storage?.updateStoredProject({ id: project.id, name: newName });
     loadList();
 }
 </script>

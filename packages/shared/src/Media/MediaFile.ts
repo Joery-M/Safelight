@@ -25,9 +25,9 @@ export class MediaFileItem extends MediaItem<MediaFileItemMetadata> {
             return this.file;
         }
 
-        const fileMeta = await this.getMetadata('file');
+        const fileMeta = this.getMetadata('file');
         if (fileMeta) {
-            this.file = await Storage.getStorage().ReadFile(fileMeta.location);
+            this.file = await Storage.getStorage().readFile(fileMeta.location);
             return this.file;
         }
     }
@@ -39,7 +39,7 @@ export class MediaFileItem extends MediaItem<MediaFileItemMetadata> {
             .sort((a, b) => a.time - b.time)
             .findLast((t) => t.time <= time);
         if (curThumbnail) {
-            return await Storage.getStorage().ReadFile(curThumbnail.location);
+            return await Storage.getStorage().readFile(curThumbnail.location);
         }
     }
 }

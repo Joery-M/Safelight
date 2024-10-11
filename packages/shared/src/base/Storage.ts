@@ -5,20 +5,20 @@ import type { TimelineItemType } from './TimelineItem';
 export default abstract class BaseStorageController {
     public version: string = '0.0.0';
 
-    abstract SaveProject(project: BaseProject): Promise<SaveResults>;
-    abstract LoadProject(projectId: string): Promise<BaseProject | undefined>;
-    abstract UpdateStoredProject(
+    abstract saveProject(project: BaseProject): Promise<SaveResults>;
+    abstract loadProject(projectId: string): Promise<BaseProject | undefined>;
+    abstract updateStoredProject(
         project: Partial<StoredProject> & Pick<StoredProject, 'id'>
     ): Promise<SaveResults>;
     static getProjects: () => Promise<StoredProject[]>;
 
-    abstract SaveMedia(media: StoredMedia): Promise<SaveResults>;
-    abstract SaveMedia(media: MediaItem): Promise<SaveResults>;
-    abstract LoadMedia<M extends MediaItem>(mediaId: string): Promise<M | undefined>;
+    abstract saveMedia(media: StoredMedia): Promise<SaveResults>;
+    abstract saveMedia(media: MediaItem): Promise<SaveResults>;
+    abstract loadMedia<M extends MediaItem>(mediaId: string): Promise<M | undefined>;
 
-    abstract GetBaseFilePath(type: FilePathTypes): string[] | undefined;
-    abstract WriteFile(filePath: string[], data: ArrayBufferLike, start?: number): Promise<void>;
-    abstract ReadFile(
+    abstract getBaseFilePath(type: FilePathTypes): string[] | undefined;
+    abstract writeFile(filePath: string[], data: ArrayBufferLike, start?: number): Promise<void>;
+    abstract readFile(
         filePath: string[],
         start?: number,
         size?: number

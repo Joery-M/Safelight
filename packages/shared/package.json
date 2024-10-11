@@ -21,6 +21,7 @@
         "mp4box": "^0.5.2",
         "opfs-tools": "^0.6.1",
         "rxjs": "^7.8.1",
+        "type-fest": "^4.26.1",
         "uuid": "^10.0.0"
     },
     "devDependencies": {

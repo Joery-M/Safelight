@@ -6,7 +6,7 @@
         :style="{
             width: size + 'px'
         }"
-        :aria-label="item.name.value"
+        :aria-label="item.name"
         @contextmenu.prevent="
             (ev) => {
                 closeOtherOverlays();
@@ -18,10 +18,9 @@
             class="bg-checkerboard relative flex aspect-video w-full items-center justify-center text-clip rounded-t-md"
         >
             <img
-                v-if="item.previewImage.value"
+                v-if="false"
                 class="overflow-none max-h-full max-w-full"
-                :aria-label="'Preview image for ' + item.name.value"
-                :src="item.previewImage.value"
+                :aria-label="'Preview image for ' + item.name"
             />
             <Skeleton
                 v-else
@@ -29,35 +28,45 @@
                 height="100%"
                 width="100%"
             />
-            <div v-if="size >= 96" class="mediaType">
+            <div v-if="size >= 96 && itemSourceType" class="mediaType">
                 <PhVideoCamera
-                    v-if="item.isOfType(MediaType.Video)"
+                    v-if="item.isOfType(MediaSourceType.Video)"
                     weight="bold"
                     :aria-label="$t('media.attrs.video')"
                 />
                 <PhSpeakerHigh
-                    v-if="item.isOfType(MediaType.Audio)"
+                    v-if="item.isOfType(MediaSourceType.Audio)"
                     weight="bold"
                     :aria-label="$t('media.attrs.audio')"
                 />
                 <PhSubtitles
-                    v-if="item.isOfType(MediaType.Text)"
+                    v-if="item.isOfType(MediaSourceType.Timeline)"
                     weight="bold"
                     :aria-label="$t('media.attrs.subtitles')"
                 />
                 <PhImage
-                    v-if="item.isOfType(MediaType.Image)"
+                    v-if="item.isOfType(MediaSourceType.Image)"
                     weight="bold"
                     :aria-label="$t('media.attrs.image')"
+                />
+                <PhFilmStrip
+                    v-if="item.isOfType(MediaSourceType.Special)"
+                    weight="bold"
+                    :aria-label="$t('media.attrs.timeline')"
+                />
+                <PhSparkle
+                    v-if="item.isOfType(MediaSourceType.Special)"
+                    weight="bold"
+                    :aria-label="$t('media.attrs.special')"
                 />
             </div>
         </div>
         <div class="flex items-center gap-1 px-1">
             <p
-                v-tooltip.bottom="{ value: item.name.value, showDelay: 500 }"
+                v-tooltip.bottom="{ value: item.name, showDelay: 500 }"
                 class="line-clamp-2 flex-1 text-base"
             >
-                {{ item.name.value }}
+                {{ item.name }}
             </p>
             <Button
                 v-if="size >= 96"
@@ -120,15 +129,16 @@
 import { CurrentProject } from '@/stores/currentProject';
 import {
     PhDotsThreeVertical,
+    PhFilmStrip,
     PhImage,
+    PhSparkle,
     PhSpeakerHigh,
     PhSubtitles,
     PhTrash,
     PhVideoCamera
 } from '@phosphor-icons/vue';
 import { ProjectFeatures } from '@safelight/shared/base/Project';
-import type Media from '@safelight/shared/Media/Media';
-import { MediaType } from '@safelight/shared/Media/Media';
+import { MediaSourceType, type MediaItem } from '@safelight/shared/Media/Media';
 import Button from 'primevue/button';
 import Menu from 'primevue/menu';
 import type { MenuItem } from 'primevue/menuitem';
@@ -138,7 +148,7 @@ import Toolbar from 'primevue/toolbar';
 import { computed, ref } from 'vue';
 
 const props = defineProps<{
-    item: Media;
+    item: MediaItem;
     size: number;
 }>();
 
@@ -147,6 +157,8 @@ const menuItems = ref<MenuItem[]>([
         label: 'Temp'
     }
 ]);
+
+const itemSourceType = computed(() => props.item.getMetadata('media')?.sourceType ?? 0);
 
 const hasItemInTimeline = computed(
     () =>

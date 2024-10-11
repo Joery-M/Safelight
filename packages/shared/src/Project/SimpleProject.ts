@@ -8,7 +8,7 @@ import BaseProject, {
     type ProjectType
 } from '../base/Project';
 import { Storage } from '../base/Storage';
-import Media from '../Media/Media';
+import { MediaItem } from '../Media/Media';
 import MediaManager from '../Storage/MediaManager';
 import { type TimelineConfig, Timeline } from '../Timeline/Timeline';
 
@@ -20,7 +20,7 @@ export default class SimpleProject
     public type: ProjectType = 'Simple';
     public isSaving = ref(false);
 
-    public media = shallowReactive<Media[]>([]);
+    public media = shallowReactive<MediaItem[]>([]);
 
     public selectedTimeline = ref<string>();
     public timelines = shallowReactive<Timeline[]>([]);
@@ -41,14 +41,14 @@ export default class SimpleProject
         if (this.isSaving.value) return 'Cancelled';
 
         this.isSaving.value = true;
-        const res = await Storage.getStorage().SaveProject(this);
+        const res = await Storage.getStorage().saveProject(this);
         this.isSaving.value = false;
         return res;
     }
 
-    public usesMedia(media: Media) {
-        return this.timelines.some((timeline) => timeline.usesMedia(media));
-    }
+    // public usesMedia(media: MediaItem) {
+    //     return this.timelines.some((timeline) => timeline.usesMedia(media));
+    // }
 
     public selectTimeline(timeline: Timeline) {
         this.selectedTimeline.value = timeline.id;
@@ -69,7 +69,7 @@ export default class SimpleProject
     public loadFile(file: File) {
         return new Promise<boolean>((resolve) => {
             const storingProcessing = useObservable(
-                MediaManager.StoreMedia(file).pipe(takeUntil(this.destroy$))
+                MediaManager.storeMedia(file).pipe(takeUntil(this.destroy$))
             );
             watch(storingProcessing, (s) => {
                 console.log(s?.type, s?.hashProgress);
@@ -82,7 +82,7 @@ export default class SimpleProject
                     );
 
                     if (!existingMedia) {
-                        const media = await Storage.getStorage().LoadMedia(
+                        const media = await Storage.getStorage().loadMedia(
                             storingProcessing.value.id!
                         );
 

@@ -20,7 +20,7 @@ export class CurrentProject {
 
         Storage.setStorage(storageType);
 
-        const project = await Storage.getStorage().LoadProject(selectedProject.id);
+        const project = await Storage.getStorage().loadProject(selectedProject.id);
 
         if (project) {
             this.setProject(project);
@@ -38,8 +38,8 @@ export class CurrentProject {
 
     public static async newSimpleProject(goToEditor = true) {
         const IndexedDbStorageController = (
-            await import('@safelight/shared/Storage/IndexedDbStorage')
-        ).default;
+            await import('@safelight/shared/Storage/LocalStorage/IndexedDbStorage')
+        ).IndexedDbStorageController;
         Storage.setStorage(new IndexedDbStorageController());
         const SimpleProject = (await import('@safelight/shared/Project/SimpleProject')).default;
 
@@ -70,7 +70,9 @@ export class CurrentProject {
     public static async getStorageControllerForProject(project: StoredProject | ProjectType) {
         const type = typeof project === 'string' ? project : project.type;
         if (type == 'Simple') {
-            return new (await import('@safelight/shared/Storage/IndexedDbStorage')).default();
+            return new (
+                await import('@safelight/shared/Storage/LocalStorage/IndexedDbStorage')
+            ).IndexedDbStorageController();
         } else {
             console.error('Project type not supported');
         }

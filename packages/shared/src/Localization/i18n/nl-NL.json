@@ -43,7 +43,9 @@
                 "video": "Media heeft video",
                 "audio": "Media heeft audio",
                 "subtitles": "Media heeft ondertiteling",
-                "image": "Media is een afbeelding"
+                "image": "Media is een afbeelding",
+                "timeline": "Media is een tijdlijn",
+                "special": "Media heeft een plugin nodig"
             }
         },
         "panels": {

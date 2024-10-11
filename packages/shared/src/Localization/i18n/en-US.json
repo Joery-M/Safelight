@@ -43,7 +43,9 @@
                 "video": "Media has video",
                 "audio": "Media has audio",
                 "subtitles": "Media has subtitles",
-                "image": "Media is an image"
+                "image": "Media is an image",
+                "timeline": "Media is a timeline",
+                "special": "Media requires a plugin"
             }
         },
         "panels": {

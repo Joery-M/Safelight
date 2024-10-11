@@ -9,8 +9,8 @@ export class ChunkedMediaFileItem extends MediaItem<ChunkedMediaFileItemMetadata
     public type: MediaItemTypes = 'ChunkedMediaFile';
 
     public async *loadChunk(start = 0, count = 1): AsyncGenerator<MediaChunkData | undefined> {
-        const basePath = await this.getMetadata('file');
-        const offsets = (await this.getMetadata('chunks'))?.offsets;
+        const basePath = this.getMetadata('file');
+        const offsets = this.getMetadata('chunks')?.offsets;
         if (!basePath || !offsets) {
             throw new Error('Could not get file metadata');
         }
@@ -20,7 +20,7 @@ export class ChunkedMediaFileItem extends MediaItem<ChunkedMediaFileItemMetadata
 
             if (offsets[index]) {
                 const offset = offsets[index];
-                const file = await Storage.getStorage().ReadFile(
+                const file = await Storage.getStorage().readFile(
                     basePath.location,
                     offset.start,
                     offset.size
@@ -31,7 +31,7 @@ export class ChunkedMediaFileItem extends MediaItem<ChunkedMediaFileItemMetadata
                 } else {
                     // Decode metadata
                     if (offset.metaStart !== undefined && offset.metaSize !== undefined) {
-                        const metadataFile = await Storage.getStorage().ReadFile(
+                        const metadataFile = await Storage.getStorage().readFile(
                             basePath.location,
                             offset.metaStart,
                             offset.metaSize
@@ -59,13 +59,13 @@ export class ChunkedMediaFileItem extends MediaItem<ChunkedMediaFileItemMetadata
     }
 
     async getThumbnail(time = 0) {
-        const thumbnails = (this.metadata.get('thumbnails') ?? []) as MediaThumbnailMetadata[];
+        const thumbnails = (this.getMetadata('thumbnails') ?? []) as MediaThumbnailMetadata[];
 
         const curThumbnail = thumbnails
             .sort((a, b) => a.time - b.time)
             .findLast((t) => t.time <= time);
         if (curThumbnail) {
-            return await Storage.getStorage().ReadFile(curThumbnail.location);
+            return await Storage.getStorage().readFile(curThumbnail.location);
         }
     }
 }
