@@ -22,10 +22,28 @@ export async function demux(source: File, callback: (event: WorkerOutput) => voi
             // Set codec string for video codecs that have enough info at the start
 
             switch (track.CodecID) {
-                case 'V_MPEGH/ISO/HEVC':
+                case 'V_MPEGH/ISO/HEVC': {
+                    if (!track.CodecPrivate) break;
+                    const view = new DataView(track.CodecPrivate);
+                    const codecString = decodeHEVCPrivateData(view);
+
+                    if (!codecString) {
+                        return;
+                    }
+
+                    callback({
+                        decoderConfig: {
+                            codec: codecString,
+                            codedWidth: track.Video!.DisplayWidth ?? track.Video!.PixelWidth,
+                            codedHeight: track.Video!.DisplayHeight ?? track.Video!.PixelHeight
+                        },
+                        trackIndex: track.TrackNumber,
+                        type: 'video'
+                    });
+                    completeTracks.add(track.TrackNumber);
                     break;
+                }
                 case 'V_MPEG4/ISO/AVC': {
-                    // Technically this already could have been done in the track callback, but eh
                     if (!track.CodecPrivate) break;
                     const view = new DataView(track.CodecPrivate);
                     const codecData = decodeAVCPrivateData(view);
@@ -289,6 +307,108 @@ function decodeAVCPrivateData(buffer: DataView) {
         profile_compat,
         level_idc
     };
+}
+
+// #region HEVC private data
+
+function decodeHEVCPrivateData(buffer: DataView) {
+    /**
+     * @see https://github.com/gpac/mp4box.js/blob/2c15bfd58c095776e6ce1a02dd974d77b51c2129/src/parsing/hvcC.js#L1
+     */
+    function unpack(stream: DataView) {
+        let offset = 1;
+
+        const tempByte = stream.getUint8(offset++);
+        const general_profile_space = tempByte >> 6;
+        const general_tier_flag = (tempByte & 0x20) >> 5;
+        const general_profile_idc = tempByte & 0x1f;
+
+        const general_profile_compatibility_flag = stream.getUint32(offset);
+        offset += 4;
+
+        const general_constraint_indicator = new Uint8Array(
+            stream.buffer.slice(offset, offset + 6)
+        );
+        offset += 6;
+
+        const general_level_idc = stream.getUint8(offset++);
+
+        return {
+            general_profile_space,
+            general_tier_flag,
+            general_profile_idc,
+            general_profile_compatibility_flag,
+            general_constraint_indicator,
+            general_level_idc
+        };
+    }
+
+    /**
+     * @see https://github.com/gpac/mp4box.js/blob/fbc03484283e389eae011c99a7a21a09a5c45f40/src/box-codecs.js#L106
+     */
+    function formatCodecData(data: ReturnType<typeof unpack>) {
+        let baseCodec = 'hev1.';
+        switch (data.general_profile_space) {
+            case 0:
+                baseCodec += '';
+                break;
+            case 1:
+                baseCodec += 'A';
+                break;
+            case 2:
+                baseCodec += 'B';
+                break;
+            case 3:
+                baseCodec += 'C';
+                break;
+        }
+        baseCodec += data.general_profile_idc + '.';
+
+        let val = data.general_profile_compatibility_flag;
+        let reversed = 0;
+        for (let i = 0; i < 32; i++) {
+            reversed |= val & 1;
+            if (i == 31) break;
+            reversed <<= 1;
+            val >>= 1;
+        }
+
+        baseCodec += decimalToHex(reversed) + '.';
+
+        if (data.general_tier_flag === 0) {
+            baseCodec += 'L';
+        } else {
+            baseCodec += 'H';
+        }
+
+        baseCodec += data.general_level_idc;
+
+        let hasByte = false;
+        let constraintString = '';
+
+        for (let i = 5; i >= 0; i--) {
+            if (data.general_constraint_indicator[i] || hasByte) {
+                constraintString =
+                    '.' + decimalToHex(data.general_constraint_indicator[i], 0) + constraintString;
+                hasByte = true;
+            }
+        }
+
+        baseCodec += constraintString;
+
+        return baseCodec;
+    }
+
+    function decimalToHex(d: number, padding?: number) {
+        let hex = Number(d).toString(16);
+        padding = typeof padding === 'undefined' || padding === null ? (padding = 2) : padding;
+        while (hex.length < padding) {
+            hex = '0' + hex;
+        }
+        return hex;
+    }
+
+    return formatCodecData(unpack(buffer));
 }
 
 expose({ demux });
