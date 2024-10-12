@@ -38,7 +38,8 @@
                         <InputGroupAddon class="p-0">
                             <PhMagnifyingGlass />
                         </InputGroupAddon>
-                        <InputText v-model="search" placeholder="Search"> </InputText>
+                        <InputText v-model="search" :placeholder="$t('general.actions.search')">
+                        </InputText>
                     </InputGroup>
                     <InputGroup>
                         <Button
@@ -47,18 +48,14 @@
                             outlined
                             severity="secondary"
                             :title="
-                                $t(
-                                    sortDescending
-                                        ? 'general.actions.sortAscending'
-                                        : 'general.actions.sortDescending'
-                                )
+                                sortDescending
+                                    ? $t('general.actions.sortAscending')
+                                    : $t('general.actions.sortDescending')
                             "
                             :aria-label="
-                                $t(
-                                    sortDescending
-                                        ? 'general.actions.sortAscending'
-                                        : 'general.actions.sortDescending'
-                                )
+                                sortDescending
+                                    ? $t('general.actions.sortAscending')
+                                    : $t('general.actions.sortDescending')
                             "
                             @click="sortDescending = !sortDescending"
                         >
@@ -71,7 +68,13 @@
                             v-model="sortBy"
                             style="line-height: 1.2"
                             :aria-label="$t('general.actions.sortBy')"
-                            :options="['Name', 'Duration', 'File type']"
+                            option-label="label"
+                            option-value="value"
+                            :options="[
+                                { label: $t('general.descriptions.name'), value: 'name' },
+                                { label: $t('general.descriptions.duration'), value: 'duration' },
+                                { label: $t('general.descriptions.fileType'), value: 'fileType' }
+                            ]"
                         />
                     </InputGroup>
                 </template>
@@ -214,7 +217,8 @@
                         <InputGroupAddon class="p-0">
                             <PhMagnifyingGlass />
                         </InputGroupAddon>
-                        <InputText v-model="search" placeholder="Search"> </InputText>
+                        <InputText v-model="search" :placeholder="$t('general.actions.search')">
+                        </InputText>
                     </InputGroup>
                 </template>
                 <template #end>
@@ -313,7 +317,7 @@ fileDialog.onChange((fileList) => {
 });
 
 const search = ref('');
-const sortBy = ref<sortOptions>('Name');
+const sortBy = ref<sortOptions>('name');
 const sortDescending = ref(false);
 const layout = ref<string>('grid');
 const gridItemSize = ref(176); // 11rem
@@ -324,7 +328,7 @@ const sortedAndFiltered = shallowRef<MediaItem[]>([]);
 // List has its own sorting
 watchEffect(() => {
     if (layout.value == 'list') {
-        sortBy.value = 'Name';
+        sortBy.value = 'name';
         sortDescending.value = false;
     }
 });
@@ -361,7 +365,7 @@ function sortAndFilter() {
         const ext2 = item2.name.split('.').at(-1) ?? 'ZZZ';
 
         switch (sortBy.value) {
-            case 'File type':
+            case 'fileType':
                 return collator.compare(ext1, ext2);
             default:
                 return collator.compare(item1.name, item2.name);
@@ -377,5 +381,5 @@ function fileDialogOpenDblClick(event: MouseEvent) {
     fileDialog.open();
 }
 
-type sortOptions = 'Name' | 'Duration' | 'File type';
+type sortOptions = 'name' | 'duration' | 'fileType';
 </script>

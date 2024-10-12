@@ -47,9 +47,9 @@ async function compileTypes({ localesDir: dir, outputFile: output }: Options) {
         allFiles,
         ...(await Promise.all(files.map(async (path) => JSON.parse(await readFile(path, 'utf-8')))))
     );
+    const { localeSettings, ...messages } = allFiles ?? {};
 
-    // If no messages, back out
-    if (!('messages' in allFiles)) {
+    if (!messages) {
         return;
     }
 
@@ -60,7 +60,7 @@ declare module 'vue-i18n' {
 
     // Add JSON file, and replace all values with "string"
     let jsonRes = JSON.stringify(
-        allFiles.messages,
+        messages,
         (_, value) => (typeof value == 'object' ? value : 'string'),
         4
     );

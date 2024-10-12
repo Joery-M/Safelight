@@ -1,113 +1,113 @@
 {
-    "messages": {
-        "general": {
-            "default": "Standaard",
-            "loading": "Laden",
-            "actions": {
-                "open": "Open",
-                "search": "Zoeken",
-                "skipBackFrame": "Ga {n} beeld terug | Ga {n} beelden terug",
-                "skipForwardFrame": "Ga {n} beeld verder | Ga {n} beelden verder",
-                "sortAscending": "Sorteer oplopend",
-                "sortDescending": "Sorteer aflopend",
-                "sortBy": "Sorteer op",
-                "loadFile": "Importeer bestand",
-                "resetValue": "Zet waarde terug"
-            },
-            "descriptions": {
-                "untitled": "Naamloos",
-                "name": "Naam | Namen",
-                "type": "Type | Types",
-                "project": "Project | Projecten",
-                "duration": "Duur",
-                "modified": "Aangepast",
-                "created": "Aangemaakt",
-                "fileType": "Bestandstype | Bestandstypen",
-                "refresh": "Herladen"
-            },
-            "status": {
-                "error": "Error",
-                "errorOccurred": "Er is een fout opgetreden",
-                "warning": "Waarschuwing"
-            }
+    "general": {
+        "default": "Standaard",
+        "loading": "Laden",
+        "actions": {
+            "open": "Open",
+            "search": "Zoeken",
+            "skipBackFrame": "Ga {n} beeld terug | Ga {n} beelden terug",
+            "skipForwardFrame": "Ga {n} beeld verder | Ga {n} beelden verder",
+            "sortAscending": "Sorteer oplopend",
+            "sortDescending": "Sorteer aflopend",
+            "sortBy": "Sorteer op",
+            "loadFile": "Importeer bestand",
+            "resetValue": "Zet waarde terug"
         },
-        "project": {
-            "new": "Nieuw project",
-            "types": {
-                "simple": "Simpel"
-            }
+        "descriptions": {
+            "untitled": "Naamloos",
+            "name": "Naam | Namen",
+            "type": "Type | Types",
+            "project": "Project | Projecten",
+            "duration": "Duur",
+            "modified": "Aangepast",
+            "created": "Aangemaakt",
+            "fileType": "Bestandstype | Bestandstypen",
+            "refresh": "Herladen"
         },
-        "media": {
-            "properties": "Eigenschappen",
-            "attrs": {
-                "video": "Media heeft video",
-                "audio": "Media heeft audio",
-                "subtitles": "Media heeft ondertiteling",
-                "image": "Media is een afbeelding",
-                "timeline": "Media is een tijdlijn",
-                "special": "Media heeft een plugin nodig"
-            }
-        },
-        "panels": {
-            "noPanel": "Geen paneel",
-            "library": {
-                "title": "Bibliotheek",
-                "noMediaLoaded": "Geen media geïmporteerd",
-                "noMediaFound": "Geen media gevonden"
-            },
-            "timeline": {
-                "title": "Tijdlijn"
-            },
-            "monitor": {
-                "title": "Monitor"
-            }
-        },
-        "storage": {
-            "nonPersistentNotif": {
-                "title": "Project kan zomaar verwijderd worden",
-                "text": "Uw browser kan uw data verwijderen wanneer het ziet dat u geen opslagruimte meer heeft.\nWilt u de browser vragen om uw data te bewaren?",
-                "button": "Data bewaren"
-            }
-        },
-        "notification": {
-            "defaultTitle": "Melding"
+        "status": {
+            "error": "Error",
+            "errorOccurred": "Er is een fout opgetreden",
+            "warning": "Waarschuwing"
         }
     },
-    "dateTimeFormat": {
-        "short": {
-            "day": "numeric",
-            "month": "numeric",
-            "year": "2-digit"
+    "project": {
+        "new": "Nieuw project",
+        "types": {
+            "simple": "Simpel"
+        }
+    },
+    "media": {
+        "properties": "Eigenschappen",
+        "attrs": {
+            "video": "Media heeft video",
+            "audio": "Media heeft audio",
+            "subtitles": "Media heeft ondertiteling",
+            "image": "Media is een afbeelding",
+            "timeline": "Media is een tijdlijn",
+            "special": "Media heeft een plugin nodig"
+        }
+    },
+    "panels": {
+        "noPanel": "Geen paneel",
+        "library": {
+            "title": "Bibliotheek",
+            "noMediaLoaded": "Geen media geïmporteerd",
+            "noMediaFound": "Geen media gevonden"
         },
-        "medium": {
-            "day": "numeric",
-            "month": "numeric",
-            "year": "numeric"
+        "timeline": {
+            "title": "Tijdlijn"
         },
-        "long": {
-            "dateStyle": "long"
-        },
-        "dateTime": {
-            "day": "numeric",
-            "month": "numeric",
-            "year": "numeric",
-            "hour": "numeric",
-            "minute": "numeric"
-        },
-        "time": {
-            "hour": "numeric",
-            "minute": "numeric"
-        },
-        "timeLong": {
-            "hour": "numeric",
-            "minute": "2-digit",
-            "second": "2-digit"
-        },
-        "timeFull": {
-            "hour": "numeric",
-            "minute": "2-digit",
-            "second": "2-digit",
-            "fractionalSecondDigits": 3
+        "monitor": {
+            "title": "Monitor"
+        }
+    },
+    "storage": {
+        "nonPersistentNotif": {
+            "title": "Project kan zomaar verwijderd worden",
+            "text": "Uw browser kan uw data verwijderen wanneer het ziet dat u geen opslagruimte meer heeft.\nWilt u de browser vragen om uw data te bewaren?",
+            "button": "Data bewaren"
+        }
+    },
+    "notification": {
+        "defaultTitle": "Melding"
+    },
+    "localeSettings": {
+        "dateTimeFormat": {
+            "short": {
+                "day": "numeric",
+                "month": "numeric",
+                "year": "2-digit"
+            },
+            "medium": {
+                "day": "numeric",
+                "month": "numeric",
+                "year": "numeric"
+            },
+            "long": {
+                "dateStyle": "long"
+            },
+            "dateTime": {
+                "day": "numeric",
+                "month": "numeric",
+                "year": "numeric",
+                "hour": "numeric",
+                "minute": "numeric"
+            },
+            "time": {
+                "hour": "numeric",
+                "minute": "numeric"
+            },
+            "timeLong": {
+                "hour": "numeric",
+                "minute": "2-digit",
+                "second": "2-digit"
+            },
+            "timeFull": {
+                "hour": "numeric",
+                "minute": "2-digit",
+                "second": "2-digit",
+                "fractionalSecondDigits": 3
+            }
         }
     }
 }
