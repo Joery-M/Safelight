@@ -47,7 +47,7 @@
         "change-case": "^5.4.4",
         "eventemitter3": "^5.0.1",
         "fast-xml-parser": "^4.4.0",
-        "happy-dom": "^14.12.3",
+        "happy-dom": "^15.0.0",
         "prettier": "^3.3.3",
         "rimraf": "^5.0.5",
         "tsx": "^4.16.0",
