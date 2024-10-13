@@ -16,10 +16,10 @@ export default abstract class BaseStorageController {
     abstract saveMedia(media: MediaItem): Promise<SaveResults>;
     abstract loadMedia<M extends MediaItem>(mediaId: string): Promise<M | undefined>;
 
-    abstract getBaseFilePath(type: FilePathTypes): string[] | undefined;
-    abstract writeFile(filePath: string[], data: ArrayBufferLike, start?: number): Promise<void>;
+    abstract getBaseFilePath(type: FilePathTypes): FilePath;
+    abstract writeFile(filePath: FilePath, data: ArrayBufferLike, start?: number): Promise<void>;
     abstract readFile(
-        filePath: string[],
+        filePath: FilePath,
         start?: number,
         size?: number
     ): Promise<ArrayBuffer | undefined>;
@@ -55,6 +55,8 @@ export class Storage {
 
 export type SaveResults = 'Success' | 'Cancelled' | 'Error' | (string & {});
 export type FilePathTypes = 'media-files' | 'thumbnails' | (string & {});
+
+export type FilePath = (string | number)[];
 
 export interface StoredMedia {
     id: string;

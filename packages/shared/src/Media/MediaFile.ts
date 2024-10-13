@@ -1,3 +1,4 @@
+import type { Path, PathValue } from 'dot-path-value';
 import { v4 as uuidv4 } from 'uuid';
 import { Storage } from '../base/Storage';
 import { MediaItem, type MediaItemMetadata, type MediaItemTypes } from './Media';
@@ -9,12 +10,12 @@ export class MediaFileItem extends MediaItem<MediaFileItemMetadata> {
 
     private file?: ArrayBuffer;
 
-    public addMetadata<K extends keyof MediaFileItemMetadata>(
+    public addMetadata<K extends Path<MediaFileItemMetadata>>(
         part: K,
-        data: MediaFileItemMetadata[K]
+        data: PathValue<MediaFileItemMetadata, K>
     ) {
         // If file has changed (idk how), make it undefined
-        if (part == 'file') {
+        if (part.startsWith('file')) {
             this.file = undefined;
         }
         return super.addMetadata(part, data);
@@ -33,7 +34,7 @@ export class MediaFileItem extends MediaItem<MediaFileItemMetadata> {
     }
 
     async getThumbnail(time = 0) {
-        const thumbnails = (this.metadata.get('thumbnails') ?? []) as MediaThumbnailMetadata[];
+        const thumbnails = (this.getMetadata('thumbnails') ?? []) as MediaThumbnailMetadata[];
 
         const curThumbnail = thumbnails
             .sort((a, b) => a.time - b.time)

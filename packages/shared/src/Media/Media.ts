@@ -1,5 +1,4 @@
 import { type Path, type PathValue, getByPath, setByPath } from 'dot-path-value';
-import type { PartialDeep, Paths } from 'type-fest';
 import type { Timeline } from '../Timeline/Timeline';
 import type { ChunkedMediaFileItem } from './ChunkedMediaFile';
 import type { MediaFileItem } from './MediaFile';

@@ -1,3 +1,4 @@
+import MimeMatcher from 'mime-matcher';
 import { Observable } from 'rxjs';
 
 export class VideoDemuxer {
@@ -9,16 +10,19 @@ export class VideoDemuxer {
     }
 
     static async getDemuxer(file: File): Promise<BaseDemuxer | undefined> {
-        if (this.demuxers.has(file.type)) {
-            const possibleDemuxers = this.demuxers.get(file.type) ?? [];
-            for await (const demuxerProm of possibleDemuxers) {
-                try {
-                    const demuxer = await demuxerProm();
-                    if (demuxer) {
-                        return demuxer;
+        for (const demuxerType of this.demuxers.keys()) {
+            const matcher = new MimeMatcher(demuxerType);
+            if (matcher.match(file.type)) {
+                const possibleDemuxers = this.demuxers.get(demuxerType) ?? [];
+                for await (const demuxerProm of possibleDemuxers) {
+                    try {
+                        const demuxer = await demuxerProm();
+                        if (demuxer) {
+                            return demuxer;
+                        }
+                    } catch (error) {
+                        console.error('Error loading demuxer for type ' + file.type, error);
                     }
-                } catch (error) {
-                    console.error('Error loading demuxer for type ' + file.type, error);
                 }
             }
         }
