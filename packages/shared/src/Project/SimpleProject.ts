@@ -1,7 +1,6 @@
-import { useObservable } from '@vueuse/rxjs';
 import { debounceTime, takeUntil } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
-import { computed, ref, shallowReactive, watch } from 'vue';
+import { computed, ref, shallowReactive } from 'vue';
 import BaseProject, {
     type ProjectFeatureMedia,
     type ProjectFeatureSaving,
@@ -46,9 +45,9 @@ export default class SimpleProject
         return res;
     }
 
-    // public usesMedia(media: MediaItem) {
-    //     return this.timelines.some((timeline) => timeline.usesMedia(media));
-    // }
+    public usesMedia(media: MediaItem) {
+        return this.media.some((m) => m.id == media.id);
+    }
 
     public selectTimeline(timeline: Timeline) {
         this.selectedTimeline.value = timeline.id;
@@ -66,37 +65,14 @@ export default class SimpleProject
         return timeline;
     }
 
-    public loadFile(file: File) {
-        return new Promise<boolean>((resolve) => {
-            const storingProcessing = useObservable(
-                MediaManager.storeMedia(file).pipe(takeUntil(this.destroy$))
-            );
-            watch(storingProcessing, (s) => {
-                console.log(s?.type, s?.hashProgress);
-            });
-
-            watch(storingProcessing, async () => {
-                if (storingProcessing.value && storingProcessing.value.type == 'done') {
-                    const existingMedia = this.media.some(
-                        (m) => m.id == storingProcessing.value!.id
-                    );
-
-                    if (!existingMedia) {
-                        const media = await Storage.getStorage().loadMedia(
-                            storingProcessing.value.id!
-                        );
-
-                        if (media) {
-                            this.media.push(media);
-
-                            await this.Save();
-                            resolve(true);
-                        }
-                    }
-
-                    resolve(false);
-                }
-            });
-        });
+    public async loadFile(file: File) {
+        const media = await MediaManager.storeMedia(file);
+        if (media) {
+            this.media.push(media);
+            await this.Save();
+            return true;
+        } else {
+            return false;
+        }
     }
 }

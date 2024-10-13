@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Storage } from '../base/Storage';
+import { Storage, type FilePath } from '../base/Storage';
 import { MediaItem, type MediaItemMetadata, type MediaItemTypes } from './Media';
 import type { MediaThumbnailMetadata } from './MediaFile';
 
@@ -9,8 +9,8 @@ export class ChunkedMediaFileItem extends MediaItem<ChunkedMediaFileItemMetadata
     public type: MediaItemTypes = 'ChunkedMediaFile';
 
     public async *loadChunk(start = 0, count = 1): AsyncGenerator<MediaChunkData | undefined> {
-        const basePath = this.getMetadata('file');
-        const offsets = this.getMetadata('chunks')?.offsets;
+        const basePath = this.getMetadata('file.location');
+        const offsets = this.getMetadata('source.chunkOffsets');
         if (!basePath || !offsets) {
             throw new Error('Could not get file metadata');
         }
@@ -21,7 +21,7 @@ export class ChunkedMediaFileItem extends MediaItem<ChunkedMediaFileItemMetadata
             if (offsets[index]) {
                 const offset = offsets[index];
                 const file = await Storage.getStorage().readFile(
-                    basePath.location,
+                    basePath,
                     offset.start,
                     offset.size
                 );
@@ -29,28 +29,7 @@ export class ChunkedMediaFileItem extends MediaItem<ChunkedMediaFileItemMetadata
                 if (!file) {
                     yield undefined;
                 } else {
-                    // Decode metadata
-                    if (offset.metaStart !== undefined && offset.metaSize !== undefined) {
-                        const metadataFile = await Storage.getStorage().readFile(
-                            basePath.location,
-                            offset.metaStart,
-                            offset.metaSize
-                        );
-                        if (metadataFile) {
-                            const decoder = new TextDecoder();
-
-                            try {
-                                const jsonResult = JSON.parse(decoder.decode(metadataFile));
-                                const metadata = new Map(Object.entries(jsonResult));
-                                yield { index, size: file.byteLength, data: file, metadata };
-                            } catch (error) {
-                                console.error('Error reading JSON metadata', error);
-                                yield { index, size: 0, data: file };
-                            }
-                        }
-                    } else {
-                        yield { index, size: 0, data: file };
-                    }
+                    yield { index, size: 0, data: file };
                 }
             } else {
                 yield undefined;
@@ -79,7 +58,7 @@ export interface MediaChunkData {
 
 export interface ChunkedMediaFileItemMetadata extends MediaItemMetadata {
     file: {
-        location: string[];
+        location: FilePath;
         /**
          * File size in bytes
          */
@@ -89,10 +68,27 @@ export interface ChunkedMediaFileItemMetadata extends MediaItemMetadata {
          */
         name?: string;
     };
-    chunks: {
-        offsets: {
-            [index: number]: { start: number; size: number; metaStart?: number; metaSize?: number };
+    source: {
+        chunkOffsets: ChunkOffset[];
+        tracks: {
+            [key: number]: CompatibleDecoderConfig;
         };
     };
     thumbnails: MediaThumbnailMetadata[];
+}
+
+export type CompatibleDecoderConfig<T = VideoDecoderConfig | AudioDecoderConfig> = Omit<
+    T,
+    'description'
+> & {
+    description?: ArrayBuffer | undefined;
+};
+
+export interface ChunkOffset {
+    start: number;
+    size: number;
+    trackIndex: number;
+    keyFrame: boolean;
+    duration?: number;
+    timestamp: number;
 }

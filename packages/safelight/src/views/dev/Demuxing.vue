@@ -21,8 +21,9 @@
             >
                 <PhUpload />Upload
             </Button>
-            <Button :disabled="progress !== 'Loaded' || !demuxFn" @click="if (demuxFn) demuxFn();">
-                Demux
+            <Button :disabled="progress !== 'Loaded'" @click="demux()"> Demux </Button>
+            <Button :disabled="progress !== 'Loaded'" @click="demuxToStorage()">
+                Demux to storage
             </Button>
         </div>
         <p>
@@ -31,10 +32,13 @@
                 , {{ endTime - startTime }}ms
             </template>
         </p>
-        <div :class="{ slow: clock - average > 1 }" class="slow-indicator"></div>
+        <div
+            :class="{ slow: useAbs(averageShort - average).value > 1 }"
+            class="slow-indicator"
+        ></div>
         <p>
-            {{ clock }}, <br />
-            {{ average }}
+            Current: {{ useRound(1000 / averageShort) }}<br />
+            <span @click="measurements = []">Average: {{ useRound(1000 / average) }}</span>
         </p>
         <ul>
             <li v-for="track in trackNum.entries()" :key="track[0]">
@@ -46,9 +50,12 @@
 
 <script lang="ts" setup>
 import { PhArrowLeft, PhUpload } from '@phosphor-icons/vue';
-import { VideoDemuxer, type DemuxedVideoTrack } from '@safelight/shared/Decoder/Video/VideoDemuxer';
+import { Storage } from '@safelight/shared/base/Storage';
+import { VideoDemuxer } from '@safelight/shared/Decoder/Video/VideoDemuxer';
+import { IndexedDbStorageController } from '@safelight/shared/Storage/LocalStorage/IndexedDbStorage';
+import MediaManager from '@safelight/shared/Storage/MediaManager';
 import { useFileDialog } from '@vueuse/core';
-import { useAverage } from '@vueuse/math';
+import { useAbs, useAverage, useRound } from '@vueuse/math';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import Panel from 'primevue/panel';
@@ -62,20 +69,25 @@ const autoDemux = ref(false);
 const startTime = ref<number>();
 const endTime = ref<number>();
 
-const clock = ref(0);
 let lastTick = performance.now();
 let animFrameCallback: number | undefined;
-const measurements = reactive<number[]>([]);
+const measurementsShort = reactive<number[]>([]);
+const measurements = ref<number[]>([]);
 const average = useAverage(measurements);
+const averageShort = useAverage(measurementsShort);
 
 function tick(now: DOMHighResTimeStamp) {
-    clock.value = now - lastTick;
-    lastTick = performance.now();
+    const tickTime = now - lastTick;
+    lastTick = now;
     animFrameCallback = requestAnimationFrame(tick);
 
-    measurements.push(clock.value);
-    while (measurements.length > 10000) {
-        measurements.shift();
+    measurementsShort.push(tickTime);
+    while (measurementsShort.length > 100) {
+        measurementsShort.shift();
+    }
+    measurements.value.push(tickTime);
+    while (measurements.value.length > 10000) {
+        measurements.value.shift();
     }
 }
 animFrameCallback = requestAnimationFrame(tick);
@@ -83,7 +95,6 @@ animFrameCallback = requestAnimationFrame(tick);
 onUnmounted(() => {
     if (animFrameCallback) cancelAnimationFrame(animFrameCallback);
 });
-const tracks = ref<DemuxedVideoTrack[]>();
 const trackNum = reactive(new Map<number, number>());
 
 fileDialog.onChange((fileList) => {
@@ -95,52 +106,67 @@ fileDialog.onChange((fileList) => {
     }
 });
 
-let demuxFn: (() => void | Promise<void>) | undefined = undefined;
+let demuxer: VideoDemuxer;
 
 async function loadFile(source: File) {
     endTime.value = undefined;
     startTime.value = undefined;
     progress.value = 'Processing';
-    const demuxer = new VideoDemuxer();
+    demuxer = new VideoDemuxer();
     const success = await demuxer.loadFile(source);
     if (success) {
         progress.value = 'Loaded';
         trackNum.clear();
-        demuxFn = async () => {
-            startTime.value = Date.now();
-            progress.value = 'Start demux';
-            const res = demuxer.demux();
-            progress.value = `Demuxed ${res !== undefined}`;
-            res?.subscribe({
-                complete() {
-                    endTime.value = Date.now();
-                },
-                next: (val) => {
-                    if (val.type == 'video' || val.type == 'audio') {
-                        trackNum.set(val.trackIndex, 0);
-                        console.log(val);
-                    } else if (val.type == 'chunks') {
-                        val.chunks.forEach((val) => {
-                            if (trackNum.has(val.trackIndex)) {
-                                trackNum.set(
-                                    val.trackIndex,
-                                    (trackNum.get(val.trackIndex) ?? 0) + 1
-                                );
-                            }
-                        });
-                    }
-                }
-            });
-            // tracks.value = res;
-            fileDialog.reset();
-        };
         if (autoDemux.value) {
-            demuxFn();
+            demux();
         }
     } else {
         progress.value = 'No demuxer found for this file';
         fileDialog.reset();
     }
+}
+
+function demux() {
+    startTime.value = Date.now();
+    progress.value = 'Start demux';
+    const res = demuxer.demux();
+    progress.value = `Demuxed ${res !== undefined}`;
+    res?.subscribe({
+        complete() {
+            endTime.value = Date.now();
+            progress.value = `Done`;
+            fileDialog.reset();
+        },
+        next: (val) => {
+            if (val.type == 'video' || val.type == 'audio') {
+                trackNum.set(val.trackIndex, 0);
+                console.log(val);
+            } else if (val.type == 'chunks') {
+                val.chunks.forEach((val) => {
+                    if (trackNum.has(val.trackIndex)) {
+                        trackNum.set(val.trackIndex, (trackNum.get(val.trackIndex) ?? 0) + 1);
+                    }
+                });
+            }
+        }
+    });
+}
+
+function demuxToStorage() {
+    const source = fileDialog.files.value?.[0];
+    if (!source) return;
+    startTime.value = Date.now();
+    progress.value = 'Start demux';
+    Storage.setStorage(new IndexedDbStorageController());
+    MediaManager.storeMedia(source)
+        .then(() => {
+            endTime.value = Date.now();
+            progress.value = `Done`;
+            fileDialog.reset();
+        })
+        .catch((err) => {
+            console.error(err);
+        });
 }
 </script>
 

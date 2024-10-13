@@ -63,7 +63,7 @@ export interface DemuxedChunkArray {
     chunks: DemuxedChunk[];
 }
 
-export interface DemuxedChunk<ChunkType = EncodedAudioChunk | EncodedVideoChunk> {
+export interface DemuxedChunk<ChunkType = EncodedAudioChunkInit | EncodedVideoChunkInit> {
     type: 'chunk';
     trackIndex: number;
     chunk: ChunkType;

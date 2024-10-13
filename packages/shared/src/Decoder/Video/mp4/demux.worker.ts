@@ -55,24 +55,24 @@ export function demux(source: File, callback: (event: WorkerOutput) => any) {
             const track = result.find((t) => t.trackIndex == sample.track_id);
 
             if (track?.type == 'video') {
-                const chunk = new EncodedVideoChunk({
+                const chunk: EncodedVideoChunkInit = {
                     type: type,
                     timestamp: (1e6 * sample.cts) / sample.timescale,
                     duration: (1e6 * sample.duration) / sample.timescale,
                     data: sample.data
-                });
+                };
                 chunks.push({
                     type: 'chunk',
                     trackIndex: sample.track_id,
                     chunk
                 });
             } else if (track?.type == 'audio') {
-                const chunk = new EncodedAudioChunk({
+                const chunk: EncodedAudioChunkInit = {
                     type: type,
                     timestamp: (1e6 * sample.cts) / sample.timescale,
                     duration: (1e6 * sample.duration) / sample.timescale,
                     data: sample.data
-                });
+                };
                 chunks.push({
                     type: 'chunk',
                     trackIndex: sample.track_id,

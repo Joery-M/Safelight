@@ -1,6 +1,6 @@
 {
     "extends": "@vue/tsconfig/tsconfig.dom.json",
-    "include": ["src/**/*.worker.ts"],
+    "include": ["src/**/*.worker.ts", "types/*.d.ts"],
     "compilerOptions": {
         "noEmit": false,
         "moduleResolution": "Bundler",

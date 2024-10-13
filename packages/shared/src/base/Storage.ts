@@ -18,6 +18,7 @@ export default abstract class BaseStorageController {
 
     abstract getBaseFilePath(type: FilePathTypes): FilePath;
     abstract writeFile(filePath: FilePath, data: ArrayBufferLike, start?: number): Promise<void>;
+    abstract writeStream(filePath: FilePath, data: ReadableStream): Promise<void>;
     abstract readFile(
         filePath: FilePath,
         start?: number,
@@ -63,7 +64,7 @@ export interface StoredMedia {
     name: string;
     created: string;
     type: MediaItemTypes;
-    metadata: Map<string, any>;
+    metadata: { [key: string | number]: any };
 }
 
 export interface StoredProject {
@@ -76,7 +77,7 @@ export interface StoredProject {
     media: string[];
     created: string;
     updated: string;
-    metadata: Map<string, any>;
+    metadata: { [key: string | number]: any };
 }
 
 // TODO Add all necessary properties

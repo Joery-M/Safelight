@@ -1,11 +1,20 @@
 import { DateTime } from 'luxon';
 import * as opfsTools from 'opfs-tools';
 import type BaseProject from '../../base/Project';
-import type { FilePathTypes, SaveResults, StoredMedia, StoredProject } from '../../base/Storage';
+import type {
+    FilePath,
+    FilePathTypes,
+    SaveResults,
+    StoredMedia,
+    StoredProject
+} from '../../base/Storage';
 import BaseStorageController from '../../base/Storage';
-import { ChunkedMediaFileItem } from '../../Media/ChunkedMediaFile';
+import {
+    ChunkedMediaFileItem,
+    type ChunkedMediaFileItemMetadata
+} from '../../Media/ChunkedMediaFile';
 import { MediaItem } from '../../Media/Media';
-import { MediaFileItem } from '../../Media/MediaFile';
+import { MediaFileItem, type MediaFileItemMetadata } from '../../Media/MediaFile';
 import SimpleProject from '../../Project/SimpleProject';
 import { Timeline, type TimelineConfig } from '../../Timeline/Timeline';
 import { NotificationService } from '../../UI/Notifications/NotificationService';
@@ -122,7 +131,7 @@ export class IndexedDbStorageController extends BaseStorageController {
                 ? {
                       name: media.name,
                       id: media.id,
-                      created: media.getMetadata('media')!.created,
+                      created: media.getMetadata('media.created'),
                       metadata: await media.serializeMetadata(),
                       type: media.type
                   }
@@ -141,20 +150,16 @@ export class IndexedDbStorageController extends BaseStorageController {
 
         switch (storedMedia?.type) {
             case 'ChunkedMediaFile': {
-                const item = new ChunkedMediaFileItem();
-                for (const [path, value] of storedMedia.metadata) {
-                    item.addMetadata(path as any, value);
-                }
+                const item = new ChunkedMediaFileItem(
+                    storedMedia.metadata as ChunkedMediaFileItemMetadata
+                );
                 item.id = storedMedia.id;
                 item.name = storedMedia.name;
 
                 return item as unknown as M;
             }
             case 'MediaFile': {
-                const item = new MediaFileItem();
-                for (const [path, value] of storedMedia.metadata) {
-                    item.addMetadata(path as any, value);
-                }
+                const item = new MediaFileItem(storedMedia.metadata as MediaFileItemMetadata);
                 item.id = storedMedia.id;
                 item.name = storedMedia.name;
 
@@ -167,7 +172,7 @@ export class IndexedDbStorageController extends BaseStorageController {
                 }
 
                 const item = new Timeline(config);
-                for (const [path, value] of storedMedia.metadata) {
+                for (const [path, value] of Object.entries(storedMedia.metadata)) {
                     item.addMetadata(path as any, value);
                 }
                 item.id = storedMedia.id;
@@ -202,17 +207,20 @@ export class IndexedDbStorageController extends BaseStorageController {
         return reader.read(size, { at: start });
     }
 
-    async writeFile(filePath: string[], data: ArrayBuffer, start?: number) {
-        const file = opfsTools.file(filePath.join('/'), 'rw');
-
+    async writeFile(filePath: FilePath, data: ArrayBuffer, start?: number) {
         if (start) {
+            const file = opfsTools.file('/' + filePath.join('/'), 'rw-unsafe');
             const writer = await file.createWriter();
-            writer.write(data, { at: start });
+            await writer.write(data, { at: start });
+            await writer.flush();
+            await writer.close();
         } else {
-            await file.remove();
-            const writer = await file.createWriter();
-            writer.write(data);
+            await opfsTools.write('/' + filePath.join('/'), data, { overwrite: true });
         }
+    }
+
+    async writeStream(filePath: FilePath, data: ReadableStream) {
+        await opfsTools.write('/' + filePath.join('/'), data, { overwrite: true });
     }
 
     async DeleteFile(filePath: string[]) {

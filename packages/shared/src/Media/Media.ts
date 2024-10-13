@@ -8,7 +8,13 @@ export abstract class MediaItem<Metadata extends Record<string, any> = MediaItem
     public abstract name: string;
     public abstract type: MediaItemTypes;
 
-    protected metadata!: Metadata;
+    protected metadata: Metadata = {} as Metadata;
+
+    constructor(initialMetadata?: Metadata) {
+        if (initialMetadata) {
+            this.metadata = initialMetadata;
+        }
+    }
 
     public getMetadata<TPath extends Path<Metadata>>(part: TPath): PathValue<Metadata, TPath> {
         return getByPath(this.metadata, part);
@@ -18,8 +24,8 @@ export abstract class MediaItem<Metadata extends Record<string, any> = MediaItem
     }
 
     // This function could be expanded in the future
-    public async serializeMetadata(): Promise<Map<string, any>> {
-        return new Map(Object.entries(this.metadata ?? {}));
+    public async serializeMetadata(): Promise<{ [key: string | number]: any }> {
+        return this.metadata ?? {};
     }
 
     public isMediaFile(): this is MediaFileItem {
@@ -41,6 +47,7 @@ export abstract class MediaItem<Metadata extends Record<string, any> = MediaItem
 export type MediaItemTypes = 'ChunkedMediaFile' | 'MediaFile' | 'Timeline';
 
 export enum MediaSourceType {
+    Unknown = 0,
     /**
      * The source has audio
      */

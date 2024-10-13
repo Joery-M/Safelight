@@ -161,21 +161,21 @@ export async function demux(source: File, callback: (event: WorkerOutput) => voi
         let curIndex = 0;
         if (track.TrackType == Elements.TrackType.Video) {
             curIndex = blockBuffer.push({
-                chunk: new EncodedVideoChunk({
+                chunk: {
                     data: block.totalBuffer,
                     timestamp: block.TimeStamp,
                     type: block.hasFlag(BlockFlags.Keyframe) ? 'key' : 'delta'
-                }),
+                },
                 trackIndex: block.TrackNumber,
                 type: 'chunk'
             });
         } else if (track.TrackType == Elements.TrackType.Audio) {
             curIndex = blockBuffer.push({
-                chunk: new EncodedAudioChunk({
+                chunk: {
                     data: block.totalBuffer,
                     timestamp: block.TimeStamp,
                     type: block.hasFlag(BlockFlags.Keyframe) ? 'key' : 'delta'
-                }),
+                },
                 trackIndex: block.TrackNumber,
                 type: 'chunk'
             });
