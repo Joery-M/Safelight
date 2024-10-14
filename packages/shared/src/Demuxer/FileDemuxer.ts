@@ -1,5 +1,6 @@
 import MimeMatcher from 'mime-matcher';
 import { Observable } from 'rxjs';
+import type { MediaFileAudioTrack, MediaFileVideoTrack } from '../Media/ChunkedMediaFile';
 
 export class FileDemuxer {
     private static demuxers = new Map<string, (() => Promise<BaseDemuxer | undefined>)[]>();
@@ -45,18 +46,7 @@ export class FileDemuxer {
     }
 }
 
-export type DemuxerOutput = DemuxedVideoTrack | DemuxedAudioTrack | DemuxedChunkArray;
-
-export interface DemuxedVideoTrack {
-    type: 'video';
-    trackIndex: number;
-    decoderConfig: VideoDecoderConfig;
-}
-export interface DemuxedAudioTrack {
-    type: 'audio';
-    trackIndex: number;
-    decoderConfig: AudioDecoderConfig;
-}
+export type DemuxerOutput = MediaFileAudioTrack | MediaFileVideoTrack | DemuxedChunkArray;
 
 export interface DemuxedChunkArray {
     type: 'chunks';

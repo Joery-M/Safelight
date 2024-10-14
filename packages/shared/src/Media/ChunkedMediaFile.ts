@@ -66,9 +66,7 @@ export interface ChunkedMediaFileItemMetadata extends MediaItemMetadata {
     };
     source: {
         chunkOffsets: ChunkOffset[];
-        tracks: {
-            [key: number]: CompatibleDecoderConfig;
-        };
+        tracks: MediaFileTracks;
     };
     thumbnails: MediaThumbnailMetadata[];
 }
@@ -80,21 +78,21 @@ export type CompatibleDecoderConfig<T = VideoDecoderConfig | AudioDecoderConfig>
     description?: ArrayBuffer | undefined;
 };
 
-export type MediaFileTrack = MediaFileAudioTrack | MediaFileVideoTrack;
+export type MediaFileTracks = { [key: number]: MediaFileAudioTrack | MediaFileVideoTrack };
 export interface MediaFileAudioTrack {
     type: 'audio';
+    trackIndex: number;
     channels: number;
-    duration: number;
     sampleRate: number;
     codec: string;
     decoderConfig: CompatibleDecoderConfig<AudioDecoderConfig>;
 }
 export interface MediaFileVideoTrack {
     type: 'video';
+    trackIndex: number;
     width: number;
     height: number;
-    duration: number;
-    framerate: number;
+    framerate?: number;
     codec: string;
     colorSpace?: VideoColorSpaceInit;
     decoderConfig: CompatibleDecoderConfig<VideoDecoderConfig>;

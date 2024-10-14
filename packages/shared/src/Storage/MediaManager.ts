@@ -1,13 +1,13 @@
+import { DateTime } from 'luxon';
 import { Subscription } from 'rxjs';
 import { Storage } from '../base/Storage';
 import { FileDemuxer } from '../Demuxer/FileDemuxer';
 import {
     ChunkedMediaFileItem,
     type ChunkOffset,
-    type CompatibleDecoderConfig
+    type MediaFileTracks
 } from '../Media/ChunkedMediaFile';
 import { MediaSourceType, type MediaItem } from '../Media/Media';
-import { DateTime } from 'luxon';
 
 export default class MediaManager {
     static storeMedia(file: File) {
@@ -27,7 +27,7 @@ export default class MediaManager {
                 let fileDemuxer$: Subscription;
                 let offsetInFile = 0;
 
-                const tracks: { [key: number]: CompatibleDecoderConfig } = {};
+                const tracks: MediaFileTracks = {};
 
                 let sourceType: MediaSourceType = MediaSourceType.Unknown;
 
@@ -65,10 +65,8 @@ export default class MediaManager {
                                         }
                                     }
 
-                                    tracks[output.trackIndex] = {
-                                        ...output.decoderConfig,
-                                        description: desc
-                                    };
+                                    output.decoderConfig.description = desc;
+                                    tracks[output.trackIndex] = output;
 
                                     // Add type
                                     if (output.type == 'audio') {

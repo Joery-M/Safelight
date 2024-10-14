@@ -51,7 +51,7 @@
 <script lang="ts" setup>
 import { PhArrowLeft, PhUpload } from '@phosphor-icons/vue';
 import { Storage } from '@safelight/shared/base/Storage';
-import { VideoDemuxer } from '@safelight/shared/Decoder/Video/VideoDemuxer';
+import { FileDemuxer } from '@safelight/shared/Demuxer/FileDemuxer';
 import { IndexedDbStorageController } from '@safelight/shared/Storage/LocalStorage/IndexedDbStorage';
 import MediaManager from '@safelight/shared/Storage/MediaManager';
 import { useFileDialog } from '@vueuse/core';
@@ -106,13 +106,13 @@ fileDialog.onChange((fileList) => {
     }
 });
 
-let demuxer: VideoDemuxer;
+let demuxer: FileDemuxer;
 
 async function loadFile(source: File) {
     endTime.value = undefined;
     startTime.value = undefined;
     progress.value = 'Processing';
-    demuxer = new VideoDemuxer();
+    demuxer = new FileDemuxer();
     const success = await demuxer.loadFile(source);
     if (success) {
         progress.value = 'Loaded';

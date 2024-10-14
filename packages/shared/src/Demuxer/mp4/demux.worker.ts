@@ -9,7 +9,8 @@ import {
 } from 'mp4box';
 
 import * as Comlink from 'comlink';
-import type { DemuxedAudioTrack, DemuxedChunk, DemuxedVideoTrack } from '../FileDemuxer';
+import type { MediaFileAudioTrack, MediaFileVideoTrack } from '../../Media/ChunkedMediaFile';
+import type { DemuxedChunk } from '../FileDemuxer';
 import type { WorkerOutput } from './Mp4Demuxer';
 
 export function demux(source: File, callback: (event: WorkerOutput) => any) {
@@ -17,7 +18,7 @@ export function demux(source: File, callback: (event: WorkerOutput) => any) {
 
     const reader = source.stream().getReader();
 
-    const result: (DemuxedVideoTrack | DemuxedAudioTrack)[] = [];
+    const result: (MediaFileVideoTrack | MediaFileAudioTrack)[] = [];
 
     file.onError = (e: string) => {
         console.error(e);
@@ -109,8 +110,8 @@ async function readChunk(
 }
 
 function onReady(info: MP4Info, file: MP4File) {
-    const vidTrackInfo: DemuxedVideoTrack[] = [];
-    const audTrackInfo: DemuxedAudioTrack[] = [];
+    const vidTrackInfo: MediaFileVideoTrack[] = [];
+    const audTrackInfo: MediaFileAudioTrack[] = [];
 
     for (const track of info.videoTracks) {
         if (!track) continue;
@@ -123,6 +124,9 @@ function onReady(info: MP4Info, file: MP4File) {
         vidTrackInfo.push({
             type: 'video',
             trackIndex: track.id,
+            codec: track.codec,
+            height: track.video.height,
+            width: track.video.width,
             decoderConfig: {
                 codec: track.codec,
                 codedWidth: track.video.width,
@@ -138,6 +142,9 @@ function onReady(info: MP4Info, file: MP4File) {
         audTrackInfo.push({
             type: 'audio',
             trackIndex: track.id,
+            channels: track.audio.channel_count,
+            codec: track.codec,
+            sampleRate: track.audio.sample_rate,
             decoderConfig: {
                 codec: track.codec,
                 numberOfChannels: track.audio.channel_count,
@@ -154,7 +161,7 @@ function getExtradata(entries: any) {
         if (box) {
             const stream = new DataStream(undefined, 0, DataStream.BIG_ENDIAN);
             box.write(stream);
-            return new Uint8Array(stream.buffer, 8); // Remove the box header.
+            return stream.buffer.slice(8); // Remove the box header.
         }
     }
 }
