@@ -147,7 +147,23 @@ export class IndexedDbStorageController extends BaseStorageController {
     }
     async loadMedia<M extends MediaItem>(mediaId: string): Promise<M | undefined> {
         const storedMedia = await this.db.media.get({ id: mediaId });
+        return this.mapStoredMediaToMediaItem(storedMedia) as unknown as M;
+    }
 
+    async getAllMedia() {
+        const storedMedias = await this.db.media.filter((m) => m.type !== 'Timeline').toArray();
+        return storedMedias
+            .map(
+                (storedMedia) =>
+                    this.mapStoredMediaToMediaItem(storedMedia) as
+                        | MediaFileItem
+                        | ChunkedMediaFileItem
+                        | undefined
+            )
+            .filter((m) => !!m);
+    }
+
+    private mapStoredMediaToMediaItem(storedMedia?: StoredMedia) {
         switch (storedMedia?.type) {
             case 'ChunkedMediaFile': {
                 const item = new ChunkedMediaFileItem(
@@ -156,14 +172,14 @@ export class IndexedDbStorageController extends BaseStorageController {
                 item.id = storedMedia.id;
                 item.name = storedMedia.name;
 
-                return item as unknown as M;
+                return item;
             }
             case 'MediaFile': {
                 const item = new MediaFileItem(storedMedia.metadata as MediaFileItemMetadata);
                 item.id = storedMedia.id;
                 item.name = storedMedia.name;
 
-                return item as unknown as M;
+                return item;
             }
             case 'Timeline': {
                 const config = storedMedia.metadata.get('timelineConfig') as TimelineConfig;
@@ -178,7 +194,7 @@ export class IndexedDbStorageController extends BaseStorageController {
                 item.id = storedMedia.id;
                 item.name = storedMedia.name;
 
-                return item as unknown as M;
+                return item;
             }
 
             default:

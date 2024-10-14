@@ -1,10 +1,10 @@
 <template>
     <Card>
         <template #subtitle>
-            <RouterLink to="/">
+            <RouterLink to="/dev">
                 <Button>
                     <template #icon>
-                        <PhHouse />
+                        <PhArrowLeft />
                     </template>
                 </Button>
             </RouterLink>
@@ -13,9 +13,7 @@
             <template
                 v-for="route in $router
                     .getRoutes()
-                    .filter(
-                        (a) => a.path.startsWith($route.path + '/') && !a.path.includes('storage/')
-                    )"
+                    .filter((a) => a.path.startsWith('/dev/storage/'))"
                 :key="route.path"
             >
                 <div class="mb-2">
@@ -36,12 +34,15 @@
 </template>
 
 <script setup lang="ts">
-import { PhHouse } from '@phosphor-icons/vue';
+import { PhArrowLeft } from '@phosphor-icons/vue';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import { RouterLink } from 'vue-router';
 </script>
 
 <route lang="json">
-{ "path": "/dev" }
+{
+    "$schema": "https://raw.githubusercontent.com/posva/unplugin-vue-router/main/route.schema.json",
+    "name": "Storage"
+}
 </route>

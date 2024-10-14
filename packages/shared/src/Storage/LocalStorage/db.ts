@@ -14,7 +14,7 @@ export class SafelightIndexedDB extends Dexie {
         }
 
         this.version(1).stores({
-            media: 'id, name',
+            media: 'id, name, type',
             project: 'id, name',
             timelineItem: 'id'
         });

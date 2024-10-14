@@ -1,4 +1,6 @@
+import type { ChunkedMediaFileItem } from '../Media/ChunkedMediaFile';
 import type { MediaItem, MediaItemTypes } from '../Media/Media';
+import type { MediaFileItem } from '../Media/MediaFile';
 import type { default as BaseProject, ProjectType } from './Project';
 import type { TimelineItemType } from './TimelineItem';
 
@@ -15,6 +17,7 @@ export default abstract class BaseStorageController {
     abstract saveMedia(media: StoredMedia): Promise<SaveResults>;
     abstract saveMedia(media: MediaItem): Promise<SaveResults>;
     abstract loadMedia<M extends MediaItem>(mediaId: string): Promise<M | undefined>;
+    abstract getAllMedia(): Promise<(ChunkedMediaFileItem | MediaFileItem)[]>;
 
     abstract getBaseFilePath(type: FilePathTypes): FilePath;
     abstract writeFile(filePath: FilePath, data: ArrayBufferLike, start?: number): Promise<void>;
