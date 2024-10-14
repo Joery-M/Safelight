@@ -91,6 +91,13 @@ export interface MediaFileAudioTrack {
 }
 export interface MediaFileVideoTrack {
     type: 'video';
+    width: number;
+    height: number;
+    duration: number;
+    framerate: number;
+    codec: string;
+    colorSpace?: VideoColorSpaceInit;
+    decoderConfig: CompatibleDecoderConfig<VideoDecoderConfig>;
 }
 
 export interface ChunkOffset {
