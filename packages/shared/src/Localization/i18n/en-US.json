@@ -22,7 +22,8 @@
             "modified": "Modified",
             "created": "Created",
             "fileType": "File type | File types",
-            "refresh": "Refresh"
+            "refresh": "Refresh",
+            "size": "Size"
         },
         "status": {
             "error": "Error",
@@ -59,7 +60,8 @@
         },
         "monitor": {
             "title": "Monitor"
-        }
+        },
+        "addMenu": "Add panel"
     },
     "storage": {
         "nonPersistentNotif": {
@@ -107,5 +109,8 @@
                 "fractionalSecondDigits": 3
             }
         }
+    },
+    "settings": {
+        "downloadJson": "Download JSON"
     }
 }

@@ -17,7 +17,7 @@
             </Tree>
             <Button severity="secondary" @click="SettingsManager.downloadSettings()">
                 <PhDownload />
-                Download JSON
+                {{ $t('settings.downloadJson') }}
             </Button>
         </div>
         <div

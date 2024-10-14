@@ -19,7 +19,7 @@
     "test:tswebm": "cd packages/tswebm && pnpm test:run",
     "dev": "cd packages/safelight && pnpm dev",
     "dev:darkroom": "pnpm build:packages && cd packages/darkroom && pnpm dev:web",
-    "lint": "pnpm run \"/lint:\"/",
+    "lint": "pnpm lint:prettier && pnpm lint:eslint",
     "lint:prettier": "prettier . --write --ignore-path .gitignore --ignore-path ./packages/safelight/.gitignore --ignore-path .prettierignore",
     "lint:eslint": "eslint ./packages/**/*{.ts,.js,.vue}"
   },

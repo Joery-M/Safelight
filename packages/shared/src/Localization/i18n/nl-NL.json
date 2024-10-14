@@ -22,7 +22,8 @@
             "modified": "Aangepast",
             "created": "Aangemaakt",
             "fileType": "Bestandstype | Bestandstypen",
-            "refresh": "Herladen"
+            "refresh": "Herladen",
+            "size": "Grootte"
         },
         "status": {
             "error": "Error",
@@ -59,7 +60,8 @@
         },
         "monitor": {
             "title": "Monitor"
-        }
+        },
+        "addMenu": "Paneel toevoegen"
     },
     "storage": {
         "nonPersistentNotif": {
@@ -109,5 +111,8 @@
                 "fractionalSecondDigits": 3
             }
         }
+    },
+    "settings": {
+        "downloadJson": "JSON downloaden"
     }
 }
