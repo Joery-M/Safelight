@@ -8,32 +8,28 @@ export class ChunkedMediaFileItem extends MediaItem<ChunkedMediaFileItemMetadata
     public name = '';
     public type: MediaItemTypes = 'ChunkedMediaFile';
 
-    public async *loadChunk(start = 0, count = 1): AsyncGenerator<MediaChunkData | undefined> {
+    public async loadChunk(index = 0): Promise<MediaChunkData | undefined> {
+        // This method could be easily optimized if a bit of brain power is used. Depending
+        // on how Daguerreo and surrounding code is implemented, this could return a stream
+        // instead, but that would maybe cause issues with OPFS, unsafe read should then be used.
+
         const basePath = this.getMetadata('file.location');
         const offsets = this.getMetadata('source.chunkOffsets');
         if (!basePath || !offsets) {
             throw new Error('Could not get file metadata');
         }
 
-        for (let i = 0; i < count; i++) {
-            const index = i + start;
+        if (offsets[index]) {
+            const offset = offsets[index];
+            const file = await Storage.getStorage().readFile(basePath, offset.start, offset.size);
 
-            if (offsets[index]) {
-                const offset = offsets[index];
-                const file = await Storage.getStorage().readFile(
-                    basePath,
-                    offset.start,
-                    offset.size
-                );
-
-                if (!file) {
-                    yield undefined;
-                } else {
-                    yield { index, size: 0, data: file };
-                }
+            if (!file) {
+                return undefined;
             } else {
-                yield undefined;
+                return { index, size: 0, data: file };
             }
+        } else {
+            return undefined;
         }
     }
 
@@ -83,6 +79,19 @@ export type CompatibleDecoderConfig<T = VideoDecoderConfig | AudioDecoderConfig>
 > & {
     description?: ArrayBuffer | undefined;
 };
+
+export type MediaFileTrack = MediaFileAudioTrack | MediaFileVideoTrack;
+export interface MediaFileAudioTrack {
+    type: 'audio';
+    channels: number;
+    duration: number;
+    sampleRate: number;
+    codec: string;
+    decoderConfig: CompatibleDecoderConfig<AudioDecoderConfig>;
+}
+export interface MediaFileVideoTrack {
+    type: 'video';
+}
 
 export interface ChunkOffset {
     start: number;
