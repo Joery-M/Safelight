@@ -9,7 +9,7 @@ import {
 } from 'mp4box';
 
 import * as Comlink from 'comlink';
-import type { DemuxedAudioTrack, DemuxedChunk, DemuxedVideoTrack } from '../VideoDemuxer';
+import type { DemuxedAudioTrack, DemuxedChunk, DemuxedVideoTrack } from '../FileDemuxer';
 import type { WorkerOutput } from './Mp4Demuxer';
 
 export function demux(source: File, callback: (event: WorkerOutput) => any) {

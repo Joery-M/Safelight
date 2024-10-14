@@ -1,7 +1,7 @@
 import MimeMatcher from 'mime-matcher';
 import { Observable } from 'rxjs';
 
-export class VideoDemuxer {
+export class FileDemuxer {
     private static demuxers = new Map<string, (() => Promise<BaseDemuxer | undefined>)[]>();
 
     static registerDemuxer(mimeType: string, demuxer: () => Promise<BaseDemuxer | undefined>) {
@@ -32,7 +32,7 @@ export class VideoDemuxer {
     private file?: File;
 
     async loadFile(file: File) {
-        this.demuxer = await VideoDemuxer.getDemuxer(file);
+        this.demuxer = await FileDemuxer.getDemuxer(file);
         this.file = file;
         return this.demuxer !== undefined;
     }
@@ -74,19 +74,19 @@ export interface BaseDemuxer {
 }
 
 // Load default demuxers
-VideoDemuxer.registerDemuxer(
+FileDemuxer.registerDemuxer(
     'video/mp4',
     async () => new (await import('./mp4/Mp4Demuxer')).Mp4Demuxer()
 );
-VideoDemuxer.registerDemuxer(
+FileDemuxer.registerDemuxer(
     'video/quicktime',
     async () => new (await import('./mp4/Mp4Demuxer')).Mp4Demuxer()
 );
-VideoDemuxer.registerDemuxer(
+FileDemuxer.registerDemuxer(
     'video/x-matroska',
     async () => new (await import('./webm/WebmDemuxer')).WebmDemuxer()
 );
-VideoDemuxer.registerDemuxer(
+FileDemuxer.registerDemuxer(
     'video/webm',
     async () => new (await import('./webm/WebmDemuxer')).WebmDemuxer()
 );

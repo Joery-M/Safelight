@@ -1,6 +1,6 @@
 import { Subscription } from 'rxjs';
 import { Storage } from '../base/Storage';
-import { VideoDemuxer } from '../Decoder/Video/VideoDemuxer';
+import { FileDemuxer } from '../Demuxer/FileDemuxer';
 import {
     ChunkedMediaFileItem,
     type ChunkOffset,
@@ -13,7 +13,7 @@ export default class MediaManager {
     static storeMedia(file: File) {
         const storage = Storage.getStorage();
         return new Promise<MediaItem>(async (resolve, reject) => {
-            const videoDemuxer = await VideoDemuxer.getDemuxer(file);
+            const videoDemuxer = await FileDemuxer.getDemuxer(file);
             if (videoDemuxer) {
                 const media = new ChunkedMediaFileItem();
                 // Set base media stuff
@@ -95,7 +95,7 @@ export default class MediaManager {
                 // Set other data
                 media.addMetadata('source.chunkOffsets', chunkOffsets);
                 media.addMetadata('source.tracks', tracks);
-                // Coincidentally, this is also the raw size of all chunks
+                // Coincidentally, offsetInFile is also the raw size of all chunks
                 media.addMetadata('file.size', offsetInFile);
                 media.addMetadata('media.sourceType', sourceType);
                 media.addMetadata('media.created', DateTime.now().toISO());

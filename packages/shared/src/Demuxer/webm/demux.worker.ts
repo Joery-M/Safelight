@@ -2,7 +2,7 @@ import { BlockFlags } from '@safelight/tswebm/Block';
 import { Elements, MatroskaElements } from '@safelight/tswebm/elements';
 import { WebmReader } from '@safelight/tswebm/WebmReader';
 import { expose } from 'comlink';
-import type { DemuxedChunk } from '../VideoDemuxer';
+import type { DemuxedChunk } from '../FileDemuxer';
 import type { WorkerOutput } from './WebmDemuxer';
 
 export async function demux(source: File, callback: (event: WorkerOutput) => void) {
