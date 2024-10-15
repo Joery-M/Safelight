@@ -149,18 +149,36 @@ export class IndexedDbStorageController extends BaseStorageController {
         const storedMedia = await this.db.media.get({ id: mediaId });
         return this.mapStoredMediaToMediaItem(storedMedia) as unknown as M;
     }
+    deleteMedia(mediaId: MediaItem): Promise<SaveResults>;
+    deleteMedia(mediaId: StoredMedia): Promise<SaveResults>;
+    deleteMedia(mediaId: string): Promise<SaveResults>;
+    async deleteMedia(mediaId: MediaItem | StoredMedia | string): Promise<SaveResults> {
+        const id = typeof mediaId === 'string' ? mediaId : mediaId?.id;
+        if (!id) {
+            return 'Error';
+        }
+    }
 
-    async getAllMedia() {
-        const storedMedias = await this.db.media.filter((m) => m.type !== 'Timeline').toArray();
-        return storedMedias
-            .map(
-                (storedMedia) =>
-                    this.mapStoredMediaToMediaItem(storedMedia) as
-                        | MediaFileItem
-                        | ChunkedMediaFileItem
-                        | undefined
-            )
-            .filter((m) => !!m);
+    async getAllMedia(projectId?: string) {
+        if (projectId) {
+            const mediaList = await this.db.project.get(projectId).then((p) => p?.media);
+            if (!mediaList) {
+                return [];
+            }
+
+            const storedMedias = await this.db.media
+                .filter((m) => mediaList.includes(m.id))
+                .toArray();
+
+            return storedMedias
+                .map((storedMedia) => this.mapStoredMediaToMediaItem(storedMedia))
+                .filter((m) => !!m);
+        } else {
+            const storedMedias = await this.db.media.filter((m) => m.type !== 'Timeline').toArray();
+            return storedMedias
+                .map((storedMedia) => this.mapStoredMediaToMediaItem(storedMedia))
+                .filter((m) => !!m);
+        }
     }
 
     private mapStoredMediaToMediaItem(storedMedia?: StoredMedia) {

@@ -11,7 +11,8 @@
             "sortDescending": "Sort descending",
             "sortBy": "Sort by",
             "loadFile": "Import file",
-            "resetValue": "Reset value"
+            "resetValue": "Reset value",
+            "delete": "Delete"
         },
         "descriptions": {
             "untitled": "Untitled",

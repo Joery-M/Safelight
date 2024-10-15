@@ -12,14 +12,23 @@
         <template #content>
             <TreeTable :value="treeItems">
                 <Column field="name" :header="$t('general.descriptions.name')" expander />
-                <Column field="size" :header="$t('general.descriptions.size')" expander />
+                <Column field="size" :header="$t('general.descriptions.size')" />
+                <Column :header="$t('general.actions.delete')">
+                    <template #body="{ node: { data } }">
+                        <Button rounded @click="storage.deleteMedia(data.id)">
+                            <template #icon>
+                                <PhTrash />
+                            </template>
+                        </Button>
+                    </template>
+                </Column>
             </TreeTable>
         </template>
     </Card>
 </template>
 
 <script setup lang="ts">
-import { PhArrowLeft } from '@phosphor-icons/vue';
+import { PhArrowLeft, PhTrash } from '@phosphor-icons/vue';
 import { IndexedDbStorageController } from '@safelight/shared/Storage/LocalStorage/IndexedDbStorage';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
@@ -27,7 +36,6 @@ import Column from 'primevue/column';
 import type { TreeNode } from 'primevue/treenode';
 import TreeTable from 'primevue/treetable';
 import { onMounted, reactive } from 'vue';
-import { useI18n } from 'vue-i18n';
 
 const treeItems = reactive<TreeNode[]>([]);
 
@@ -48,15 +56,14 @@ function formatByteValue(n: number) {
     return formatter.format(value);
 }
 
-const i18n = useI18n();
+const storage = new IndexedDbStorageController();
 onMounted(() => {
-    const storage = new IndexedDbStorageController();
-    const formatter = new Intl.NumberFormat(undefined, { style: 'unit', unit: 'megabyte' });
     storage.getAllMedia().then((m) => {
         m.forEach((media) => {
             treeItems.push({
                 key: media.id,
                 data: {
+                    id: media.id,
                     name: media.name,
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     //@ts-expect-error

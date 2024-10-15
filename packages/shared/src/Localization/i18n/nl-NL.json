@@ -11,7 +11,8 @@
             "sortDescending": "Sorteer aflopend",
             "sortBy": "Sorteer op",
             "loadFile": "Importeer bestand",
-            "resetValue": "Zet waarde terug"
+            "resetValue": "Zet waarde terug",
+            "delete": "Verwijderen"
         },
         "descriptions": {
             "untitled": "Naamloos",
