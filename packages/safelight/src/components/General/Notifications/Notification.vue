@@ -3,7 +3,7 @@
         class="notification"
         role="dialog"
         :aria-label="$t(notif.config.title ?? '', 'notification.defaultTitle')"
-        :aria-describedby="$t(notif.config.text ?? '', 'notification.defaultTitle')"
+        :aria-describedby="'content-' + notif.id"
         :aria-live="notif.config.severity == 'error' ? 'assertive' : 'polite'"
     >
         <template #header>
@@ -22,7 +22,7 @@
                 </template>
             </Button>
         </template>
-        <p class="mb-0">{{ $t(notif.config.title ?? '') }}</p>
+        <p class="mb-0" :id="'content-' + notif.id">{{ $t(notif.config.text ?? '') }}</p>
         <div v-if="buttons.length > 0" class="align-items-center mt-4 flex gap-2">
             <template v-for="(btn, i) in buttons" :key="i">
                 <Button
