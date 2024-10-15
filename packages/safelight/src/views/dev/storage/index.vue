@@ -13,17 +13,16 @@
             <template
                 v-for="route in $router
                     .getRoutes()
-                    .filter((a) => a.path.startsWith('/dev/storage/'))"
+                    .filter((a) => a.path.startsWith($route.path) && a.path !== $route.path)"
                 :key="route.path"
             >
                 <div class="mb-2">
                     <RouterLink :to="route.path">
                         <Button>
                             {{
-                                (route.name?.toString() ?? route.path).replace(
-                                    $route.path + '/',
-                                    ''
-                                )
+                                (route.name?.toString() ?? route.path)
+                                    .replace($route.path, '')
+                                    .replace(/^\//, '')
                             }}
                         </Button>
                     </RouterLink>

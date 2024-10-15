@@ -31,6 +31,23 @@ import { useI18n } from 'vue-i18n';
 
 const treeItems = reactive<TreeNode[]>([]);
 
+function formatByteValue(n: number) {
+    const UNITS = ['byte', 'kilobyte', 'megabyte', 'gigabyte', 'terabyte', 'petabyte'];
+
+    const i = n == 0 ? 0 : Math.floor(Math.log(n) / Math.log(1024));
+    const value = n / Math.pow(1024, i);
+    const unit = UNITS[i];
+
+    const formatter = new Intl.NumberFormat(undefined, {
+        notation: 'standard',
+        style: 'unit',
+        unit: unit,
+        unitDisplay: 'narrow',
+        maximumFractionDigits: 1
+    });
+    return formatter.format(value);
+}
+
 const i18n = useI18n();
 onMounted(() => {
     const storage = new IndexedDbStorageController();
@@ -43,7 +60,7 @@ onMounted(() => {
                     name: media.name,
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     //@ts-expect-error
-                    size: formatter.format(Number(media.getMetadata('file.size')) / 1024 / 1024)
+                    size: formatByteValue(Number(media.getMetadata('file.size')))
                 }
             });
         });

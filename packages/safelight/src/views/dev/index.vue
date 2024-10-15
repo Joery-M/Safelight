@@ -14,7 +14,10 @@
                 v-for="route in $router
                     .getRoutes()
                     .filter(
-                        (a) => a.path.startsWith($route.path + '/') && !a.path.includes('storage/')
+                        (a) =>
+                            a.path.startsWith($route.path) &&
+                            a.path !== $route.path &&
+                            !a.path.includes('storage/')
                     )"
                 :key="route.path"
             >
@@ -22,10 +25,9 @@
                     <RouterLink :to="route.path">
                         <Button>
                             {{
-                                (route.name?.toString() ?? route.path).replace(
-                                    $route.path + '/',
-                                    ''
-                                )
+                                (route.name?.toString() ?? route.path)
+                                    .replace($route.path, '')
+                                    .replace(/^\//, '')
                             }}
                         </Button>
                     </RouterLink>
@@ -43,5 +45,8 @@ import { RouterLink } from 'vue-router';
 </script>
 
 <route lang="json">
-{ "path": "/dev" }
+{
+    "$schema": "https://raw.githubusercontent.com/posva/unplugin-vue-router/main/route.schema.json",
+    "name": "Dev"
+}
 </route>
