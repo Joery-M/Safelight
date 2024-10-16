@@ -1,186 +1,113 @@
-import { createMD5 } from 'hash-wasm';
 import { DateTime } from 'luxon';
-import type { MediaInfoResult } from 'mediainfo.js';
-import { Observable } from 'rxjs';
-import { v4 as uuidv4 } from 'uuid';
+import { Subscription } from 'rxjs';
 import { Storage } from '../base/Storage';
-import { getFileInfo } from '../helpers/Files/GetFileInfo';
-import { generateMediaThumbnail } from '../helpers/Video/GenerateMediaThumbnail';
+import { FileDemuxer } from '../Demuxer/FileDemuxer';
 import {
-    MediaType,
-    type AudioTrackInfo,
-    type ImageInfo,
-    type TextTrackInfo,
-    type VideoTrackInfo
-} from '../Media/Media';
-
-const chunkSize = 64 * 1024 * 1024;
+    ChunkedMediaFileItem,
+    type ChunkOffset,
+    type MediaFileTracks
+} from '../Media/ChunkedMediaFile';
+import { MediaSourceType, type MediaItem } from '../Media/Media';
 
 export default class MediaManager {
-    static StoreMedia(file: File) {
-        return new Observable<LoadMediaProgress>((subscriber) => {
-            // Thanks RxJs, makes sense
-            (async () => {
-                // Hash file
-                const reader = new FileReader();
+    static storeMedia(file: File) {
+        const storage = Storage.getStorage();
+        return new Promise<MediaItem>(async (resolve, reject) => {
+            const videoDemuxer = await FileDemuxer.getDemuxer(file);
+            if (videoDemuxer) {
+                const media = new ChunkedMediaFileItem();
+                // Set base media stuff
+                const path = storage.getBaseFilePath('media-files');
+                media.addMetadata('file.location', [...path, media.id]);
+                media.addMetadata('file.name', file.name);
+                media.name = file.name;
 
-                const hasher = await createMD5();
+                const chunkOffsets: ChunkOffset[] = [];
 
-                function hashChunk(chunk: Blob) {
-                    return new Promise<void>((resolve) => {
-                        reader.onload = async (e) => {
-                            const view = new Uint8Array(e.target!.result! as ArrayBuffer);
-                            hasher.update(view);
-                            resolve();
-                        };
+                let fileDemuxer$: Subscription;
+                let offsetInFile = 0;
 
-                        reader.readAsArrayBuffer(chunk);
-                    });
-                }
+                const tracks: MediaFileTracks = {};
 
-                const chunkNumber = Math.ceil(file.size / chunkSize);
+                let sourceType: MediaSourceType = MediaSourceType.Unknown;
 
-                for (let i = 0; i <= chunkNumber; i++) {
-                    const chunk = file.slice(
-                        chunkSize * i,
-                        Math.min(chunkSize * (i + 1), file.size)
-                    );
-                    await hashChunk(chunk);
-                    subscriber.next({
-                        hashProgress: Math.min(i / chunkNumber, 1),
-                        type: 'hash'
-                    });
-                }
+                const stream = new ReadableStream<BufferSource>({
+                    start(controller) {
+                        fileDemuxer$ = videoDemuxer.demuxFile(file).subscribe({
+                            next: async (output) => {
+                                if (output.type == 'chunks') {
+                                    for (const chunk of output.chunks) {
+                                        controller.enqueue(chunk.chunk.data);
 
-                const hash = hasher.digest();
+                                        chunkOffsets.push({
+                                            size: chunk.chunk.data.byteLength,
+                                            start: offsetInFile,
+                                            trackIndex: chunk.trackIndex,
+                                            keyFrame: chunk.chunk.type == 'key',
+                                            timestamp: chunk.chunk.timestamp,
+                                            duration: chunk.chunk.duration ?? undefined
+                                        });
 
-                // Check if a file with the same hash is already stored, if so, use it
-                const existingMedia = await Storage.getStorage().getMediaFromHash(hash);
+                                        offsetInFile += chunk.chunk.data.byteLength;
+                                    }
+                                } else if (output.type == 'audio' || output.type == 'video') {
+                                    let desc: ArrayBuffer | undefined;
+                                    if (output.decoderConfig.description) {
+                                        // Convert SharedArrayBuffer to regular ArrayBuffer
+                                        if (ArrayBuffer.isView(output.decoderConfig.description)) {
+                                            const view = new Uint8Array(
+                                                output.decoderConfig.description.buffer
+                                            );
+                                            desc = new ArrayBuffer(view.byteLength);
+                                            new Uint8Array(desc).set(view);
+                                        } else {
+                                            desc = output.decoderConfig.description;
+                                        }
+                                    }
 
-                if (existingMedia) {
-                    subscriber.next({
-                        type: 'done',
-                        id: existingMedia.id,
-                        hashProgress: 1
-                    });
-                } else {
-                    // Generate fileInfo
-                    subscriber.next({
-                        type: 'fileInfo',
-                        hashProgress: 1
-                    });
-                    const fileInfo = await getFileInfo(file);
+                                    output.decoderConfig.description = desc;
+                                    tracks[output.trackIndex] = output;
 
-                    // Get thumbnail
-                    subscriber.next({
-                        hashProgress: 1,
-                        type: 'thumbnail'
-                    });
-                    const thumbnail = (await generateMediaThumbnail(file)) ?? undefined; // Typescript shenanigans
-
-                    const uuid = uuidv4();
-
-                    const trackInfo = this.parseFileInfo(fileInfo);
-
-                    let type: MediaType = 0;
-
-                    if (trackInfo.videoTracks.length > 0) {
-                        type = type | MediaType.Video;
+                                    // Add type
+                                    if (output.type == 'audio') {
+                                        sourceType |= MediaSourceType.Audio;
+                                    } else if (output.type == 'video') {
+                                        sourceType |= MediaSourceType.Video;
+                                    }
+                                }
+                            },
+                            complete: async () => {
+                                controller.close();
+                            }
+                        });
+                    },
+                    cancel: () => {
+                        fileDemuxer$?.unsubscribe();
+                        reject('Stream cancelled');
                     }
-                    if (trackInfo.audioTracks.length > 0) {
-                        type = type | MediaType.Audio;
-                    }
-                    if (trackInfo.textTracks.length > 0) {
-                        type = type | MediaType.Text;
-                    }
-                    if (trackInfo.imageInfo) {
-                        type = type | MediaType.Image;
-                    }
-
-                    Storage.getStorage().SaveMedia({
-                        id: uuid,
-                        name: file.name,
-                        contentHash: hash,
-                        data: file,
-                        fileInfo,
-                        previewImage: thumbnail,
-                        type,
-                        ...trackInfo,
-                        created: DateTime.now().toISO()
-                    });
-                    subscriber.next({
-                        type: 'done',
-                        id: uuid,
-                        hashProgress: 1
-                    });
-                }
-
-                subscriber.complete();
-            })();
-        });
-    }
-
-    private static parseFileInfo(info: MediaInfoResult) {
-        const videoTracks: VideoTrackInfo[] = [];
-        const audioTracks: AudioTrackInfo[] = [];
-        const textTracks: TextTrackInfo[] = [];
-        const sampledDurations: number[] = [];
-        let imageInfo: ImageInfo | undefined;
-
-        info.media?.track.forEach((track) => {
-            if (track['@type'] == 'Video') {
-                videoTracks.push({
-                    title: track.Title ?? `Video Track ${videoTracks.length + 1}`,
-                    bitDepth: track.BitDepth!,
-                    codec: (track.CodecID ?? track.Format)!,
-                    colorSpace: track.ColorSpace!,
-                    frameRate: track.FrameRate!,
-                    frameRateMode:
-                        track.FrameRate_Mode === 'CFR' || !track.FrameRate_Mode ? 'CFR' : 'VFR',
-                    height: track.Height!,
-                    width: track.Width!,
-                    isHDR: 'HDR_Format' in track,
-                    duration: track.Duration!
                 });
-                if (track.Duration) {
-                    sampledDurations.push(track.Duration);
-                }
-            } else if (track['@type'] == 'Audio') {
-                audioTracks.push({
-                    title: track.Title ?? `Audio Track ${audioTracks.length + 1}`,
-                    channels: track.Channels ?? 1,
-                    codec: track.CodecID ?? track.Format ?? 'Unknown codec',
-                    sampleRate: track.SamplingRate ?? 0,
-                    duration: track.Duration ?? 0
-                });
-                if (track.Duration) {
-                    sampledDurations.push(track.Duration);
-                }
-            } else if (track['@type'] == 'Image') {
-                imageInfo = {
-                    format: track.Format!,
-                    height: track.Height!,
-                    width: track.Width!
-                };
-            } else if (track['@type'] == 'Text') {
-                textTracks.push({
-                    format: track.Format!
-                });
+
+                // Wait for promise to finish, since that is when the readableStream
+                // is empty and its contents have been written to storage
+                await storage.writeStream([...path, media.id], stream);
+                // Set other data
+                media.addMetadata('source.chunkOffsets', chunkOffsets);
+                media.addMetadata('source.tracks', tracks);
+                // Coincidentally, offsetInFile is also the raw size of all chunks
+                media.addMetadata('file.size', offsetInFile);
+                media.addMetadata('media.sourceType', sourceType);
+                media.addMetadata('media.created', DateTime.now().toISO());
+
+                await storage.saveMedia(media);
+                resolve(media);
+                return;
             }
+
+            // TODO: Implement audio demuxer
+
+            // If no demuxer could be found, just write the file to storage and use it
         });
-
-        return {
-            videoTracks,
-            audioTracks,
-            textTracks,
-            imageInfo,
-            duration: Math.max(...sampledDurations)
-        };
     }
-}
 
-interface LoadMediaProgress {
-    type: 'fileInfo' | 'thumbnail' | 'hash' | 'done';
-    id?: string;
-    hashProgress: number;
+    static generateThumbnail() {}
 }

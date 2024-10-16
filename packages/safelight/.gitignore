@@ -4,3 +4,4 @@
 
 # Generated items
 /src/generated/*
+/types/i18n.d.ts

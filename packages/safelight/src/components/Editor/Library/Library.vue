@@ -38,7 +38,8 @@
                         <InputGroupAddon class="p-0">
                             <PhMagnifyingGlass />
                         </InputGroupAddon>
-                        <InputText v-model="search" placeholder="Search"> </InputText>
+                        <InputText v-model="search" :placeholder="$t('general.actions.search')">
+                        </InputText>
                     </InputGroup>
                     <InputGroup>
                         <Button
@@ -47,18 +48,14 @@
                             outlined
                             severity="secondary"
                             :title="
-                                $t(
-                                    sortDescending
-                                        ? 'general.actions.sortAscending'
-                                        : 'general.actions.sortDescending'
-                                )
+                                sortDescending
+                                    ? $t('general.actions.sortAscending')
+                                    : $t('general.actions.sortDescending')
                             "
                             :aria-label="
-                                $t(
-                                    sortDescending
-                                        ? 'general.actions.sortAscending'
-                                        : 'general.actions.sortDescending'
-                                )
+                                sortDescending
+                                    ? $t('general.actions.sortAscending')
+                                    : $t('general.actions.sortDescending')
                             "
                             @click="sortDescending = !sortDescending"
                         >
@@ -71,7 +68,13 @@
                             v-model="sortBy"
                             style="line-height: 1.2"
                             :aria-label="$t('general.actions.sortBy')"
-                            :options="['Name', 'Duration', 'File type']"
+                            option-label="label"
+                            option-value="value"
+                            :options="[
+                                { label: $t('general.descriptions.name'), value: 'name' },
+                                { label: $t('general.descriptions.duration'), value: 'duration' },
+                                { label: $t('general.descriptions.fileType'), value: 'fileType' }
+                            ]"
                         />
                     </InputGroup>
                 </template>
@@ -88,7 +91,7 @@
                 </template>
             </Toolbar>
         </template>
-        <template #grid="{ items }: { items: Media[] }">
+        <template #grid="{ items }: { items: MediaItem[] }">
             <div
                 class="flex h-full select-none flex-wrap justify-center overflow-y-auto"
                 role="grid"
@@ -150,40 +153,50 @@
         data-key="id"
     >
         <Column header="Type" body-class="px-0">
-            <template #body="{ data }: { data: Media }">
+            <template #body="{ data }: { data: MediaItem }">
                 <div class="flex gap-2 pl-2">
                     <PhVideoCamera
-                        v-if="data.isOfType(MediaType.Video)"
+                        v-if="data.isOfType(MediaSourceType.Video)"
                         weight="bold"
                         :aria-label="$t('media.attrs.video')"
                     />
                     <PhSpeakerHigh
-                        v-if="data.isOfType(MediaType.Audio)"
+                        v-if="data.isOfType(MediaSourceType.Audio)"
                         weight="bold"
                         :aria-label="$t('media.attrs.audio')"
                     />
                     <PhSubtitles
-                        v-if="data.isOfType(MediaType.Text)"
+                        v-if="data.isOfType(MediaSourceType.Subtitles)"
                         weight="bold"
                         :aria-label="$t('media.attrs.subtitles')"
                     />
                     <PhImage
-                        v-if="data.isOfType(MediaType.Image)"
+                        v-if="data.isOfType(MediaSourceType.Image)"
                         weight="bold"
                         :aria-label="$t('media.attrs.image')"
+                    />
+                    <PhFilmStrip
+                        v-if="data.isOfType(MediaSourceType.Special)"
+                        weight="bold"
+                        :aria-label="$t('media.attrs.timeline')"
+                    />
+                    <PhSparkle
+                        v-if="data.isOfType(MediaSourceType.Special)"
+                        weight="bold"
+                        :aria-label="$t('media.attrs.special')"
                     />
                 </div>
             </template>
         </Column>
         <Column field="name.value" :header="$t('general.descriptions.name')" sortable />
         <Column field="duration.value" :header="$t('general.descriptions.duration')" sortable>
-            <template #body="{ data }: { data: Media }">
-                <template v-if="data.isOfType(MediaType.Image)">
+            <template #body="{ data }: { data: MediaItem }">
+                <template v-if="data.isOfType(MediaSourceType.Image)">
                     {{ Timecode.toFormattedTimecode(5000) }}
                 </template>
-                <template v-else>
+                <!-- <template v-else>
                     {{ Timecode.toFormattedTimecode(data.duration.value * 1000) }}
-                </template>
+                </template> -->
             </template>
         </Column>
         <template #header>
@@ -204,7 +217,8 @@
                         <InputGroupAddon class="p-0">
                             <PhMagnifyingGlass />
                         </InputGroupAddon>
-                        <InputText v-model="search" placeholder="Search"> </InputText>
+                        <InputText v-model="search" :placeholder="$t('general.actions.search')">
+                        </InputText>
                     </InputGroup>
                 </template>
                 <template #end>
@@ -239,19 +253,21 @@
 <script setup lang="ts">
 import { CurrentProject } from '@/stores/currentProject';
 import {
+    PhFilmStrip,
     PhImage,
     PhList,
     PhMagnifyingGlass,
     PhPlus,
     PhSortAscending,
     PhSortDescending,
+    PhSparkle,
     PhSpeakerHigh,
     PhSquaresFour,
     PhSubtitles,
     PhVideoCamera
 } from '@phosphor-icons/vue';
 import { ProjectFeatures } from '@safelight/shared/base/Project';
-import Media, { MediaType } from '@safelight/shared/Media/Media';
+import { MediaItem, MediaSourceType } from '@safelight/shared/Media/Media';
 import Timecode from '@safelight/shared/Timecode';
 import { useDropZone, useFileDialog, watchDebounced } from '@vueuse/core';
 import fuzzysearch from 'fuzzysearch';
@@ -301,18 +317,18 @@ fileDialog.onChange((fileList) => {
 });
 
 const search = ref('');
-const sortBy = ref<sortOptions>('Name');
+const sortBy = ref<sortOptions>('name');
 const sortDescending = ref(false);
 const layout = ref<string>('grid');
 const gridItemSize = ref(176); // 11rem
 
-const sortedAndFiltered = shallowRef<Media[]>([]);
+const sortedAndFiltered = shallowRef<MediaItem[]>([]);
 
 // Reset sorting when changing to list
 // List has its own sorting
 watchEffect(() => {
     if (layout.value == 'list') {
-        sortBy.value = 'Name';
+        sortBy.value = 'name';
         sortDescending.value = false;
     }
 });
@@ -336,7 +352,7 @@ function sortAndFilter() {
             return true;
         }
 
-        return fuzzysearch(search.value.toLowerCase(), elem.name.value.toLowerCase());
+        return fuzzysearch(search.value.toLowerCase(), elem.name.toLowerCase());
     });
 
     const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
@@ -345,16 +361,14 @@ function sortAndFilter() {
         const item1 = sortDescending.value ? b : a;
         const item2 = sortDescending.value ? a : b;
 
-        const ext1 = item1.name.value.split('.').at(-1) ?? 'ZZZ';
-        const ext2 = item2.name.value.split('.').at(-1) ?? 'ZZZ';
+        const ext1 = item1.name.split('.').at(-1) ?? 'ZZZ';
+        const ext2 = item2.name.split('.').at(-1) ?? 'ZZZ';
 
         switch (sortBy.value) {
-            case 'Duration':
-                return item1.duration.value - item2.duration.value;
-            case 'File type':
+            case 'fileType':
                 return collator.compare(ext1, ext2);
             default:
-                return collator.compare(item1.name.value, item2.name.value);
+                return collator.compare(item1.name, item2.name);
         }
     });
 
@@ -367,5 +381,5 @@ function fileDialogOpenDblClick(event: MouseEvent) {
     fileDialog.open();
 }
 
-type sortOptions = 'Name' | 'Duration' | 'File type';
+type sortOptions = 'name' | 'duration' | 'fileType';
 </script>

@@ -1,8 +1,8 @@
 import { Subject } from 'rxjs';
 import { isReactive, isRef, ref, type ComputedRef, type Ref, type ShallowReactive } from 'vue';
-import type Media from '../Media/Media';
+import { type MediaItem } from '../Media/Media';
 import type SimpleProject from '../Project/SimpleProject';
-import type SimpleTimeline from '../Timeline/SimpleTimeline';
+import type { Timeline } from '../Timeline/Timeline';
 import type { SaveResults } from './Storage';
 
 export default abstract class BaseProject {
@@ -10,11 +10,11 @@ export default abstract class BaseProject {
     public name = ref('Untitled');
     public type: ProjectType = 'Base';
 
-    public abstract media: ShallowReactive<Media[]>;
+    public abstract media: ShallowReactive<MediaItem[]>;
 
     public abstract selectedTimeline: Ref<string | undefined>;
-    public abstract timelines: ShallowReactive<SimpleTimeline[]>;
-    public abstract timeline: ComputedRef<SimpleTimeline | undefined>;
+    public abstract timelines: ShallowReactive<Timeline[]>;
+    public abstract timeline: ComputedRef<Timeline | undefined>;
 
     /**
      * Triggered when this class has been changed
@@ -63,7 +63,7 @@ export interface ProjectFeatureSaving {
     Save(): Promise<SaveResults>;
 }
 export interface ProjectFeatureMedia {
-    media: ShallowReactive<Media[]>;
-    usesMedia(media: Media): boolean;
+    media: ShallowReactive<MediaItem[]>;
+    usesMedia(media: MediaItem): boolean;
     loadFile(file: File): Promise<boolean>;
 }

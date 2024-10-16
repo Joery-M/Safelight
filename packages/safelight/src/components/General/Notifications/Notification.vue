@@ -2,8 +2,8 @@
     <Panel
         class="notification"
         role="dialog"
-        :aria-label="notif.config.title"
-        :aria-describedby="notif.config.text"
+        :aria-label="$t(notif.config.title ?? '', 'notification.defaultTitle')"
+        :aria-describedby="'content-' + notif.id"
         :aria-live="notif.config.severity == 'error' ? 'assertive' : 'polite'"
     >
         <template #header>
@@ -15,14 +15,14 @@
                 />
                 <PhWarning v-if="notif.config.severity == 'warning'" />
             </template>
-            <h3>{{ notif.config.title }}</h3>
+            <h3>{{ $t(notif.config.title ?? '', 'notification.defaultTitle') }}</h3>
             <Button text severity="secondary" rounded @click="closeNotif">
                 <template #icon>
                     <PhX />
                 </template>
             </Button>
         </template>
-        <p class="mb-0">{{ notif.config.text }}</p>
+        <p class="mb-0" :id="'content-' + notif.id">{{ $t(notif.config.text ?? '') }}</p>
         <div v-if="buttons.length > 0" class="align-items-center mt-4 flex gap-2">
             <template v-for="(btn, i) in buttons" :key="i">
                 <Button
@@ -35,7 +35,7 @@
                         }
                     "
                 >
-                    {{ btn.label }}
+                    {{ $t(btn.label ?? '') }}
                 </Button>
             </template>
         </div>

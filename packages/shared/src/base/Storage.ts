@@ -1,46 +1,45 @@
-import type { MediaInfoResult } from 'mediainfo.js';
-import type {
-    AudioTrackInfo,
-    ImageInfo,
-    default as Media,
-    MediaType,
-    TextTrackInfo,
-    VideoTrackInfo
-} from '../Media/Media';
-import type IndexedDbStorageController from '../Storage/IndexedDbStorage';
+import type { ChunkedMediaFileItem } from '../Media/ChunkedMediaFile';
+import type { MediaItem, MediaItemTypes } from '../Media/Media';
+import type { MediaFileItem } from '../Media/MediaFile';
+import type { Timeline } from '../Timeline/Timeline';
 import type { default as BaseProject, ProjectType } from './Project';
-import type BaseTimeline from './Timeline';
 import type { TimelineItemType } from './TimelineItem';
-import type { TimelineType } from './Timeline';
 
 export default abstract class BaseStorageController {
-    public abstract type: StorageControllerType;
     public version: string = '0.0.0';
 
-    abstract SaveProject(project: BaseProject): Promise<SaveResults>;
-    abstract LoadProject(projectId: string): Promise<BaseProject | undefined>;
-    abstract UpdateStoredProject(
+    abstract saveProject(project: BaseProject): Promise<SaveResults>;
+    abstract loadProject(projectId: string): Promise<BaseProject | undefined>;
+    abstract updateStoredProject(
         project: Partial<StoredProject> & Pick<StoredProject, 'id'>
     ): Promise<SaveResults>;
     static getProjects: () => Promise<StoredProject[]>;
 
-    abstract SaveMedia(media: StoredMedia): Promise<SaveResults>;
-    abstract SaveMedia(media: Media): Promise<SaveResults>;
-    abstract LoadMedia(mediaId: string): Promise<Media | undefined>;
-    abstract getMediaFromHash(hash: string): Promise<Media | undefined>;
-    abstract hasMediaHash(hash: string): Promise<boolean>;
+    abstract saveMedia(media: StoredMedia): Promise<SaveResults>;
+    abstract saveMedia(media: MediaItem): Promise<SaveResults>;
+    abstract loadMedia<M extends MediaItem>(mediaId: string): Promise<M | undefined>;
+    abstract deleteMedia(mediaId: MediaItem): Promise<SaveResults>;
+    abstract deleteMedia(mediaId: StoredMedia): Promise<SaveResults>;
+    abstract deleteMedia(mediaId: string): Promise<SaveResults>;
+    abstract getAllMedia(
+        projectId?: string
+    ): Promise<(ChunkedMediaFileItem | MediaFileItem | Timeline)[]>;
 
-    abstract SaveTimeline(timeline: BaseTimeline): Promise<SaveResults>;
-    abstract LoadTimeline(timelineId: string): Promise<BaseTimeline | undefined>;
-
-    isIndexDBstorage = (): this is IndexedDbStorageController => this.type == 'IndexedDB';
-    // TODO
-    // isWebFileSystem = (): this is IndexedDbStorageController => this.type == 'WebFileSystem';
+    abstract getBaseFilePath(type: FilePathTypes): FilePath;
+    abstract writeFile(filePath: FilePath, data: ArrayBufferLike, start?: number): Promise<void>;
+    abstract writeStream(filePath: FilePath, data: ReadableStream): Promise<void>;
+    abstract readFile(
+        filePath: FilePath,
+        start?: number,
+        size?: number
+    ): Promise<ArrayBuffer | undefined>;
 }
 
 export class Storage {
     public static async getProjects(): Promise<StoredProject[]> {
-        const storageControllers = [(await import('../Storage/IndexedDbStorage')).default];
+        const storageControllers = [
+            (await import('../Storage/LocalStorage/IndexedDbStorage')).IndexedDbStorageController
+        ];
 
         const getPromises = storageControllers.map((controller) => controller.getProjects());
 
@@ -64,23 +63,17 @@ export class Storage {
     }
 }
 
-export type StorageControllerType = 'IndexedDB' | 'WebFileSystem';
 export type SaveResults = 'Success' | 'Cancelled' | 'Error' | (string & {});
+export type FilePathTypes = 'media-files' | 'thumbnails' | (string & {});
+
+export type FilePath = (string | number)[];
 
 export interface StoredMedia {
     id: string;
     name: string;
-    type: MediaType;
-    contentHash: string;
-    fileInfo?: MediaInfoResult;
-    previewImage?: Blob;
-    data: Blob;
-    duration: number;
-    videoTracks: VideoTrackInfo[];
-    audioTracks: AudioTrackInfo[];
-    textTracks: TextTrackInfo[];
-    imageInfo?: ImageInfo;
     created: string;
+    type: MediaItemTypes;
+    metadata: { [key: string | number]: any };
 }
 
 export interface StoredProject {
@@ -91,24 +84,11 @@ export interface StoredProject {
      * Array of media id's
      */
     media: string[];
-    /**
-     * Array of timeline id's
-     */
-    timelines: string[];
-    activeTimeline?: string;
     created: string;
     updated: string;
+    metadata: { [key: string | number]: any };
 }
 
-export interface StoredSimpleTimeline {
-    id: string;
-    name: string;
-    type: TimelineType;
-    width: number;
-    height: number;
-    framerate: number;
-    items: string[];
-}
 // TODO Add all necessary properties
 export interface StoredSimpleTimelineItem {
     id: string;

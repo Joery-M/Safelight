@@ -2,7 +2,7 @@ import { BlockFlags } from '@safelight/tswebm/Block';
 import { Elements, MatroskaElements } from '@safelight/tswebm/elements';
 import { WebmReader } from '@safelight/tswebm/WebmReader';
 import { expose } from 'comlink';
-import type { DemuxedChunk } from '../VideoDemuxer';
+import type { DemuxedChunk } from '../FileDemuxer';
 import type { WorkerOutput } from './WebmDemuxer';
 
 export async function demux(source: File, callback: (event: WorkerOutput) => void) {
@@ -38,6 +38,10 @@ export async function demux(source: File, callback: (event: WorkerOutput) => voi
                             codedHeight: track.Video!.DisplayHeight ?? track.Video!.PixelHeight
                         },
                         trackIndex: track.TrackNumber,
+                        codec: codecString,
+                        framerate: track.Video!.FrameRate!,
+                        width: track.Video!.PixelWidth,
+                        height: track.Video!.PixelHeight,
                         type: 'video'
                     });
                     completeTracks.add(track.TrackNumber);
@@ -63,6 +67,10 @@ export async function demux(source: File, callback: (event: WorkerOutput) => voi
                             codedHeight: track.Video!.DisplayHeight ?? track.Video!.PixelHeight
                         },
                         trackIndex: track.TrackNumber,
+                        codec: codecString,
+                        framerate: track.Video!.FrameRate!,
+                        width: track.Video!.PixelWidth,
+                        height: track.Video!.PixelHeight,
                         type: 'video'
                     });
                     completeTracks.add(track.TrackNumber);
@@ -112,6 +120,9 @@ export async function demux(source: File, callback: (event: WorkerOutput) => voi
                         description: track.CodecPrivate
                     },
                     trackIndex: track.TrackNumber,
+                    codec: codecString,
+                    channels: track.Audio!.Channels,
+                    sampleRate: track.Audio!.SamplingFrequency,
                     type: 'audio'
                 });
                 completeTracks.add(track.TrackNumber);
@@ -137,14 +148,19 @@ export async function demux(source: File, callback: (event: WorkerOutput) => voi
                         const dv = new DataView(block.data);
                         const headerInfo = decodeVP9Header(dv);
 
+                        // It doesn't seem like neither Firefox nor Chromium care about the level. So I just rolled a dice and set it to 1.0
+                        const codecString = `vp09.${headerInfo.profile.toString().padStart(2, '0')}.10.${headerInfo.bitDepth.toString().padStart(2, '0')}`;
                         callback({
                             decoderConfig: {
-                                // It doesn't seem like neither Firefox nor Chromium care about the level. So I just rolled a dice and set it to 1.0
-                                codec: `vp09.${headerInfo.profile.toString().padStart(2, '0')}.10.${headerInfo.bitDepth.toString().padStart(2, '0')}`,
+                                codec: codecString,
                                 codedWidth: track.Video!.DisplayWidth ?? track.Video!.PixelWidth,
                                 codedHeight: track.Video!.DisplayHeight ?? track.Video!.PixelHeight
                             },
+                            codec: codecString,
                             trackIndex: block.TrackNumber,
+                            framerate: track.Video!.FrameRate!,
+                            width: track.Video!.PixelWidth,
+                            height: track.Video!.PixelHeight,
                             type: 'video'
                         });
                         completeTracks.add(track.TrackNumber);
@@ -161,21 +177,21 @@ export async function demux(source: File, callback: (event: WorkerOutput) => voi
         let curIndex = 0;
         if (track.TrackType == Elements.TrackType.Video) {
             curIndex = blockBuffer.push({
-                chunk: new EncodedVideoChunk({
+                chunk: {
                     data: block.totalBuffer,
                     timestamp: block.TimeStamp,
                     type: block.hasFlag(BlockFlags.Keyframe) ? 'key' : 'delta'
-                }),
+                },
                 trackIndex: block.TrackNumber,
                 type: 'chunk'
             });
         } else if (track.TrackType == Elements.TrackType.Audio) {
             curIndex = blockBuffer.push({
-                chunk: new EncodedAudioChunk({
+                chunk: {
                     data: block.totalBuffer,
                     timestamp: block.TimeStamp,
                     type: block.hasFlag(BlockFlags.Keyframe) ? 'key' : 'delta'
-                }),
+                },
                 trackIndex: block.TrackNumber,
                 type: 'chunk'
             });

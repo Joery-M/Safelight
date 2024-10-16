@@ -89,7 +89,7 @@ declare module 'mp4box' {
             vpcC?: BoxParser.vpcCBox; // vp9
             av1C?: BoxParser.av1CBox; // av1
         };
-        data: ArrayBuffer;
+        data: Uint8Array;
         size: number;
         alreadyRead?: number;
         duration: number;

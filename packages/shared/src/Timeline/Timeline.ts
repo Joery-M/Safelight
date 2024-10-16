@@ -1,16 +1,15 @@
 import { useManualRefHistory } from '@vueuse/core';
 import { v4 as uuidv4 } from 'uuid';
 import { computed, ref, shallowReactive } from 'vue';
-import BaseTimeline, { type TimelineType } from '../base/Timeline';
-import type BaseTimelineItem from '../base/TimelineItem';
-import type Media from '../Media/Media';
+import { MediaItem, type MediaItemMetadata, type MediaItemTypes } from '../Media/Media';
+import type { TimelineItem } from '../base/TimelineItem';
 
-export default class SimpleTimeline extends BaseTimeline {
-    public name = ref('Untitled');
+export class Timeline extends MediaItem<TimelineItemMetadata> {
     public id = uuidv4();
-    public type: TimelineType = 'Simple';
+    public name = '';
+    public type: MediaItemTypes = 'Timeline';
 
-    public items = shallowReactive(new Set<BaseTimelineItem>());
+    public items = shallowReactive(new Set<TimelineItem>());
 
     public width = ref(1920);
     public height = ref(1080);
@@ -22,10 +21,11 @@ export default class SimpleTimeline extends BaseTimeline {
         return 1000 / this.framerate.value;
     });
 
-    constructor(config: SimpleTimelineConfig) {
+    constructor(config: TimelineConfig) {
         super();
+
         if (config.name) {
-            this.name.value = config.name;
+            this.name = config.name;
         }
         this.width.value = config.width;
         this.height.value = config.height;
@@ -37,7 +37,7 @@ export default class SimpleTimeline extends BaseTimeline {
     /**
      * Called when an item is dropped in the timeline
      */
-    public itemDropped(otherItem: BaseTimelineItem) {
+    public itemDropped(otherItem: TimelineItem) {
         this.items.forEach((item) => {
             if (
                 item.layer.value === otherItem.layer.value &&
@@ -50,14 +50,7 @@ export default class SimpleTimeline extends BaseTimeline {
         });
     }
 
-    public usesMedia(media: Media) {
-        for (const item of this.items) {
-            return item.hasMedia() && item.media.value == media;
-        }
-        return false;
-    }
-
-    public deleteItem(item: BaseTimelineItem) {
+    public deleteItem(item: TimelineItem) {
         item.Delete();
         return this.items.delete(item);
     }
@@ -129,9 +122,13 @@ export default class SimpleTimeline extends BaseTimeline {
     //#endregion
 }
 
-export interface SimpleTimelineConfig {
+export interface TimelineConfig {
     name?: string;
     width: number;
     height: number;
     framerate: number;
+}
+
+export interface TimelineItemMetadata extends MediaItemMetadata {
+    timelineConfig: TimelineConfig;
 }

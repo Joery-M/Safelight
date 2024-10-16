@@ -45,19 +45,25 @@ export class LocaleManager {
         const localeFile = await this.loadLocale(locale);
         if (!localeFile) return;
 
-        this.i18n.global.setLocaleMessage(locale, localeFile.messages);
-        if (localeFile.dateTimeFormat)
-            this.i18n.global.setDateTimeFormat(locale, localeFile.dateTimeFormat);
+        const { localeSettings, ...messages } = localeFile;
+        this.i18n.global.setLocaleMessage(locale, messages);
+        if (localeSettings?.dateTimeFormat)
+            this.i18n.global.setDateTimeFormat(locale, localeSettings.dateTimeFormat);
 
-        const fallbackLocale = localeFile.fallback ?? 'en-US';
+        const fallbackLocale = localeSettings?.fallback ?? 'en-US';
         this.i18n.global.fallbackLocale.value = fallbackLocale;
 
         // Also load fallback asynchronously
         this.loadLocale(fallbackLocale).then((fallback) => {
             if (fallback) {
-                this.i18n.global.setLocaleMessage(fallbackLocale, fallback.messages);
-                if (fallback.dateTimeFormat)
-                    this.i18n.global.setDateTimeFormat(fallbackLocale, fallback.dateTimeFormat);
+                const { localeSettings, ...messages } = fallback;
+
+                this.i18n.global.setLocaleMessage(fallbackLocale, messages);
+                if (localeSettings?.dateTimeFormat)
+                    this.i18n.global.setDateTimeFormat(
+                        fallbackLocale,
+                        localeSettings.dateTimeFormat
+                    );
             }
         });
 
@@ -94,20 +100,22 @@ interface RegisteredLocale {
 }
 
 export interface LocalizationFile {
-    messages: Record<string, unknown>;
-    dateTimeFormat?: {
-        short: IntlDateTimeFormat[string];
-        medium: IntlDateTimeFormat[string];
-        long: IntlDateTimeFormat[string];
-        dateTime: IntlDateTimeFormat[string];
-        time: IntlDateTimeFormat[string];
-        timeLong: IntlDateTimeFormat[string];
-        timeFull: IntlDateTimeFormat[string];
+    localeSettings?: {
+        dateTimeFormat?: {
+            short: IntlDateTimeFormat[string];
+            medium: IntlDateTimeFormat[string];
+            long: IntlDateTimeFormat[string];
+            dateTime: IntlDateTimeFormat[string];
+            time: IntlDateTimeFormat[string];
+            timeLong: IntlDateTimeFormat[string];
+            timeFull: IntlDateTimeFormat[string];
+        };
+        /**
+         * @default en-US
+         */
+        fallback?: string;
     };
-    /**
-     * @default en-US
-     */
-    fallback?: string;
+    [key: string]: any;
 }
 
 // Theres no way to use HMR accept on globs

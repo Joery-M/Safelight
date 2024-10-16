@@ -1,10 +1,10 @@
 import { proxy, releaseProxy, wrap } from 'comlink';
 import { Observable } from 'rxjs';
-import { type BaseDemuxer, type DemuxerOutput } from '../VideoDemuxer';
+import { type BaseDemuxer, type DemuxerOutput } from '../FileDemuxer';
 import DemuxWorker from './demux.worker?worker';
 
-export class Mp4Demuxer implements BaseDemuxer {
-    DemuxFile(source: File) {
+export class WebmDemuxer implements BaseDemuxer {
+    demuxFile(source: File) {
         const worker = wrap<typeof import('./demux.worker')>(new DemuxWorker());
 
         return new Observable<DemuxerOutput>((subscriber) => {

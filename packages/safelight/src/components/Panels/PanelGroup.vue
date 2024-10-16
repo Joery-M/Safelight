@@ -36,7 +36,7 @@
                     text
                     aria-haspopup="true"
                     aria-controls="panel_add_menu"
-                    aria-label="Add panel menu"
+                    :aria-label="$t('panels.addMenu')"
                     @click="addOverlay?.toggle"
                 >
                     <template #icon>
