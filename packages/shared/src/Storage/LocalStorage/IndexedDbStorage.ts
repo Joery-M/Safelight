@@ -155,8 +155,30 @@ export class IndexedDbStorageController extends BaseStorageController {
     async deleteMedia(mediaId: MediaItem | StoredMedia | string): Promise<SaveResults> {
         const id = typeof mediaId === 'string' ? mediaId : mediaId?.id;
         if (!id) {
+            console.error('Could not get media ID for deletion');
             return 'Error';
         }
+
+        const media = await this.db.media.get(id);
+        if (!media) {
+            console.error('Could not find media for deletion');
+            return 'Error';
+        }
+        // File path might not exist
+        const filePath = media?.metadata?.file?.location as FilePath | undefined;
+        try {
+            if (filePath) {
+                const file = opfsTools.file(filePath.join('/'));
+                if (file && (await file.exists())) {
+                    await file.remove();
+                }
+            }
+        } catch (error) {
+            console.error('Error deleting file from OPFS', error);
+        }
+
+        await this.db.media.delete(id);
+        return 'Success';
     }
 
     async getAllMedia(projectId?: string) {

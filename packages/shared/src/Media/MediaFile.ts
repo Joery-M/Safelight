@@ -1,6 +1,6 @@
 import type { Path, PathValue } from 'dot-path-value';
 import { v4 as uuidv4 } from 'uuid';
-import { Storage } from '../base/Storage';
+import { Storage, type FilePath } from '../base/Storage';
 import { MediaItem, type MediaItemMetadata, type MediaItemTypes } from './Media';
 
 export class MediaFileItem extends MediaItem<MediaFileItemMetadata> {
@@ -47,7 +47,7 @@ export class MediaFileItem extends MediaItem<MediaFileItemMetadata> {
 
 export interface MediaFileItemMetadata extends MediaItemMetadata {
     file: {
-        location: string[];
+        location: FilePath;
         /**
          * File size in bytes
          */
