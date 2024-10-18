@@ -53,7 +53,7 @@ export class TimelineCursorElement implements TimelineElement {
             }
 
             if (
-                Math.abs(mouseX - manager.msToPx(this.cursorPos.value, true)) <= 9.5 ||
+                Math.abs(mouseX - manager.msToPx(this.cursor.value, true)) <= 9.5 ||
                 this.isDragging.value
             ) {
                 manager.cursor.set('cursor', ['ew-resize', 10]);

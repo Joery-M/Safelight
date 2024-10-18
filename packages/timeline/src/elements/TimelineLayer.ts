@@ -1,28 +1,25 @@
 import { CustomInspectorNode, CustomInspectorState } from '@vue/devtools-api';
 import { toValue, watchArray } from '@vueuse/core';
-import { computed, readonly, ref, shallowReactive } from 'vue';
+import { computed, ref, shallowReactive } from 'vue';
 import { __DEVTOOLS_AVAILABLE__, ItemContainer, TimelineItem, TimelineManager } from '..';
 
 export class TimelineLayer {
     public __RENDER_TIME__ = ref(0);
     public __ELEMENT_RENDER_TIME__ = shallowReactive(new Map<TimelineItem, number>());
     public index = ref(0);
-    // public elements = shallowReactive(new Set<TimelineItemElement>());
-    public elements = readonly(
-        computed(() => {
-            if (!this.manager) {
-                return new Set<TimelineItem>();
-            } else {
-                const items = new Set<TimelineItem>();
-                this.manager.allLayerItems.forEach((i) => {
-                    if (i.layer.value == this.index.value) {
-                        items.add(i);
-                    }
-                });
-                return items;
-            }
-        })
-    );
+    public elements = computed(() => {
+        if (!this.manager) {
+            return new Set<TimelineItem>();
+        } else {
+            const items = new Set<TimelineItem>();
+            this.manager.allLayerItems.forEach((i) => {
+                if (i.layer.value == this.index.value) {
+                    items.add(i);
+                }
+            });
+            return items;
+        }
+    });
 
     /**
      * Height of the layer
@@ -124,10 +121,7 @@ export class TimelineLayer {
                     this.__ELEMENT_RENDER_TIME__.set(element, NaN);
                 }
             } else {
-                if (
-                    elemStart <= manager.viewportSmooth.end.value &&
-                    manager.viewportSmooth.start.value <= elemEnd
-                ) {
+                if (elemStart <= viewEnd && viewStart <= elemEnd) {
                     element.render({
                         ctx,
                         container,

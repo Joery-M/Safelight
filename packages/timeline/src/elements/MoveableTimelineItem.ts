@@ -1,7 +1,7 @@
+import EventEmitter from 'eventemitter3';
 import { ref, watch } from 'vue';
 import { TimelineItem, TimelineItemInitPayload, TimelineItemRenderPayload } from '..';
 import { useSteppedRef } from '../tools/useSteppedRef';
-import EventEmitter from 'eventemitter3';
 
 export abstract class MoveableTimelineItem implements TimelineItem {
     protected cursorInside = ref(false);
@@ -13,7 +13,7 @@ export abstract class MoveableTimelineItem implements TimelineItem {
 
     frameInterval = ref(1);
     start = useSteppedRef(0, this.frameInterval);
-    end = ref(1000);
+    end = useSteppedRef(1000, this.frameInterval);
     layer = ref(0);
 
     protected isDragging = ref(false);
