@@ -3,10 +3,11 @@
     "enabledManagers": ["npm"],
     "extends": ["config:recommended"],
     "schedule": ["every weekend"],
+    "rangeStrategy": "bump",
     "packageRules": [
         {
-            "extends": ["packages:vite"],
-            "groupName": "Vite packages"
+            "matchPackageNames": ["vite", "**vite-plugin**", "@vitejs/**", "rollup", "@rollup/**"],
+            "groupName": "Build"
         },
         {
             "extends": ["packages:test", "monorepo:vitest", "monorepo:playwright"],
