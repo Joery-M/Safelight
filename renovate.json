@@ -9,12 +9,21 @@
             "groupName": "Vite packages"
         },
         {
-            "extends": ["monorepo:vitest", "monorepo:playwright"],
+            "extends": ["packages:test", "monorepo:vitest", "monorepo:playwright"],
+            "matchPackageNames": ["vitest", "playwright", "jsdom", "happy-dom", "@vitest/**"],
             "groupName": "Testing"
+        },
+        {
+            "matchPackageNames": ["primevue", "@primevue/**"],
+            "groupName": "PrimeVue"
         },
         {
             "extends": ["monorepo:vue"],
             "groupName": "Vue"
+        },
+        {
+            "extends": ["packages:linters"],
+            "groupName": "linters"
         },
         {
             "matchPackagePatterns": ["*"],
@@ -22,5 +31,6 @@
             "groupName": "All non-major dependencies",
             "groupSlug": "all-minor-patch"
         }
-    ]
+    ],
+    "ignoreDeps": ["pnpm"]
 }
