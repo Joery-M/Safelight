@@ -201,6 +201,9 @@ importers:
       hash-wasm:
         specifier: ^4.11.0
         version: 4.11.0
+      luna-object-viewer:
+        specifier: ^0.3.1
+        version: 0.3.1
       luxon:
         specifier: ^3.5.0
         version: 3.5.0
@@ -2635,6 +2638,9 @@ packages:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
     engines: {node: '>= 0.8.0'}
 
+  licia@1.43.0:
+    resolution: {integrity: sha512-/m23vS54TozPbRMXUuV/Ht1+IIAB4Lw9bPX3ZPzzGL0uWNMt91QK/xktdJk//b2y1HiWPNTjb8lWM927nZI8OQ==}
+
   lightningcss-darwin-arm64@1.27.0:
     resolution: {integrity: sha512-Gl/lqIXY+d+ySmMbgDf0pgaWSqrWYxVHoc88q+Vhf2YNzZ8DwoRzGt5NZDVqqIW5ScpSnmmjcgXP87Dn2ylSSQ==}
     engines: {node: '>= 12.0.0'}
@@ -2744,6 +2750,9 @@ packages:
   lru-cache@6.0.0:
     resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}
     engines: {node: '>=10'}
+
+  luna-object-viewer@0.3.1:
+    resolution: {integrity: sha512-byynxixA8aAzSg9LymFDzPPrhKCPBOiELnOGxuztAXmes7W7OFqGkiLSyV8ECDvRimF1WewVmyOdxyhsLVquFg==}
 
   luxon@3.5.0:
     resolution: {integrity: sha512-rh+Zjr6DNfUYR3bPwJEnuwDdqMbxZW7LOQfUN4B54+Cl+0o5zaU9RJ6bcidfDtC1cWCZXQ+nvX8bf6bAji37QQ==}
@@ -6142,6 +6151,8 @@ snapshots:
       prelude-ls: 1.2.1
       type-check: 0.4.0
 
+  licia@1.43.0: {}
+
   lightningcss-darwin-arm64@1.27.0:
     optional: true
 
@@ -6222,6 +6233,10 @@ snapshots:
   lru-cache@6.0.0:
     dependencies:
       yallist: 4.0.0
+
+  luna-object-viewer@0.3.1:
+    dependencies:
+      licia: 1.43.0
 
   luxon@3.5.0: {}
 

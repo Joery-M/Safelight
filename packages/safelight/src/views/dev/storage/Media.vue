@@ -13,7 +13,11 @@
             <TreeTable :value="treeItems">
                 <Column field="name" :header="$t('general.descriptions.name')" expander />
                 <Column field="size" :header="$t('general.descriptions.size')" />
-                <Column :header="$t('general.actions.delete')">
+                <Column
+                    :header="$t('general.actions.delete')"
+                    style="width: 0"
+                    :pt="{ bodyCellContent: { style: 'justify-content: center;' } }"
+                >
                     <template #body="{ node: { data } }">
                         <Button v-if="data?.isMedia" rounded @click="deleteMedia(data.id)">
                             <template #icon>
@@ -22,29 +26,58 @@
                         </Button>
                     </template>
                 </Column>
+                <Column
+                    :header="$t('media.properties')"
+                    style="width: 0"
+                    :pt="{ bodyCellContent: { style: 'justify-content: center;' } }"
+                >
+                    <template #body="{ node: { data } }">
+                        <Button v-if="data?.isMedia" rounded @click="selectedMedia = data.media">
+                            <template #icon>
+                                <PhListDashes />
+                            </template>
+                        </Button>
+                    </template>
+                </Column>
             </TreeTable>
         </template>
     </Card>
+
+    <Dialog
+        :visible="selectedMedia !== undefined"
+        modal
+        :draggable="false"
+        :header="$t('media.properties')"
+        style="width: 50rem; height: 100%"
+        @update:visible="selectedMedia = undefined"
+    >
+        <JsonViewer :data="selectedMedia" />
+    </Dialog>
 </template>
 
 <script setup lang="ts">
-import { PhArrowLeft, PhTrash } from '@phosphor-icons/vue';
+import JsonViewer from '@/components/Helpers/JsonViewer.vue';
+import { PhArrowLeft, PhListDashes, PhTrash } from '@phosphor-icons/vue';
 import type {
     ChunkOffset,
     MediaFileAudioTrack,
     MediaFileVideoTrack
 } from '@safelight/shared/Media/ChunkedMediaFile';
+import type { MediaItem } from '@safelight/shared/Media/Media';
 import { IndexedDbStorageController } from '@safelight/shared/Storage/LocalStorage/IndexedDbStorage';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import Column from 'primevue/column';
+import Dialog from 'primevue/dialog';
 import type { TreeNode } from 'primevue/treenode';
 import TreeTable from 'primevue/treetable';
-import { onMounted, reactive } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const treeItems = reactive<TreeNode[]>([]);
 const i18n = useI18n();
+
+const selectedMedia = ref<MediaItem | undefined>(undefined);
 
 function formatByteValue(n: number) {
     const UNITS = ['byte', 'kilobyte', 'megabyte', 'gigabyte', 'terabyte', 'petabyte'];
@@ -103,7 +136,8 @@ function loadMedia() {
                     name: media.name,
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     //@ts-expect-error
-                    size: formatByteValue(Number(media.getMetadata('file.size')))
+                    size: formatByteValue(Number(media.getMetadata('file.size'))),
+                    media
                 },
                 children: tracks.map((track) => {
                     return {
