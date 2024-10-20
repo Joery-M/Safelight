@@ -9,7 +9,7 @@ fetch(url)
     .then((data) => {
         const parser = new XMLParser({ ignoreAttributes: false });
         const EBML = parser.parse(data).EBMLSchema.element;
-        let result = `/* eslint-disable prettier/prettier */\n`;
+        let result = '';
 
         // Hex lookup
         result += GenerateElementHexLookup(EBML);
@@ -133,14 +133,14 @@ export const ElementInfo: {[key: number]: Element | undefined} = {
     ${/* Need to add types that dont exist in the matroska spec */ ''}
     [EbmlElements.EBMLHead]: {
         name: 'EBML',
-        path: '\\EBML',
+        path: '\\\\EBML',
         pathArray: [EbmlElements.EBMLHead],
         id: '0x1a45dfa3',
         type: ElementType.Master,
     },
     [EbmlElements.EBMLVersion]: {
         name: 'EBMLVersion',
-        path: '\\EBML\\EBMLVersion',
+        path: '\\\\EBML\\\\EBMLVersion',
         pathArray: [EbmlElements.EBMLHead, EbmlElements.EBMLVersion],
         id: '0x4286',
         type: ElementType.Uinteger,
@@ -149,7 +149,7 @@ export const ElementInfo: {[key: number]: Element | undefined} = {
     },
     [EbmlElements.EBMLReadVersion]: {
         name: 'EBMLReadVersion',
-        path: '\\EBML\\EBMLReadVersion',
+        path: '\\\\EBML\\\\EBMLReadVersion',
         pathArray: [EbmlElements.EBMLHead, EbmlElements.EBMLReadVersion],
         id: '0x42F7',
         type: ElementType.Uinteger,
@@ -158,7 +158,7 @@ export const ElementInfo: {[key: number]: Element | undefined} = {
     },
     [EbmlElements.DocType]: {
         name: 'DocType',
-        path: '\\EBML\\DocType',
+        path: '\\\\EBML\\\\DocType',
         pathArray: [EbmlElements.EBMLHead, EbmlElements.DocType],
         id: '0x4282',
         type: ElementType.String,
@@ -167,7 +167,7 @@ export const ElementInfo: {[key: number]: Element | undefined} = {
     },
     [EbmlElements.DocTypeVersion]: {
         name: 'DocTypeVersion',
-        path: '\\EBML\\DocTypeVersion',
+        path: '\\\\EBML\\\\DocTypeVersion',
         pathArray: [EbmlElements.EBMLHead, EbmlElements.DocTypeVersion],
         id: '0x4287',
         type: ElementType.Uinteger,
@@ -176,7 +176,7 @@ export const ElementInfo: {[key: number]: Element | undefined} = {
     },
     [EbmlElements.DocTypeReadVersion]: {
         name: 'DocTypeReadVersion',
-        path: '\\EBML\\DocTypeReadVersion',
+        path: '\\\\EBML\\\\DocTypeReadVersion',
         pathArray: [EbmlElements.EBMLHead, EbmlElements.DocTypeReadVersion],
         id: '0x4285',
         type: ElementType.Uinteger,

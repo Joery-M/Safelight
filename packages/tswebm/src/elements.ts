@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 export enum EbmlElements {
     EBMLHead = 0x1a45dfa3,
     EBMLVersion = 0x4286,
@@ -3016,14 +3015,14 @@ export interface Element {
 export const ElementInfo: { [key: number]: Element | undefined } = {
     [EbmlElements.EBMLHead]: {
         name: 'EBML',
-        path: 'EBML',
+        path: '\\EBML',
         pathArray: [EbmlElements.EBMLHead],
         id: '0x1a45dfa3',
         type: ElementType.Master
     },
     [EbmlElements.EBMLVersion]: {
         name: 'EBMLVersion',
-        path: 'EBMLEBMLVersion',
+        path: '\\EBML\\EBMLVersion',
         pathArray: [EbmlElements.EBMLHead, EbmlElements.EBMLVersion],
         id: '0x4286',
         type: ElementType.Uinteger,
@@ -3032,7 +3031,7 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
     },
     [EbmlElements.EBMLReadVersion]: {
         name: 'EBMLReadVersion',
-        path: 'EBMLEBMLReadVersion',
+        path: '\\EBML\\EBMLReadVersion',
         pathArray: [EbmlElements.EBMLHead, EbmlElements.EBMLReadVersion],
         id: '0x42F7',
         type: ElementType.Uinteger,
@@ -3041,7 +3040,7 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
     },
     [EbmlElements.DocType]: {
         name: 'DocType',
-        path: 'EBMLDocType',
+        path: '\\EBML\\DocType',
         pathArray: [EbmlElements.EBMLHead, EbmlElements.DocType],
         id: '0x4282',
         type: ElementType.String,
@@ -3050,7 +3049,7 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
     },
     [EbmlElements.DocTypeVersion]: {
         name: 'DocTypeVersion',
-        path: 'EBMLDocTypeVersion',
+        path: '\\EBML\\DocTypeVersion',
         pathArray: [EbmlElements.EBMLHead, EbmlElements.DocTypeVersion],
         id: '0x4287',
         type: ElementType.Uinteger,
@@ -3059,7 +3058,7 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
     },
     [EbmlElements.DocTypeReadVersion]: {
         name: 'DocTypeReadVersion',
-        path: 'EBMLDocTypeReadVersion',
+        path: '\\EBML\\DocTypeReadVersion',
         pathArray: [EbmlElements.EBMLHead, EbmlElements.DocTypeReadVersion],
         id: '0x4285',
         type: ElementType.Uinteger,
