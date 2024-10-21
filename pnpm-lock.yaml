@@ -159,9 +159,6 @@ importers:
       '@primevue/themes':
         specifier: ^4.1.1
         version: 4.1.1
-      '@quantco/pnpm-licenses':
-        specifier: ^2.1.0
-        version: 2.1.0
       '@safelight/shared':
         specifier: workspace:*
         version: link:../shared
@@ -244,6 +241,9 @@ importers:
       '@intlify/eslint-plugin-vue-i18n':
         specifier: ^3.0.0
         version: 3.0.0(eslint@9.13.0(jiti@1.21.6))
+      '@quantco/pnpm-licenses':
+        specifier: ^2.1.0
+        version: 2.1.0
       '@tsconfig/node20':
         specifier: ^20.1.4
         version: 20.1.4

@@ -8,8 +8,7 @@
     "type": "module",
     "scripts": {
         "dev": "pnpm generate-all && vite",
-        "generate-disclaimer": "cd ../../ && pnpm-licenses generate-disclaimer -o ./packages/safelight/src/generated/disclaimer.txt",
-        "generate-license": "cd ../../ && pnpm-licenses list -o ./packages/safelight/src/generated/licenses.json",
+        "generate-disclaimer": "pnpm-licenses generate-disclaimer -o ./src/generated/disclaimer.txt",
         "generate-package-list": "tsx ./buildscripts/generatePackageList.ts",
         "generate-all": "pnpm \"/^(generate-(?!all).*)/\"",
         "build": "pnpm \"/^(generate-(?!all).*|type-check)/\" && pnpm build-only",
@@ -21,7 +20,6 @@
         "@fontsource-variable/inter": "^5.1.0",
         "@phosphor-icons/vue": "^2.2.1",
         "@primevue/themes": "^4.1.1",
-        "@quantco/pnpm-licenses": "^2.1.0",
         "@safelight/shared": "workspace:*",
         "@safelight/timeline": "workspace:*",
         "@vueuse/core": "^11.1.0",
@@ -49,6 +47,7 @@
     "devDependencies": {
         "@babel/types": "^7.25.8",
         "@intlify/eslint-plugin-vue-i18n": "^3.0.0",
+        "@quantco/pnpm-licenses": "^2.1.0",
         "@tsconfig/node20": "^20.1.4",
         "@types/dom-webcodecs": "^0.1.13",
         "@types/fuzzysearch": "^1.0.2",
