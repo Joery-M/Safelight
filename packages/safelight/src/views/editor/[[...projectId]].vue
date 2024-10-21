@@ -1,5 +1,5 @@
 <template>
-    <template v-if="CurrentProject.isLoaded.value">
+    <template v-if="project.isLoaded">
         <Toolbar
             :pt="{
                 root: {
@@ -19,11 +19,12 @@
             </template>
             <template #center>
                 <InplaceRename
-                    v-if="CurrentProject.project.value"
-                    :value="CurrentProject.project.value?.name.value"
+                    v-if="project.p !== undefined"
+                    :value="project.p.name.value"
                     @change="
                         (newName: string) => {
-                            CurrentProject.project.value!.name.value = newName;
+                            project.p!.name.value = newName;
+                            project.p?.save();
                         }
                     "
                 />
@@ -39,17 +40,18 @@
 import InplaceRename from '@/components/InplaceRename.vue';
 import PanelContainer from '@/components/Panels/PanelContainer.vue';
 import { router } from '@/main';
-import { CurrentProject } from '@/stores/currentProject';
 import { useEditor } from '@/stores/useEditor';
 import { useProject } from '@/stores/useProject';
 import { PhFile, PhGear, PhSignOut } from '@phosphor-icons/vue';
+import { useTitle } from '@vueuse/core';
 import ConfirmDialog from 'primevue/confirmdialog';
 import Menubar from 'primevue/menubar';
 import type { MenuItem } from 'primevue/menuitem';
 import Toolbar from 'primevue/toolbar';
 import { useConfirm } from 'primevue/useconfirm';
 import { useDialog } from 'primevue/usedialog';
-import { defineAsyncComponent, onBeforeUnmount, onMounted, watch } from 'vue';
+import { defineAsyncComponent, onMounted, watchEffect } from 'vue';
+import { useRoute } from 'vue-router';
 
 const project = useProject();
 const editor = useEditor();
@@ -95,7 +97,7 @@ const menuItems: MenuItem[] = [
                 icon: PhSignOut as any,
                 disabled: false,
                 command: async () => {
-                    await CurrentProject.beforeExit();
+                    project.$reset();
                     router.push('/projects');
                 }
             }
@@ -103,19 +105,17 @@ const menuItems: MenuItem[] = [
     }
 ];
 
+const route = useRoute('/editor/[[...projectId]]');
+
 onMounted(async () => {
     await router.isReady();
-    if (!CurrentProject.isLoaded.value) {
-        const lastProject = CurrentProject.getSessionProject();
-        if (lastProject) {
-            if (lastProject) {
-                CurrentProject.openProject(lastProject, false /* Already here */);
-            } else {
-                showNoProjectDialog();
-            }
-        } else {
+    if (!project.isLoaded && route.params?.projectId) {
+        const success = await project.openProject({ id: route.params.projectId });
+        if (!success) {
             showNoProjectDialog();
         }
+    } else {
+        showNoProjectDialog();
     }
 });
 
@@ -135,27 +135,13 @@ function showNoProjectDialog() {
     });
 }
 
-watch(
-    CurrentProject.project,
-    (project) => {
-        if (project && CurrentProject.isLoaded.value) {
-            project.onDeepChange.next();
-        }
-    },
-    { deep: true }
-);
-
-onBeforeUnmount(async () => {
-    if (CurrentProject.isLoaded.value) {
-        await CurrentProject.beforeExit(false);
-        project.$dispose();
+definePage({
+    meta: {
+        overridePageName: true
     }
 });
-</script>
 
-<route lang="json">
-{
-    "path": "/editor",
-    "name": "Editor"
-}
-</route>
+watchEffect(() => {
+    useTitle(project.p?.name.value ? project.p?.name.value + ' | Safelight' : 'Safelight');
+});
+</script>

@@ -37,20 +37,19 @@
 </template>
 
 <script lang="ts" setup>
-import { CurrentProject } from '@/stores/currentProject';
+import { useProject } from '@/stores/useProject';
 import { PhPause, PhPlay, PhSkipBack, PhSkipForward } from '@phosphor-icons/vue';
 import Button from 'primevue/button';
 import ButtonGroup from 'primevue/buttongroup';
 import { computed } from 'vue';
 import Timecode from './Timecode.vue';
 
-const { project } = CurrentProject;
-const timeline = computed(() =>
-    project.value?.timeline.value?.isSimpleTimeline() ? project.value.timeline.value : undefined
-);
+const project = useProject();
+
+const timeline = computed(() => project.p?.timeline?.value);
 
 function playPause(ev: MouseEvent) {
-    if (timeline.value) {
+    if (timeline?.value) {
         if (timeline.value.isPlaying.value) {
             timeline.value.stopPlayback(ev.ctrlKey);
         } else {

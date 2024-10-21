@@ -19,7 +19,7 @@
                     :label="$t('project.new')"
                     rounded
                     :model="projectTypes"
-                    @click="CurrentProject.newSimpleProject()"
+                    @click="useProject().creators.newSimpleProject()"
                 />
             </div>
         </template>
@@ -37,11 +37,6 @@
                     @keydown.enter="setProjectName($event.target.value, data)"
                     @blur="setProjectName($event.target.value, data)"
                 />
-            </template>
-        </Column>
-        <Column field="type" :header="$t('general.descriptions.type')" sortable>
-            <template #body="slotProps">
-                {{ $t('project.types.' + slotProps.data.type.toLowerCase(), slotProps.data.type) }}
             </template>
         </Column>
         <Column
@@ -65,8 +60,8 @@
             </template>
         </Column>
         <Column>
-            <template #body="slotProps">
-                <Button @click="CurrentProject.openProject(slotProps.data)">
+            <template #body="{ data }">
+                <Button @click="$router.push(`/editor/${data.id}`)">
                     {{ $t('general.actions.open') }}
                 </Button>
             </template>
@@ -75,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { CurrentProject } from '@/stores/currentProject';
+import { useProject } from '@/stores/useProject';
 import { PhArrowsClockwise } from '@phosphor-icons/vue';
 import { Storage, type StoredProject } from '@safelight/shared/base/Storage';
 import Button from 'primevue/button';
@@ -84,23 +79,25 @@ import DataTable from 'primevue/datatable';
 import InputText from 'primevue/inputtext';
 import type { MenuItem } from 'primevue/menuitem';
 import SplitButton from 'primevue/splitbutton';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, shallowRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
+
+const curProject = useProject();
 
 const projectTypes = computed<MenuItem[]>(
     () =>
         [
             {
                 label: t('project.types.simple'),
-                command: () => CurrentProject.newSimpleProject()
+                command: () => curProject.creators.newSimpleProject()
             },
             { label: 'Test', command() {} }
         ] as const
 );
 
-const projects = ref<StoredProject[]>([]);
+const projects = shallowRef<StoredProject[]>([]);
 
 const loading = ref(true);
 
@@ -125,7 +122,11 @@ async function setProjectName(newName: string, project: StoredProject) {
     if (!newName || newName.length == 0) {
         return;
     }
-    const storage = await CurrentProject.getStorageControllerForProject(project);
+
+    const storage = new (
+        await import('@safelight/shared/Storage/LocalStorage/IndexedDbStorage')
+    ).IndexedDbStorageController();
+
     await storage?.patchStoredProject({ id: project.id, name: newName });
     loadList();
 }

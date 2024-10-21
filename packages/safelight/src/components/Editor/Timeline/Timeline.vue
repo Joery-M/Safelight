@@ -3,8 +3,8 @@
 </template>
 
 <script setup lang="ts">
-import { CurrentProject } from '@/stores/currentProject';
-import type BaseTimelineItem from '@safelight/shared/base/TimelineItem';
+import { useProject } from '@/stores/useProject';
+import type { TimelineItem } from '@safelight/shared/base/TimelineItem';
 import { SettingsManager } from '@safelight/shared/Settings/SettingsManager';
 import { createTimelineManager, type CreateTimelineFn } from '@safelight/timeline';
 import { TimelineCursorElement } from '@safelight/timeline/elements/TimelineCursorElement';
@@ -14,7 +14,8 @@ import { VideoTimelineElement } from '@safelight/timeline/elements/VideoTimeline
 import { syncRef, watchArray } from '@vueuse/core';
 import { computed, onMounted, ref, shallowReactive, watch, watchEffect } from 'vue';
 
-const projectTimeline = computed(() => CurrentProject.project.value?.timeline?.value);
+const project = useProject();
+const projectTimeline = computed(() => project.p?.timeline.value);
 
 const canvas = ref<HTMLCanvasElement>();
 
@@ -28,7 +29,6 @@ onMounted(() => {
         watch(
             projectTimeline,
             (projectTimeline, _old, onCleanup) => {
-                console.log(CurrentProject.project.value);
                 if (!projectTimeline) {
                     return;
                 }
@@ -103,7 +103,7 @@ onMounted(() => {
                     projectTimeline ? Array.from(projectTimeline.items) : []
                 );
                 const projectItemsToTimelineItems = shallowReactive(
-                    new WeakMap<BaseTimelineItem, VideoTimelineElement>()
+                    new WeakMap<TimelineItem, VideoTimelineElement>()
                 );
                 watchArray(
                     projectItems,

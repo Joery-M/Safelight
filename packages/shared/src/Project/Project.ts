@@ -20,9 +20,13 @@ export class Project {
     public media = shallowReactive(new Map<string, MediaItem>());
 
     public selectedTimeline = ref<string>();
-    public timeline = computed(() =>
-        this.selectedTimeline.value ? this.media.get(this.selectedTimeline.value) : undefined
-    );
+    public timeline = computed(() => {
+        const item = this.selectedTimeline.value
+            ? this.media.get(this.selectedTimeline.value)
+            : undefined;
+
+        return item?.isTimeline() ? item : undefined;
+    });
 
     public async save() {
         return await Storage.getStorage().saveProject(this);

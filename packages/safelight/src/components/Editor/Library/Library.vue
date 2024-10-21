@@ -9,13 +9,13 @@
                 class: 'p-1'
             },
             content: {
-                style: 'flex-shrink: 1; min-height: 0;'
+                style: 'flex-grow: 1; min-height: 0;'
             },
             emptyMessage: {
                 style: 'height: 100%;'
             },
             footer: {
-                style: 'flex-grow: 1; display: flex; align-items: end'
+                style: 'flex-shrink: 1; display: flex; align-items: end'
             }
         }"
         layout="grid"
@@ -107,7 +107,7 @@
                 class="grid h-full select-none place-items-center opacity-60"
                 @dblclick="fileDialogOpenDblClick"
             >
-                <label v-if="CurrentProject.project.value?.media.size == 0">
+                <label v-if="project.p?.media.size == 0">
                     {{ $t('panels.library.noMediaLoaded') }}
                 </label>
                 <label v-else>
@@ -239,7 +239,7 @@
                 class="grid h-full select-none place-items-center opacity-60"
                 @dblclick="fileDialogOpenDblClick"
             >
-                <label v-if="CurrentProject.project.value?.media.size == 0">
+                <label v-if="project.p?.media.size == 0">
                     {{ $t('panels.library.noMediaLoaded') }}
                 </label>
                 <label v-else>
@@ -251,7 +251,6 @@
 </template>
 
 <script setup lang="ts">
-import { CurrentProject } from '@/stores/currentProject';
 import {
     PhFilmStrip,
     PhImage,
@@ -284,11 +283,14 @@ import Slider from 'primevue/slider';
 import Toolbar from 'primevue/toolbar';
 import { ref, shallowRef, watchEffect } from 'vue';
 import LibraryGridItem from './LibraryGridItem.vue';
+import { useProject } from '@/stores/useProject';
+
+const project = useProject();
 
 useDropZone(document.body, {
     onDrop(files) {
         files?.forEach((file) => {
-            CurrentProject.project.value?.loadFile(file);
+            project.p?.loadFile(file);
         });
     },
     dataTypes(types) {
@@ -307,8 +309,8 @@ fileDialog.onChange((fileList) => {
     for (let i = 0; i < fileList.length; i++) {
         const item = fileList.item(i);
 
-        if (item && CurrentProject.project.value) {
-            CurrentProject.project.value.loadFile(item);
+        if (item && project.p) {
+            project.p.loadFile(item);
         }
     }
 });
@@ -330,21 +332,17 @@ watchEffect(() => {
     }
 });
 
-watchDebounced(
-    [CurrentProject.project.value?.media, search, sortBy, sortDescending],
-    sortAndFilter,
-    {
-        deep: true,
-        debounce: 100,
-        maxWait: 1000,
-        immediate: true
-    }
-);
+watchDebounced([project.p?.media, search, sortBy, sortDescending], sortAndFilter, {
+    deep: true,
+    debounce: 100,
+    maxWait: 1000,
+    immediate: true
+});
 
 function sortAndFilter() {
-    if (!CurrentProject.project.value) return;
+    if (!project.p) return;
 
-    const allMedia = Array.from(CurrentProject.project.value.media.values());
+    const allMedia = Array.from(project.p.media.values());
     const filtered = allMedia.filter((elem) => {
         if (search.value.length == 0) {
             return true;
