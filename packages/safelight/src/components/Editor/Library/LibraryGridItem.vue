@@ -106,7 +106,6 @@
                     v-tooltip.bottom="{ value: 'Delete', showDelay: 500 }"
                     severity="secondary"
                     text
-                    :disabled="hasItemInTimeline"
                     @click="alertt('yea no')"
                 >
                     <template #icon>
@@ -126,7 +125,6 @@
     </Popover>
 </template>
 <script setup lang="ts">
-import { CurrentProject } from '@/stores/currentProject';
 import {
     PhDotsThreeVertical,
     PhFilmStrip,
@@ -137,12 +135,11 @@ import {
     PhTrash,
     PhVideoCamera
 } from '@phosphor-icons/vue';
-import { ProjectFeatures } from '@safelight/shared/base/Project';
 import { MediaSourceType, type MediaItem } from '@safelight/shared/Media/Media';
 import Button from 'primevue/button';
 import Menu from 'primevue/menu';
 import type { MenuItem } from 'primevue/menuitem';
-import Popover from 'primevue/popover';
+import Popover, { type PopoverMethods, type PopoverProps } from 'primevue/popover';
 import Skeleton from 'primevue/skeleton';
 import Toolbar from 'primevue/toolbar';
 import { computed, ref } from 'vue';
@@ -160,16 +157,9 @@ const menuItems = ref<MenuItem[]>([
 
 const itemSourceType = computed(() => props.item.getMetadata('media')?.sourceType ?? 0);
 
-const hasItemInTimeline = computed(
-    () =>
-        CurrentProject.project.value &&
-        CurrentProject.project.value.hasFeature(ProjectFeatures.media) &&
-        CurrentProject.project.value.usesMedia(props.item)
-);
-
 const alertt = (text: string) => window.alert(text);
 
-const overlay = ref<typeof Popover>();
+const overlay = ref<PopoverMethods & PopoverProps>();
 
 function closeOtherOverlays() {
     if (document.activeElement && 'blur' in document.activeElement) {

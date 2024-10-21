@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
 import * as opfsTools from 'opfs-tools';
-import type BaseProject from '../../base/Project';
+import type { SetRequired } from 'type-fest';
 import type {
     FilePath,
     FilePathTypes,
@@ -15,7 +15,7 @@ import {
 } from '../../Media/ChunkedMediaFile';
 import { MediaItem } from '../../Media/Media';
 import { MediaFileItem, type MediaFileItemMetadata } from '../../Media/MediaFile';
-import SimpleProject from '../../Project/SimpleProject';
+import { Project } from '../../Project/Project';
 import { Timeline, type TimelineConfig } from '../../Timeline/Timeline';
 import { NotificationService } from '../../UI/Notifications/NotificationService';
 import { SafelightIndexedDB } from './db';
@@ -25,29 +25,29 @@ export class IndexedDbStorageController extends BaseStorageController {
 
     private db = new SafelightIndexedDB();
 
-    async saveProject(project: BaseProject, includeTimelines = true): Promise<SaveResults> {
+    async saveProject(project: Project, includeTimelines = true): Promise<SaveResults> {
         this.checkPersistentStorage();
         const existingProject = await this.db.project.get({ id: project.id });
 
         const storableProject: StoredProject = {
             id: project.id,
             name: project.name.value,
-            type: project.type,
-            media: project.media
-                .map((m) => m.id)
-                .filter((id) => id !== undefined)
-                .concat(...project.timelines.map((m) => m.id)),
+            media: Array.from(project.media.keys()),
             updated: DateTime.now().toISO(),
             created: existingProject?.created ?? DateTime.now().toISO(),
-            metadata: new Map()
+            fileTree: { entries: {}, name: 'root' },
+            metadata: {}
         };
 
         try {
             await this.db.project.put(storableProject, project.id);
 
             if (includeTimelines) {
-                const proms = project.timelines.map((timeline) => this.saveMedia(timeline));
-                await Promise.allSettled(proms);
+                for (const media of project.media.values()) {
+                    if (media.isTimeline()) {
+                        await this.saveMedia(media);
+                    }
+                }
             }
 
             return 'Success';
@@ -55,45 +55,32 @@ export class IndexedDbStorageController extends BaseStorageController {
             return error.toString();
         }
     }
-    async loadProject(projectId: string): Promise<BaseProject | undefined> {
-        return this.db.project
-            .get(projectId)
-            .then<SimpleProject | undefined, never>(async (project) => {
-                if (!project) return;
+    async loadProject(projectId: string): Promise<Project | undefined> {
+        const storedProject = await this.db.project.get(projectId);
+        if (!storedProject) return;
 
-                if (project.type == 'Simple') {
-                    const proj = new SimpleProject();
-                    proj.id = project.id;
-                    const mediaFetches = project.media.map(async (m) => {
-                        const media = await this.loadMedia(m).catch((reason) => {
-                            console.error('Error loading media into project', reason);
-                        });
-                        if (media) {
-                            // Timelines are seperate
-                            if (media.isTimeline()) {
-                                proj.timelines.push(media);
-                                // if (media.id == project.activeTimeline) {
-                                //     proj.selectTimeline(timeline);
-                                // }
-                            } else {
-                                proj.media.push(media);
-                            }
-                        } else {
-                            // TODO: Add a way for media to be marked as missing
-                        }
-                    });
+        const project = new Project();
 
-                    // Load all media
-                    await Promise.allSettled(mediaFetches);
-                    proj.name.value = project.name;
-                    return proj;
-                } else {
-                    return;
-                }
+        project.id = storedProject.id;
+        project.name.value = storedProject.name;
+        // TODO: Find what to do with metadata
+
+        for (const mediaId of storedProject.media) {
+            const media = await this.loadMedia(mediaId).catch((reason) => {
+                console.error('Error loading media into project', reason);
             });
+            if (media) {
+                project.media.set(media.id, media);
+            } else {
+                // TODO: Add a way for media to be marked as missing
+                console.error('Could not find media', mediaId);
+            }
+        }
+
+        return project;
     }
-    async updateStoredProject(
-        project: Partial<StoredProject> & Pick<StoredProject, 'id'>
+    async patchStoredProject(
+        project: SetRequired<Partial<StoredProject>, 'id'>
     ): Promise<SaveResults> {
         this.checkPersistentStorage();
         const existingProject = await this.db.project.get({ id: project.id });

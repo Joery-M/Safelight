@@ -107,7 +107,7 @@
                 class="grid h-full select-none place-items-center opacity-60"
                 @dblclick="fileDialogOpenDblClick"
             >
-                <label v-if="CurrentProject.project.value?.media.length == 0">
+                <label v-if="CurrentProject.project.value?.media.size == 0">
                     {{ $t('panels.library.noMediaLoaded') }}
                 </label>
                 <label v-else>
@@ -239,7 +239,7 @@
                 class="grid h-full select-none place-items-center opacity-60"
                 @dblclick="fileDialogOpenDblClick"
             >
-                <label v-if="CurrentProject.project.value?.media.length == 0">
+                <label v-if="CurrentProject.project.value?.media.size == 0">
                     {{ $t('panels.library.noMediaLoaded') }}
                 </label>
                 <label v-else>
@@ -266,7 +266,6 @@ import {
     PhSubtitles,
     PhVideoCamera
 } from '@phosphor-icons/vue';
-import { ProjectFeatures } from '@safelight/shared/base/Project';
 import { MediaItem, MediaSourceType } from '@safelight/shared/Media/Media';
 import Timecode from '@safelight/shared/Timecode';
 import { useDropZone, useFileDialog, watchDebounced } from '@vueuse/core';
@@ -289,9 +288,7 @@ import LibraryGridItem from './LibraryGridItem.vue';
 useDropZone(document.body, {
     onDrop(files) {
         files?.forEach((file) => {
-            if (CurrentProject.project.value?.hasFeature(ProjectFeatures.media)) {
-                CurrentProject.project.value.loadFile(file);
-            }
+            CurrentProject.project.value?.loadFile(file);
         });
     },
     dataTypes(types) {
@@ -310,7 +307,7 @@ fileDialog.onChange((fileList) => {
     for (let i = 0; i < fileList.length; i++) {
         const item = fileList.item(i);
 
-        if (item && CurrentProject.project.value?.hasFeature(ProjectFeatures.media)) {
+        if (item && CurrentProject.project.value) {
             CurrentProject.project.value.loadFile(item);
         }
     }
@@ -347,7 +344,8 @@ watchDebounced(
 function sortAndFilter() {
     if (!CurrentProject.project.value) return;
 
-    const filtered = CurrentProject.project.value.media.filter((elem) => {
+    const allMedia = Array.from(CurrentProject.project.value.media.values());
+    const filtered = allMedia.filter((elem) => {
         if (search.value.length == 0) {
             return true;
         }

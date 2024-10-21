@@ -1,24 +1,24 @@
-import type BaseProject from '@safelight/shared/base/Project';
-import { ProjectFeatures, type ProjectType } from '@safelight/shared/base/Project';
-import BaseStorageController, { Storage, type StoredProject } from '@safelight/shared/base/Storage';
+import { Storage, type StoredProject } from '@safelight/shared/base/Storage';
+import type { Project } from '@safelight/shared/Project/Project';
 import { DateTime } from 'luxon';
 import { computed, shallowRef } from 'vue';
 
 export class CurrentProject {
     // see #14 for why
-    public static project = shallowRef<BaseProject>();
+    public static project = shallowRef<Project>();
     public static isLoaded = computed(() => !!this.project.value);
 
     public static async openProject(
         selectedProject: StoredProject | SessionProject,
         goToEditor = true
     ) {
-        const storageType = await this.getStorageControllerForProject(selectedProject.type);
-        if (!storageType) {
-            throw new Error('Could not find storage controller for project type');
-        }
+        if (!Storage.hasStorage()) {
+            const IndexedDbStorageController = (
+                await import('@safelight/shared/Storage/LocalStorage/IndexedDbStorage')
+            ).IndexedDbStorageController;
 
-        Storage.setStorage(storageType);
+            Storage.setStorage(new IndexedDbStorageController());
+        }
 
         const project = await Storage.getStorage().loadProject(selectedProject.id);
 
@@ -41,7 +41,7 @@ export class CurrentProject {
             await import('@safelight/shared/Storage/LocalStorage/IndexedDbStorage')
         ).IndexedDbStorageController;
         Storage.setStorage(new IndexedDbStorageController());
-        const SimpleProject = (await import('@safelight/shared/Project/SimpleProject')).default;
+        const SimpleProject = (await import('@safelight/shared/Project/Project')).Project;
 
         const proj = new SimpleProject();
 
@@ -55,38 +55,20 @@ export class CurrentProject {
 
         this.setProject(proj);
 
-        await proj.Save();
+        await proj.save();
         this.setSessionProject(proj);
 
         if (goToEditor) await this.toEditor();
     }
 
-    public static getStorageControllerForProject(
-        project: ProjectType
-    ): Promise<BaseStorageController | undefined>;
-    public static getStorageControllerForProject(
-        project: StoredProject
-    ): Promise<BaseStorageController | undefined>;
-    public static async getStorageControllerForProject(project: StoredProject | ProjectType) {
-        const type = typeof project === 'string' ? project : project.type;
-        if (type == 'Simple') {
-            return new (
-                await import('@safelight/shared/Storage/LocalStorage/IndexedDbStorage')
-            ).IndexedDbStorageController();
-        } else {
-            console.error('Project type not supported');
-        }
-    }
-
-    public static setProject(newProject: BaseProject) {
+    public static setProject(newProject: Project) {
         this.project.value = newProject;
     }
 
-    public static setSessionProject(project: StoredProject | BaseProject | SessionProject) {
+    public static setSessionProject(project: StoredProject | Project | SessionProject) {
         const sessionProject: SessionProject = {
             id: project.id,
-            lastOpened: DateTime.now().toISO(),
-            type: project.type
+            lastOpened: DateTime.now().toISO()
         };
         sessionStorage.setItem('project', JSON.stringify(sessionProject));
     }
@@ -101,12 +83,8 @@ export class CurrentProject {
 
     public static async beforeExit(clearSession = true) {
         if (this.project.value) {
-            this.project.value.destroy$.next();
-            this.project.value.destroy$.complete();
             if (clearSession) this.clearSessionProject();
-            if (this.project.value.hasFeature(ProjectFeatures.saving)) {
-                await this.project.value.Save();
-            }
+            await this.project.value.save();
             this.project.value = undefined;
         }
     }
@@ -114,6 +92,5 @@ export class CurrentProject {
 
 export interface SessionProject {
     id: string;
-    type: ProjectType;
     lastOpened: string;
 }
