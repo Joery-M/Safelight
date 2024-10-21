@@ -1,8 +1,8 @@
-import { expect, onTestFinished, test, vi } from 'vitest';
+import { beforeEach, expect, test, vi } from 'vitest';
 import { createI18n } from 'vue-i18n';
 import { LocaleManager, type LocalizationFile } from '../../src/Localization/LocaleManager';
 
-test('Switch locale', async () => {
+beforeEach(async (ctx) => {
     const i18n = createI18n<false>({
         locale: 'en-US',
         legacy: false,
@@ -12,6 +12,12 @@ test('Switch locale', async () => {
     LocaleManager.activeLocale.value = 'en-US';
     await LocaleManager.init(i18n);
 
+    ctx.onTestFinished(() => {
+        i18n.dispose();
+    });
+});
+
+test('Switch locale', async () => {
     expect(LocaleManager.activeLocale.value).toBe('en-US');
     const curLocales = LocaleManager.i18n.global.messages.value;
     expect(curLocales).key('en-US');
@@ -20,10 +26,6 @@ test('Switch locale', async () => {
 
     expect(LocaleManager.activeLocale.value).toBe('nl-NL');
     expect(curLocales).keys('nl-NL', 'en-US');
-
-    onTestFinished(() => {
-        i18n.dispose();
-    });
 });
 
 test('Import locale file', async () => {
@@ -44,14 +46,6 @@ test('Add locale', async () => {
             test: '123'
         } as LocalizationFile;
     });
-
-    const i18n = createI18n<false>({
-        locale: 'en-US',
-        legacy: false,
-        fallbackLocale: 'en-US',
-        messages: {}
-    });
-    await LocaleManager.init(i18n);
 
     LocaleManager.registerLocale('te-ST', {
         loadFn,

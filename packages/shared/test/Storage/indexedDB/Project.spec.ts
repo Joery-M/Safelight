@@ -1,16 +1,12 @@
-import { IDBKeyRange, indexedDB } from 'fake-indexeddb';
 import { expect, test } from 'vitest';
 import { Storage } from '../../../src/base/Storage';
-import SimpleProject from '../../../src/Project/SimpleProject';
+import { Project } from '../../../src/Project/Project';
 import { IndexedDbStorageController } from '../../../src/Storage/LocalStorage/IndexedDbStorage';
-
-window.indexedDB = indexedDB;
-window.IDBKeyRange = IDBKeyRange;
 
 test('List project', async () => {
     const storage = new IndexedDbStorageController();
 
-    const project = new SimpleProject();
+    const project = new Project();
     await storage.saveProject(project);
 
     const projects = await Storage.getProjects();
@@ -21,7 +17,7 @@ test('List project', async () => {
 test('Retrieve project', async () => {
     const storage = new IndexedDbStorageController();
 
-    const project = new SimpleProject();
+    const project = new Project();
     await storage.saveProject(project);
 
     const loadedProject = await storage.loadProject(project.id);
@@ -32,7 +28,7 @@ test('Retrieve project', async () => {
 test('Update project', async () => {
     const storage = new IndexedDbStorageController();
 
-    const project = new SimpleProject();
+    const project = new Project();
     project.name.value = 'Name 1';
 
     await storage.saveProject(project);
@@ -41,8 +37,29 @@ test('Update project', async () => {
 
     Storage.setStorage(storage);
 
-    const res = await project.Save();
+    const res = await project.save();
     expect(res).toEqual('Success');
+
+    const loadedProject = await storage.loadProject(project.id);
+    expect(loadedProject).toBeDefined();
+    expect(loadedProject?.name.value).toBe('Name 2');
+});
+
+test('Patch stored project', async () => {
+    const storage = new IndexedDbStorageController();
+    Storage.setStorage(storage);
+
+    const project = new Project();
+    project.name.value = 'Name 1';
+
+    const saveRes = await project.save();
+    expect(saveRes).toEqual('Success');
+
+    const patchRes = await storage.patchStoredProject({
+        id: project.id,
+        name: 'Name 2'
+    });
+    expect(patchRes).toBe('Success');
 
     const loadedProject = await storage.loadProject(project.id);
     expect(loadedProject).toBeDefined();
