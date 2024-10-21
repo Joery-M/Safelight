@@ -1,7 +1,7 @@
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router/auto';
-import { routes } from 'vue-router/auto-routes';
+import { routes, handleHotUpdate } from 'vue-router/auto-routes';
 import App from './App.vue';
 
 import { definePreset } from '@primevue/themes';

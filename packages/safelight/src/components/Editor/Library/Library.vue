@@ -251,6 +251,7 @@
 </template>
 
 <script setup lang="ts">
+import { useProject } from '@/stores/useProject';
 import {
     PhFilmStrip,
     PhImage,
@@ -283,7 +284,6 @@ import Slider from 'primevue/slider';
 import Toolbar from 'primevue/toolbar';
 import { ref, shallowRef, watchEffect } from 'vue';
 import LibraryGridItem from './LibraryGridItem.vue';
-import { useProject } from '@/stores/useProject';
 
 const project = useProject();
 
