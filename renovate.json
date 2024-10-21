@@ -6,25 +6,44 @@
     "rangeStrategy": "bump",
     "packageRules": [
         {
-            "matchPackageNames": ["vite", "**vite-plugin**", "@vitejs/**", "rollup", "@rollup/**"],
-            "groupName": "Build"
+            "matchPackageNames": [
+                "vite",
+                "**vite-plugin**",
+                "@vitejs/**",
+                "rollup",
+                "@rollup/**",
+                "vue-tsc"
+            ],
+            "groupName": "Build",
+            "groupSlug": "build"
         },
         {
             "extends": ["packages:test", "monorepo:vitest", "monorepo:playwright"],
-            "matchPackageNames": ["vitest", "playwright", "jsdom", "happy-dom", "@vitest/**"],
-            "groupName": "Testing"
+            "matchPackageNames": [
+                "vitest",
+                "playwright",
+                "jsdom",
+                "happy-dom",
+                "@vitest/**",
+                "@intlify/eslint-plugin-vue-i18n"
+            ],
+            "groupName": "Testing",
+            "groupSlug": "testing"
         },
         {
             "matchPackageNames": ["primevue", "@primevue/**"],
-            "groupName": "PrimeVue"
+            "groupName": "PrimeVue",
+            "groupSlug": "primevue"
         },
         {
-            "extends": ["monorepo:vue"],
-            "groupName": "Vue"
+            "matchPackageNames": ["vue-**", "vue", "@vueuse/**", "@vue/**", "unplugin-vue-router"],
+            "groupName": "Vue",
+            "groupSlug": "vue"
         },
         {
             "extends": ["packages:linters"],
-            "groupName": "linters"
+            "groupName": "linters",
+            "groupSlug": "linters"
         },
         {
             "matchPackagePatterns": ["*"],
