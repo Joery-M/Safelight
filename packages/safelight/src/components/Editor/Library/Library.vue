@@ -348,7 +348,7 @@ function sortAndFilter() {
             return true;
         }
 
-        return fuzzysearch(search.value.toLowerCase(), elem.name.toLowerCase());
+        return fuzzysearch(search.value.toLowerCase(), elem.name.value.toLowerCase());
     });
 
     const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
@@ -357,14 +357,14 @@ function sortAndFilter() {
         const item1 = sortDescending.value ? b : a;
         const item2 = sortDescending.value ? a : b;
 
-        const ext1 = item1.name.split('.').at(-1) ?? 'ZZZ';
-        const ext2 = item2.name.split('.').at(-1) ?? 'ZZZ';
+        const ext1 = item1.name.value.split('.').at(-1) ?? 'ZZZ';
+        const ext2 = item2.name.value.split('.').at(-1) ?? 'ZZZ';
 
         switch (sortBy.value) {
             case 'fileType':
                 return collator.compare(ext1, ext2);
             default:
-                return collator.compare(item1.name, item2.name);
+                return collator.compare(item1.name.value, item2.name.value);
         }
     });
 

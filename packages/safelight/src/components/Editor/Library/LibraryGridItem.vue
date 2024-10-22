@@ -4,9 +4,9 @@
         class="border-round m-1 flex h-fit select-text flex-col rounded-md border-solid border-white/10"
         style="border-width: 1px"
         :style="{
-            width: $props.size + 'px'
+            width: size + 'px'
         }"
-        :aria-label="item.name"
+        :aria-label="item.name.value"
         @contextmenu.prevent="
             (ev) => {
                 closeOtherOverlays();
@@ -20,7 +20,7 @@
             <img
                 v-if="false"
                 class="overflow-none max-h-full max-w-full"
-                :aria-label="'Preview image for ' + item.name"
+                :aria-label="item.name.value"
             />
             <Skeleton
                 v-else
@@ -63,10 +63,10 @@
         </div>
         <div class="flex items-center gap-1 px-1">
             <p
-                v-tooltip.bottom="{ value: item.name, showDelay: 500 }"
+                v-tooltip.bottom="{ value: item.name.value, showDelay: 500 }"
                 class="line-clamp-2 flex-1 text-base"
             >
-                {{ item.name }}
+                {{ item.name.value }}
             </p>
             <Button
                 v-if="size >= 96"

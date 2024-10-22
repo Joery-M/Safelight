@@ -1,11 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
+import { ref } from 'vue';
 import { Storage, type FilePath } from '../base/Storage';
 import { MediaItem, type MediaItemMetadata, type MediaItemTypes } from './Media';
 import type { MediaThumbnailMetadata } from './MediaFile';
 
 export class ChunkedMediaFileItem extends MediaItem<ChunkedMediaFileItemMetadata> {
     public id = uuidv4();
-    public name = '';
+    public name = ref('');
     public type: MediaItemTypes = 'ChunkedMediaFile';
 
     public async loadChunk(index = 0): Promise<MediaChunkData | undefined> {

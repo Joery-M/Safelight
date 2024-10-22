@@ -1,3 +1,4 @@
+import { toValue } from '@vueuse/core';
 import { DateTime } from 'luxon';
 import * as opfsTools from 'opfs-tools';
 import type { SetRequired } from 'type-fest';
@@ -116,7 +117,7 @@ export class IndexedDbStorageController extends BaseStorageController {
         const storedMedia: StoredMedia =
             'getMetadata' in media
                 ? {
-                      name: media.name,
+                      name: toValue(media.name),
                       id: media.id,
                       created: media.getMetadata('media.created'),
                       metadata: await media.serializeMetadata(),
@@ -197,19 +198,19 @@ export class IndexedDbStorageController extends BaseStorageController {
                     storedMedia.metadata as ChunkedMediaFileItemMetadata
                 );
                 item.id = storedMedia.id;
-                item.name = storedMedia.name;
+                item.name.value = storedMedia.name;
 
                 return item;
             }
             case 'MediaFile': {
                 const item = new MediaFileItem(storedMedia.metadata as MediaFileItemMetadata);
                 item.id = storedMedia.id;
-                item.name = storedMedia.name;
+                item.name.value = storedMedia.name;
 
                 return item;
             }
             case 'Timeline': {
-                const config = storedMedia.metadata.get('timelineConfig') as TimelineConfig;
+                const config = storedMedia.metadata['timelineConfig'] as TimelineConfig;
                 if (!config) {
                     return;
                 }
@@ -219,7 +220,6 @@ export class IndexedDbStorageController extends BaseStorageController {
                     item.addMetadata(path as any, value);
                 }
                 item.id = storedMedia.id;
-                item.name = storedMedia.name;
 
                 return item;
             }

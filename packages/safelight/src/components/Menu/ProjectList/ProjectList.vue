@@ -6,6 +6,7 @@
         sort-field="updated"
         removable-sort
         :sort-order="-1"
+        @row-dblclick="curProject.toEditor($event.data.id)"
     >
         <template #header>
             <div class="align-items-center justify-content-between flex flex-wrap gap-2">
@@ -34,8 +35,22 @@
                     :model-value="data.name"
                     autofocus
                     fluid
-                    @keydown.enter="setProjectName($event.target.value, data)"
-                    @blur="setProjectName($event.target.value, data)"
+                    @keydown.enter="
+                        (event) => {
+                            const value = (event.target as HTMLInputElement)?.value ?? '';
+                            if (value !== data.name) {
+                                setProjectName(value, data);
+                            }
+                        }
+                    "
+                    @blur="
+                        (event) => {
+                            const value = (event.target as HTMLInputElement)?.value ?? '';
+                            if (value !== data.name) {
+                                setProjectName(value, data);
+                            }
+                        }
+                    "
                 />
             </template>
         </Column>
@@ -59,10 +74,33 @@
                 {{ $d(new Date((slotProps.data as StoredProject).created), 'dateTime') }}
             </template>
         </Column>
-        <Column>
+        <Column style="width: 0">
             <template #body="{ data }">
-                <Button @click="$router.push(`/editor/${data.id}`)">
-                    {{ $t('general.actions.open') }}
+                <Button
+                    v-tooltip="$t('general.actions.open')"
+                    text
+                    rounded
+                    plain
+                    @click="$router.push(`/editor/${data.id}`)"
+                >
+                    <template #icon>
+                        <PhCaretRight />
+                    </template>
+                </Button>
+            </template>
+        </Column>
+        <Column style="width: 0">
+            <template #body="{ data }">
+                <Button
+                    v-tooltip="$t('general.actions.delete')"
+                    text
+                    rounded
+                    plain
+                    @click="$router.push(`/editor/${data.id}`)"
+                >
+                    <template #icon>
+                        <PhTrash />
+                    </template>
                 </Button>
             </template>
         </Column>
@@ -71,7 +109,7 @@
 
 <script setup lang="ts">
 import { useProject } from '@/stores/useProject';
-import { PhArrowsClockwise } from '@phosphor-icons/vue';
+import { PhArrowsClockwise, PhCaretRight, PhTrash } from '@phosphor-icons/vue';
 import { Storage, type StoredProject } from '@safelight/shared/base/Storage';
 import Button from 'primevue/button';
 import Column from 'primevue/column';

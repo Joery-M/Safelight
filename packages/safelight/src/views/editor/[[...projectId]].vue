@@ -109,7 +109,8 @@ const route = useRoute('/editor/[[...projectId]]');
 
 onMounted(async () => {
     await router.isReady();
-    if (!project.isLoaded && route.params?.projectId) {
+
+    if (route.params?.projectId) {
         const success = await project.openProject({ id: route.params.projectId });
         if (!success) {
             showNoProjectDialog();
