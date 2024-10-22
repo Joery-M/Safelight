@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { computed, ref, shallowReactive } from 'vue';
-import { Storage, type ProjectFileTreeItem } from '../base/Storage';
+import { Storage, type ProjectFileTree, type ProjectFileTreeItem } from '../base/Storage';
 import { refComputedDefault } from '../helpers/refComputedDefault';
 import { LocaleManager } from '../Localization/LocaleManager';
 import { MediaItem } from '../Media/Media';
@@ -19,7 +19,7 @@ export class Project {
     id = uuidv4();
 
     media = shallowReactive(new Map<string, MediaItem>());
-    fileTree = new FileTreeItem(undefined, true);
+    fileTree = new FileTreeItem(this);
 
     selectedTimeline = ref<string>();
     timeline = computed(() => {
@@ -63,18 +63,20 @@ export class Project {
         return serializeEntries(this.fileTree);
     }
 
-    deserializeFileTree(tree: { [path: string]: ProjectFileTreeItem }) {
-        const deserializeEntries = (
-            item: FileTreeItem,
-            tree: { [path: string]: ProjectFileTreeItem }
-        ) => {
+    deserializeFileTree(tree: ProjectFileTree) {
+        const deserializeEntries = (item: FileTreeItem, tree: ProjectFileTree) => {
             Object.entries(tree).forEach(([id, storedItem]) => {
-                const newItem = new FileTreeItem(storedItem.name, !!storedItem.entries);
+                const newItem = new FileTreeItem(
+                    this,
+                    item,
+                    storedItem.name,
+                    'entries' in storedItem
+                );
                 newItem.id = id;
 
-                if (storedItem.entries) {
+                if ('entries' in storedItem) {
                     deserializeEntries(newItem, storedItem.entries);
-                } else if (storedItem.mediaID) {
+                } else if ('mediaID' in storedItem) {
                     // Get media from filled media lookup
                     const media = this.media.get(storedItem.mediaID);
                     newItem.media.value = media;
@@ -91,11 +93,12 @@ export class Project {
         this.selectedTimeline.value = timeline.id;
     }
 
-    createTimeline(config: TimelineConfig, openOnCreate = true): Timeline {
+    async createTimeline(config: TimelineConfig, openOnCreate = true): Promise<Timeline> {
         const timeline = new Timeline(config);
 
         this.media.set(timeline.id, timeline);
         this.fileTree.addFile(timeline);
+        await this.save();
 
         if (openOnCreate) {
             this.selectTimeline(timeline);
@@ -109,6 +112,7 @@ export class Project {
         if (media) {
             this.media.set(media.id, media);
             this.fileTree.addFile(media);
+            await this.save();
             return true;
         } else {
             return false;

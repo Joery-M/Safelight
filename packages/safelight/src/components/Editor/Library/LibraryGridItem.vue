@@ -28,39 +28,39 @@
                 height="100%"
                 width="100%"
             />
-            <div v-if="size >= 96 && item.type" class="mediaType">
+            <div v-if="size >= 96 && item.media.value" class="mediaType">
                 <PhVideoCamera
-                    v-if="item.isOfType(MediaSourceType.Video)"
+                    v-if="item.media.value.isOfType(MediaSourceType.Video)"
                     v-tooltip="$t('media.attrs.video')"
                     weight="bold"
                     :aria-label="$t('media.attrs.video')"
                 />
                 <PhSpeakerHigh
-                    v-if="item.isOfType(MediaSourceType.Audio)"
+                    v-if="item.media.value.isOfType(MediaSourceType.Audio)"
                     v-tooltip="$t('media.attrs.audio')"
                     weight="bold"
                     :aria-label="$t('media.attrs.audio')"
                 />
                 <PhSubtitles
-                    v-if="item.isOfType(MediaSourceType.Subtitles)"
+                    v-if="item.media.value.isOfType(MediaSourceType.Subtitles)"
                     v-tooltip="$t('media.attrs.subtitles')"
                     weight="bold"
                     :aria-label="$t('media.attrs.subtitles')"
                 />
                 <PhImage
-                    v-if="item.isOfType(MediaSourceType.Image)"
+                    v-if="item.media.value.isOfType(MediaSourceType.Image)"
                     v-tooltip="$t('media.attrs.image')"
                     weight="bold"
                     :aria-label="$t('media.attrs.image')"
                 />
                 <PhFilmStrip
-                    v-if="item.isOfType(MediaSourceType.Timeline)"
+                    v-if="item.media.value.isOfType(MediaSourceType.Timeline)"
                     v-tooltip="$t('media.attrs.timeline')"
                     weight="bold"
                     :aria-label="$t('media.attrs.timeline')"
                 />
                 <PhSparkle
-                    v-if="item.isOfType(MediaSourceType.Special)"
+                    v-if="item.media.value.isOfType(MediaSourceType.Special)"
                     v-tooltip="$t('media.attrs.special')"
                     weight="bold"
                     :aria-label="$t('media.attrs.special')"
@@ -109,10 +109,10 @@
         >
             <template #center>
                 <Button
-                    v-tooltip.bottom="{ value: 'Delete', showDelay: 500 }"
+                    v-tooltip.top="{ value: 'Delete', showDelay: 500 }"
                     severity="secondary"
                     text
-                    @click="alertt('yea no')"
+                    @click="item.deleteSelf()"
                 >
                     <template #icon>
                         <PhTrash />
@@ -141,17 +141,18 @@ import {
     PhTrash,
     PhVideoCamera
 } from '@phosphor-icons/vue';
-import { MediaSourceType, type MediaItem } from '@safelight/shared/Media/Media';
+import { MediaSourceType } from '@safelight/shared/Media/Media';
+import type { FileTreeItem } from '@safelight/shared/Project/ProjectFileTree';
 import Button from 'primevue/button';
 import Menu from 'primevue/menu';
 import type { MenuItem } from 'primevue/menuitem';
-import Popover, { type PopoverMethods, type PopoverProps } from 'primevue/popover';
+import Popover from 'primevue/popover';
 import Skeleton from 'primevue/skeleton';
 import Toolbar from 'primevue/toolbar';
-import { ref } from 'vue';
+import { ref, type ComponentInstance } from 'vue';
 
 defineProps<{
-    item: MediaItem;
+    item: FileTreeItem;
     size: number;
 }>();
 
@@ -161,9 +162,7 @@ const menuItems = ref<MenuItem[]>([
     }
 ]);
 
-const alertt = (text: string) => window.alert(text);
-
-const overlay = ref<PopoverMethods & PopoverProps>();
+const overlay = ref<ComponentInstance<typeof Popover>>();
 
 function closeOtherOverlays() {
     if (document.activeElement && 'blur' in document.activeElement) {

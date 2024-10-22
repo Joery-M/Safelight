@@ -1,6 +1,6 @@
 <template>
     <DataView
-        v-if="layout == 'grid'"
+        id="data-view"
         :value="sortedAndFiltered"
         class="flex h-full flex-col"
         data-key="id"
@@ -23,17 +23,6 @@
         <template #header>
             <Toolbar class="border-none p-0">
                 <template #start>
-                    <SelectButton
-                        v-model="layout"
-                        :options="['list', 'grid']"
-                        :allow-empty="false"
-                        class="mr-2 min-w-fit"
-                    >
-                        <template #option="{ option }">
-                            <PhList v-if="option === 'list'" />
-                            <PhSquaresFour v-else />
-                        </template>
-                    </SelectButton>
                     <InputGroup class="mr-2">
                         <InputGroupAddon class="p-0">
                             <PhMagnifyingGlass />
@@ -78,20 +67,9 @@
                         />
                     </InputGroup>
                 </template>
-                <template #end>
-                    <Button
-                        :title="$t('general.actions.loadFile')"
-                        rounded
-                        @click="fileDialog.open()"
-                    >
-                        <template #icon>
-                            <PhPlus />
-                        </template>
-                    </Button>
-                </template>
             </Toolbar>
         </template>
-        <template #grid="{ items }: { items: MediaItem[] }">
+        <template #grid="{ items }: { items: FileTreeItem[] }">
             <div
                 class="flex h-full select-none flex-wrap justify-center overflow-y-auto"
                 role="grid"
@@ -116,7 +94,7 @@
             </div>
         </template>
         <template #footer>
-            <Toolbar class="border-none p-0">
+            <Toolbar class="grow border-none p-0">
                 <template #start>
                     <Slider
                         v-model="gridItemSize"
@@ -127,162 +105,42 @@
                         class="w-48 max-w-full"
                     />
                 </template>
-            </Toolbar>
-        </template>
-    </DataView>
-    <DataTable
-        v-else-if="layout == 'list'"
-        class="flex h-full flex-col"
-        :value="sortedAndFiltered"
-        :pt="{
-            header: {
-                class: 'p-1'
-            },
-            wrapper: {
-                style: 'flex-shrink: 1'
-            },
-            table: {
-                class: 'h-full'
-            }
-        }"
-        sort-field="field"
-        sort-mode="single"
-        scrollable
-        resizable-columns
-        column-resize-mode="expand"
-        data-key="id"
-    >
-        <Column header="Type" body-class="px-0">
-            <template #body="{ data }: { data: MediaItem }">
-                <div class="flex gap-2 pl-2">
-                    <PhVideoCamera
-                        v-if="data.isOfType(MediaSourceType.Video)"
-                        weight="bold"
-                        :aria-label="$t('media.attrs.video')"
-                    />
-                    <PhSpeakerHigh
-                        v-if="data.isOfType(MediaSourceType.Audio)"
-                        weight="bold"
-                        :aria-label="$t('media.attrs.audio')"
-                    />
-                    <PhSubtitles
-                        v-if="data.isOfType(MediaSourceType.Subtitles)"
-                        weight="bold"
-                        :aria-label="$t('media.attrs.subtitles')"
-                    />
-                    <PhImage
-                        v-if="data.isOfType(MediaSourceType.Image)"
-                        weight="bold"
-                        :aria-label="$t('media.attrs.image')"
-                    />
-                    <PhFilmStrip
-                        v-if="data.isOfType(MediaSourceType.Special)"
-                        weight="bold"
-                        :aria-label="$t('media.attrs.timeline')"
-                    />
-                    <PhSparkle
-                        v-if="data.isOfType(MediaSourceType.Special)"
-                        weight="bold"
-                        :aria-label="$t('media.attrs.special')"
-                    />
-                </div>
-            </template>
-        </Column>
-        <Column field="name.value" :header="$t('general.descriptions.name')" sortable />
-        <Column field="duration.value" :header="$t('general.descriptions.duration')" sortable>
-            <template #body="{ data }: { data: MediaItem }">
-                <template v-if="data.isOfType(MediaSourceType.Image)">
-                    {{ Timecode.toFormattedTimecode(5000) }}
-                </template>
-                <!-- <template v-else>
-                    {{ Timecode.toFormattedTimecode(data.duration.value * 1000) }}
-                </template> -->
-            </template>
-        </Column>
-        <template #header>
-            <Toolbar class="border-none p-0">
-                <template #start>
-                    <SelectButton
-                        v-model="layout"
-                        :options="['list', 'grid']"
-                        :allow-empty="false"
-                        class="mr-2 min-w-fit"
-                    >
-                        <template #option="{ option }">
-                            <PhList v-if="option === 'list'" />
-                            <PhSquaresFour v-else />
-                        </template>
-                    </SelectButton>
-                    <InputGroup class="mr-2">
-                        <InputGroupAddon class="p-0">
-                            <PhMagnifyingGlass />
-                        </InputGroupAddon>
-                        <InputText v-model="search" :placeholder="$t('general.actions.search')">
-                        </InputText>
-                    </InputGroup>
-                </template>
                 <template #end>
-                    <Button
-                        :title="$t('general.actions.loadFile')"
-                        rounded
+                    <SplitButton
+                        outlined
+                        severity="secondary"
+                        :model="createMenuItems"
                         @click="fileDialog.open()"
                     >
                         <template #icon>
                             <PhPlus />
                         </template>
-                    </Button>
+                    </SplitButton>
                 </template>
             </Toolbar>
         </template>
-        <template #empty>
-            <div
-                class="grid h-full select-none place-items-center opacity-60"
-                @dblclick="fileDialogOpenDblClick"
-            >
-                <label v-if="project.p?.media.size == 0">
-                    {{ $t('panels.library.noMediaLoaded') }}
-                </label>
-                <label v-else>
-                    {{ $t('panels.library.noMediaFound') }}
-                </label>
-            </div>
-        </template>
-    </DataTable>
+    </DataView>
 </template>
 
 <script setup lang="ts">
 import { useProject } from '@/stores/useProject';
-import {
-    PhFilmStrip,
-    PhImage,
-    PhList,
-    PhMagnifyingGlass,
-    PhPlus,
-    PhSortAscending,
-    PhSortDescending,
-    PhSparkle,
-    PhSpeakerHigh,
-    PhSquaresFour,
-    PhSubtitles,
-    PhVideoCamera
-} from '@phosphor-icons/vue';
-import { MediaItem, MediaSourceType } from '@safelight/shared/Media/Media';
-import Timecode from '@safelight/shared/Timecode';
-import { useDropZone, useFileDialog, watchDebounced } from '@vueuse/core';
+import { PhMagnifyingGlass, PhPlus, PhSortAscending, PhSortDescending } from '@phosphor-icons/vue';
+import type { FileTreeItem } from '@safelight/shared/Project/ProjectFileTree';
+import { useDropZone, useFileDialog } from '@vueuse/core';
 import fuzzysearch from 'fuzzysearch';
 import MimeMatcher from 'mime-matcher';
 import Button from 'primevue/button';
-import Column from 'primevue/column';
-import DataTable from 'primevue/datatable';
 import DataView from 'primevue/dataview';
 import InputGroup from 'primevue/inputgroup';
 import InputGroupAddon from 'primevue/inputgroupaddon';
 import InputText from 'primevue/inputtext';
+import type { MenuItem } from 'primevue/menuitem';
 import Select from 'primevue/select';
-import SelectButton from 'primevue/selectbutton';
 import Slider from 'primevue/slider';
+import SplitButton from 'primevue/splitbutton';
 import Toolbar from 'primevue/toolbar';
-import { ref, shallowRef, watchEffect } from 'vue';
+import { reactive, ref, shallowReactive, shallowRef, watchEffect } from 'vue';
+import { useI18n } from 'vue-i18n';
 import LibraryGridItem from './LibraryGridItem.vue';
 
 const project = useProject();
@@ -318,32 +176,44 @@ fileDialog.onChange((fileList) => {
 const search = ref('');
 const sortBy = ref<sortOptions>('name');
 const sortDescending = ref(false);
-const layout = ref<string>('grid');
 const gridItemSize = ref(176); // 11rem
+const directoryPath = shallowReactive<FileTreeItem[]>([]);
 
-const sortedAndFiltered = shallowRef<MediaItem[]>([]);
+const i18n = useI18n();
 
-// Reset sorting when changing to list
-// List has its own sorting
-watchEffect(() => {
-    if (layout.value == 'list') {
-        sortBy.value = 'name';
-        sortDescending.value = false;
+const createMenuItems = reactive<MenuItem[]>([
+    {
+        label: () => i18n.t('media.create.file'),
+        command: () => {
+            fileDialog.open();
+        }
+    },
+    {
+        label: () => i18n.t('media.create.timeline'),
+        command: () => {
+            if (!project.p) return;
+            project.p.createTimeline({
+                framerate: 60,
+                height: 1080,
+                width: 1920,
+                name: i18n.t('panels.timeline.title') + ' ' + project.p.media.size
+            });
+        }
     }
-});
+]);
 
-watchDebounced([project.p?.media, search, sortBy, sortDescending], sortAndFilter, {
-    deep: true,
-    debounce: 100,
-    maxWait: 1000,
-    immediate: true
-});
+const sortedAndFiltered = shallowRef<FileTreeItem[]>([]);
+
+watchEffect(sortAndFilter);
 
 function sortAndFilter() {
     if (!project.p) return;
+    if (directoryPath.length == 0) {
+        directoryPath.unshift(project.p.fileTree);
+    }
 
-    const allMedia = Array.from(project.p.media.values());
-    const filtered = allMedia.filter((elem) => {
+    const curDir = directoryPath[0];
+    const filtered = Array.from(curDir.children).filter((elem) => {
         if (search.value.length == 0) {
             return true;
         }
@@ -379,3 +249,8 @@ function fileDialogOpenDblClick(event: MouseEvent) {
 
 type sortOptions = 'name' | 'duration' | 'fileType';
 </script>
+<style lang="scss" scoped>
+#data-view {
+    --p-dataview-footer-padding: 0.25rem;
+}
+</style>

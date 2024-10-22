@@ -20,7 +20,7 @@ export default class MediaManager {
                 const path = storage.getBaseFilePath('media-files');
                 media.addMetadata('file.location', [...path, media.id]);
                 media.addMetadata('file.name', file.name);
-                media.name = file.name;
+                media.name.value = file.name;
 
                 const chunkOffsets: ChunkOffset[] = [];
 

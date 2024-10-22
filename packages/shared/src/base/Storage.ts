@@ -72,24 +72,23 @@ export type FilePathTypes = 'media-files' | 'thumbnails' | (string & {});
 
 export type FilePath = (string | number)[];
 
-export type ProjectFileTreeItem =
-    | {
-          name: string;
-          /**
-           * The ID of a Media item.
-           *
-           * This ID should also exist in {@link StoredProject.media|`StoredProject.media`}
-           */
-          mediaID: string;
-          entries: never;
-      }
-    | {
-          name: string;
-          entries: {
-              [path: string]: ProjectFileTreeItem;
-          };
-          mediaID: never;
-      };
+export interface ProjectFileTreeItem {
+    name: string;
+    /**
+     * The ID of a Media item.
+     *
+     * This ID should also exist in {@link StoredProject.media|`StoredProject.media`}
+     */
+    mediaID: string;
+}
+export interface ProjectFileTreeDirectory {
+    name: string;
+    entries: ProjectFileTree;
+}
+
+export interface ProjectFileTree {
+    [path: string]: ProjectFileTreeItem | ProjectFileTreeDirectory;
+}
 
 export interface StoredMedia {
     id: string;
@@ -108,9 +107,7 @@ export interface StoredProject {
     media: string[];
     created: string;
     updated: string;
-    fileTree: {
-        [path: string]: ProjectFileTreeItem;
-    };
+    fileTree: ProjectFileTree;
     metadata: { [key: string | number]: any };
 }
 

@@ -1,117 +1,120 @@
 {
-  "general": {
-    "default": "Default",
-    "loading": "Loading",
-    "actions": {
-      "open": "Open",
-      "search": "Search",
-      "skipBackFrame": "Skip back {n} frame | Skip back {n} frames",
-      "skipForwardFrame": "Skip forward {n} frame | Skip forward {n} frames",
-      "sortAscending": "Sort ascending",
-      "sortDescending": "Sort descending",
-      "sortBy": "Sort by",
-      "loadFile": "Import file",
-      "resetValue": "Reset value",
-      "delete": "Delete"
+    "general": {
+        "default": "Default",
+        "loading": "Loading",
+        "actions": {
+            "open": "Open",
+            "search": "Search",
+            "skipBackFrame": "Skip back {n} frame | Skip back {n} frames",
+            "skipForwardFrame": "Skip forward {n} frame | Skip forward {n} frames",
+            "sortAscending": "Sort ascending",
+            "sortDescending": "Sort descending",
+            "sortBy": "Sort by",
+            "resetValue": "Reset value",
+            "delete": "Delete"
+        },
+        "descriptions": {
+            "untitled": "Untitled",
+            "name": "Name | Names",
+            "type": "Type | Types",
+            "project": "Project | Projects",
+            "duration": "Duration",
+            "modified": "Modified",
+            "created": "Created",
+            "fileType": "File type | File types",
+            "refresh": "Refresh",
+            "size": "Size"
+        },
+        "status": {
+            "error": "Error",
+            "errorOccurred": "An error ocurred",
+            "warning": "Warning"
+        }
     },
-    "descriptions": {
-      "untitled": "Untitled",
-      "name": "Name | Names",
-      "type": "Type | Types",
-      "project": "Project | Projects",
-      "duration": "Duration",
-      "modified": "Modified",
-      "created": "Created",
-      "fileType": "File type | File types",
-      "refresh": "Refresh",
-      "size": "Size"
+    "project": {
+        "new": "New project",
+        "types": {
+            "simple": "Simple"
+        }
     },
-    "status": {
-      "error": "Error",
-      "errorOccurred": "An error ocurred",
-      "warning": "Warning"
-    }
-  },
-  "project": {
-    "new": "New project",
-    "types": {
-      "simple": "Simple"
-    }
-  },
-  "media": {
-    "properties": "Properties",
-    "attrs": {
-      "video": "Media has video",
-      "audio": "Media has audio",
-      "subtitles": "Media has subtitles",
-      "image": "Media is an image",
-      "timeline": "Media is a timeline",
-      "special": "Media requires a plugin"
-    }
-  },
-  "panels": {
-    "noPanel": "No panel",
-    "library": {
-      "title": "Library",
-      "noMediaLoaded": "No media imported",
-      "noMediaFound": "No media found"
+    "media": {
+        "properties": "Properties",
+        "attrs": {
+            "video": "Media has video",
+            "audio": "Media has audio",
+            "subtitles": "Media has subtitles",
+            "image": "Media is an image",
+            "timeline": "Media is a timeline",
+            "special": "Media requires a plugin"
+        },
+        "create": {
+            "file": "Import file",
+            "timeline": "Create timeline"
+        }
     },
-    "timeline": {
-      "title": "Timeline"
+    "panels": {
+        "noPanel": "No panel",
+        "library": {
+            "title": "Library",
+            "noMediaLoaded": "No media imported",
+            "noMediaFound": "No media found"
+        },
+        "timeline": {
+            "title": "Timeline"
+        },
+        "monitor": {
+            "title": "Monitor"
+        },
+        "addMenu": "Add panel"
     },
-    "monitor": {
-      "title": "Monitor"
+    "storage": {
+        "nonPersistentNotif": {
+            "title": "Project might be deleted",
+            "text": "Your browser might delete data if it thinks you are running out of storage.\nDo you want to ask the browser to persist data?",
+            "button": "Persist data"
+        }
     },
-    "addMenu": "Add panel"
-  },
-  "storage": {
-    "nonPersistentNotif": {
-      "title": "Project might be deleted",
-      "text": "Your browser might delete data if it thinks you are running out of storage.\nDo you want to ask the browser to persist data?",
-      "button": "Persist data"
+    "notification": {
+        "defaultTitle": "Notification"
+    },
+    "localeSettings": {
+        "dateTimeFormat": {
+            "short": {
+                "dateStyle": "short"
+            },
+            "medium": {
+                "day": "numeric",
+                "month": "numeric",
+                "year": "numeric"
+            },
+            "long": {
+                "dateStyle": "long"
+            },
+            "dateTime": {
+                "day": "numeric",
+                "month": "numeric",
+                "year": "numeric",
+                "hour": "numeric",
+                "minute": "numeric"
+            },
+            "time": {
+                "hour": "numeric",
+                "minute": "numeric"
+            },
+            "timeLong": {
+                "hour": "numeric",
+                "minute": "2-digit",
+                "second": "2-digit"
+            },
+            "timeFull": {
+                "hour": "numeric",
+                "minute": "2-digit",
+                "second": "2-digit",
+                "fractionalSecondDigits": 3
+            }
+        }
+    },
+    "settings": {
+        "downloadJson": "Download JSON"
     }
-  },
-  "notification": {
-    "defaultTitle": "Notification"
-  },
-  "localeSettings": {
-    "dateTimeFormat": {
-      "short": {
-        "dateStyle": "short"
-      },
-      "medium": {
-        "day": "numeric",
-        "month": "numeric",
-        "year": "numeric"
-      },
-      "long": {
-        "dateStyle": "long"
-      },
-      "dateTime": {
-        "day": "numeric",
-        "month": "numeric",
-        "year": "numeric",
-        "hour": "numeric",
-        "minute": "numeric"
-      },
-      "time": {
-        "hour": "numeric",
-        "minute": "numeric"
-      },
-      "timeLong": {
-        "hour": "numeric",
-        "minute": "2-digit",
-        "second": "2-digit"
-      },
-      "timeFull": {
-        "hour": "numeric",
-        "minute": "2-digit",
-        "second": "2-digit",
-        "fractionalSecondDigits": 3
-      }
-    }
-  },
-  "settings": {
-    "downloadJson": "Download JSON"
-  }
 }

@@ -133,7 +133,7 @@ function loadMedia() {
                 data: {
                     isMedia: true,
                     id: media.id,
-                    name: media.name,
+                    name: media.name.value,
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     //@ts-expect-error
                     size: formatByteValue(Number(media.getMetadata('file.size'))),
