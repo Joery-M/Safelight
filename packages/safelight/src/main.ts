@@ -1,7 +1,5 @@
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
-import { createRouter, createWebHistory } from 'vue-router/auto';
-import { routes, handleHotUpdate } from 'vue-router/auto-routes';
 import App from './App.vue';
 
 import { definePreset } from '@primevue/themes';
@@ -15,12 +13,8 @@ import Ripple from 'primevue/ripple';
 import Tooltip from 'primevue/tooltip';
 
 import { createI18n } from 'vue-i18n';
+import { router } from './router';
 import './style.scss';
-
-export const router = createRouter({
-    history: createWebHistory('/'),
-    routes: routes
-});
 
 const app = createApp(App);
 

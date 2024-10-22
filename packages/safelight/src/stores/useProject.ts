@@ -1,3 +1,4 @@
+import { router } from '@/router';
 import { Storage } from '@safelight/shared/base/Storage';
 import type { Project } from '@safelight/shared/Project/Project';
 import { defineStore } from 'pinia';
@@ -16,10 +17,8 @@ export const useProject = defineStore('Project', () => {
     }
 
     async function toEditor(projectId: string) {
-        await (
-            await import('@/main')
-        ).router.push({
-            name: `/editor/[[...projectId]]`,
+        await router.push({
+            name: `Editor`,
             params: {
                 projectId
             }

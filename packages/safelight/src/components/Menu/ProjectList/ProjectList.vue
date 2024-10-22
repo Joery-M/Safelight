@@ -53,6 +53,9 @@
                     "
                 />
             </template>
+            <template #body="{ data }">
+                {{ data.name || $t('general.descriptions.untitled') }}
+            </template>
         </Column>
         <Column
             field="updated"

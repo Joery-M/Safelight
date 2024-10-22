@@ -8,7 +8,6 @@
                 v-model="curValue"
                 autofocus
                 @focusout="close()"
-                @change="sendValue()"
                 @keyup.enter="sendValue(true)"
                 @keyup.escape="close()"
             />
@@ -46,6 +45,7 @@ function open() {
 }
 function close() {
     isOpen.value = false;
+    curValue.value = props.value;
 }
 function sendValue(forceClose = false) {
     emit('change', curValue.value);

@@ -1,5 +1,5 @@
 <template>
-    <template v-if="project.isLoaded">
+    <template v-if="projectLoaded">
         <Toolbar
             :pt="{
                 root: {
@@ -39,7 +39,7 @@
 <script setup lang="ts">
 import InplaceRename from '@/components/InplaceRename.vue';
 import PanelContainer from '@/components/Panels/PanelContainer.vue';
-import { router } from '@/main';
+import { router } from '@/router';
 import { useEditor } from '@/stores/useEditor';
 import { useProject } from '@/stores/useProject';
 import { PhFile, PhGear, PhSignOut } from '@phosphor-icons/vue';
@@ -50,13 +50,15 @@ import type { MenuItem } from 'primevue/menuitem';
 import Toolbar from 'primevue/toolbar';
 import { useConfirm } from 'primevue/useconfirm';
 import { useDialog } from 'primevue/usedialog';
-import { defineAsyncComponent, onMounted, watchEffect } from 'vue';
-import { useRoute } from 'vue-router';
+import { defineAsyncComponent, onMounted, ref, watchEffect } from 'vue';
+import { onBeforeRouteLeave, useRoute } from 'vue-router';
 
 const project = useProject();
 const editor = useEditor();
 
 editor.AddDefaultPanels();
+
+const projectLoaded = ref(false);
 
 const projectErrorDialog = useConfirm();
 const dialog = useDialog();
@@ -72,7 +74,7 @@ const menuItems: MenuItem[] = [
                 disabled: false,
                 command: () => {
                     const settingsComponent = defineAsyncComponent(
-                        () => import('../../components/Menu/Settings/Settings.vue')
+                        () => import('@/components/Menu/Settings/Settings.vue')
                     );
                     dialog.open(settingsComponent, {
                         props: {
@@ -105,13 +107,20 @@ const menuItems: MenuItem[] = [
     }
 ];
 
-const route = useRoute('/editor/[[...projectId]]');
+const route = useRoute('Editor');
 
 onMounted(async () => {
     await router.isReady();
 
     if (route.params?.projectId) {
+        // Check if the project ID from the URL is the one that is loaded
+        console.log(project.isLoaded, project.p?.id, project.p?.id === route.params.projectId);
+        if (project.isLoaded && project.p?.id && project.p.id === route.params.projectId) {
+            projectLoaded.value = true;
+            return;
+        }
         const success = await project.openProject({ id: route.params.projectId });
+        projectLoaded.value = true;
         if (!success) {
             showNoProjectDialog();
         }
@@ -144,5 +153,9 @@ definePage({
 
 watchEffect(() => {
     useTitle(project.p?.name.value ? project.p?.name.value + ' | Safelight' : 'Safelight');
+});
+
+onBeforeRouteLeave(() => {
+    project.$reset();
 });
 </script>
