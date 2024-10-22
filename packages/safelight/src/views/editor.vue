@@ -50,7 +50,7 @@ import type { MenuItem } from 'primevue/menuitem';
 import Toolbar from 'primevue/toolbar';
 import { useConfirm } from 'primevue/useconfirm';
 import { useDialog } from 'primevue/usedialog';
-import { defineAsyncComponent, onMounted, ref, watchEffect } from 'vue';
+import { defineAsyncComponent, ref, watch, watchEffect } from 'vue';
 import { onBeforeRouteLeave, useRoute } from 'vue-router';
 
 const project = useProject();
@@ -98,8 +98,7 @@ const menuItems: MenuItem[] = [
                 label: 'Exit',
                 icon: PhSignOut as any,
                 disabled: false,
-                command: async () => {
-                    project.$reset();
+                command: () => {
                     router.push('/projects');
                 }
             }
@@ -109,25 +108,29 @@ const menuItems: MenuItem[] = [
 
 const route = useRoute('Editor');
 
-onMounted(async () => {
-    await router.isReady();
+watch(
+    () => route.params.projectId,
+    (val) => loadProject(val),
+    { immediate: true }
+);
 
-    if (route.params?.projectId) {
+async function loadProject(id?: string) {
+    if (id) {
         // Check if the project ID from the URL is the one that is loaded
-        console.log(project.isLoaded, project.p?.id, project.p?.id === route.params.projectId);
-        if (project.isLoaded && project.p?.id && project.p.id === route.params.projectId) {
+        if (project.isLoaded && project.p?.id && project.p.id === id) {
             projectLoaded.value = true;
             return;
         }
-        const success = await project.openProject({ id: route.params.projectId });
-        projectLoaded.value = true;
+        const success = await project.openProject({ id });
         if (!success) {
             showNoProjectDialog();
+        } else {
+            projectLoaded.value = true;
         }
     } else {
         showNoProjectDialog();
     }
-});
+}
 
 function showNoProjectDialog() {
     projectErrorDialog.require({

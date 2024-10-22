@@ -36,7 +36,7 @@ export class IndexedDbStorageController extends BaseStorageController {
             media: Array.from(project.media.keys()),
             updated: DateTime.now().toISO(),
             created: existingProject?.created ?? DateTime.now().toISO(),
-            fileTree: { entries: {}, name: 'root' },
+            fileTree: project.serializeFileTree(),
             metadata: {}
         };
 
@@ -77,6 +77,7 @@ export class IndexedDbStorageController extends BaseStorageController {
                 console.error('Could not find media', mediaId);
             }
         }
+        project.deserializeFileTree(storedProject.fileTree);
 
         return project;
     }
