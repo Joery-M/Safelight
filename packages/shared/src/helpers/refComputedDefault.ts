@@ -1,4 +1,4 @@
-import { toValue, type MaybeRefOrGetter } from '@vueuse/core';
+import { extendRef, toValue, type MaybeRefOrGetter } from '@vueuse/core';
 import { computed, type Ref } from 'vue';
 
 /**
@@ -10,8 +10,8 @@ export function refComputedDefault<T>(
     source: Ref<T | undefined | null>,
     defaultValue: MaybeRefOrGetter<T>,
     strict = true
-): Ref<T> {
-    return computed({
+) {
+    const comp = computed<T>({
         get() {
             return strict
                 ? (source.value ?? toValue(defaultValue))
@@ -20,5 +20,9 @@ export function refComputedDefault<T>(
         set(value) {
             source.value = value;
         }
+    });
+
+    return extendRef(comp, {
+        source
     });
 }

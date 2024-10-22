@@ -32,7 +32,7 @@ export class IndexedDbStorageController extends BaseStorageController {
 
         const storableProject: StoredProject = {
             id: project.id,
-            name: project.name.value,
+            name: project.name.source ?? '',
             media: Array.from(project.media.keys()),
             updated: DateTime.now().toISO(),
             created: existingProject?.created ?? DateTime.now().toISO(),
