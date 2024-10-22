@@ -28,34 +28,40 @@
                 height="100%"
                 width="100%"
             />
-            <div v-if="size >= 96 && itemSourceType" class="mediaType">
+            <div v-if="size >= 96 && item.type" class="mediaType">
                 <PhVideoCamera
                     v-if="item.isOfType(MediaSourceType.Video)"
+                    v-tooltip="$t('media.attrs.video')"
                     weight="bold"
                     :aria-label="$t('media.attrs.video')"
                 />
                 <PhSpeakerHigh
                     v-if="item.isOfType(MediaSourceType.Audio)"
+                    v-tooltip="$t('media.attrs.audio')"
                     weight="bold"
                     :aria-label="$t('media.attrs.audio')"
                 />
                 <PhSubtitles
-                    v-if="item.isOfType(MediaSourceType.Timeline)"
+                    v-if="item.isOfType(MediaSourceType.Subtitles)"
+                    v-tooltip="$t('media.attrs.subtitles')"
                     weight="bold"
                     :aria-label="$t('media.attrs.subtitles')"
                 />
                 <PhImage
                     v-if="item.isOfType(MediaSourceType.Image)"
+                    v-tooltip="$t('media.attrs.image')"
                     weight="bold"
                     :aria-label="$t('media.attrs.image')"
                 />
                 <PhFilmStrip
-                    v-if="item.isOfType(MediaSourceType.Special)"
+                    v-if="item.isOfType(MediaSourceType.Timeline)"
+                    v-tooltip="$t('media.attrs.timeline')"
                     weight="bold"
                     :aria-label="$t('media.attrs.timeline')"
                 />
                 <PhSparkle
                     v-if="item.isOfType(MediaSourceType.Special)"
+                    v-tooltip="$t('media.attrs.special')"
                     weight="bold"
                     :aria-label="$t('media.attrs.special')"
                 />
@@ -142,9 +148,9 @@ import type { MenuItem } from 'primevue/menuitem';
 import Popover, { type PopoverMethods, type PopoverProps } from 'primevue/popover';
 import Skeleton from 'primevue/skeleton';
 import Toolbar from 'primevue/toolbar';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 
-const props = defineProps<{
+defineProps<{
     item: MediaItem;
     size: number;
 }>();
@@ -154,8 +160,6 @@ const menuItems = ref<MenuItem[]>([
         label: 'Temp'
     }
 ]);
-
-const itemSourceType = computed(() => props.item.getMetadata('media')?.sourceType ?? 0);
 
 const alertt = (text: string) => window.alert(text);
 
