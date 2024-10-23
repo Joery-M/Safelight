@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { ref, shallowReactive, shallowRef } from 'vue';
+import { ref, shallowReactive, shallowRef, watch } from 'vue';
 import { MediaItem } from '../Media/Media';
 import type { Project } from './Project';
 import { Storage } from '../base/Storage';
@@ -26,6 +26,12 @@ export class FileTreeItem {
     setMedia(media: MediaItem) {
         this.media.value = media;
         this.name.value = media.name.value;
+        this.project.save();
+    }
+
+    setName(newName: string) {
+        this.name.value = newName;
+        this.project.save();
     }
 
     addFile(media: MediaItem) {
@@ -33,16 +39,18 @@ export class FileTreeItem {
         file.setMedia(media);
 
         this.children.add(file);
+        this.project.save();
     }
 
     addDirectory(name: string) {
         const dir = new FileTreeItem(this.project, this, name, true);
         this.children.add(dir);
+        this.project.save();
     }
 
-    deleteChild(id: string): boolean;
-    deleteChild(item: FileTreeItem): boolean;
-    deleteChild(item: string | FileTreeItem): boolean {
+    deleteChild(id: string): void;
+    deleteChild(item: FileTreeItem): void;
+    deleteChild(item: string | FileTreeItem) {
         if (typeof item === 'string') {
             const child = this.children.values().find((c) => c.id == item);
             if (!child) return false;
@@ -50,7 +58,8 @@ export class FileTreeItem {
             item = child;
         }
 
-        return this.children.delete(item);
+        this.children.delete(item);
+        this.project.save();
     }
 
     async deleteSelf() {

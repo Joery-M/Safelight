@@ -31,6 +31,7 @@ export class Project {
     });
 
     async save() {
+        console.log('A');
         return await Storage.getStorage().saveProject(this);
     }
     serializeFileTree() {

@@ -22,13 +22,16 @@
                 class="overflow-none max-h-full max-w-full"
                 :aria-label="item.name.value"
             />
+            <template v-else-if="item.isDirectory">
+                <PhFolder weight="bold" style="max-width: 80%; max-height: 80%" size="" />
+            </template>
             <Skeleton
                 v-else
                 class="max-h-full max-w-full rounded-none rounded-t-md"
                 height="100%"
                 width="100%"
             />
-            <div v-if="size >= 96 && item.media.value" class="mediaType">
+            <div v-if="size >= 96 && item.media.value" class="media-type">
                 <PhVideoCamera
                     v-if="item.media.value.isOfType(MediaSourceType.Video)"
                     v-tooltip="$t('media.attrs.video')"
@@ -67,15 +70,54 @@
                 />
             </div>
         </div>
-        <div class="flex items-center gap-1 px-1">
-            <p
-                v-tooltip.bottom="{ value: item.name.value, showDelay: 500 }"
-                class="line-clamp-2 flex-1 text-base"
-            >
-                {{ item.name.value }}
-            </p>
+        <div class="flex min-h-14 items-center gap-1 px-1">
+            <InplaceRename :value="item.name.value" @change="item.setName($event)">
+                <template #default="{ open }">
+                    <p
+                        v-tooltip.bottom="{ value: item.name.value, showDelay: 500 }"
+                        class="m-0 line-clamp-2 flex-1 cursor-pointer select-none text-base"
+                        tabindex="0"
+                        @dblclick="
+                            open();
+                            nameEditorOpen = true;
+                        "
+                        @keypress.enter="
+                            open();
+                            nameEditorOpen = true;
+                        "
+                    >
+                        {{ item.name.value }}
+                    </p>
+                </template>
+                <template #content="{ close, curValue, sendValue, setCurValue }">
+                    <div v-focustrap>
+                        <InputText
+                            :pt="{
+                                root: {
+                                    style: 'width: 100%'
+                                }
+                            }"
+                            autofocus
+                            :model-value="curValue"
+                            @update:model-value="setCurValue($event)"
+                            @focusout="
+                                close();
+                                nameEditorOpen = false;
+                            "
+                            @keyup.enter="
+                                sendValue(true);
+                                nameEditorOpen = false;
+                            "
+                            @keyup.escape="
+                                close();
+                                nameEditorOpen = false;
+                            "
+                        />
+                    </div>
+                </template>
+            </InplaceRename>
             <Button
-                v-if="size >= 96"
+                v-if="size >= 96 && !nameEditorOpen"
                 :title="$t('media.properties')"
                 text
                 rounded
@@ -131,9 +173,11 @@
     </Popover>
 </template>
 <script setup lang="ts">
+import InplaceRename from '@/components/InplaceRename.vue';
 import {
     PhDotsThreeVertical,
     PhFilmStrip,
+    PhFolder,
     PhImage,
     PhSparkle,
     PhSpeakerHigh,
@@ -144,6 +188,7 @@ import {
 import { MediaSourceType } from '@safelight/shared/Media/Media';
 import type { FileTreeItem } from '@safelight/shared/Project/ProjectFileTree';
 import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
 import Menu from 'primevue/menu';
 import type { MenuItem } from 'primevue/menuitem';
 import Popover from 'primevue/popover';
@@ -155,6 +200,8 @@ defineProps<{
     item: FileTreeItem;
     size: number;
 }>();
+
+const nameEditorOpen = ref(false);
 
 const menuItems = ref<MenuItem[]>([
     {
@@ -180,7 +227,7 @@ function closeOtherOverlays() {
     background: repeating-conic-gradient(#ffffff0a 0% 25%, transparent 0% 50%) 50% / 20px 20px;
 }
 
-.mediaType {
+.media-type {
     @apply left-0 top-0 h-full w-full gap-2 p-2;
 
     position: absolute;

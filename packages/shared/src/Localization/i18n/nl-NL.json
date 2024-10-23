@@ -23,7 +23,8 @@
             "created": "Aangemaakt",
             "fileType": "Bestandstype | Bestandstypen",
             "refresh": "Herladen",
-            "size": "Grootte"
+            "size": "Grootte",
+            "directory": "Map | Mappen"
         },
         "status": {
             "error": "Error",
@@ -49,7 +50,8 @@
         },
         "create": {
             "file": "Importeer bestand",
-            "timeline": "Creëer tijdlijn"
+            "timeline": "Creëer tijdlijn",
+            "directory": "Creëer map"
         }
     },
     "panels": {

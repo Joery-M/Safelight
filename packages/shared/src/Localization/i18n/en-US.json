@@ -23,7 +23,8 @@
             "created": "Created",
             "fileType": "File type | File types",
             "refresh": "Refresh",
-            "size": "Size"
+            "size": "Size",
+            "directory": "Folder | Folders"
         },
         "status": {
             "error": "Error",
@@ -49,7 +50,8 @@
         },
         "create": {
             "file": "Import file",
-            "timeline": "Create timeline"
+            "timeline": "Create timeline",
+            "directory": "Create folder"
         }
     },
     "panels": {

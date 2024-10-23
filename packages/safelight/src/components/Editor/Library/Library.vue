@@ -199,6 +199,15 @@ const createMenuItems = reactive<MenuItem[]>([
                 name: i18n.t('panels.timeline.title') + ' ' + project.p.media.size
             });
         }
+    },
+    {
+        label: () => i18n.t('media.create.directory'),
+        command: () => {
+            const curDir = directoryPath[0] ?? project.p?.fileTree;
+            if (!curDir) return;
+
+            curDir.addDirectory(i18n.t('general.descriptions.directory'));
+        }
     }
 ]);
 
