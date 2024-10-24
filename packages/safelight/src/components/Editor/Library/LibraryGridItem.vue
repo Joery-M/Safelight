@@ -13,6 +13,7 @@
                 overlay?.toggle(ev);
             }
         "
+        @dblclick="clickHandler"
     >
         <div
             class="bg-checkerboard relative flex aspect-video w-full items-center justify-center text-clip rounded-t-md"
@@ -23,7 +24,7 @@
                 :aria-label="item.name.value"
             />
             <template v-else-if="item.isDirectory">
-                <PhFolder weight="bold" style="max-width: 80%; max-height: 80%" size="" />
+                <PhFolder weight="bold" style="max-width: 80%; max-height: 80%" :size="70" />
             </template>
             <Skeleton
                 v-else
@@ -77,11 +78,11 @@
                         v-tooltip.bottom="{ value: item.name.value, showDelay: 500 }"
                         class="m-0 line-clamp-2 flex-1 cursor-pointer select-none text-base"
                         tabindex="0"
-                        @dblclick="
+                        @dblclick.stop="
                             open();
                             nameEditorOpen = true;
                         "
-                        @keypress.enter="
+                        @keypress.enter.stop="
                             open();
                             nameEditorOpen = true;
                         "
@@ -104,11 +105,11 @@
                                 close();
                                 nameEditorOpen = false;
                             "
-                            @keyup.enter="
+                            @keyup.enter.stop="
                                 sendValue(true);
                                 nameEditorOpen = false;
                             "
-                            @keyup.escape="
+                            @keyup.escape.stop="
                                 close();
                                 nameEditorOpen = false;
                             "
@@ -174,6 +175,7 @@
 </template>
 <script setup lang="ts">
 import InplaceRename from '@/components/InplaceRename.vue';
+import { useProject } from '@/stores/useProject';
 import {
     PhDotsThreeVertical,
     PhFilmStrip,
@@ -196,10 +198,16 @@ import Skeleton from 'primevue/skeleton';
 import Toolbar from 'primevue/toolbar';
 import { ref, type ComponentInstance } from 'vue';
 
-defineProps<{
+const props = defineProps<{
     item: FileTreeItem;
     size: number;
 }>();
+
+const emit = defineEmits<{
+    openDirectory: [item: FileTreeItem];
+}>();
+
+const project = useProject();
 
 const nameEditorOpen = ref(false);
 
@@ -217,6 +225,17 @@ function closeOtherOverlays() {
     }
     // Weird, but fine
     document.body.click();
+}
+
+function clickHandler() {
+    if (props.item.isDirectory) {
+        emit('openDirectory', props.item);
+    } else if (props.item.media.value) {
+        const media = props.item.media.value;
+        if (media.isTimeline()) {
+            project.p?.selectTimeline(media);
+        }
+    }
 }
 </script>
 

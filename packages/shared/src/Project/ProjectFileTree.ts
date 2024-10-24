@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
-import { ref, shallowReactive, shallowRef, watch } from 'vue';
+import { ref, shallowReactive, shallowRef } from 'vue';
+import { Storage } from '../base/Storage';
 import { MediaItem } from '../Media/Media';
 import type { Project } from './Project';
-import { Storage } from '../base/Storage';
 
 export class FileTreeItem {
     id = uuidv4();

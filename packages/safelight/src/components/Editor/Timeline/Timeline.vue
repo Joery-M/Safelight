@@ -12,7 +12,15 @@ import { TimelineGrid } from '@safelight/timeline/elements/TimelineGrid';
 import { TimelineLayer } from '@safelight/timeline/elements/TimelineLayer';
 import { VideoTimelineElement } from '@safelight/timeline/elements/VideoTimelineElement';
 import { syncRef, watchArray } from '@vueuse/core';
-import { computed, onMounted, ref, shallowReactive, watch, watchEffect } from 'vue';
+import {
+    computed,
+    onBeforeUnmount,
+    onMounted,
+    ref,
+    shallowReactive,
+    watch,
+    watchEffect
+} from 'vue';
 
 const project = useProject();
 const projectTimeline = computed(() => project.p?.timeline.value);
@@ -154,7 +162,12 @@ onMounted(() => {
         );
     }
 });
+
+onBeforeUnmount(() => {
+    timelineManager.value?.destroy();
+});
 </script>
+
 <style lang="scss" scoped>
 .timeline {
     --surface-100: var(--p-splitter-gutter-background);

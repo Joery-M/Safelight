@@ -31,7 +31,6 @@ export class Project {
     });
 
     async save() {
-        console.log('A');
         return await Storage.getStorage().saveProject(this);
     }
     serializeFileTree() {
@@ -90,15 +89,23 @@ export class Project {
         deserializeEntries(this.fileTree, tree);
     }
 
-    selectTimeline(timeline: Timeline) {
-        this.selectedTimeline.value = timeline.id;
+    selectTimeline(timeline: Timeline): void;
+    selectTimeline(timelineId: string): void;
+    selectTimeline(timeline: Timeline | string) {
+        this.selectedTimeline.value = typeof timeline === 'string' ? timeline : timeline.id;
     }
 
-    async createTimeline(config: TimelineConfig, openOnCreate = true): Promise<Timeline> {
+    async createTimeline(
+        config: TimelineConfig,
+        openOnCreate = true,
+        addToRootFileTree = true
+    ): Promise<Timeline> {
         const timeline = new Timeline(config);
 
         this.media.set(timeline.id, timeline);
-        this.fileTree.addFile(timeline);
+        if (addToRootFileTree) {
+            this.fileTree.addFile(timeline);
+        }
         await this.save();
 
         if (openOnCreate) {
@@ -108,15 +115,15 @@ export class Project {
         return timeline;
     }
 
-    async loadFile(file: File) {
+    async loadFile(file: File, addToFileRootTree = true) {
         const media = await MediaManager.storeMedia(file);
         if (media) {
             this.media.set(media.id, media);
-            this.fileTree.addFile(media);
+            if (addToFileRootTree) {
+                this.fileTree.addFile(media);
+            }
             await this.save();
-            return true;
-        } else {
-            return false;
+            return media;
         }
     }
 }
