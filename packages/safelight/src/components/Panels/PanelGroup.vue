@@ -179,4 +179,8 @@ function addPanel(panel: Panel) {
         }
     }
 }
+
+.p-tabmenu {
+    scrollbar-width: none;
+}
 </style>
