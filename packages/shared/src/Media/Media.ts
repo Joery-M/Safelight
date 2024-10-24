@@ -1,11 +1,12 @@
 import { type Path, type PathValue, getByPath, setByPath } from 'dot-path-value';
+import type { Ref } from 'vue';
 import type { Timeline } from '../Timeline/Timeline';
 import type { ChunkedMediaFileItem } from './ChunkedMediaFile';
 import type { MediaFileItem } from './MediaFile';
 
 export abstract class MediaItem<Metadata extends Record<string, any> = MediaItemMetadata> {
     public abstract id: string;
-    public abstract name: string;
+    public abstract name: Ref<string>;
     public abstract type: MediaItemTypes;
 
     protected metadata: Metadata = {} as Metadata;

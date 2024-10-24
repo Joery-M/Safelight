@@ -1,13 +1,11 @@
 <template>
     <div class="panel-group-menu flex h-full flex-col">
         <div class="flex">
-            <TabMenu :model="allTabs">
-                <!-- eslint-disable-next-line vue/no-template-shadow -->
-                <template #item="{ item, props, index }">
+            <TabMenu :model="allTabs" @tab-change="activeIndex = $event.index">
+                <template #item="{ item, props: iProps }">
                     <a
-                        v-bind="props.action"
+                        v-bind="iProps.action"
                         class="align-items-center flex min-w-36 gap-1 p-2 pr-1"
-                        @click="activeIndex = index"
                     >
                         <component :is="item.icon" class="mr-2" />
                         <span class="flex-1 font-bold">{{ item.name }}</span>
@@ -92,6 +90,7 @@ import {
     ref,
     shallowRef,
     type Component,
+    type ComponentInstance,
     type StyleValue
 } from 'vue';
 import { type Panel, type PanelGroupConfig } from './injection';
@@ -149,7 +148,7 @@ const allAvailablePanels = computed<MenuItem[]>(() =>
     }))
 );
 
-const addOverlay = ref<typeof Popover>();
+const addOverlay = ref<ComponentInstance<typeof Popover>>();
 
 // TODO: Be able to send a signal to the top level to remove a panel from the group
 // OR, be able to modify the local config to affect the top config.
@@ -179,5 +178,9 @@ function addPanel(panel: Panel) {
             }
         }
     }
+}
+
+.p-tabmenu {
+    scrollbar-width: none;
 }
 </style>

@@ -1,14 +1,28 @@
 <template>
-    <slot v-if="!isOpen" name="default">
-        <label class="cursor-pointer select-none" @dblclick="open()">{{ value }}</label>
+    <slot v-if="!isOpen" name="default" :open="open">
+        <label
+            class="cursor-pointer select-none"
+            tabindex="0"
+            @dblclick="open()"
+            @keypress.enter="open()"
+            >{{ value }}</label
+        >
     </slot>
-    <slot v-else name="content" :cur-value="curValue" :close="close">
+    <slot
+        v-else
+        name="content"
+        :cur-value="curValue"
+        :close="close"
+        :send-value="sendValue"
+        :set-cur-value="
+            (value: string | undefined) => (value !== undefined ? (curValue = value) : undefined)
+        "
+    >
         <div v-focustrap>
             <InputText
                 v-model="curValue"
                 autofocus
                 @focusout="close()"
-                @change="sendValue()"
                 @keyup.enter="sendValue(true)"
                 @keyup.escape="close()"
             />
@@ -18,14 +32,16 @@
 
 <script lang="ts" setup>
 import InputText from 'primevue/inputtext';
-import { ref } from 'vue';
+import { ref, type VNode } from 'vue';
 
 defineSlots<{
-    default: [];
-    content: {
+    default: (scope: { open: () => void }) => VNode[];
+    content: (scope: {
         close: () => void;
+        sendValue: (forceClose: boolean) => void;
         curValue: string;
-    };
+        setCurValue: (value: string | undefined) => void;
+    }) => VNode[];
 }>();
 
 const props = defineProps<{
@@ -42,10 +58,12 @@ const emit = defineEmits<{
 }>();
 
 function open() {
+    curValue.value = props.value;
     isOpen.value = true;
 }
 function close() {
     isOpen.value = false;
+    curValue.value = props.value;
 }
 function sendValue(forceClose = false) {
     emit('change', curValue.value);

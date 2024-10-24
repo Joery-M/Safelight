@@ -1,18 +1,19 @@
 <template>
     <div
         role="gridcell"
-        class="border-round m-1 flex select-text flex-col rounded-md border-solid border-white/10"
+        class="border-round m-1 flex h-fit select-text flex-col rounded-md border-solid border-white/10"
         style="border-width: 1px"
         :style="{
             width: size + 'px'
         }"
-        :aria-label="item.name"
+        :aria-label="item.name.value"
         @contextmenu.prevent="
             (ev) => {
                 closeOtherOverlays();
                 overlay?.toggle(ev);
             }
         "
+        @dblclick="clickHandler"
     >
         <div
             class="bg-checkerboard relative flex aspect-video w-full items-center justify-center text-clip rounded-t-md"
@@ -20,56 +21,104 @@
             <img
                 v-if="false"
                 class="overflow-none max-h-full max-w-full"
-                :aria-label="'Preview image for ' + item.name"
+                :aria-label="item.name.value"
             />
+            <template v-else-if="item.isDirectory">
+                <PhFolder weight="bold" style="max-width: 80%; max-height: 80%" :size="70" />
+            </template>
             <Skeleton
                 v-else
                 class="max-h-full max-w-full rounded-none rounded-t-md"
                 height="100%"
                 width="100%"
             />
-            <div v-if="size >= 96 && itemSourceType" class="mediaType">
+            <div v-if="size >= 96 && item.media.value" class="media-type">
                 <PhVideoCamera
-                    v-if="item.isOfType(MediaSourceType.Video)"
+                    v-if="item.media.value.isOfType(MediaSourceType.Video)"
+                    v-tooltip="$t('media.attrs.video')"
                     weight="bold"
                     :aria-label="$t('media.attrs.video')"
                 />
                 <PhSpeakerHigh
-                    v-if="item.isOfType(MediaSourceType.Audio)"
+                    v-if="item.media.value.isOfType(MediaSourceType.Audio)"
+                    v-tooltip="$t('media.attrs.audio')"
                     weight="bold"
                     :aria-label="$t('media.attrs.audio')"
                 />
                 <PhSubtitles
-                    v-if="item.isOfType(MediaSourceType.Timeline)"
+                    v-if="item.media.value.isOfType(MediaSourceType.Subtitles)"
+                    v-tooltip="$t('media.attrs.subtitles')"
                     weight="bold"
                     :aria-label="$t('media.attrs.subtitles')"
                 />
                 <PhImage
-                    v-if="item.isOfType(MediaSourceType.Image)"
+                    v-if="item.media.value.isOfType(MediaSourceType.Image)"
+                    v-tooltip="$t('media.attrs.image')"
                     weight="bold"
                     :aria-label="$t('media.attrs.image')"
                 />
                 <PhFilmStrip
-                    v-if="item.isOfType(MediaSourceType.Special)"
+                    v-if="item.media.value.isOfType(MediaSourceType.Timeline)"
+                    v-tooltip="$t('media.attrs.timeline')"
                     weight="bold"
                     :aria-label="$t('media.attrs.timeline')"
                 />
                 <PhSparkle
-                    v-if="item.isOfType(MediaSourceType.Special)"
+                    v-if="item.media.value.isOfType(MediaSourceType.Special)"
+                    v-tooltip="$t('media.attrs.special')"
                     weight="bold"
                     :aria-label="$t('media.attrs.special')"
                 />
             </div>
         </div>
-        <div class="flex items-center gap-1 px-1">
-            <p
-                v-tooltip.bottom="{ value: item.name, showDelay: 500 }"
-                class="line-clamp-2 flex-1 text-base"
-            >
-                {{ item.name }}
-            </p>
+        <div class="flex min-h-14 items-center gap-1 px-1">
+            <InplaceRename :value="item.name.value" @change="item.setName($event)">
+                <template #default="{ open }">
+                    <p
+                        v-tooltip.bottom="{ value: item.name.value, showDelay: 500 }"
+                        class="m-0 line-clamp-2 flex-1 cursor-pointer select-none text-base"
+                        tabindex="0"
+                        @dblclick.stop="
+                            open();
+                            nameEditorOpen = true;
+                        "
+                        @keypress.enter.stop="
+                            open();
+                            nameEditorOpen = true;
+                        "
+                    >
+                        {{ item.name.value }}
+                    </p>
+                </template>
+                <template #content="{ close, curValue, sendValue, setCurValue }">
+                    <div v-focustrap>
+                        <InputText
+                            :pt="{
+                                root: {
+                                    style: 'width: 100%'
+                                }
+                            }"
+                            autofocus
+                            :model-value="curValue"
+                            @update:model-value="setCurValue($event)"
+                            @focusout="
+                                close();
+                                nameEditorOpen = false;
+                            "
+                            @keyup.enter.stop="
+                                sendValue(true);
+                                nameEditorOpen = false;
+                            "
+                            @keyup.escape.stop="
+                                close();
+                                nameEditorOpen = false;
+                            "
+                        />
+                    </div>
+                </template>
+            </InplaceRename>
             <Button
-                v-if="size >= 96"
+                v-if="size >= 96 && !nameEditorOpen"
                 :title="$t('media.properties')"
                 text
                 rounded
@@ -103,11 +152,10 @@
         >
             <template #center>
                 <Button
-                    v-tooltip.bottom="{ value: 'Delete', showDelay: 500 }"
+                    v-tooltip.top="{ value: 'Delete', showDelay: 500 }"
                     severity="secondary"
                     text
-                    :disabled="hasItemInTimeline"
-                    @click="alertt('yea no')"
+                    @click="item.deleteSelf()"
                 >
                     <template #icon>
                         <PhTrash />
@@ -126,10 +174,12 @@
     </Popover>
 </template>
 <script setup lang="ts">
-import { CurrentProject } from '@/stores/currentProject';
+import InplaceRename from '@/components/InplaceRename.vue';
+import { useProject } from '@/stores/useProject';
 import {
     PhDotsThreeVertical,
     PhFilmStrip,
+    PhFolder,
     PhImage,
     PhSparkle,
     PhSpeakerHigh,
@@ -137,20 +187,29 @@ import {
     PhTrash,
     PhVideoCamera
 } from '@phosphor-icons/vue';
-import { ProjectFeatures } from '@safelight/shared/base/Project';
-import { MediaSourceType, type MediaItem } from '@safelight/shared/Media/Media';
+import { MediaSourceType } from '@safelight/shared/Media/Media';
+import type { FileTreeItem } from '@safelight/shared/Project/ProjectFileTree';
 import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
 import Menu from 'primevue/menu';
 import type { MenuItem } from 'primevue/menuitem';
 import Popover from 'primevue/popover';
 import Skeleton from 'primevue/skeleton';
 import Toolbar from 'primevue/toolbar';
-import { computed, ref } from 'vue';
+import { ref, type ComponentInstance } from 'vue';
 
 const props = defineProps<{
-    item: MediaItem;
+    item: FileTreeItem;
     size: number;
 }>();
+
+const emit = defineEmits<{
+    openDirectory: [item: FileTreeItem];
+}>();
+
+const project = useProject();
+
+const nameEditorOpen = ref(false);
 
 const menuItems = ref<MenuItem[]>([
     {
@@ -158,18 +217,7 @@ const menuItems = ref<MenuItem[]>([
     }
 ]);
 
-const itemSourceType = computed(() => props.item.getMetadata('media')?.sourceType ?? 0);
-
-const hasItemInTimeline = computed(
-    () =>
-        CurrentProject.project.value &&
-        CurrentProject.project.value.hasFeature(ProjectFeatures.media) &&
-        CurrentProject.project.value.usesMedia(props.item)
-);
-
-const alertt = (text: string) => window.alert(text);
-
-const overlay = ref<typeof Popover>();
+const overlay = ref<ComponentInstance<typeof Popover>>();
 
 function closeOtherOverlays() {
     if (document.activeElement && 'blur' in document.activeElement) {
@@ -177,6 +225,17 @@ function closeOtherOverlays() {
     }
     // Weird, but fine
     document.body.click();
+}
+
+function clickHandler() {
+    if (props.item.isDirectory) {
+        emit('openDirectory', props.item);
+    } else if (props.item.media.value) {
+        const media = props.item.media.value;
+        if (media.isTimeline()) {
+            project.p?.selectTimeline(media);
+        }
+    }
 }
 </script>
 
@@ -187,7 +246,7 @@ function closeOtherOverlays() {
     background: repeating-conic-gradient(#ffffff0a 0% 25%, transparent 0% 50%) 50% / 20px 20px;
 }
 
-.mediaType {
+.media-type {
     @apply left-0 top-0 h-full w-full gap-2 p-2;
 
     position: absolute;

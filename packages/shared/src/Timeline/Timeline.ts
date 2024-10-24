@@ -1,12 +1,17 @@
 import { useManualRefHistory } from '@vueuse/core';
 import { v4 as uuidv4 } from 'uuid';
-import { computed, ref, shallowReactive } from 'vue';
-import { MediaItem, type MediaItemMetadata, type MediaItemTypes } from '../Media/Media';
+import { computed, ref, shallowReactive, watchEffect } from 'vue';
+import {
+    MediaItem,
+    MediaSourceType,
+    type MediaItemMetadata,
+    type MediaItemTypes
+} from '../Media/Media';
 import type { TimelineItem } from '../base/TimelineItem';
 
 export class Timeline extends MediaItem<TimelineItemMetadata> {
     public id = uuidv4();
-    public name = '';
+    public name = ref('');
     public type: MediaItemTypes = 'Timeline';
 
     public items = shallowReactive(new Set<TimelineItem>());
@@ -23,13 +28,22 @@ export class Timeline extends MediaItem<TimelineItemMetadata> {
 
     constructor(config: TimelineConfig) {
         super();
+        this.addMetadata('media.sourceType', MediaSourceType.Timeline);
 
-        if (config.name) {
-            this.name = config.name;
-        }
+        this.name.value = config.name;
         this.width.value = config.width;
         this.height.value = config.height;
         this.framerate.value = config.framerate;
+
+        this.addMetadata('timelineConfig', config);
+        watchEffect(() => {
+            this.addMetadata('timelineConfig', {
+                framerate: this.framerate.value,
+                height: this.height.value,
+                width: this.width.value,
+                name: this.name.value
+            });
+        });
 
         this.pbPosHistory.commit();
     }
@@ -120,10 +134,14 @@ export class Timeline extends MediaItem<TimelineItemMetadata> {
     }
 
     //#endregion
+
+    public isOfType(type: MediaSourceType): boolean {
+        return (type & MediaSourceType.Timeline) !== 0;
+    }
 }
 
 export interface TimelineConfig {
-    name?: string;
+    name: string;
     width: number;
     height: number;
     framerate: number;

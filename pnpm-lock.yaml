@@ -159,9 +159,6 @@ importers:
       '@primevue/themes':
         specifier: ^4.1.1
         version: 4.1.1
-      '@quantco/pnpm-licenses':
-        specifier: ^2.1.0
-        version: 2.1.0
       '@safelight/shared':
         specifier: workspace:*
         version: link:../shared
@@ -201,6 +198,9 @@ importers:
       hash-wasm:
         specifier: ^4.11.0
         version: 4.11.0
+      luna-object-viewer:
+        specifier: ^0.3.1
+        version: 0.3.1
       luxon:
         specifier: ^3.5.0
         version: 3.5.0
@@ -210,9 +210,6 @@ importers:
       mime-matcher:
         specifier: ^1.0.5
         version: 1.0.5
-      monaco-editor:
-        specifier: ^0.52.0
-        version: 0.52.0
       pinia:
         specifier: ^2.2.4
         version: 2.2.4(typescript@5.6.3)(vue@3.5.12(typescript@5.6.3))
@@ -244,6 +241,9 @@ importers:
       '@intlify/eslint-plugin-vue-i18n':
         specifier: ^3.0.0
         version: 3.0.0(eslint@9.13.0(jiti@1.21.6))
+      '@quantco/pnpm-licenses':
+        specifier: ^2.1.0
+        version: 2.1.0
       '@tsconfig/node20':
         specifier: ^20.1.4
         version: 20.1.4
@@ -2635,6 +2635,9 @@ packages:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
     engines: {node: '>= 0.8.0'}
 
+  licia@1.43.0:
+    resolution: {integrity: sha512-/m23vS54TozPbRMXUuV/Ht1+IIAB4Lw9bPX3ZPzzGL0uWNMt91QK/xktdJk//b2y1HiWPNTjb8lWM927nZI8OQ==}
+
   lightningcss-darwin-arm64@1.27.0:
     resolution: {integrity: sha512-Gl/lqIXY+d+ySmMbgDf0pgaWSqrWYxVHoc88q+Vhf2YNzZ8DwoRzGt5NZDVqqIW5ScpSnmmjcgXP87Dn2ylSSQ==}
     engines: {node: '>= 12.0.0'}
@@ -2745,6 +2748,9 @@ packages:
     resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}
     engines: {node: '>=10'}
 
+  luna-object-viewer@0.3.1:
+    resolution: {integrity: sha512-byynxixA8aAzSg9LymFDzPPrhKCPBOiELnOGxuztAXmes7W7OFqGkiLSyV8ECDvRimF1WewVmyOdxyhsLVquFg==}
+
   luxon@3.5.0:
     resolution: {integrity: sha512-rh+Zjr6DNfUYR3bPwJEnuwDdqMbxZW7LOQfUN4B54+Cl+0o5zaU9RJ6bcidfDtC1cWCZXQ+nvX8bf6bAji37QQ==}
     engines: {node: '>=12'}
@@ -2847,9 +2853,6 @@ packages:
 
   mlly@1.7.2:
     resolution: {integrity: sha512-tN3dvVHYVz4DhSXinXIk7u9syPYaJvio118uomkovAtWBT+RdbP6Lfh/5Lvo519YMmwBafwlh20IPTXIStscpA==}
-
-  monaco-editor@0.52.0:
-    resolution: {integrity: sha512-OeWhNpABLCeTqubfqLMXGsqf6OmPU6pHM85kF3dhy6kq5hnhuVS1p3VrEW/XhWHc71P2tHyS5JFySD8mgs1crw==}
 
   mp4box@0.5.2:
     resolution: {integrity: sha512-zRmGlvxy+YdW3Dmt+TR4xPHynbxwXtAQDTN/Fo9N3LMxaUlB2C5KmZpzYyGKy4c7k4Jf3RCR0A2pm9SZELOLXw==}
@@ -6142,6 +6145,8 @@ snapshots:
       prelude-ls: 1.2.1
       type-check: 0.4.0
 
+  licia@1.43.0: {}
+
   lightningcss-darwin-arm64@1.27.0:
     optional: true
 
@@ -6222,6 +6227,10 @@ snapshots:
   lru-cache@6.0.0:
     dependencies:
       yallist: 4.0.0
+
+  luna-object-viewer@0.3.1:
+    dependencies:
+      licia: 1.43.0
 
   luxon@3.5.0: {}
 
@@ -6315,8 +6324,6 @@ snapshots:
       pathe: 1.1.2
       pkg-types: 1.2.1
       ufo: 1.5.4
-
-  monaco-editor@0.52.0: {}
 
   mp4box@0.5.2: {}
 

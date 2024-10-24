@@ -1,17 +1,18 @@
+import type { SetRequired } from 'type-fest';
 import type { ChunkedMediaFileItem } from '../Media/ChunkedMediaFile';
 import type { MediaItem, MediaItemTypes } from '../Media/Media';
 import type { MediaFileItem } from '../Media/MediaFile';
+import type { Project } from '../Project/Project';
 import type { Timeline } from '../Timeline/Timeline';
-import type { default as BaseProject, ProjectType } from './Project';
 import type { TimelineItemType } from './TimelineItem';
 
 export default abstract class BaseStorageController {
     public version: string = '0.0.0';
 
-    abstract saveProject(project: BaseProject): Promise<SaveResults>;
-    abstract loadProject(projectId: string): Promise<BaseProject | undefined>;
-    abstract updateStoredProject(
-        project: Partial<StoredProject> & Pick<StoredProject, 'id'>
+    abstract saveProject(project: Project): Promise<SaveResults>;
+    abstract loadProject(projectId: string): Promise<Project | undefined>;
+    abstract patchStoredProject(
+        project: SetRequired<Partial<StoredProject>, 'id'>
     ): Promise<SaveResults>;
     static getProjects: () => Promise<StoredProject[]>;
 
@@ -51,6 +52,9 @@ export class Storage {
     // Singleton pattern
     private static currentStorageController: BaseStorageController;
 
+    static hasStorage() {
+        return this.currentStorageController !== undefined;
+    }
     static setStorage(storageController: BaseStorageController) {
         this.currentStorageController = storageController;
     }
@@ -68,6 +72,24 @@ export type FilePathTypes = 'media-files' | 'thumbnails' | (string & {});
 
 export type FilePath = (string | number)[];
 
+export interface ProjectFileTreeItem {
+    name: string;
+    /**
+     * The ID of a Media item.
+     *
+     * This ID should also exist in {@link StoredProject.media|`StoredProject.media`}
+     */
+    mediaID: string;
+}
+export interface ProjectFileTreeDirectory {
+    name: string;
+    entries: ProjectFileTree;
+}
+
+export interface ProjectFileTree {
+    [path: string]: ProjectFileTreeItem | ProjectFileTreeDirectory;
+}
+
 export interface StoredMedia {
     id: string;
     name: string;
@@ -79,13 +101,13 @@ export interface StoredMedia {
 export interface StoredProject {
     id: string;
     name: string;
-    type: ProjectType;
     /**
      * Array of media id's
      */
     media: string[];
     created: string;
     updated: string;
+    fileTree: ProjectFileTree;
     metadata: { [key: string | number]: any };
 }
 

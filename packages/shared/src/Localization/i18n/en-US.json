@@ -10,7 +10,6 @@
             "sortAscending": "Sort ascending",
             "sortDescending": "Sort descending",
             "sortBy": "Sort by",
-            "loadFile": "Import file",
             "resetValue": "Reset value",
             "delete": "Delete"
         },
@@ -24,7 +23,8 @@
             "created": "Created",
             "fileType": "File type | File types",
             "refresh": "Refresh",
-            "size": "Size"
+            "size": "Size",
+            "directory": "Folder | Folders"
         },
         "status": {
             "error": "Error",
@@ -47,6 +47,11 @@
             "image": "Media is an image",
             "timeline": "Media is a timeline",
             "special": "Media requires a plugin"
+        },
+        "create": {
+            "file": "Import file",
+            "timeline": "Create timeline",
+            "directory": "Create folder"
         }
     },
     "panels": {
@@ -67,7 +72,7 @@
     "storage": {
         "nonPersistentNotif": {
             "title": "Project might be deleted",
-            "text": "Your browser might delete data when storing projects locally if it thinks you are running out of storage.\nDo you want to ask the browser to persist data?",
+            "text": "Your browser might delete data if it thinks you are running out of storage.\nDo you want to ask the browser to persist data?",
             "button": "Persist data"
         }
     },

@@ -6,6 +6,7 @@
         sort-field="updated"
         removable-sort
         :sort-order="-1"
+        @row-dblclick="curProject.toEditor($event.data.id)"
     >
         <template #header>
             <div class="align-items-center justify-content-between flex flex-wrap gap-2">
@@ -19,7 +20,7 @@
                     :label="$t('project.new')"
                     rounded
                     :model="projectTypes"
-                    @click="CurrentProject.newSimpleProject()"
+                    @click="useProject().creators.newSimpleProject()"
                 />
             </div>
         </template>
@@ -34,14 +35,26 @@
                     :model-value="data.name"
                     autofocus
                     fluid
-                    @keydown.enter="setProjectName($event.target.value, data)"
-                    @blur="setProjectName($event.target.value, data)"
+                    @keydown.enter="
+                        (event) => {
+                            const value = (event.target as HTMLInputElement)?.value ?? '';
+                            if (value !== data.name) {
+                                setProjectName(value, data);
+                            }
+                        }
+                    "
+                    @blur="
+                        (event) => {
+                            const value = (event.target as HTMLInputElement)?.value ?? '';
+                            if (value !== data.name) {
+                                setProjectName(value, data);
+                            }
+                        }
+                    "
                 />
             </template>
-        </Column>
-        <Column field="type" :header="$t('general.descriptions.type')" sortable>
-            <template #body="slotProps">
-                {{ $t('project.types.' + slotProps.data.type.toLowerCase(), slotProps.data.type) }}
+            <template #body="{ data }">
+                {{ data.name || $t('general.descriptions.untitled') }}
             </template>
         </Column>
         <Column
@@ -64,10 +77,33 @@
                 {{ $d(new Date((slotProps.data as StoredProject).created), 'dateTime') }}
             </template>
         </Column>
-        <Column>
-            <template #body="slotProps">
-                <Button @click="CurrentProject.openProject(slotProps.data)">
-                    {{ $t('general.actions.open') }}
+        <Column style="width: 0">
+            <template #body="{ data }">
+                <Button
+                    v-tooltip="$t('general.actions.open')"
+                    text
+                    rounded
+                    plain
+                    @click="$router.push(`/editor/${data.id}`)"
+                >
+                    <template #icon>
+                        <PhCaretRight />
+                    </template>
+                </Button>
+            </template>
+        </Column>
+        <Column style="width: 0">
+            <template #body="{ data }">
+                <Button
+                    v-tooltip="$t('general.actions.delete')"
+                    text
+                    rounded
+                    plain
+                    @click="$router.push(`/editor/${data.id}`)"
+                >
+                    <template #icon>
+                        <PhTrash />
+                    </template>
                 </Button>
             </template>
         </Column>
@@ -75,8 +111,8 @@
 </template>
 
 <script setup lang="ts">
-import { CurrentProject } from '@/stores/currentProject';
-import { PhArrowsClockwise } from '@phosphor-icons/vue';
+import { useProject } from '@/stores/useProject';
+import { PhArrowsClockwise, PhCaretRight, PhTrash } from '@phosphor-icons/vue';
 import { Storage, type StoredProject } from '@safelight/shared/base/Storage';
 import Button from 'primevue/button';
 import Column from 'primevue/column';
@@ -84,23 +120,25 @@ import DataTable from 'primevue/datatable';
 import InputText from 'primevue/inputtext';
 import type { MenuItem } from 'primevue/menuitem';
 import SplitButton from 'primevue/splitbutton';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, shallowRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
+
+const curProject = useProject();
 
 const projectTypes = computed<MenuItem[]>(
     () =>
         [
             {
                 label: t('project.types.simple'),
-                command: () => CurrentProject.newSimpleProject()
+                command: () => curProject.creators.newSimpleProject()
             },
             { label: 'Test', command() {} }
         ] as const
 );
 
-const projects = ref<StoredProject[]>([]);
+const projects = shallowRef<StoredProject[]>([]);
 
 const loading = ref(true);
 
@@ -125,8 +163,12 @@ async function setProjectName(newName: string, project: StoredProject) {
     if (!newName || newName.length == 0) {
         return;
     }
-    const storage = await CurrentProject.getStorageControllerForProject(project);
-    await storage?.updateStoredProject({ id: project.id, name: newName });
+
+    const storage = new (
+        await import('@safelight/shared/Storage/LocalStorage/IndexedDbStorage')
+    ).IndexedDbStorageController();
+
+    await storage?.patchStoredProject({ id: project.id, name: newName });
     loadList();
 }
 </script>

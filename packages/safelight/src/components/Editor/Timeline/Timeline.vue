@@ -3,8 +3,8 @@
 </template>
 
 <script setup lang="ts">
-import { CurrentProject } from '@/stores/currentProject';
-import type BaseTimelineItem from '@safelight/shared/base/TimelineItem';
+import { useProject } from '@/stores/useProject';
+import type { TimelineItem } from '@safelight/shared/base/TimelineItem';
 import { SettingsManager } from '@safelight/shared/Settings/SettingsManager';
 import { createTimelineManager, type CreateTimelineFn } from '@safelight/timeline';
 import { TimelineCursorElement } from '@safelight/timeline/elements/TimelineCursorElement';
@@ -12,9 +12,18 @@ import { TimelineGrid } from '@safelight/timeline/elements/TimelineGrid';
 import { TimelineLayer } from '@safelight/timeline/elements/TimelineLayer';
 import { VideoTimelineElement } from '@safelight/timeline/elements/VideoTimelineElement';
 import { syncRef, watchArray } from '@vueuse/core';
-import { computed, onMounted, ref, shallowReactive, watch, watchEffect } from 'vue';
+import {
+    computed,
+    onBeforeUnmount,
+    onMounted,
+    ref,
+    shallowReactive,
+    watch,
+    watchEffect
+} from 'vue';
 
-const projectTimeline = computed(() => CurrentProject.project.value?.timeline?.value);
+const project = useProject();
+const projectTimeline = computed(() => project.p?.timeline.value);
 
 const canvas = ref<HTMLCanvasElement>();
 
@@ -28,7 +37,6 @@ onMounted(() => {
         watch(
             projectTimeline,
             (projectTimeline, _old, onCleanup) => {
-                console.log(CurrentProject.project.value);
                 if (!projectTimeline) {
                     return;
                 }
@@ -103,7 +111,7 @@ onMounted(() => {
                     projectTimeline ? Array.from(projectTimeline.items) : []
                 );
                 const projectItemsToTimelineItems = shallowReactive(
-                    new WeakMap<BaseTimelineItem, VideoTimelineElement>()
+                    new WeakMap<TimelineItem, VideoTimelineElement>()
                 );
                 watchArray(
                     projectItems,
@@ -154,7 +162,12 @@ onMounted(() => {
         );
     }
 });
+
+onBeforeUnmount(() => {
+    timelineManager.value?.destroy();
+});
 </script>
+
 <style lang="scss" scoped>
 .timeline {
     --surface-100: var(--p-splitter-gutter-background);

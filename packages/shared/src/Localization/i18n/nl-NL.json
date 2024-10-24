@@ -10,7 +10,6 @@
             "sortAscending": "Sorteer oplopend",
             "sortDescending": "Sorteer aflopend",
             "sortBy": "Sorteer op",
-            "loadFile": "Importeer bestand",
             "resetValue": "Zet waarde terug",
             "delete": "Verwijderen"
         },
@@ -24,7 +23,8 @@
             "created": "Aangemaakt",
             "fileType": "Bestandstype | Bestandstypen",
             "refresh": "Herladen",
-            "size": "Grootte"
+            "size": "Grootte",
+            "directory": "Map | Mappen"
         },
         "status": {
             "error": "Error",
@@ -47,6 +47,11 @@
             "image": "Media is een afbeelding",
             "timeline": "Media is een tijdlijn",
             "special": "Media heeft een plugin nodig"
+        },
+        "create": {
+            "file": "Importeer bestand",
+            "timeline": "Creëer tijdlijn",
+            "directory": "Creëer map"
         }
     },
     "panels": {
@@ -67,7 +72,7 @@
     "storage": {
         "nonPersistentNotif": {
             "title": "Project kan zomaar verwijderd worden",
-            "text": "Uw browser kan uw data verwijderen wanneer het ziet dat u geen opslagruimte meer heeft.\nWilt u de browser vragen om uw data te bewaren?",
+            "text": "Uw browser kan uw projecten verwijderen wanneer het ziet dat u geen opslagruimte meer heeft.\nWilt u de browser vragen om uw data te bewaren?",
             "button": "Data bewaren"
         }
     },

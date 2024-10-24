@@ -1,11 +1,12 @@
 import type { Path, PathValue } from 'dot-path-value';
 import { v4 as uuidv4 } from 'uuid';
+import { ref } from 'vue';
 import { Storage, type FilePath } from '../base/Storage';
 import { MediaItem, type MediaItemMetadata, type MediaItemTypes } from './Media';
 
 export class MediaFileItem extends MediaItem<MediaFileItemMetadata> {
     public id = uuidv4();
-    public name = '';
+    public name = ref('');
     public type: MediaItemTypes = 'MediaFile';
 
     private file?: ArrayBuffer;

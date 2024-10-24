@@ -1,4 +1,5 @@
 import Dexie, { type Table } from 'dexie';
+import { IDBKeyRange, indexedDB } from 'fake-indexeddb';
 import type { StoredMedia, StoredProject, StoredSimpleTimelineItem } from '../../base/Storage';
 
 export class SafelightIndexedDB extends Dexie {
@@ -8,7 +9,7 @@ export class SafelightIndexedDB extends Dexie {
 
     constructor() {
         if (__TEST__) {
-            super('SafelightIdb', { indexedDB: window.indexedDB, IDBKeyRange: window.IDBKeyRange });
+            super('SafelightIdb', { indexedDB, IDBKeyRange });
         } else {
             super('SafelightIdb');
         }

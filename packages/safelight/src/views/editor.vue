@@ -1,5 +1,5 @@
 <template>
-    <template v-if="CurrentProject.isLoaded.value">
+    <template v-if="projectLoaded">
         <Toolbar
             :pt="{
                 root: {
@@ -19,11 +19,12 @@
             </template>
             <template #center>
                 <InplaceRename
-                    v-if="CurrentProject.project.value"
-                    :value="CurrentProject.project.value?.name.value"
+                    v-if="project.p !== undefined"
+                    :value="project.p.name.value"
                     @change="
                         (newName: string) => {
-                            CurrentProject.project.value!.name.value = newName;
+                            project.p!.name.value = newName;
+                            project.p?.save();
                         }
                     "
                 />
@@ -38,23 +39,26 @@
 <script setup lang="ts">
 import InplaceRename from '@/components/InplaceRename.vue';
 import PanelContainer from '@/components/Panels/PanelContainer.vue';
-import { router } from '@/main';
-import { CurrentProject } from '@/stores/currentProject';
+import { router } from '@/router';
 import { useEditor } from '@/stores/useEditor';
 import { useProject } from '@/stores/useProject';
 import { PhFile, PhGear, PhSignOut } from '@phosphor-icons/vue';
+import { useTitle } from '@vueuse/core';
 import ConfirmDialog from 'primevue/confirmdialog';
 import Menubar from 'primevue/menubar';
 import type { MenuItem } from 'primevue/menuitem';
 import Toolbar from 'primevue/toolbar';
 import { useConfirm } from 'primevue/useconfirm';
 import { useDialog } from 'primevue/usedialog';
-import { defineAsyncComponent, onBeforeUnmount, onMounted, watch } from 'vue';
+import { defineAsyncComponent, ref, watch, watchEffect } from 'vue';
+import { onBeforeRouteLeave, useRoute } from 'vue-router';
 
 const project = useProject();
 const editor = useEditor();
 
 editor.AddDefaultPanels();
+
+const projectLoaded = ref(false);
 
 const projectErrorDialog = useConfirm();
 const dialog = useDialog();
@@ -70,7 +74,7 @@ const menuItems: MenuItem[] = [
                 disabled: false,
                 command: () => {
                     const settingsComponent = defineAsyncComponent(
-                        () => import('../../components/Menu/Settings/Settings.vue')
+                        () => import('@/components/Menu/Settings/Settings.vue')
                     );
                     dialog.open(settingsComponent, {
                         props: {
@@ -94,8 +98,7 @@ const menuItems: MenuItem[] = [
                 label: 'Exit',
                 icon: PhSignOut as any,
                 disabled: false,
-                command: async () => {
-                    await CurrentProject.beforeExit();
+                command: () => {
                     router.push('/projects');
                 }
             }
@@ -103,21 +106,31 @@ const menuItems: MenuItem[] = [
     }
 ];
 
-onMounted(async () => {
-    await router.isReady();
-    if (!CurrentProject.isLoaded.value) {
-        const lastProject = CurrentProject.getSessionProject();
-        if (lastProject) {
-            if (lastProject) {
-                CurrentProject.openProject(lastProject, false /* Already here */);
-            } else {
-                showNoProjectDialog();
-            }
-        } else {
-            showNoProjectDialog();
+const route = useRoute('Editor');
+
+watch(
+    () => route.params.projectId,
+    (val) => loadProject(val),
+    { immediate: true }
+);
+
+async function loadProject(id?: string) {
+    if (id) {
+        // Check if the project ID from the URL is the one that is loaded
+        if (project.isLoaded && project.p?.id && project.p.id === id) {
+            projectLoaded.value = true;
+            return;
         }
+        const success = await project.openProject({ id });
+        if (!success) {
+            showNoProjectDialog();
+        } else {
+            projectLoaded.value = true;
+        }
+    } else {
+        showNoProjectDialog();
     }
-});
+}
 
 function showNoProjectDialog() {
     projectErrorDialog.require({
@@ -135,27 +148,17 @@ function showNoProjectDialog() {
     });
 }
 
-watch(
-    CurrentProject.project,
-    (project) => {
-        if (project && CurrentProject.isLoaded.value) {
-            project.onDeepChange.next();
-        }
-    },
-    { deep: true }
-);
-
-onBeforeUnmount(async () => {
-    if (CurrentProject.isLoaded.value) {
-        await CurrentProject.beforeExit(false);
-        project.$dispose();
+definePage({
+    meta: {
+        overridePageName: true
     }
 });
-</script>
 
-<route lang="json">
-{
-    "path": "/editor",
-    "name": "Editor"
-}
-</route>
+watchEffect(() => {
+    useTitle(project.p?.name.value ? project.p?.name.value + ' | Safelight' : 'Safelight');
+});
+
+onBeforeRouteLeave(() => {
+    project.$reset();
+});
+</script>

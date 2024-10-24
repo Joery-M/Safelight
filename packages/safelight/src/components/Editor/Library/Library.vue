@@ -1,6 +1,6 @@
 <template>
     <DataView
-        v-if="layout == 'grid'"
+        id="data-view"
         :value="sortedAndFiltered"
         class="flex h-full flex-col"
         data-key="id"
@@ -9,13 +9,13 @@
                 class: 'p-1'
             },
             content: {
-                style: 'flex-shrink: 1; min-height: 0;'
+                style: 'flex-grow: 1; min-height: 0;'
             },
             emptyMessage: {
                 style: 'height: 100%;'
             },
             footer: {
-                style: 'flex-grow: 1; display: flex; align-items: end'
+                style: 'flex-shrink: 1; display: flex; align-items: end'
             }
         }"
         layout="grid"
@@ -23,17 +23,6 @@
         <template #header>
             <Toolbar class="border-none p-0">
                 <template #start>
-                    <SelectButton
-                        v-model="layout"
-                        :options="['list', 'grid']"
-                        :allow-empty="false"
-                        class="mr-2 min-w-fit"
-                    >
-                        <template #option="{ option }">
-                            <PhList v-if="option === 'list'" />
-                            <PhSquaresFour v-else />
-                        </template>
-                    </SelectButton>
                     <InputGroup class="mr-2">
                         <InputGroupAddon class="p-0">
                             <PhMagnifyingGlass />
@@ -78,27 +67,54 @@
                         />
                     </InputGroup>
                 </template>
-                <template #end>
-                    <Button
-                        :title="$t('general.actions.loadFile')"
-                        rounded
-                        @click="fileDialog.open()"
-                    >
-                        <template #icon>
-                            <PhPlus />
-                        </template>
-                    </Button>
-                </template>
             </Toolbar>
+            <Breadcrumb
+                id="directory-path"
+                ref="breadCrumbPath"
+                :model="breadcrumbItems"
+                :home="{
+                    key: 'home',
+                    command: () => {
+                        while (directoryPath.shift());
+                    }
+                }"
+                :pt="{
+                    itemLink: {
+                        // To stop ctrl click and shift click from opening tabs
+                        href: undefined,
+                        style: 'cursor: pointer'
+                    }
+                }"
+            >
+                <template #itemicon="{ item: { key } }">
+                    <span v-if="key === 'home'" class="flex items-center" style="height: 22.4px">
+                        <PhHouse id="breadcrumb-root" weight="bold" />
+                    </span>
+                </template>
+            </Breadcrumb>
         </template>
-        <template #grid="{ items }: { items: MediaItem[] }">
+        <template #grid="{ items }: { items: FileTreeItem[] }">
             <div
-                class="flex h-full select-none flex-wrap justify-center overflow-y-auto"
+                class="flex h-full select-none flex-wrap justify-start overflow-y-auto"
                 role="grid"
                 @dblclick.self="fileDialogOpenDblClick"
             >
                 <template v-for="item in items" :key="item.id">
-                    <LibraryGridItem :item="item" :size="gridItemSize" />
+                    <LibraryGridItem
+                        :item="item"
+                        :size="gridItemSize"
+                        @open-directory="
+                            (item) => {
+                                directoryPath.unshift(item);
+                                nextTick(() => {
+                                    // Scroll to last item in breadcrumb
+                                    breadCrumbPath?.$el
+                                        .querySelector('li:last-of-type')
+                                        .scrollIntoView();
+                                });
+                            }
+                        "
+                    />
                 </template>
             </div>
         </template>
@@ -107,7 +123,7 @@
                 class="grid h-full select-none place-items-center opacity-60"
                 @dblclick="fileDialogOpenDblClick"
             >
-                <label v-if="CurrentProject.project.value?.media.length == 0">
+                <label v-if="project.p?.media.size == 0">
                     {{ $t('panels.library.noMediaLoaded') }}
                 </label>
                 <label v-else>
@@ -116,7 +132,7 @@
             </div>
         </template>
         <template #footer>
-            <Toolbar class="border-none p-0">
+            <Toolbar class="grow border-none p-0">
                 <template #start>
                     <Slider
                         v-model="gridItemSize"
@@ -127,170 +143,69 @@
                         class="w-48 max-w-full"
                     />
                 </template>
-            </Toolbar>
-        </template>
-    </DataView>
-    <DataTable
-        v-else-if="layout == 'list'"
-        class="flex h-full flex-col"
-        :value="sortedAndFiltered"
-        :pt="{
-            header: {
-                class: 'p-1'
-            },
-            wrapper: {
-                style: 'flex-shrink: 1'
-            },
-            table: {
-                class: 'h-full'
-            }
-        }"
-        sort-field="field"
-        sort-mode="single"
-        scrollable
-        resizable-columns
-        column-resize-mode="expand"
-        data-key="id"
-    >
-        <Column header="Type" body-class="px-0">
-            <template #body="{ data }: { data: MediaItem }">
-                <div class="flex gap-2 pl-2">
-                    <PhVideoCamera
-                        v-if="data.isOfType(MediaSourceType.Video)"
-                        weight="bold"
-                        :aria-label="$t('media.attrs.video')"
-                    />
-                    <PhSpeakerHigh
-                        v-if="data.isOfType(MediaSourceType.Audio)"
-                        weight="bold"
-                        :aria-label="$t('media.attrs.audio')"
-                    />
-                    <PhSubtitles
-                        v-if="data.isOfType(MediaSourceType.Subtitles)"
-                        weight="bold"
-                        :aria-label="$t('media.attrs.subtitles')"
-                    />
-                    <PhImage
-                        v-if="data.isOfType(MediaSourceType.Image)"
-                        weight="bold"
-                        :aria-label="$t('media.attrs.image')"
-                    />
-                    <PhFilmStrip
-                        v-if="data.isOfType(MediaSourceType.Special)"
-                        weight="bold"
-                        :aria-label="$t('media.attrs.timeline')"
-                    />
-                    <PhSparkle
-                        v-if="data.isOfType(MediaSourceType.Special)"
-                        weight="bold"
-                        :aria-label="$t('media.attrs.special')"
-                    />
-                </div>
-            </template>
-        </Column>
-        <Column field="name.value" :header="$t('general.descriptions.name')" sortable />
-        <Column field="duration.value" :header="$t('general.descriptions.duration')" sortable>
-            <template #body="{ data }: { data: MediaItem }">
-                <template v-if="data.isOfType(MediaSourceType.Image)">
-                    {{ Timecode.toFormattedTimecode(5000) }}
-                </template>
-                <!-- <template v-else>
-                    {{ Timecode.toFormattedTimecode(data.duration.value * 1000) }}
-                </template> -->
-            </template>
-        </Column>
-        <template #header>
-            <Toolbar class="border-none p-0">
-                <template #start>
-                    <SelectButton
-                        v-model="layout"
-                        :options="['list', 'grid']"
-                        :allow-empty="false"
-                        class="mr-2 min-w-fit"
-                    >
-                        <template #option="{ option }">
-                            <PhList v-if="option === 'list'" />
-                            <PhSquaresFour v-else />
-                        </template>
-                    </SelectButton>
-                    <InputGroup class="mr-2">
-                        <InputGroupAddon class="p-0">
-                            <PhMagnifyingGlass />
-                        </InputGroupAddon>
-                        <InputText v-model="search" :placeholder="$t('general.actions.search')">
-                        </InputText>
-                    </InputGroup>
-                </template>
                 <template #end>
-                    <Button
-                        :title="$t('general.actions.loadFile')"
-                        rounded
+                    <SplitButton
+                        outlined
+                        severity="secondary"
+                        :model="createMenuItems"
                         @click="fileDialog.open()"
                     >
                         <template #icon>
                             <PhPlus />
                         </template>
-                    </Button>
+                    </SplitButton>
                 </template>
             </Toolbar>
         </template>
-        <template #empty>
-            <div
-                class="grid h-full select-none place-items-center opacity-60"
-                @dblclick="fileDialogOpenDblClick"
-            >
-                <label v-if="CurrentProject.project.value?.media.length == 0">
-                    {{ $t('panels.library.noMediaLoaded') }}
-                </label>
-                <label v-else>
-                    {{ $t('panels.library.noMediaFound') }}
-                </label>
-            </div>
-        </template>
-    </DataTable>
+    </DataView>
 </template>
 
 <script setup lang="ts">
-import { CurrentProject } from '@/stores/currentProject';
+import { useProject } from '@/stores/useProject';
 import {
-    PhFilmStrip,
-    PhImage,
-    PhList,
+    PhHouse,
     PhMagnifyingGlass,
     PhPlus,
     PhSortAscending,
-    PhSortDescending,
-    PhSparkle,
-    PhSpeakerHigh,
-    PhSquaresFour,
-    PhSubtitles,
-    PhVideoCamera
+    PhSortDescending
 } from '@phosphor-icons/vue';
-import { ProjectFeatures } from '@safelight/shared/base/Project';
-import { MediaItem, MediaSourceType } from '@safelight/shared/Media/Media';
-import Timecode from '@safelight/shared/Timecode';
-import { useDropZone, useFileDialog, watchDebounced } from '@vueuse/core';
+import { MediaSourceType } from '@safelight/shared/Media/Media';
+import type { FileTreeItem } from '@safelight/shared/Project/ProjectFileTree';
+import { useDropZone, useFileDialog } from '@vueuse/core';
 import fuzzysearch from 'fuzzysearch';
 import MimeMatcher from 'mime-matcher';
+import Breadcrumb from 'primevue/breadcrumb';
 import Button from 'primevue/button';
-import Column from 'primevue/column';
-import DataTable from 'primevue/datatable';
 import DataView from 'primevue/dataview';
 import InputGroup from 'primevue/inputgroup';
 import InputGroupAddon from 'primevue/inputgroupaddon';
 import InputText from 'primevue/inputtext';
+import type { MenuItem } from 'primevue/menuitem';
 import Select from 'primevue/select';
-import SelectButton from 'primevue/selectbutton';
 import Slider from 'primevue/slider';
+import SplitButton from 'primevue/splitbutton';
 import Toolbar from 'primevue/toolbar';
-import { ref, shallowRef, watchEffect } from 'vue';
+import {
+    computed,
+    nextTick,
+    reactive,
+    ref,
+    shallowReactive,
+    shallowRef,
+    watchEffect,
+    type ComponentInstance
+} from 'vue';
+import { useI18n } from 'vue-i18n';
 import LibraryGridItem from './LibraryGridItem.vue';
+
+const project = useProject();
 
 useDropZone(document.body, {
     onDrop(files) {
-        files?.forEach((file) => {
-            if (CurrentProject.project.value?.hasFeature(ProjectFeatures.media)) {
-                CurrentProject.project.value.loadFile(file);
+        files?.forEach(async (file) => {
+            const media = await project.p?.loadFile(file, false);
+            if (media) {
+                curDir.value?.addFile(media);
             }
         });
     },
@@ -310,8 +225,12 @@ fileDialog.onChange((fileList) => {
     for (let i = 0; i < fileList.length; i++) {
         const item = fileList.item(i);
 
-        if (item && CurrentProject.project.value?.hasFeature(ProjectFeatures.media)) {
-            CurrentProject.project.value.loadFile(item);
+        if (item && project.p) {
+            project.p?.loadFile(item, false).then((media) => {
+                if (media) {
+                    curDir.value?.addFile(media);
+                }
+            });
         }
     }
 });
@@ -319,40 +238,73 @@ fileDialog.onChange((fileList) => {
 const search = ref('');
 const sortBy = ref<sortOptions>('name');
 const sortDescending = ref(false);
-const layout = ref<string>('grid');
 const gridItemSize = ref(176); // 11rem
 
-const sortedAndFiltered = shallowRef<MediaItem[]>([]);
-
-// Reset sorting when changing to list
-// List has its own sorting
-watchEffect(() => {
-    if (layout.value == 'list') {
-        sortBy.value = 'name';
-        sortDescending.value = false;
-    }
+const breadCrumbPath = ref<ComponentInstance<typeof Breadcrumb>>();
+const directoryPath = shallowReactive<FileTreeItem[]>([]);
+const curDir = computed(() => directoryPath[0] ?? project.p?.fileTree);
+const breadcrumbItems = computed(() => {
+    return directoryPath.toReversed().map<MenuItem>((item, i) => ({
+        label: item.name.value,
+        key: item.id,
+        command: () => {
+            const newPath = directoryPath.slice(directoryPath.length - (i + 1));
+            // Clear path array
+            while (directoryPath.shift());
+            directoryPath.push(...newPath);
+        }
+    }));
 });
 
-watchDebounced(
-    [CurrentProject.project.value?.media, search, sortBy, sortDescending],
-    sortAndFilter,
+const i18n = useI18n();
+
+const createMenuItems = reactive<MenuItem[]>([
     {
-        deep: true,
-        debounce: 100,
-        maxWait: 1000,
-        immediate: true
+        label: () => i18n.t('media.create.file'),
+        command: () => {
+            fileDialog.open();
+        }
+    },
+    {
+        label: () => i18n.t('media.create.timeline'),
+        command: async () => {
+            if (!project.p) return;
+            const timeline = await project.p.createTimeline(
+                {
+                    framerate: 60,
+                    height: 1080,
+                    width: 1920,
+                    name: i18n.t('panels.timeline.title') + ' ' + project.p.media.size
+                },
+                false,
+                false
+            );
+            if (timeline) {
+                curDir.value?.addFile(timeline);
+            }
+        }
+    },
+    {
+        label: () => i18n.t('media.create.directory'),
+        command: () => {
+            curDir.value?.addDirectory(i18n.t('general.descriptions.directory'));
+        }
     }
-);
+]);
+
+const sortedAndFiltered = shallowRef<FileTreeItem[]>([]);
+
+watchEffect(sortAndFilter);
 
 function sortAndFilter() {
-    if (!CurrentProject.project.value) return;
+    if (!project.p) return;
 
-    const filtered = CurrentProject.project.value.media.filter((elem) => {
+    const filtered = Array.from(curDir.value?.children).filter((elem) => {
         if (search.value.length == 0) {
             return true;
         }
 
-        return fuzzysearch(search.value.toLowerCase(), elem.name.toLowerCase());
+        return fuzzysearch(search.value.toLowerCase(), elem.name.value.toLowerCase());
     });
 
     const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
@@ -361,14 +313,17 @@ function sortAndFilter() {
         const item1 = sortDescending.value ? b : a;
         const item2 = sortDescending.value ? a : b;
 
-        const ext1 = item1.name.split('.').at(-1) ?? 'ZZZ';
-        const ext2 = item2.name.split('.').at(-1) ?? 'ZZZ';
-
         switch (sortBy.value) {
-            case 'fileType':
-                return collator.compare(ext1, ext2);
+            case 'fileType': {
+                const ext1 =
+                    item1.media.value?.getMetadata('media.sourceType') ?? MediaSourceType.Unknown;
+                const ext2 =
+                    item2.media.value?.getMetadata('media.sourceType') ?? MediaSourceType.Unknown;
+
+                return ext1 - ext2;
+            }
             default:
-                return collator.compare(item1.name, item2.name);
+                return collator.compare(item1.name.value, item2.name.value);
         }
     });
 
@@ -383,3 +338,22 @@ function fileDialogOpenDblClick(event: MouseEvent) {
 
 type sortOptions = 'name' | 'duration' | 'fileType';
 </script>
+
+<style lang="scss" scoped>
+#data-view {
+    --p-dataview-footer-padding: 0.25rem;
+}
+
+#directory-path {
+    --p-breadcrumb-padding: 0.25rem;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+}
+#breadcrumb-root {
+    transition: color var(--p-transition-duration);
+
+    &:hover {
+        color: var(--p-text-color);
+    }
+}
+</style>

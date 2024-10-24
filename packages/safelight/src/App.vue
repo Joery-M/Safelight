@@ -9,15 +9,16 @@ import { SettingsManager } from '@safelight/shared/Settings/SettingsManager';
 import { useTitle } from '@vueuse/core';
 import DynamicDialog from 'primevue/dynamicdialog';
 import { defineAsyncComponent, markRaw, watchEffect } from 'vue';
-import { RouterView } from 'vue-router';
+import { RouterView, useRoute } from 'vue-router';
 import NotificationManager from './components/General/Notifications/NotificationManager.vue';
-import { router } from './main';
 
 const pageTitle = useTitle();
+const newRoute = useRoute();
 watchEffect(() => {
-    const newRoute = router.currentRoute.value;
     if (newRoute.name) {
-        const newName = newRoute.name.toString().replace(/^\//, '').split('/').at(-1);
+        const newName = newRoute.meta.overridePageName
+            ? undefined
+            : newRoute.name.toString().replace(/^\//, '').split('/').at(-1);
         if (newName) {
             pageTitle.value = newName + ' | Safelight';
         } else {
