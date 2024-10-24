@@ -28,6 +28,7 @@ export class Timeline extends MediaItem<TimelineItemMetadata> {
 
     constructor(config: TimelineConfig) {
         super();
+        this.addMetadata('media.sourceType', MediaSourceType.Timeline);
 
         this.name.value = config.name;
         this.width.value = config.width;
