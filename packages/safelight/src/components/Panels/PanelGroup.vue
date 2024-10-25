@@ -7,7 +7,7 @@
                         v-bind="iProps.action"
                         class="align-items-center flex min-w-36 gap-1 p-2 pr-1"
                     >
-                        <component :is="item.icon" class="mr-2" />
+                        <i v-if="item.icon" :class="item.icon" class="mr-2" />
                         <span class="flex-1 font-bold">{{ item.name }}</span>
                         <Button
                             rounded
@@ -64,11 +64,7 @@
             }"
         >
             <template #itemicon="{ item }">
-                <i
-                    v-if="item.icon"
-                    :class="{ [item.icon]: true, ph: true, 'mr-2': true }"
-                    class="mr-2"
-                />
+                <i v-if="item.icon" :class="item.icon" class="mr-2" />
             </template>
         </Menu>
     </Popover>

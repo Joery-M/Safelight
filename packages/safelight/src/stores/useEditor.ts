@@ -1,5 +1,4 @@
 import type { PanelViewConfig } from '@/components/Panels/injection';
-import { PhFilmStrip, PhFolders, PhFrameCorners } from '@phosphor-icons/vue';
 import PanelManager from '@safelight/shared/UI/Panels/PanelManager';
 import { defineStore } from 'pinia';
 import { reactive } from 'vue';
@@ -45,19 +44,19 @@ export const useEditor = defineStore('Editor', () => {
     function AddDefaultPanels() {
         PanelManager.RegisterPanel('SL-Timeline', {
             component: () => import('../components/Editor/Timeline/Timeline.vue'),
-            icon: PhFilmStrip,
+            icon: 'ph ph-film-strip',
             name: 'Timeline'
         });
 
         PanelManager.RegisterPanel('SL-Library', {
             component: () => import('../components/Editor/Library/Library.vue'),
-            icon: PhFolders,
+            icon: 'ph ph-folders',
             name: 'Library'
         });
 
         PanelManager.RegisterPanel('SL-Monitor', {
             component: () => import('../components/Editor/Monitor/Monitor.vue'),
-            icon: PhFrameCorners,
+            icon: 'ph ph-frame-corners',
             name: 'Monitor'
         });
     }
