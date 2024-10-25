@@ -2,11 +2,7 @@
     <Card>
         <template #subtitle>
             <RouterLink to="/dev/storage">
-                <Button>
-                    <template #icon>
-                        <PhArrowLeft />
-                    </template>
-                </Button>
+                <Button icon="ph ph-arrow-left" />
             </RouterLink>
         </template>
         <template #content>
@@ -19,11 +15,12 @@
                     :pt="{ bodyCellContent: { style: 'justify-content: center;' } }"
                 >
                     <template #body="{ node: { data } }">
-                        <Button v-if="data?.isMedia" rounded @click="deleteMedia(data.id)">
-                            <template #icon>
-                                <PhTrash />
-                            </template>
-                        </Button>
+                        <Button
+                            v-if="data?.isMedia"
+                            rounded
+                            class="ph ph-trash"
+                            @click="deleteMedia(data.id)"
+                        />
                     </template>
                 </Column>
                 <Column
@@ -32,11 +29,12 @@
                     :pt="{ bodyCellContent: { style: 'justify-content: center;' } }"
                 >
                     <template #body="{ node: { data } }">
-                        <Button v-if="data?.isMedia" rounded @click="selectedMedia = data.media">
-                            <template #icon>
-                                <PhListDashes />
-                            </template>
-                        </Button>
+                        <Button
+                            v-if="data?.isMedia"
+                            rounded
+                            icon="ph ph-list-dashes"
+                            @click="selectedMedia = data.media"
+                        />
                     </template>
                 </Column>
             </TreeTable>
@@ -57,7 +55,6 @@
 
 <script setup lang="ts">
 import JsonViewer from '@/components/Helpers/JsonViewer.vue';
-import { PhArrowLeft, PhListDashes, PhTrash } from '@phosphor-icons/vue';
 import type {
     ChunkOffset,
     MediaFileAudioTrack,

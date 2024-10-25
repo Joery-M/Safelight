@@ -1,21 +1,11 @@
 <template>
     <template v-if="projectLoaded">
-        <Toolbar
-            :pt="{
-                root: {
-                    class: 'p-0 rounded-none'
-                }
-            }"
-        >
+        <Toolbar id="toolbar">
             <template #start>
                 <Menubar
                     :pt="{ root: { class: 'border-none' }, submenu: { class: 'z-50' } }"
                     :model="menuItems"
-                >
-                    <template #itemicon="{ item: { icon } }">
-                        <component :is="icon" v-if="icon" />
-                    </template>
-                </Menubar>
+                />
             </template>
             <template #center>
                 <InplaceRename
@@ -42,7 +32,6 @@ import PanelContainer from '@/components/Panels/PanelContainer.vue';
 import { router } from '@/router';
 import { useEditor } from '@/stores/useEditor';
 import { useProject } from '@/stores/useProject';
-import { PhFile, PhGear, PhSignOut } from '@phosphor-icons/vue';
 import { useTitle } from '@vueuse/core';
 import ConfirmDialog from 'primevue/confirmdialog';
 import Menubar from 'primevue/menubar';
@@ -66,11 +55,11 @@ const dialog = useDialog();
 const menuItems: MenuItem[] = [
     {
         label: 'File',
-        icon: PhFile as any,
+        icon: 'ph ph-file',
         items: [
             {
                 label: 'Settings',
-                icon: PhGear as any,
+                icon: 'ph ph-gear',
                 disabled: false,
                 command: () => {
                     const settingsComponent = defineAsyncComponent(
@@ -96,7 +85,7 @@ const menuItems: MenuItem[] = [
             },
             {
                 label: 'Exit',
-                icon: PhSignOut as any,
+                icon: 'ph ph-sign-out',
                 disabled: false,
                 command: () => {
                     router.push('/projects');
@@ -162,3 +151,13 @@ onBeforeRouteLeave(() => {
     project.$reset();
 });
 </script>
+
+<style lang="scss" scoped>
+#toolbar {
+    @apply rounded-none p-0;
+
+    --p-menubar-item-icon-color: var(--p-menubar-item-color);
+    --p-menubar-item-icon-focus-color: var(--p-menubar-item-color);
+    --p-menubar-item-icon-active-color: var(--p-menubar-item-color);
+}
+</style>

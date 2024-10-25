@@ -2,11 +2,7 @@
     <Panel>
         <template #header>
             <RouterLink to="/dev/">
-                <Button>
-                    <template #icon>
-                        <PhArrowLeft />
-                    </template>
-                </Button>
+                <Button icon="ph ph-arrow-left" />
             </RouterLink>
         </template>
 
@@ -17,10 +13,10 @@
         <div class="flex items-center gap-3">
             <Button
                 :disabled="!(!fileDialog.files.value || fileDialog.files.value.length == 0)"
+                icon="ph ph-upload"
+                label="Upload"
                 @click="fileDialog.open()"
-            >
-                <PhUpload />Upload
-            </Button>
+            />
             <Button :disabled="progress !== 'Loaded'" @click="demux()"> Demux </Button>
             <Button :disabled="progress !== 'Loaded'" @click="demuxToStorage()">
                 Demux to storage
@@ -49,7 +45,6 @@
 </template>
 
 <script lang="ts" setup>
-import { PhArrowLeft, PhUpload } from '@phosphor-icons/vue';
 import { Storage } from '@safelight/shared/base/Storage';
 import { FileDemuxer } from '@safelight/shared/Demuxer/FileDemuxer';
 import { IndexedDbStorageController } from '@safelight/shared/Storage/LocalStorage/IndexedDbStorage';

@@ -20,7 +20,7 @@
     >
         ({{ $t('general.default') }}:
         {{ setting.labelKey ? getByPath(defaultValue, setting.labelKey) : defaultValue }})
-        <PhArrowUDownLeft size="15" />
+        <i class="ph ph-arrow-u-down-left" style="font-size: 15px" />
     </a>
     <Dropdown
         :model-value="enumValue"
@@ -33,7 +33,6 @@
 </template>
 
 <script lang="ts" setup>
-import { PhArrowUDownLeft } from '@phosphor-icons/vue';
 import {
     SettingsManager,
     type SettingsEnumProperty

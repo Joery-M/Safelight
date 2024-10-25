@@ -1,4 +1,20 @@
 @use '@fontsource-variable/inter';
+@use '@phosphor-icons/web/regular';
+@use '@phosphor-icons/web/thin';
+@use '@phosphor-icons/web/light';
+@use '@phosphor-icons/web/bold';
+@use '@phosphor-icons/web/fill';
+@use '@phosphor-icons/web/duotone';
+
+// Before tailwind so tailwind can override
+.ph-bold,
+.ph-duotone,
+.ph-fill,
+.ph-light,
+.ph-thin,
+.ph {
+    font-size: 18px;
+}
 
 @tailwind components;
 @tailwind utilities;

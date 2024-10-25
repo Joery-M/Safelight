@@ -1,11 +1,7 @@
 <!-- eslint-disable vue/no-v-model-argument -->
 <template>
-    <RouterLink to="/dev/">
-        <Button style="margin: 0.5rem" alt="To dev pages overview">
-            <template #icon>
-                <PhArrowLeft />
-            </template>
-        </Button>
+    <RouterLink to="/dev">
+        <Button icon="ph ph-arrow-left" />
     </RouterLink>
 
     <Card title="Timeline">
@@ -37,7 +33,6 @@
 </template>
 
 <script setup lang="ts">
-import { PhArrowLeft } from '@phosphor-icons/vue';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import Listbox from 'primevue/listbox';

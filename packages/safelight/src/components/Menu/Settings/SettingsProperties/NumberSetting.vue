@@ -8,7 +8,7 @@
     />
     <a
         v-if="defaultValue !== undefined"
-        :class="{ show: defaultValue !== numberValue.value }"
+        :class="{ show: defaultValue !== numberValue }"
         class="default"
         :aria-label="$t('general.actions.resetValue')"
         tabindex="0"
@@ -19,7 +19,7 @@
         "
     >
         ({{ $t('general.default') }}: {{ defaultValue }})
-        <PhArrowUDownLeft size="15" />
+        <i class="ph ph-arrow-u-down-left" style="font-size: 15px" />
     </a>
     <div class="number-slider-combo">
         <InputNumber
@@ -45,7 +45,6 @@
 </template>
 
 <script lang="ts" setup>
-import { PhArrowUDownLeft } from '@phosphor-icons/vue';
 import {
     SettingsManager,
     type SettingsNumberProperty

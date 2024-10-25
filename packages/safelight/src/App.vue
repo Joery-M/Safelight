@@ -38,28 +38,18 @@ SettingsManager.setup([
     {
         name: 'editor',
         title: 'Editor',
-        icon: markRaw(
-            defineAsyncComponent(async () => (await import('@phosphor-icons/vue')).PhSidebar)
-        ),
+        icon: 'ph ph-sidebar',
         childNamespaces: [
             {
                 name: 'playback',
                 title: 'Playback',
-                icon: markRaw(
-                    defineAsyncComponent(
-                        async () => (await import('@phosphor-icons/vue')).PhPlayPause
-                    )
-                ),
+                icon: 'ph ph-play-pause',
                 settings: []
             },
             {
                 name: 'timeline',
                 title: 'Timeline',
-                icon: markRaw(
-                    defineAsyncComponent(
-                        async () => (await import('@phosphor-icons/vue')).PhFilmStrip
-                    )
-                ),
+                icon: 'ph ph-film-strip',
                 settings: [
                     {
                         type: 'boolean',
@@ -96,11 +86,7 @@ SettingsManager.setup([
             {
                 name: 'library',
                 title: 'Library',
-                icon: markRaw(
-                    defineAsyncComponent(
-                        async () => (await import('@phosphor-icons/vue')).PhFolders
-                    )
-                ),
+                icon: 'ph ph-folders',
                 settings: [
                     {
                         type: 'group',
@@ -129,9 +115,7 @@ SettingsManager.setup([
     {
         name: 'keyboard',
         title: 'Keyboard',
-        icon: markRaw(
-            defineAsyncComponent(async () => (await import('@phosphor-icons/vue')).PhKeyboard)
-        ),
+        icon: 'ph ph-keyboard',
         childNamespaces: [
             {
                 name: 'hotkeys',
