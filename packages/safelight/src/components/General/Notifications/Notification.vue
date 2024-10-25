@@ -8,21 +8,22 @@
     >
         <template #header>
             <template v-if="notif.config.severity && notif.config.severity !== 'none'">
-                <PhInfo v-if="notif.config.severity == 'info'" style="color: var(--blue-500)" />
-                <PhWarningCircle
+                <i
+                    v-if="notif.config.severity == 'info'"
+                    class="ph ph-info"
+                    style="color: var(--blue-500)"
+                />
+                <i
                     v-if="notif.config.severity == 'error'"
+                    class="ph ph-warning-circle"
                     style="color: var(--red-500)"
                 />
-                <PhWarning v-if="notif.config.severity == 'warning'" />
+                <i v-if="notif.config.severity == 'warning'" class="ph ph-warning" />
             </template>
             <h3>{{ $t(notif.config.title ?? '', 'notification.defaultTitle') }}</h3>
-            <Button text severity="secondary" rounded @click="closeNotif">
-                <template #icon>
-                    <PhX />
-                </template>
-            </Button>
+            <Button text severity="secondary" rounded icon="ph ph-x" @click="closeNotif" />
         </template>
-        <p class="mb-0" :id="'content-' + notif.id">{{ $t(notif.config.text ?? '') }}</p>
+        <p :id="'content-' + notif.id" class="mb-0">{{ $t(notif.config.text ?? '') }}</p>
         <div v-if="buttons.length > 0" class="align-items-center mt-4 flex gap-2">
             <template v-for="(btn, i) in buttons" :key="i">
                 <Button
@@ -43,7 +44,6 @@
 </template>
 
 <script setup lang="ts">
-import { PhInfo, PhWarning, PhWarningCircle, PhX } from '@phosphor-icons/vue';
 import {
     NotificationService,
     type Notification

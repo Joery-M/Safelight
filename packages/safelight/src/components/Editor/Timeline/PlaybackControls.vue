@@ -6,39 +6,28 @@
                 severity="secondary"
                 :aria-label="$t('general.actions.skipBackFrame', 1)"
                 :title="$t('general.actions.skipBackFrame', 1)"
+                icon="ph ph-skip-back"
                 @click="if (!timeline.isPlaying.value) timeline.stepPlayback(true);"
-            >
-                <template #icon>
-                    <PhSkipBack />
-                </template>
-            </Button>
+            />
             <Button
                 severity="secondary"
                 :aria-label="timeline.isPlaying.value ? 'Stop playback' : 'Start playback'"
+                :icon="timeline.isPlaying.value ? 'ph ph-pause' : 'ph ph-play'"
                 @click="playPause"
-            >
-                <template #icon>
-                    <PhPause v-if="timeline.isPlaying.value" />
-                    <PhPlay v-else />
-                </template>
-            </Button>
+            />
             <Button
                 severity="secondary"
                 :aria-label="$t('general.actions.skipForwardFrame', 1)"
                 :title="$t('general.actions.skipForwardFrame', 1)"
+                icon="ph ph-skip-forward"
                 @click="if (!timeline.isPlaying.value) timeline.stepPlayback();"
-            >
-                <template #icon>
-                    <PhSkipForward />
-                </template>
-            </Button>
+            />
         </ButtonGroup>
     </template>
 </template>
 
 <script lang="ts" setup>
 import { useProject } from '@/stores/useProject';
-import { PhPause, PhPlay, PhSkipBack, PhSkipForward } from '@phosphor-icons/vue';
 import Button from 'primevue/button';
 import ButtonGroup from 'primevue/buttongroup';
 import { computed } from 'vue';

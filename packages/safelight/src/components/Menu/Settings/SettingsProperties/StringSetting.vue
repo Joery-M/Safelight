@@ -19,7 +19,7 @@
         "
     >
         ({{ $t('general.default') }}: {{ defaultValue }})
-        <PhArrowUDownLeft size="15" />
+        <i class="ph ph-arrow-u-down-left" style="font-size: 15px" />
     </a>
     <InputText
         v-if="!setting.multiline"
@@ -53,7 +53,6 @@
 </template>
 
 <script lang="ts" setup>
-import { PhArrowUDownLeft } from '@phosphor-icons/vue';
 import {
     SettingsManager,
     type SettingsStringProperty
@@ -106,7 +105,7 @@ function changeValue(value?: string) {
 }
 
 watchImmediate(storedStringValue, (val) => {
-    stringValue.value = val.value;
+    stringValue.value = val;
 });
 </script>
 

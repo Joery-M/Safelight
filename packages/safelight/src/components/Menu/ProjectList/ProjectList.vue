@@ -11,11 +11,12 @@
         <template #header>
             <div class="align-items-center justify-content-between flex flex-wrap gap-2">
                 <h2 class="m-0 flex-1">{{ $t('general.descriptions.project', 2) }}</h2>
-                <Button rounded :title="$t('general.descriptions.refresh')" @click="loadList()">
-                    <template #icon>
-                        <PhArrowsClockwise />
-                    </template>
-                </Button>
+                <Button
+                    rounded
+                    :title="$t('general.descriptions.refresh')"
+                    icon="ph ph-arrows-clockwise"
+                    @click="loadList()"
+                />
                 <SplitButton
                     :label="$t('project.new')"
                     rounded
@@ -84,12 +85,9 @@
                     text
                     rounded
                     plain
+                    icon="ph ph-caret-right"
                     @click="$router.push(`/editor/${data.id}`)"
-                >
-                    <template #icon>
-                        <PhCaretRight />
-                    </template>
-                </Button>
+                />
             </template>
         </Column>
         <Column style="width: 0">
@@ -99,12 +97,9 @@
                     text
                     rounded
                     plain
+                    icon="ph ph-trash"
                     @click="$router.push(`/editor/${data.id}`)"
-                >
-                    <template #icon>
-                        <PhTrash />
-                    </template>
-                </Button>
+                />
             </template>
         </Column>
     </DataTable>
@@ -112,7 +107,6 @@
 
 <script setup lang="ts">
 import { useProject } from '@/stores/useProject';
-import { PhArrowsClockwise, PhCaretRight, PhTrash } from '@phosphor-icons/vue';
 import { Storage, type StoredProject } from '@safelight/shared/base/Storage';
 import Button from 'primevue/button';
 import Column from 'primevue/column';

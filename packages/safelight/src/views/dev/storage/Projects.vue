@@ -2,11 +2,7 @@
     <Card>
         <template #subtitle>
             <RouterLink to="/dev/storage">
-                <Button>
-                    <template #icon>
-                        <PhArrowLeft />
-                    </template>
-                </Button>
+                <Button icon="ph ph-arrow-left" />
             </RouterLink>
         </template>
         <template #content></template>
@@ -14,7 +10,6 @@
 </template>
 
 <script lang="ts" setup>
-import { PhArrowLeft } from '@phosphor-icons/vue';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import { RouterLink } from 'vue-router';

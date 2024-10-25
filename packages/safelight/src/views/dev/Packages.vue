@@ -2,11 +2,7 @@
     <Card>
         <template #subtitle>
             <RouterLink to="/dev">
-                <Button>
-                    <template #icon>
-                        <PhArrowLeft />
-                    </template>
-                </Button>
+                <Button icon="ph ph-arrow-left" />
             </RouterLink>
         </template>
         <template #content>
@@ -15,7 +11,7 @@
                 @update:value="
                     (e) => {
                         // Give some time to the animation of the tabview and to show the skeleton
-                        showDisclaimer = e == 'disclaimer';
+                        showDisclaimer = e.toString() == 'disclaimer';
                     }
                 "
             >
@@ -68,17 +64,17 @@
                                                 text-decoration-line: none;
                                             "
                                         >
-                                            <PhDevToLogo
+                                            <i
                                                 v-if="item.isDev"
-                                                v-tooltip="{
+                                                v-tooltip.top="{
                                                     value: 'Development package',
                                                     pt: { root: { style: 'margin-left: 9px;' } }
                                                 }"
                                                 style="width: 20px"
-                                                class="align-text-top"
+                                                class="ph ph-dev-to-logo align-text-top"
                                             />
                                             {{ item.from }}
-                                            <PhArrowSquareOut class="align-text-top" />
+                                            <i class="ph ph-arrow-square-out align-text-top" />
                                         </a>
                                         <span
                                             v-if="item.author || item.license"
@@ -112,27 +108,21 @@
                                                 <Button
                                                     v-if="item.homepage"
                                                     role="link"
+                                                    icon="ph ph-house"
                                                     @click="openUrl(item.homepage)"
-                                                >
-                                                    <template #icon>
-                                                        <PhHouse />
-                                                    </template>
-                                                </Button>
+                                                />
                                                 <Button
                                                     v-if="item.repository"
                                                     outlined
                                                     :title="'Open code repository for ' + item.from"
                                                     role="link"
+                                                    icon="ph ph-git-branch"
                                                     @click="
                                                         openUrl(
                                                             item.repository!.replace('git+', '')
                                                         )
                                                     "
-                                                >
-                                                    <template #icon>
-                                                        <PhGitBranch />
-                                                    </template>
-                                                </Button>
+                                                />
                                             </div>
                                         </div>
                                     </div>
@@ -177,13 +167,6 @@
 </template>
 
 <script setup lang="ts">
-import {
-    PhArrowLeft,
-    PhArrowSquareOut,
-    PhDevToLogo,
-    PhGitBranch,
-    PhHouse
-} from '@phosphor-icons/vue';
 import { useDebounce, useFetch } from '@vueuse/core';
 import Button from 'primevue/button';
 import Card from 'primevue/card';

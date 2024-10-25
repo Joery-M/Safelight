@@ -11,14 +11,16 @@
             >
                 <template #nodeicon="{ node }">
                     <template v-if="node.data?.icon">
-                        <component :is="node.data.icon" class="mr-2" />
+                        <i :class="node.data.icon" class="mr-2"></i>
                     </template>
                 </template>
             </Tree>
-            <Button severity="secondary" @click="SettingsManager.downloadSettings()">
-                <PhDownload />
-                {{ $t('settings.downloadJson') }}
-            </Button>
+            <Button
+                severity="secondary"
+                icon="ph ph-download"
+                :label="$t('settings.downloadJson')"
+                @click="SettingsManager.downloadSettings()"
+            />
         </div>
         <div
             class="mr-4 border-solid"
@@ -33,7 +35,6 @@
 </template>
 
 <script setup lang="ts">
-import { PhDownload } from '@phosphor-icons/vue';
 import { SettingsManager, SettingsNamespace } from '@safelight/shared/Settings/SettingsManager';
 import Button from 'primevue/button';
 import type { DynamicDialogInstance } from 'primevue/dynamicdialogoptions';

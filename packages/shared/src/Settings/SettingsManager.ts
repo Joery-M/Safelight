@@ -158,7 +158,7 @@ export class SettingsNamespace {
     public name: string;
     public childNamespaces!: SettingsNamespace[];
     public settings: SettingsPropertyDefinition[];
-    public icon?: Raw<Component>;
+    public icon?: string;
 
     constructor(
         public pathArray: string[],
@@ -196,7 +196,7 @@ export interface SettingsNamespaceDefinition {
     description?: string;
     settings?: SettingsPropertyDefinition[];
     childNamespaces?: SettingsNamespaceDefinition[];
-    icon?: Raw<Component>;
+    icon?: string;
 }
 
 export type SettingsPropertyDefinition =

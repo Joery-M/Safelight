@@ -9,7 +9,7 @@ export interface DraggingPanelInject {
 
 export interface Panel {
     name: string;
-    icon: Component;
+    icon: string;
     component: () => Promise<Component>;
 }
 

@@ -28,45 +28,45 @@
             </template>
             <Skeleton
                 v-else
-                class="max-h-full max-w-full rounded-none rounded-t-md"
+                class="z-0 max-h-full max-w-full rounded-none rounded-t-md"
                 height="100%"
                 width="100%"
             />
-            <div v-if="size >= 96 && item.media.value" class="media-type">
-                <PhVideoCamera
+            <div v-if="size >= 96 && item.media.value" class="media-type z-10">
+                <i
                     v-if="item.media.value.isOfType(MediaSourceType.Video)"
-                    v-tooltip="$t('media.attrs.video')"
-                    weight="bold"
+                    v-tooltip.top="$t('media.attrs.video')"
+                    class="ph-bold ph-video-camera"
                     :aria-label="$t('media.attrs.video')"
                 />
-                <PhSpeakerHigh
+                <i
                     v-if="item.media.value.isOfType(MediaSourceType.Audio)"
-                    v-tooltip="$t('media.attrs.audio')"
-                    weight="bold"
+                    v-tooltip.top="$t('media.attrs.audio')"
+                    class="ph-bold ph-speaker-high"
                     :aria-label="$t('media.attrs.audio')"
                 />
-                <PhSubtitles
+                <i
                     v-if="item.media.value.isOfType(MediaSourceType.Subtitles)"
-                    v-tooltip="$t('media.attrs.subtitles')"
-                    weight="bold"
+                    v-tooltip.top="$t('media.attrs.subtitles')"
+                    class="ph-bold ph-subtitles"
                     :aria-label="$t('media.attrs.subtitles')"
                 />
-                <PhImage
+                <i
                     v-if="item.media.value.isOfType(MediaSourceType.Image)"
-                    v-tooltip="$t('media.attrs.image')"
-                    weight="bold"
+                    v-tooltip.top="$t('media.attrs.image')"
+                    class="ph-bold ph-image"
                     :aria-label="$t('media.attrs.image')"
                 />
-                <PhFilmStrip
+                <i
                     v-if="item.media.value.isOfType(MediaSourceType.Timeline)"
-                    v-tooltip="$t('media.attrs.timeline')"
-                    weight="bold"
+                    v-tooltip.top="$t('media.attrs.timeline')"
+                    class="ph-bold ph-film-strip"
                     :aria-label="$t('media.attrs.timeline')"
                 />
-                <PhSparkle
+                <i
                     v-if="item.media.value.isOfType(MediaSourceType.Special)"
-                    v-tooltip="$t('media.attrs.special')"
-                    weight="bold"
+                    v-tooltip.top="$t('media.attrs.special')"
+                    class="ph-bold ph-sparkle"
                     :aria-label="$t('media.attrs.special')"
                 />
             </div>
@@ -125,12 +125,9 @@
                 severity="secondary"
                 aria-haspopup="true"
                 aria-controls="library_item_menu"
+                icon="ph ph-dots-three-vertical"
                 @click="overlay?.toggle"
-            >
-                <template #icon>
-                    <PhDotsThreeVertical size="20" />
-                </template>
-            </Button>
+            />
         </div>
     </div>
     <Popover
@@ -155,12 +152,9 @@
                     v-tooltip.top="{ value: 'Delete', showDelay: 500 }"
                     severity="secondary"
                     text
+                    icon="ph ph-trash"
                     @click="item.deleteSelf()"
-                >
-                    <template #icon>
-                        <PhTrash />
-                    </template>
-                </Button>
+                />
             </template>
         </Toolbar>
         <Menu
@@ -176,17 +170,7 @@
 <script setup lang="ts">
 import InplaceRename from '@/components/InplaceRename.vue';
 import { useProject } from '@/stores/useProject';
-import {
-    PhDotsThreeVertical,
-    PhFilmStrip,
-    PhFolder,
-    PhImage,
-    PhSparkle,
-    PhSpeakerHigh,
-    PhSubtitles,
-    PhTrash,
-    PhVideoCamera
-} from '@phosphor-icons/vue';
+import { PhFolder } from '@phosphor-icons/vue';
 import { MediaSourceType } from '@safelight/shared/Media/Media';
 import type { FileTreeItem } from '@safelight/shared/Project/ProjectFileTree';
 import Button from 'primevue/button';

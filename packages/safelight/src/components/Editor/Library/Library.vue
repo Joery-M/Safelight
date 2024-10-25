@@ -25,7 +25,7 @@
                 <template #start>
                     <InputGroup class="mr-2">
                         <InputGroupAddon class="p-0">
-                            <PhMagnifyingGlass />
+                            <i class="ph ph-magnifying-glass"></i>
                         </InputGroupAddon>
                         <InputText v-model="search" :placeholder="$t('general.actions.search')">
                         </InputText>
@@ -46,13 +46,11 @@
                                     ? $t('general.actions.sortAscending')
                                     : $t('general.actions.sortDescending')
                             "
+                            :icon="
+                                sortDescending ? 'ph ph-sort-descending' : 'ph ph-sort-ascending'
+                            "
                             @click="sortDescending = !sortDescending"
-                        >
-                            <template #icon>
-                                <PhSortAscending v-if="!sortDescending" />
-                                <PhSortDescending v-else />
-                            </template>
-                        </Button>
+                        />
                         <Select
                             v-model="sortBy"
                             style="line-height: 1.2"
@@ -74,6 +72,7 @@
                 :model="breadcrumbItems"
                 :home="{
                     key: 'home',
+                    icon: 'ph-bold ph-house',
                     command: () => {
                         while (directoryPath.shift());
                     }
@@ -85,13 +84,7 @@
                         style: 'cursor: pointer'
                     }
                 }"
-            >
-                <template #itemicon="{ item: { key } }">
-                    <span v-if="key === 'home'" class="flex items-center" style="height: 22.4px">
-                        <PhHouse id="breadcrumb-root" weight="bold" />
-                    </span>
-                </template>
-            </Breadcrumb>
+            />
         </template>
         <template #grid="{ items }: { items: FileTreeItem[] }">
             <div
@@ -148,12 +141,9 @@
                         outlined
                         severity="secondary"
                         :model="createMenuItems"
+                        icon="ph ph-plus"
                         @click="fileDialog.open()"
-                    >
-                        <template #icon>
-                            <PhPlus />
-                        </template>
-                    </SplitButton>
+                    />
                 </template>
             </Toolbar>
         </template>
@@ -162,13 +152,6 @@
 
 <script setup lang="ts">
 import { useProject } from '@/stores/useProject';
-import {
-    PhHouse,
-    PhMagnifyingGlass,
-    PhPlus,
-    PhSortAscending,
-    PhSortDescending
-} from '@phosphor-icons/vue';
 import { MediaSourceType } from '@safelight/shared/Media/Media';
 import type { FileTreeItem } from '@safelight/shared/Project/ProjectFileTree';
 import { useDropZone, useFileDialog } from '@vueuse/core';
@@ -349,7 +332,11 @@ type sortOptions = 'name' | 'duration' | 'fileType';
     scrollbar-width: none;
     scroll-behavior: smooth;
 }
-#breadcrumb-root {
+
+.p-breadcrumb ::v-deep(.ph-bold.ph-house) {
+    @apply flex items-center;
+
+    height: 22.4px;
     transition: color var(--p-transition-duration);
 
     &:hover {

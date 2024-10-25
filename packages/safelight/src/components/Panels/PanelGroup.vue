@@ -15,10 +15,10 @@
                             severity="secondary"
                             :aria-label="'Close panel ' + item.name"
                             style="width: 20px; height: 20px; padding: 0"
-                            @click="removePanel(item as unknown as Panel)"
+                            @click.stop="removePanel(item as unknown as Panel)"
                         >
                             <template #icon>
-                                <PhX size="14" />
+                                <i class="ph ph-x text-sm" />
                             </template>
                         </Button>
                     </a>
@@ -35,12 +35,9 @@
                     aria-haspopup="true"
                     aria-controls="panel_add_menu"
                     :aria-label="$t('panels.addMenu')"
+                    icon="ph ph-plus"
                     @click="addOverlay?.toggle"
-                >
-                    <template #icon>
-                        <PhPlus />
-                    </template>
-                </Button>
+                />
             </div>
         </div>
         <div class="relative min-h-0 flex-1">
@@ -67,14 +64,17 @@
             }"
         >
             <template #itemicon="{ item }">
-                <component :is="item.icon" class="mr-2" />
+                <i
+                    v-if="item.icon"
+                    :class="{ [item.icon]: true, ph: true, 'mr-2': true }"
+                    class="mr-2"
+                />
             </template>
         </Menu>
     </Popover>
 </template>
 
 <script setup lang="ts">
-import { PhPlus, PhX } from '@phosphor-icons/vue';
 import PanelManager from '@safelight/shared/UI/Panels/PanelManager';
 import { watchImmediate } from '@vueuse/core';
 import Button from 'primevue/button';
@@ -143,7 +143,7 @@ watchImmediate(activeTab, (tab) => {
 const allAvailablePanels = computed<MenuItem[]>(() =>
     Array.from(PanelManager.allPanels.values()).map<MenuItem>((panel) => ({
         command: () => addPanel(panel),
-        icon: panel.icon as any,
+        icon: panel.icon,
         label: panel.name
     }))
 );

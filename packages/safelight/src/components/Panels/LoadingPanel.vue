@@ -1,9 +1,9 @@
 <template>
     <div class="grid size-full place-content-center">
-        <PhCircleNotch class="animate-spin" :aria-label="$t('general.loading')" size="48" />
+        <i
+            class="ph ph-circle-notch animate-spin"
+            :aria-label="$t('general.loading')"
+            style="font-size: 48px"
+        />
     </div>
 </template>
-
-<script setup lang="ts">
-import { PhCircleNotch } from '@phosphor-icons/vue';
-</script>

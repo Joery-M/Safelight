@@ -2,11 +2,7 @@
     <Card>
         <template #subtitle>
             <RouterLink to="/dev">
-                <Button>
-                    <template #icon>
-                        <PhArrowLeft />
-                    </template>
-                </Button>
+                <Button icon="ph ph-arrow-left" />
             </RouterLink>
         </template>
         <template #content>
@@ -103,7 +99,6 @@
 </template>
 
 <script lang="ts" setup>
-import { PhArrowLeft } from '@phosphor-icons/vue';
 import { createTimelineManager, type CreateTimelineFn } from '@safelight/timeline';
 import {
     TimelineCursorElement,

@@ -2,11 +2,7 @@
     <Card>
         <template #subtitle>
             <RouterLink to="/">
-                <Button>
-                    <template #icon>
-                        <PhHouse />
-                    </template>
-                </Button>
+                <Button icon="ph ph-house" />
             </RouterLink>
         </template>
         <template #content>
@@ -38,7 +34,6 @@
 </template>
 
 <script setup lang="ts">
-import { PhHouse } from '@phosphor-icons/vue';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import { RouterLink } from 'vue-router';
