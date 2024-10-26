@@ -1,5 +1,6 @@
 import { type Path, type PathValue, getByPath, setByPath } from 'dot-path-value';
 import type { Ref } from 'vue';
+import { Storage } from '../base/Storage';
 import type { Timeline } from '../Timeline/Timeline';
 import type { ChunkedMediaFileItem } from './ChunkedMediaFile';
 import type { MediaFileItem } from './MediaFile';
@@ -21,12 +22,19 @@ export abstract class MediaItem<Metadata extends Record<string, any> = MediaItem
         return getByPath(this.metadata, part);
     }
     public addMetadata<K extends Path<Metadata>>(part: K, data: PathValue<Metadata, K>) {
-        this.metadata = setByPath(this.metadata as any, part, data as any);
+        this.metadata = setByPath(this.metadata, part, data);
     }
 
     // This function could be expanded in the future
     public async serializeMetadata(): Promise<{ [key: string | number]: any }> {
         return this.metadata ?? {};
+    }
+
+    public async save(): Promise<boolean> {
+        if (!Storage.hasStorage()) return false;
+        const storage = Storage.getStorage();
+        const res = await storage.saveMedia(this);
+        return res == 'Success';
     }
 
     public isMediaFile(): this is MediaFileItem {

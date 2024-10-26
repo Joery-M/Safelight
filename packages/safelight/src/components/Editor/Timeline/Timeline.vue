@@ -108,7 +108,7 @@ onMounted(() => {
                 );
 
                 const projectItems = computed(() =>
-                    projectTimeline ? Array.from(projectTimeline.items) : []
+                    projectTimeline?.items ? Array.from(projectTimeline.items.values()) : []
                 );
                 const projectItemsToTimelineItems = shallowReactive(
                     new WeakMap<TimelineItem, VideoTimelineElement>()

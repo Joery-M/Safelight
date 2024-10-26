@@ -14,7 +14,7 @@ export class Timeline extends MediaItem<TimelineItemMetadata> {
     public name = ref('');
     public type: MediaItemTypes = 'Timeline';
 
-    public items = shallowReactive(new Set<TimelineItem>());
+    public items = shallowReactive(new Map<string, TimelineItem>());
 
     public width = ref(1920);
     public height = ref(1080);
@@ -26,7 +26,7 @@ export class Timeline extends MediaItem<TimelineItemMetadata> {
         return 1000 / this.framerate.value;
     });
 
-    constructor(config: TimelineConfig) {
+    constructor(config: TimelineConfig, initItems: TimelineItem[] = []) {
         super();
         this.addMetadata('media.sourceType', MediaSourceType.Timeline);
 
@@ -43,9 +43,15 @@ export class Timeline extends MediaItem<TimelineItemMetadata> {
                 width: this.width.value,
                 name: this.name.value
             });
+            this.save();
         });
 
         this.pbPosHistory.commit();
+
+        for (const item of initItems) {
+            this.items.set(item.id, item);
+        }
+        this.save();
     }
 
     /**
@@ -64,9 +70,10 @@ export class Timeline extends MediaItem<TimelineItemMetadata> {
         });
     }
 
-    public deleteItem(item: TimelineItem) {
+    public async deleteItem(item: TimelineItem) {
         item.Delete();
-        return this.items.delete(item);
+        this.items.delete(item.id);
+        await this.save();
     }
 
     //#region Playback
@@ -134,10 +141,6 @@ export class Timeline extends MediaItem<TimelineItemMetadata> {
     }
 
     //#endregion
-
-    public isOfType(type: MediaSourceType): boolean {
-        return (type & MediaSourceType.Timeline) !== 0;
-    }
 }
 
 export interface TimelineConfig {

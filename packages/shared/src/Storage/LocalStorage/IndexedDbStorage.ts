@@ -112,7 +112,7 @@ export class IndexedDbStorageController extends BaseStorageController {
         });
     }
 
-    async saveMedia(media: MediaItem | StoredMedia): Promise<SaveResults> {
+    async saveMedia(media: MediaItem): Promise<SaveResults> {
         this.checkPersistentStorage();
 
         const storedMedia: StoredMedia =

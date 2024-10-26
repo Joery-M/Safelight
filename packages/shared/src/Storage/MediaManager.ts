@@ -98,7 +98,7 @@ export default class MediaManager {
                 media.addMetadata('media.sourceType', sourceType);
                 media.addMetadata('media.created', DateTime.now().toISO());
 
-                await storage.saveMedia(media);
+                await media.save();
                 resolve(media);
                 return;
             }
