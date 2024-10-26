@@ -2,7 +2,6 @@ import { fileURLToPath, URL } from 'node:url';
 
 import vue from '@vitejs/plugin-vue';
 import path from 'node:path';
-import { visualizer } from 'rollup-plugin-visualizer';
 import VueRouter from 'unplugin-vue-router/vite';
 import { defineConfig } from 'vite';
 import mkcert from 'vite-plugin-mkcert';
@@ -21,7 +20,6 @@ export default defineConfig({
         }),
         vue(),
         mkcert(),
-        visualizer(),
         generateI18n({
             localesDir: path.join(import.meta.dirname, '../shared/src/Localization/i18n/'),
             outputFile: path.join(import.meta.dirname, './types/i18n.d.ts')
