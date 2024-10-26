@@ -17,8 +17,13 @@ export class SettingsManager {
     public static setup(defaultNamespaces: SettingsNamespaceDefinition[]) {
         this.defaultNamespaces = defaultNamespaces;
 
-        Object.assign(this.currentSettings, {});
-        Object.assign(this.defaultSettings, {});
+        for (const key of Object.keys(this.currentSettings)) {
+            delete this.currentSettings[key];
+        }
+        for (const key of Object.keys(this.defaultSettings)) {
+            delete this.defaultSettings[key];
+        }
+
         this.settingsDefinition.clear();
         this.defaultsCreated = false;
         clearTimeout(this.saveTimeout);
