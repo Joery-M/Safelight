@@ -4,7 +4,7 @@ import type { MediaItem, MediaItemTypes } from '../Media/Media';
 import type { MediaFileItem } from '../Media/MediaFile';
 import type { Project } from '../Project/Project';
 import type { Timeline } from '../Timeline/Timeline';
-import type { TimelineItemType } from './TimelineItem';
+import type { TimelineItem } from '../Timeline/TimelineItem';
 
 export default abstract class BaseStorageController {
     public version: string = '0.0.0';

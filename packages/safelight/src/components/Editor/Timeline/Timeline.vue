@@ -4,8 +4,8 @@
 
 <script setup lang="ts">
 import { useProject } from '@/stores/useProject';
-import type { TimelineItem } from '@safelight/shared/base/TimelineItem';
 import { SettingsManager } from '@safelight/shared/Settings/SettingsManager';
+import type { TimelineItem } from '@safelight/shared/Timeline/TimelineItem';
 import { createTimelineManager, type CreateTimelineFn } from '@safelight/timeline';
 import { TimelineCursorElement } from '@safelight/timeline/elements/TimelineCursorElement';
 import { TimelineGrid } from '@safelight/timeline/elements/TimelineGrid';

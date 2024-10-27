@@ -19,6 +19,7 @@ import { MediaItem } from '../../Media/Media';
 import { MediaFileItem, type MediaFileItemMetadata } from '../../Media/MediaFile';
 import { Project } from '../../Project/Project';
 import { Timeline, type TimelineItemMetadata } from '../../Timeline/Timeline';
+import { TimelineItem } from '../../Timeline/TimelineItem';
 import { NotificationService } from '../../UI/Notifications/NotificationService';
 import { SafelightIndexedDB } from './db';
 

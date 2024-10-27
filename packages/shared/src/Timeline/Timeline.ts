@@ -7,7 +7,7 @@ import {
     type MediaItemMetadata,
     type MediaItemTypes
 } from '../Media/Media';
-import type { TimelineItem } from '../base/TimelineItem';
+import type { TimelineItem } from './TimelineItem';
 
 export class Timeline extends MediaItem<TimelineItemMetadata> {
     public id = uuidv4();
@@ -71,7 +71,7 @@ export class Timeline extends MediaItem<TimelineItemMetadata> {
     }
 
     public async deleteItem(item: TimelineItem) {
-        item.Delete();
+        item.delete();
         this.items.delete(item.id);
         await this.save();
     }
@@ -152,4 +152,5 @@ export interface TimelineConfig {
 
 export interface TimelineItemMetadata extends MediaItemMetadata {
     timelineConfig: TimelineConfig;
+    items: string[];
 }
