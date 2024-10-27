@@ -1,11 +1,11 @@
 import Dexie, { type Table } from 'dexie';
 import { IDBKeyRange, indexedDB } from 'fake-indexeddb';
-import type { StoredMedia, StoredProject, StoredSimpleTimelineItem } from '../../base/Storage';
+import type { StoredMedia, StoredProject, StoredTimelineItem } from '../../base/Storage';
 
 export class SafelightIndexedDB extends Dexie {
     media!: Table<StoredMedia, string>;
     project!: Table<StoredProject, string>;
-    timelineItem!: Table<StoredSimpleTimelineItem, string>;
+    timelineItem!: Table<StoredTimelineItem, string>;
 
     constructor() {
         if (__TEST__) {

@@ -75,10 +75,10 @@ onMounted(() => {
                     }
                 });
 
-                syncRef(pbCursor.cursorPos, projectTimeline.pbPos, {
+                syncRef(projectTimeline.pbPos, pbCursor.cursorPos, {
                     transform: {
-                        ltr: (val) => Math.round(val / projectTimeline.frameDuration.value),
-                        rtl: (val) => val * projectTimeline.frameDuration.value
+                        ltr: (val) => val * projectTimeline.frameDuration.value,
+                        rtl: (val) => Math.round(val / projectTimeline.frameDuration.value)
                     }
                 });
 

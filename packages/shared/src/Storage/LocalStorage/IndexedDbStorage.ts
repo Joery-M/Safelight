@@ -7,7 +7,8 @@ import type {
     FilePathTypes,
     SaveResults,
     StoredMedia,
-    StoredProject
+    StoredProject,
+    StoredTimelineItem
 } from '../../base/Storage';
 import BaseStorageController from '../../base/Storage';
 import {
@@ -17,7 +18,7 @@ import {
 import { MediaItem } from '../../Media/Media';
 import { MediaFileItem, type MediaFileItemMetadata } from '../../Media/MediaFile';
 import { Project } from '../../Project/Project';
-import { Timeline, type TimelineConfig } from '../../Timeline/Timeline';
+import { Timeline, type TimelineItemMetadata } from '../../Timeline/Timeline';
 import { NotificationService } from '../../UI/Notifications/NotificationService';
 import { SafelightIndexedDB } from './db';
 
@@ -181,18 +182,22 @@ export class IndexedDbStorageController extends BaseStorageController {
                 .filter((m) => mediaList.includes(m.id))
                 .toArray();
 
-            return storedMedias
-                .map((storedMedia) => this.mapStoredMediaToMediaItem(storedMedia))
-                .filter((m) => !!m);
+            return (
+                await Promise.all(
+                    storedMedias.map((storedMedia) => this.mapStoredMediaToMediaItem(storedMedia))
+                )
+            ).filter((m) => !!m);
         } else {
             const storedMedias = await this.db.media.filter((m) => m.type !== 'Timeline').toArray();
-            return storedMedias
-                .map((storedMedia) => this.mapStoredMediaToMediaItem(storedMedia))
-                .filter((m) => !!m);
+            return (
+                await Promise.all(
+                    storedMedias.map((storedMedia) => this.mapStoredMediaToMediaItem(storedMedia))
+                )
+            ).filter((m) => !!m);
         }
     }
 
-    private mapStoredMediaToMediaItem(storedMedia?: StoredMedia) {
+    private async mapStoredMediaToMediaItem(storedMedia?: StoredMedia) {
         switch (storedMedia?.type) {
             case 'ChunkedMediaFile': {
                 const item = new ChunkedMediaFileItem(
@@ -211,18 +216,25 @@ export class IndexedDbStorageController extends BaseStorageController {
                 return item;
             }
             case 'Timeline': {
-                const config = storedMedia.metadata['timelineConfig'] as TimelineConfig;
-                if (!config) {
+                const metadata = storedMedia.metadata as TimelineItemMetadata;
+                if (!metadata) {
                     return;
                 }
 
-                const item = new Timeline(config);
-                for (const [path, value] of Object.entries(storedMedia.metadata)) {
-                    item.addMetadata(path as any, value);
-                }
-                item.id = storedMedia.id;
+                const timeline = new Timeline(metadata.timelineConfig);
 
-                return item;
+                const promises = metadata.items.map(async (itemId) => {
+                    const item = await this.loadTimelineItem(itemId, timeline);
+                    if (item) timeline.items.set(itemId, item);
+                });
+                await Promise.allSettled(promises);
+
+                for (const [path, value] of Object.entries(storedMedia.metadata)) {
+                    timeline.addMetadata(path as any, value);
+                }
+                timeline.id = storedMedia.id;
+
+                return timeline;
             }
 
             default:
@@ -270,6 +282,43 @@ export class IndexedDbStorageController extends BaseStorageController {
     async DeleteFile(filePath: string[]) {
         const file = opfsTools.file(filePath.join('/'));
         await file.remove();
+    }
+
+    async loadTimelineItem(itemId: string, timeline: Timeline): Promise<TimelineItem | undefined> {
+        const storedItem = await this.db.timelineItem.get({ id: itemId });
+        if (!storedItem) return;
+
+        const item = new TimelineItem(timeline);
+        item.id = storedItem.id;
+        item.end.value = storedItem.end;
+        item.layer.value = storedItem.layer;
+        item.name.value = storedItem.name;
+        item.start.value = storedItem.start;
+        // TODO: Map stored effects to effect objects
+        // item.effects.push(...)
+
+        return item;
+    }
+
+    async saveTimelineItem(item: TimelineItem): Promise<SaveResults> {
+        this.checkPersistentStorage();
+
+        const storedTimelineItem: StoredTimelineItem = {
+            name: toValue(item.name),
+            id: item.id,
+            effects: toValue(item.effects),
+            end: toValue(item.end),
+            layer: toValue(item.layer),
+            start: toValue(item.start)
+        };
+
+        try {
+            await this.db.timelineItem.put(storedTimelineItem);
+            return 'Success';
+        } catch (error) {
+            console.error(error);
+            return 'Error';
+        }
     }
 
     private notificationShown = false;

@@ -33,6 +33,12 @@ export default abstract class BaseStorageController {
         start?: number,
         size?: number
     ): Promise<ArrayBuffer | undefined>;
+
+    abstract saveTimelineItem(item: TimelineItem): Promise<SaveResults>;
+    abstract loadTimelineItem(
+        itemId: string,
+        timeline: Timeline
+    ): Promise<TimelineItem | undefined>;
 }
 
 export class Storage {
@@ -110,19 +116,16 @@ export interface StoredProject {
     metadata: { [key: string | number]: any };
 }
 
-// TODO Add all necessary properties
-export interface StoredSimpleTimelineItem {
+export interface StoredTimelineItem {
     id: string;
     name: string;
-    type: TimelineItemType;
-    /**
-     * The ID of a stored media item.
-     *
-     * Media has to be included in the stored project's media list to be used.
-     */
-    media?: string;
     start: number;
     end: number;
     layer: number;
-    duration?: number;
+    effects: StoredEffect[];
+}
+
+// TODO Add all necessary properties
+export interface StoredEffect {
+    id: string;
 }
