@@ -48,7 +48,11 @@
                             "
                             style="max-width: 500px"
                             @update:model-value="
-                                ([start, end]) => {
+                                (range) => {
+                                    const [start, end] = Array.isArray(range)
+                                        ? range
+                                        : [range, range];
+
                                     item.item.start.value = Math.min(start, end);
                                     item.item.end.value = Math.max(start, end);
                                 }
@@ -82,7 +86,10 @@
                         "
                         style="max-width: 500px"
                         @update:model-value="
-                            ([start, end]) => {
+                            (range) => {
+                                const [start, end] = Array.isArray(range) ? range : [range, range];
+                                console.log(start, end);
+
                                 manager!.manager.viewport.start = Math.min(start, end);
                                 manager!.manager.viewport.end = Math.max(start, end);
                             }
@@ -214,5 +221,5 @@ body {
 </style>
 
 <route lang="json">
-{ "path": "/dev/timeline", "name": "Timeline" }
+{ "name": "Timeline" }
 </route>

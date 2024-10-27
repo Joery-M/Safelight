@@ -19,30 +19,27 @@ import { useProject } from '@/stores/useProject';
 import Timecode from '@safelight/shared/Timecode';
 import Inplace from 'primevue/inplace';
 import InputMask from 'primevue/inputmask';
-import { computed, ref } from 'vue';
+import { computed, ref, type ComponentInstance } from 'vue';
 
 const project = useProject();
 
-const timecodeVal = computed(() => {
-    const timeline = project.p?.timeline;
+const timecodeVal = computed(() =>
+    project.timeline
+        ? Timecode.fromFrames(project.timeline.pbPos.value, project.timeline.framerate.value)
+        : 0
+);
 
-    return timeline?.value
-        ? Timecode.fromFrames(timeline.value.pbPos.value, timeline.value.framerate.value)
-        : 0;
-});
-
-const inplace = ref<typeof Inplace>();
+const inplace = ref<ComponentInstance<typeof Inplace>>();
 
 function onChange(ev: Event) {
-    const timeline = project.p?.timeline;
-    if (!timeline?.value) return;
+    if (!project.timeline) return;
 
     const val = (ev.target as HTMLInputElement)?.value;
     console.log(val);
     if (val) {
         const res = Timecode.fromFormattedTimecode(val);
         console.log(res);
-        timeline.value.pbPos.value = Math.round(res / timeline.value.framerate.value);
+        project.timeline.pbPos.value = Math.round(res / project.timeline.framerate.value);
     }
     if (inplace.value) {
         inplace.value.$emit('close', new Event('close'));

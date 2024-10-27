@@ -1,9 +1,17 @@
 <template>
     <Card>
         <template #subtitle>
-            <RouterLink to="/dev/storage">
-                <Button icon="ph ph-arrow-left" />
-            </RouterLink>
+            <div class="flex">
+                <RouterLink to="/dev/storage">
+                    <Button icon="ph ph-arrow-left" />
+                </RouterLink>
+                <div class="grow"></div>
+                <Button
+                    icon="ph ph-arrow-counter-clockwise"
+                    rounded
+                    @click="projectGetting.execute()"
+                />
+            </div>
         </template>
         <template #content>
             <DataTable :loading="projectGetting.isLoading.value" :value="projects">
@@ -35,7 +43,7 @@ import { RouterLink } from 'vue-router';
 
 const projects = shallowRef<StoredProject[]>([]);
 
-const projectGetting = useAsyncState(Storage.getProjects(), [], {
+const projectGetting = useAsyncState(() => Storage.getProjects(), [], {
     onSuccess: (project) => {
         projects.value = project;
     }
