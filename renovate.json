@@ -46,7 +46,7 @@
             "groupSlug": "linters"
         },
         {
-            "matchPackagePatterns": ["*"],
+            "matchPackageNames": ["*"],
             "matchUpdateTypes": ["minor", "patch"],
             "groupName": "All non-major dependencies",
             "groupSlug": "all-minor-patch"
