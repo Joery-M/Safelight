@@ -88,7 +88,7 @@
         </template>
         <template #grid="{ items }: { items: FileTreeItem[] }">
             <div
-                class="flex h-full select-none flex-wrap justify-start overflow-y-auto"
+                class="h-full select-none overflow-y-auto"
                 role="grid"
                 @dblclick.self="fileDialogOpenDblClick"
             >

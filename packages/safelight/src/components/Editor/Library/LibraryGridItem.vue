@@ -1,7 +1,7 @@
 <template>
     <div
         role="gridcell"
-        class="border-round m-1 flex h-fit select-text flex-col rounded-md border-solid border-white/10"
+        class="border-round m-1 inline-flex h-fit select-text flex-col rounded-md border-solid border-white/10"
         style="border-width: 1px"
         :style="{
             width: size + 'px'
