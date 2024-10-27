@@ -1,0 +1,51 @@
+{
+    $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+    enabledManagers: ['npm'],
+    labels: ['dependencies'],
+    extends: ['config:recommended', 'group:allNonMajor'],
+    schedule: ['every weekend'],
+    rangeStrategy: 'bump',
+    packageRules: [
+        {
+            matchPackageNames: [
+                'vite',
+                '**vite-plugin**',
+                '@vitejs/**',
+                'rollup',
+                '@rollup/**',
+                'vue-tsc'
+            ],
+            groupName: 'build'
+        },
+        {
+            extends: ['packages:test', 'monorepo:vitest', 'monorepo:playwright'],
+            matchPackageNames: [
+                'vitest',
+                'playwright',
+                'jsdom',
+                'happy-dom',
+                '@vitest/**',
+                '@intlify/eslint-plugin-vue-i18n'
+            ],
+            groupName: 'testing'
+        },
+        {
+            matchPackageNames: ['primevue', '@primevue/**'],
+            groupName: 'PrimeVue'
+        },
+        {
+            matchPackageNames: ['vue-**', 'vue', '@vueuse/**', '@vue/**', 'unplugin-vue-router'],
+            groupName: 'vue'
+        },
+        {
+            extends: ['packages:linters'],
+            groupName: 'linters'
+        }
+    ],
+    ignoreDeps: [
+        'pnpm',
+
+        // Pinned
+        '@vue/devtools-api'
+    ]
+}

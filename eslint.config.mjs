@@ -10,7 +10,7 @@ import vueParser from 'vue-eslint-parser';
 
 export default ts.config(
     {
-        ignores: ['**/dist/**/*', '**/node_modules/**/*', '**/renovate.json']
+        ignores: ['**/dist/**/*', '**/node_modules/**/*']
     },
     js.configs.recommended,
     ...ts.configs.recommended,
