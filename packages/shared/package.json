@@ -12,7 +12,7 @@
     },
     "dependencies": {
         "@safelight/tswebm": "workspace:^",
-        "dexie": "^4.0.8",
+        "dexie": "^4.0.9",
         "dot-path-value": "^0.0.11",
         "hash-wasm": "^4.11.0",
         "luxon": "^3.5.0",
