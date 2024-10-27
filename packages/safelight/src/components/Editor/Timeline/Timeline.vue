@@ -23,7 +23,7 @@ import {
 } from 'vue';
 
 const project = useProject();
-const projectTimeline = computed(() => project.p?.timeline.value);
+const projectTimeline = computed(() => project.timeline);
 
 const canvas = ref<HTMLCanvasElement>();
 
@@ -108,7 +108,7 @@ onMounted(() => {
                 );
 
                 const projectItems = computed(() =>
-                    projectTimeline ? Array.from(projectTimeline.items) : []
+                    projectTimeline?.items ? Array.from(projectTimeline.items.values()) : []
                 );
                 const projectItemsToTimelineItems = shallowReactive(
                     new WeakMap<TimelineItem, VideoTimelineElement>()

@@ -16,8 +16,7 @@ export default abstract class BaseStorageController {
     ): Promise<SaveResults>;
     static getProjects: () => Promise<StoredProject[]>;
 
-    abstract saveMedia(media: StoredMedia): Promise<SaveResults>;
-    abstract saveMedia(media: MediaItem): Promise<SaveResults>;
+    abstract saveMedia(media: MediaItem<any>): Promise<SaveResults>;
     abstract loadMedia<M extends MediaItem>(mediaId: string): Promise<M | undefined>;
     abstract deleteMedia(mediaId: MediaItem): Promise<SaveResults>;
     abstract deleteMedia(mediaId: StoredMedia): Promise<SaveResults>;

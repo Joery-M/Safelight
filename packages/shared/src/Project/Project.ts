@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { computed, ref, shallowReactive } from 'vue';
+import { ref, shallowReactive } from 'vue';
 import { Storage, type ProjectFileTree, type ProjectFileTreeItem } from '../base/Storage';
 import { refComputedDefault } from '../helpers/refComputedDefault';
 import { LocaleManager } from '../Localization/LocaleManager';
@@ -20,15 +20,6 @@ export class Project {
 
     media = shallowReactive(new Map<string, MediaItem>());
     fileTree = new FileTreeItem(this);
-
-    selectedTimeline = ref<string>();
-    timeline = computed(() => {
-        const item = this.selectedTimeline.value
-            ? this.media.get(this.selectedTimeline.value)
-            : undefined;
-
-        return item?.isTimeline() ? item : undefined;
-    });
 
     async save() {
         return await Storage.getStorage().saveProject(this);
@@ -89,17 +80,7 @@ export class Project {
         deserializeEntries(this.fileTree, tree);
     }
 
-    selectTimeline(timeline: Timeline): void;
-    selectTimeline(timelineId: string): void;
-    selectTimeline(timeline: Timeline | string) {
-        this.selectedTimeline.value = typeof timeline === 'string' ? timeline : timeline.id;
-    }
-
-    async createTimeline(
-        config: TimelineConfig,
-        openOnCreate = true,
-        addToRootFileTree = true
-    ): Promise<Timeline> {
+    async createTimeline(config: TimelineConfig, addToRootFileTree = true): Promise<Timeline> {
         const timeline = new Timeline(config);
 
         this.media.set(timeline.id, timeline);
@@ -107,10 +88,6 @@ export class Project {
             this.fileTree.addFile(timeline);
         }
         await this.save();
-
-        if (openOnCreate) {
-            this.selectTimeline(timeline);
-        }
 
         return timeline;
     }

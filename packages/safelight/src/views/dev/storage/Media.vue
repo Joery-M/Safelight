@@ -18,7 +18,7 @@
                         <Button
                             v-if="data?.isMedia"
                             rounded
-                            class="ph ph-trash"
+                            icon="ph ph-trash"
                             @click="deleteMedia(data.id)"
                         />
                     </template>

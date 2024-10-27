@@ -1,4 +1,3 @@
-import type { Path, PathValue } from 'dot-path-value';
 import { v4 as uuidv4 } from 'uuid';
 import { ref } from 'vue';
 import { Storage, type FilePath } from '../base/Storage';
@@ -10,17 +9,6 @@ export class MediaFileItem extends MediaItem<MediaFileItemMetadata> {
     public type: MediaItemTypes = 'MediaFile';
 
     private file?: ArrayBuffer;
-
-    public addMetadata<K extends Path<MediaFileItemMetadata>>(
-        part: K,
-        data: PathValue<MediaFileItemMetadata, K>
-    ) {
-        // If file has changed (idk how), make it undefined
-        if (part.startsWith('file')) {
-            this.file = undefined;
-        }
-        return super.addMetadata(part, data);
-    }
 
     async loadFile() {
         if (this.file) {

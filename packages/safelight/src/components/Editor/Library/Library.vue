@@ -259,10 +259,10 @@ const createMenuItems = reactive<MenuItem[]>([
                     width: 1920,
                     name: i18n.t('panels.timeline.title') + ' ' + project.p.media.size
                 },
-                false,
                 false
             );
             if (timeline) {
+                project.selectedTimeline = timeline.id;
                 curDir.value?.addFile(timeline);
             }
         }

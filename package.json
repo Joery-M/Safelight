@@ -11,7 +11,7 @@
     "build:darkroom": "cd packages/darkroom && pnpm build",
     "build:safelight": "cd packages/safelight && pnpm build",
     "build:tswebm": "cd packages/tswebm && pnpm build",
-    "test": "pnpm run -r --parallel \"/test:run.*/\"",
+    "test": "vitest run",
     "test:darkroom": "cd packages/darkroom && pnpm test:run",
     "test:darkroom-firefox": "cd packages/darkroom && pnpm test:run-firefox",
     "test:shared": "cd packages/shared && pnpm test:run",

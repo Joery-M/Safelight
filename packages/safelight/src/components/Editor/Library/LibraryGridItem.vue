@@ -217,7 +217,7 @@ function clickHandler() {
     } else if (props.item.media.value) {
         const media = props.item.media.value;
         if (media.isTimeline()) {
-            project.p?.selectTimeline(media);
+            project.selectTimeline(media);
         }
     }
 }
