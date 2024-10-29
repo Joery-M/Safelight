@@ -83,6 +83,25 @@ export class IndexedDbStorageController extends BaseStorageController {
 
         return project;
     }
+    async deleteProject(projectId: string): Promise<SaveResults> {
+        // Delete media and timeline items, then delete actual project
+        const storedProject = await this.db.project.get(projectId);
+        if (!storedProject) return 'Error';
+
+        for (const mediaId of storedProject.media) {
+            const media = await this.db.media.get(mediaId);
+            if (!media) continue;
+
+            if (media.type == 'Timeline') {
+                const timelineItemIds: string[] = media.metadata.items ?? [];
+
+                await this.db.timelineItem.bulkDelete(timelineItemIds);
+            }
+            await this.deleteMedia(media);
+        }
+        await this.db.project.delete(projectId);
+        return 'Success';
+    }
     async patchStoredProject(
         project: SetRequired<Partial<StoredProject>, 'id'>
     ): Promise<SaveResults> {
@@ -224,7 +243,7 @@ export class IndexedDbStorageController extends BaseStorageController {
 
                 const timeline = new Timeline(metadata.timelineConfig);
 
-                const promises = metadata.items.map(async (itemId) => {
+                const promises = (metadata.items ?? []).map(async (itemId) => {
                     const item = await this.loadTimelineItem(itemId, timeline);
                     if (item) timeline.items.set(itemId, item);
                 });
@@ -280,7 +299,7 @@ export class IndexedDbStorageController extends BaseStorageController {
         await opfsTools.write('/' + filePath.join('/'), data, { overwrite: true });
     }
 
-    async DeleteFile(filePath: string[]) {
+    async deleteFile(filePath: FilePath) {
         const file = opfsTools.file(filePath.join('/'));
         await file.remove();
     }

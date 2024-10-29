@@ -11,6 +11,7 @@ export default abstract class BaseStorageController {
 
     abstract saveProject(project: Project): Promise<SaveResults>;
     abstract loadProject(projectId: string): Promise<Project | undefined>;
+    abstract deleteProject(projectId: string): Promise<SaveResults>;
     abstract patchStoredProject(
         project: SetRequired<Partial<StoredProject>, 'id'>
     ): Promise<SaveResults>;
@@ -33,6 +34,7 @@ export default abstract class BaseStorageController {
         start?: number,
         size?: number
     ): Promise<ArrayBuffer | undefined>;
+    abstract deleteFile(filePath: FilePath): Promise<void>;
 
     abstract saveTimelineItem(item: TimelineItem): Promise<SaveResults>;
     abstract loadTimelineItem(
