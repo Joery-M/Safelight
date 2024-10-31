@@ -1,5 +1,10 @@
 <template>
-    <canvas ref="canvas" class="size-full"></canvas>
+    <div class="relative size-full">
+        <canvas ref="canvas" class="size-full"></canvas>
+        <div class="bg-surface-900 absolute right-0 top-0 p-4">
+            <Button @click="addTimelineItem()"> Add item </Button>
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -12,12 +17,14 @@ import { TimelineGrid } from '@safelight/timeline/elements/TimelineGrid';
 import { TimelineLayer } from '@safelight/timeline/elements/TimelineLayer';
 import { VideoTimelineElement } from '@safelight/timeline/elements/VideoTimelineElement';
 import { syncRef, watchArray } from '@vueuse/core';
+import Button from 'primevue/button';
 import {
     computed,
     onBeforeUnmount,
     onMounted,
     ref,
     shallowReactive,
+    shallowRef,
     watch,
     watchEffect
 } from 'vue';
@@ -31,7 +38,7 @@ const invertScrollAxes = SettingsManager.getSetting<boolean>('editor.timeline.us
 // const zoomFactor = SettingsManager.getSetting<number>('editor.timeline.zoomFactor');
 // const alignment = SettingsManager.getSetting<'top' | 'bottom'>('editor.timeline.align');
 
-const timelineManager = ref<CreateTimelineFn>();
+const timelineManager = shallowRef<CreateTimelineFn>();
 onMounted(() => {
     if (canvas.value) {
         watch(
@@ -118,7 +125,13 @@ onMounted(() => {
                     (_cur, _old, added, removed) => {
                         for (const item of added) {
                             const layerItem = new VideoTimelineElement();
+                            layerItem.layer.value = item.layer.value;
+                            layerItem.start.value = item.start.value;
+                            layerItem.end.value = item.end.value;
+
                             syncRef(item.layer, layerItem.layer);
+                            syncRef(item.start, layerItem.start);
+                            syncRef(item.end, layerItem.end);
 
                             watch(item.layer, (layerIndex) => {
                                 while (layers.length < layerIndex) {
@@ -153,9 +166,9 @@ onMounted(() => {
                 });
 
                 // Settings
-                syncRef(invertScrollAxes, timelineManager.value!.manager.invertScrollAxes, {
-                    direction: 'ltr',
-                    immediate: false // dunno why
+                watchEffect(() => {
+                    timelineManager.value!.manager.invertScrollAxes.value =
+                        invertScrollAxes?.value ?? false;
                 });
             },
             { immediate: true }
@@ -166,11 +179,9 @@ onMounted(() => {
 onBeforeUnmount(() => {
     timelineManager.value?.destroy();
 });
-</script>
 
-<style lang="scss" scoped>
-.timeline {
-    --surface-100: var(--p-splitter-gutter-background);
-    --red-600: var(--p-red-600);
+// TODO: This is temporary
+async function addTimelineItem() {
+    await project.timeline?.createTimelineItem();
 }
-</style>
+</script>

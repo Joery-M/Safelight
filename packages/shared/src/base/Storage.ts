@@ -41,6 +41,7 @@ export default abstract class BaseStorageController {
         itemId: string,
         timeline: Timeline
     ): Promise<TimelineItem | undefined>;
+    abstract deleteTimelineItem(itemId: string): Promise<SaveResults>;
 }
 
 export class Storage {

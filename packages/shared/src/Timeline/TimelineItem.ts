@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { computed, ref, shallowReactive } from 'vue';
 import type { Timeline } from '../Timeline/Timeline';
+import { Storage } from '../base/Storage';
 
 export class TimelineItem {
     id = uuidv4();
@@ -27,7 +28,7 @@ export class TimelineItem {
     private lastLayer = ref(0);
 
     start = ref(0);
-    end = ref(0);
+    end = ref(1000);
     layer = ref(0);
 
     constructor(private timeline: Timeline) {}
@@ -117,7 +118,7 @@ export class TimelineItem {
      *
      * @param time New millisecond time to move to.
      */
-    MoveTo(time: number) {
+    moveTo(time: number) {
         this.linkedItems.forEach((item) => {
             // Offset between current item and other item
             const offset = item.start.value - this.start.value;
@@ -139,13 +140,22 @@ export class TimelineItem {
 
     //#endregion Movement
 
-    save() {}
+    async save() {
+        if (!Storage.hasStorage()) return;
 
-    delete() {
+        const storage = Storage.getStorage();
+
+        await storage.saveTimelineItem(this);
+    }
+
+    async delete() {
         this.linkedItems.forEach((item) => {
             // Delete myself from other linked items
             item.linkedItems.delete(this);
         });
+        if (!Storage.hasStorage()) return;
+        const storage = Storage.getStorage();
+        await storage.deleteTimelineItem(this.id);
     }
 }
 

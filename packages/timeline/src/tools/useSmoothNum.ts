@@ -20,19 +20,26 @@ export function useSmoothNum(
         return readonly(outputVal);
     }
 
+    const baseFps = 1000 / 60;
+
     let animating = false;
-    function step() {
+    let lastTime = performance.now();
+
+    function step(time: DOMHighResTimeStamp) {
         if (Math.abs(outputVal.value - sourceVal.value) > snapOffsetVal.value) {
             animating = true;
 
             const dist = sourceVal.value - outputVal.value;
+            const deltaTime = time - lastTime;
+            const delta = Math.min((deltaTime / baseFps) * stepPercVal.value, stepPercVal.value);
 
-            outputVal.value = outputVal.value + dist * stepPercVal.value;
+            outputVal.value = outputVal.value + dist * delta;
             requestAnimationFrame(step);
         } else {
             outputVal.value = sourceVal.value;
             animating = false;
         }
+        lastTime = time;
     }
 
     requestAnimationFrame(step);

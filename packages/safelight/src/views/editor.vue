@@ -23,7 +23,7 @@
         <!-- Just default data for the first split -->
         <PanelContainer :config="{ splitDirection: 'vertical', split: editor.activePanels }" />
     </template>
-    <ConfirmDialog group="noProjectDialog"> </ConfirmDialog>
+    <ConfirmDialog group="noProjectDialog"></ConfirmDialog>
 </template>
 
 <script setup lang="ts">

@@ -2,6 +2,7 @@ import { toValue } from '@vueuse/core';
 import { DateTime } from 'luxon';
 import * as opfsTools from 'opfs-tools';
 import type { SetRequired } from 'type-fest';
+import { toRaw } from 'vue';
 import type {
     FilePath,
     FilePathTypes,
@@ -187,6 +188,17 @@ export class IndexedDbStorageController extends BaseStorageController {
             console.error('Error deleting file from OPFS', error);
         }
 
+        // Check if timeline, if so, delete timelineItems
+        const timelineItems: string[] =
+            media.type == 'Timeline' ? (media.metadata.items ?? []) : [];
+        try {
+            if (timelineItems.length > 0) {
+                await this.db.timelineItem.bulkDelete(timelineItems);
+            }
+        } catch (error) {
+            console.error('Error deleting timeline items', error);
+        }
+
         await this.db.media.delete(id);
         return 'Success';
     }
@@ -242,6 +254,7 @@ export class IndexedDbStorageController extends BaseStorageController {
                 }
 
                 const timeline = new Timeline(metadata.timelineConfig);
+                timeline.id = storedMedia.id;
 
                 const promises = (metadata.items ?? []).map(async (itemId) => {
                     const item = await this.loadTimelineItem(itemId, timeline);
@@ -252,7 +265,6 @@ export class IndexedDbStorageController extends BaseStorageController {
                 for (const [path, value] of Object.entries(storedMedia.metadata)) {
                     timeline.addMetadata(path as any, value);
                 }
-                timeline.id = storedMedia.id;
 
                 return timeline;
             }
@@ -320,13 +332,18 @@ export class IndexedDbStorageController extends BaseStorageController {
         return item;
     }
 
+    async deleteTimelineItem(itemId: string): Promise<SaveResults> {
+        await this.db.timelineItem.delete(itemId);
+        return 'Success';
+    }
+
     async saveTimelineItem(item: TimelineItem): Promise<SaveResults> {
         this.checkPersistentStorage();
 
         const storedTimelineItem: StoredTimelineItem = {
             name: toValue(item.name),
             id: item.id,
-            effects: toValue(item.effects),
+            effects: toRaw(item.effects),
             end: toValue(item.end),
             layer: toValue(item.layer),
             start: toValue(item.start)
