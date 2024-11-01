@@ -1,4 +1,4 @@
-import { App, setupDevtoolsPlugin } from '@vue/devtools-api';
+import { App, setupDevToolsPlugin } from '@vue/devtools-kit';
 import { watchArray } from '@vueuse/core';
 import { computed, shallowReactive, watchEffect } from 'vue';
 import { __DEVTOOLS_AVAILABLE__, TimelineManager } from '..';
@@ -13,7 +13,7 @@ export function setupDevtools(app: App) {
 
     const managers = shallowReactive(new Map<string, TimelineManager>());
 
-    setupDevtoolsPlugin(
+    setupDevToolsPlugin(
         {
             id: 'app.safelight.timeline',
             app,

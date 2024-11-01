@@ -176,10 +176,6 @@ onMounted(() => {
     }
 });
 
-onBeforeUnmount(() => {
-    timelineManager.value?.destroy();
-});
-
 // TODO: This is temporary
 async function addTimelineItem() {
     await project.timeline?.createTimelineItem();

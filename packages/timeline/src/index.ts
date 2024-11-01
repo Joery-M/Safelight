@@ -1,14 +1,26 @@
-import { CustomInspectorNode, CustomInspectorState } from '@vue/devtools-api';
+import type { CustomInspectorNode, CustomInspectorState } from '@vue/devtools-kit';
 import {
     MaybeRefOrGetter,
     syncRef,
     useDevicePixelRatio,
     useElementBounding,
-    useEventListener
+    useEventListener,
+    whenever
 } from '@vueuse/core';
 import { useAverage, useRound } from '@vueuse/math';
 import EventEmitter from 'eventemitter3';
-import { computed, reactive, Ref, ref, shallowReactive, toRaw, watch, watchEffect } from 'vue';
+import {
+    computed,
+    getCurrentInstance,
+    onBeforeUnmount,
+    reactive,
+    Ref,
+    ref,
+    shallowReactive,
+    toRaw,
+    watch,
+    watchEffect
+} from 'vue';
 import { TimelineLayer } from './elements/TimelineLayer';
 import { useSmoothNum } from './tools/useSmoothNum';
 
@@ -71,9 +83,6 @@ export function createTimelineManager(canvas: HTMLCanvasElement): CreateTimeline
         },
         hasLayerItem(item) {
             return manager.allLayerItems.has(item);
-        },
-        destroy() {
-            manager.destroy();
         }
     };
 }
@@ -89,7 +98,6 @@ export interface CreateTimelineFn {
     addLayerItem: (item: TimelineItem) => void;
     removeLayerItem: (item: TimelineItem) => boolean;
     hasLayerItem: (item: TimelineItem) => boolean;
-    destroy: () => void;
 }
 
 class ClearableWeakMap<K extends WeakKey = WeakKey, V = any> implements WeakMap<K, V> {
@@ -470,26 +478,25 @@ export class TimelineManager {
             }
         });
 
+        const instance = getCurrentInstance();
+        onBeforeUnmount(() => {
+            this.events.emit('unmount', this);
+            this.events.removeAllListeners();
+        }, instance);
+
         // Import devtools
-        watch(
+        whenever(
             __DEVTOOLS_AVAILABLE__,
-            (enable) => {
-                if (enable) {
-                    import('./devtools/').then((dev) => {
-                        if (dev.registerTimelineManager) {
-                            const unregister = dev.registerTimelineManager(this);
-                            this.events.once('unmount', unregister);
-                        }
-                    });
-                }
+            () => {
+                import('./devtools/').then((dev) => {
+                    if (dev.registerTimelineManager) {
+                        const unregister = dev.registerTimelineManager(this);
+                        this.events.once('unmount', () => unregister());
+                    }
+                });
             },
             { immediate: true }
         );
-    }
-
-    destroy() {
-        this.events.emit('unmount', this);
-        this.events.removeAllListeners();
     }
 
     setCanvasProperties() {
