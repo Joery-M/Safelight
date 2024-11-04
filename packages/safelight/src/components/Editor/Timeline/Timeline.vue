@@ -18,16 +18,7 @@ import { TimelineLayer } from '@safelight/timeline/elements/TimelineLayer';
 import { VideoTimelineElement } from '@safelight/timeline/elements/VideoTimelineElement';
 import { syncRef, watchArray } from '@vueuse/core';
 import Button from 'primevue/button';
-import {
-    computed,
-    onBeforeUnmount,
-    onMounted,
-    ref,
-    shallowReactive,
-    shallowRef,
-    watch,
-    watchEffect
-} from 'vue';
+import { computed, onMounted, ref, shallowReactive, shallowRef, watch, watchEffect } from 'vue';
 
 const project = useProject();
 const projectTimeline = computed(() => project.timeline);
@@ -76,18 +67,22 @@ onMounted(() => {
                     }
                 );
 
-                watchEffect(() => {
-                    if (projectTimeline) {
-                        pbCursor.frameInterval.value = projectTimeline.frameDuration.value;
-                    }
-                });
+                onCleanup(
+                    watchEffect(() => {
+                        if (projectTimeline) {
+                            pbCursor.frameInterval.value = projectTimeline.frameDuration.value;
+                        }
+                    })
+                );
 
-                syncRef(projectTimeline.pbPos, pbCursor.cursorPos, {
-                    transform: {
-                        ltr: (val) => val * projectTimeline.frameDuration.value,
-                        rtl: (val) => Math.round(val / projectTimeline.frameDuration.value)
-                    }
-                });
+                onCleanup(
+                    syncRef(projectTimeline.pbPos, pbCursor.cursorPos, {
+                        transform: {
+                            ltr: (val) => val * projectTimeline.frameDuration.value,
+                            rtl: (val) => Math.round(val / projectTimeline.frameDuration.value)
+                        }
+                    })
+                );
 
                 const layers = shallowReactive<TimelineLayer[]>([new TimelineLayer()]);
 
@@ -100,18 +95,20 @@ onMounted(() => {
                     }
                 });
 
-                watchArray(
-                    layers,
-                    (_cur, _old, added, removed) => {
-                        for (const layer of added) {
-                            timelineManager.value!.addLayer(layer);
-                        }
-                        if (removed)
-                            for (const layer of removed) {
-                                timelineManager.value!.removeLayer(layer);
+                onCleanup(
+                    watchArray(
+                        layers,
+                        (_cur, _old, added, removed) => {
+                            for (const layer of added) {
+                                timelineManager.value!.addLayer(layer);
                             }
-                    },
-                    { immediate: true, deep: false }
+                            if (removed)
+                                for (const layer of removed) {
+                                    timelineManager.value!.removeLayer(layer);
+                                }
+                        },
+                        { immediate: true, deep: false }
+                    )
                 );
 
                 const projectItems = computed(() =>
@@ -120,41 +117,53 @@ onMounted(() => {
                 const projectItemsToTimelineItems = shallowReactive(
                     new WeakMap<TimelineItem, VideoTimelineElement>()
                 );
-                watchArray(
-                    projectItems,
-                    (_cur, _old, added, removed) => {
-                        for (const item of added) {
-                            const layerItem = new VideoTimelineElement();
-                            layerItem.layer.value = item.layer.value;
-                            layerItem.start.value = item.start.value;
-                            layerItem.end.value = item.end.value;
+                onCleanup(
+                    watchArray(
+                        projectItems,
+                        (_cur, _old, added, removed, onCleanup) => {
+                            for (const item of added) {
+                                const layerItem = new VideoTimelineElement();
+                                layerItem.layer.value = item.layer.value;
+                                layerItem.start.value = item.start.value;
+                                layerItem.end.value = item.end.value;
 
-                            syncRef(item.layer, layerItem.layer);
-                            syncRef(item.start, layerItem.start);
-                            syncRef(item.end, layerItem.end);
+                                onCleanup(syncRef(item.layer, layerItem.layer));
+                                onCleanup(syncRef(item.start, layerItem.start));
+                                onCleanup(syncRef(item.end, layerItem.end));
+                                onCleanup(
+                                    syncRef(
+                                        layerItem.frameInterval,
+                                        project.timeline!.frameDuration,
+                                        {
+                                            direction: 'rtl'
+                                        }
+                                    )
+                                );
+                                timelineManager.value!.addLayerItem(layerItem);
 
-                            watch(item.layer, (layerIndex) => {
-                                while (layers.length < layerIndex) {
-                                    layers.push(new TimelineLayer());
-                                }
-                            });
-                            timelineManager.value!.addLayerItem(layerItem);
+                                layerItem.events.on('drop', () => {
+                                    item.save();
+                                });
+                                onCleanup(() => {
+                                    layerItem.events.removeAllListeners('drop');
+                                });
 
-                            projectItemsToTimelineItems.set(item, layerItem);
-                        }
-
-                        if (removed)
-                            for (const item of removed) {
-                                if (projectItemsToTimelineItems.has(item)) {
-                                    timelineManager.value!.removeLayerItem(
-                                        projectItemsToTimelineItems.get(item)!
-                                    );
-                                }
+                                projectItemsToTimelineItems.set(item, layerItem);
                             }
-                    },
-                    {
-                        immediate: true
-                    }
+
+                            if (removed)
+                                for (const item of removed) {
+                                    if (projectItemsToTimelineItems.has(item)) {
+                                        timelineManager.value!.removeLayerItem(
+                                            projectItemsToTimelineItems.get(item)!
+                                        );
+                                    }
+                                }
+                        },
+                        {
+                            immediate: true
+                        }
+                    )
                 );
                 onCleanup(() => {
                     const curItems = Array.from(
@@ -165,15 +174,35 @@ onMounted(() => {
                     }
                 });
 
-                // Settings
-                watchEffect(() => {
-                    timelineManager.value!.manager.invertScrollAxes.value =
-                        invertScrollAxes?.value ?? false;
-                });
+                // Max layer
+                onCleanup(
+                    watchEffect(() => {
+                        if (!timelineManager.value) return;
+
+                        const highestLayer =
+                            Array.from(timelineManager.value.manager.allLayerItems.values())
+                                .sort((a, b) => a.layer.value - b.layer.value)
+                                .at(0)?.layer.value ?? 0;
+
+                        while (layers.length <= highestLayer + 1) {
+                            layers.push(new TimelineLayer());
+                        }
+                        while (layers.length > highestLayer + 2) {
+                            // layers.push(new TimelineLayer());
+                            layers.pop();
+                        }
+                    })
+                );
             },
             { immediate: true }
         );
     }
+});
+
+// Settings
+watchEffect(() => {
+    if (timelineManager.value)
+        timelineManager.value.manager.invertScrollAxes.value = invertScrollAxes?.value ?? false;
 });
 
 // TODO: This is temporary
