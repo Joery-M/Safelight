@@ -52,7 +52,7 @@
     },
     "optionalDependencies": {
         "@codemirror/lang-javascript": "^6.2.2",
-        "@types/node": "^22.8.1",
+        "@types/node": "^22.8.7",
         "@vitejs/plugin-vue": "^5.1.4",
         "@vue/tsconfig": "^0.5.1",
         "@vueuse/core": "^11.1.0",
