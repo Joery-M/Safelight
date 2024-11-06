@@ -61,7 +61,7 @@ importers:
         version: 5.4.10(@types/node@22.8.7)(lightningcss@1.28.1)(sass@1.80.6)(terser@5.34.1)
       vitest:
         specifier: ^2.1.4
-        version: 2.1.4(@types/node@22.8.7)(@vitest/browser@2.1.4)(@vitest/ui@2.1.4)(happy-dom@15.8.3)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.28.1)(msw@2.5.2(@types/node@22.8.7)(typescript@5.6.3))(sass@1.80.6)(terser@5.34.1)
+        version: 2.1.4(@types/node@22.8.7)(@vitest/browser@2.1.4)(@vitest/ui@2.1.4)(happy-dom@15.10.1)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.28.1)(msw@2.5.2(@types/node@22.8.7)(typescript@5.6.3))(sass@1.80.6)(terser@5.34.1)
       vue:
         specifier: ^3.5.12
         version: 3.5.12(typescript@5.6.3)
@@ -144,7 +144,7 @@ importers:
         version: 4.3.0(@types/node@22.8.7)(rollup@4.24.0)(typescript@5.6.3)(vite@5.4.10(@types/node@22.8.7)(lightningcss@1.28.1)(sass@1.80.6)(terser@5.34.1))
       vitest:
         specifier: ^2.1.4
-        version: 2.1.4(@types/node@22.8.7)(@vitest/browser@2.1.4)(@vitest/ui@2.1.4)(happy-dom@15.8.3)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.28.1)(msw@2.5.2(@types/node@22.8.7)(typescript@5.6.3))(sass@1.80.6)(terser@5.34.1)
+        version: 2.1.4(@types/node@22.8.7)(@vitest/browser@2.1.4)(@vitest/ui@2.1.4)(happy-dom@15.10.1)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.28.1)(msw@2.5.2(@types/node@22.8.7)(typescript@5.6.3))(sass@1.80.6)(terser@5.34.1)
 
   packages/plugin-types: {}
 
@@ -400,10 +400,10 @@ importers:
         version: 6.0.0
       happy-dom:
         specifier: ^15.8.3
-        version: 15.8.3
+        version: 15.10.1
       vitest:
         specifier: ^2.1.4
-        version: 2.1.4(@types/node@22.8.7)(@vitest/browser@2.1.4)(@vitest/ui@2.1.4)(happy-dom@15.8.3)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.28.1)(msw@2.5.2(@types/node@22.8.7)(typescript@5.6.3))(sass@1.80.6)(terser@5.34.1)
+        version: 2.1.4(@types/node@22.8.7)(@vitest/browser@2.1.4)(@vitest/ui@2.1.4)(happy-dom@15.10.1)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.28.1)(msw@2.5.2(@types/node@22.8.7)(typescript@5.6.3))(sass@1.80.6)(terser@5.34.1)
 
   packages/timeline:
     dependencies:
@@ -440,7 +440,7 @@ importers:
         version: 2.11.2
       happy-dom:
         specifier: ^15.8.3
-        version: 15.8.3
+        version: 15.10.1
       jsdom:
         specifier: ^25.0.1
         version: 25.0.1(canvas@2.11.2)
@@ -449,7 +449,7 @@ importers:
         version: 5.6.3
       vitest:
         specifier: ^2.1.4
-        version: 2.1.4(@types/node@22.8.7)(@vitest/browser@2.1.4)(@vitest/ui@2.1.4)(happy-dom@15.8.3)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.28.1)(msw@2.5.2(@types/node@22.8.7)(typescript@5.6.3))(sass@1.80.6)(terser@5.34.1)
+        version: 2.1.4(@types/node@22.8.7)(@vitest/browser@2.1.4)(@vitest/ui@2.1.4)(happy-dom@15.10.1)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.28.1)(msw@2.5.2(@types/node@22.8.7)(typescript@5.6.3))(sass@1.80.6)(terser@5.34.1)
       vue-tsc:
         specifier: ^2.1.10
         version: 2.1.10(typescript@5.6.3)
@@ -476,7 +476,7 @@ importers:
         version: 4.5.0
       happy-dom:
         specifier: ^15.8.3
-        version: 15.8.3
+        version: 15.10.1
       prettier:
         specifier: ^3.3.3
         version: 3.3.3
@@ -497,7 +497,7 @@ importers:
         version: 4.3.0(@types/node@22.8.7)(rollup@4.24.0)(typescript@5.6.3)(vite@5.4.10(@types/node@22.8.7)(lightningcss@1.28.1)(sass@1.80.6)(terser@5.34.1))
       vitest:
         specifier: ^2.1.4
-        version: 2.1.4(@types/node@22.8.7)(@vitest/browser@2.1.4)(@vitest/ui@2.1.4)(happy-dom@15.8.3)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.28.1)(msw@2.5.2(@types/node@22.8.7)(typescript@5.6.3))(sass@1.80.6)(terser@5.34.1)
+        version: 2.1.4(@types/node@22.8.7)(@vitest/browser@2.1.4)(@vitest/ui@2.1.4)(happy-dom@15.10.1)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.28.1)(msw@2.5.2(@types/node@22.8.7)(typescript@5.6.3))(sass@1.80.6)(terser@5.34.1)
 
 packages:
 
@@ -579,8 +579,19 @@ packages:
       '@codemirror/view': ^6.0.0
       '@lezer/common': ^1.0.0
 
+  '@codemirror/autocomplete@6.18.2':
+    resolution: {integrity: sha512-wJGylKtMFR/Ds6Gh01+OovXE/pncPiKZNNBKuC39pKnH+XK5d9+WsNqcrdxPjFPFTigRBqse0rfxw9UxrfyhPg==}
+    peerDependencies:
+      '@codemirror/language': ^6.0.0
+      '@codemirror/state': ^6.0.0
+      '@codemirror/view': ^6.0.0
+      '@lezer/common': ^1.0.0
+
   '@codemirror/commands@6.7.0':
     resolution: {integrity: sha512-+cduIZ2KbesDhbykV02K25A5xIVrquSPz4UxxYBemRlAT2aW8dhwUgLDwej7q/RJUHKk4nALYcR1puecDvbdqw==}
+
+  '@codemirror/commands@6.7.1':
+    resolution: {integrity: sha512-llTrboQYw5H4THfhN4U3qCnSZ1SOJ60ohhz+SzU0ADGtwlc533DtklQP0vSFaQuCPDn3BPpOd1GbbnUtwNjsrw==}
 
   '@codemirror/lang-javascript@6.2.2':
     resolution: {integrity: sha512-VGQfY+FCc285AhWuwjYxQyUQcYurWlxdKYT4bqwr3Twnd5wP5WSeu52t4tvvuWmljT4EmgEgZCqSieokhtY8hg==}
@@ -591,14 +602,17 @@ packages:
   '@codemirror/lint@6.8.2':
     resolution: {integrity: sha512-PDFG5DjHxSEjOXk9TQYYVjZDqlZTFaDBfhQixHnQOEVDDNHUbEh/hstAjcQJaA6FQdZTD1hquXTK0rVBLADR1g==}
 
-  '@codemirror/search@6.5.6':
-    resolution: {integrity: sha512-rpMgcsh7o0GuCDUXKPvww+muLA1pDJaFrpq/CCHtpQJYz8xopu4D1hPcKRoDD0YlF8gZaqTNIRa4VRBWyhyy7Q==}
+  '@codemirror/search@6.5.7':
+    resolution: {integrity: sha512-6+iLsXvITWKHYlkgHPCs/qiX4dNzn8N78YfhOFvPtPYCkuXqZq10rAfsUMhOq7O/1VjJqdXRflyExlfVcu/9VQ==}
 
   '@codemirror/state@6.4.1':
     resolution: {integrity: sha512-QkEyUiLhsJoZkbumGZlswmAhA7CBU02Wrz7zvH4SrcifbsqwlXShVXg65f3v/ts57W3dqyamEriMhij1Z3Zz4A==}
 
   '@codemirror/view@6.34.1':
     resolution: {integrity: sha512-t1zK/l9UiRqwUNPm+pdIT0qzJlzuVckbTEMVNFhfWkGiBQClstzg+78vedCvLSX0xJEZ6lwZbPpnljL7L6iwMQ==}
+
+  '@codemirror/view@6.34.2':
+    resolution: {integrity: sha512-d6n0WFvL970A9Z+l9N2dO+Hk9ev4hDYQzIx+B9tCyBP0W5wPEszi1rhuyFesNSkLZzXbQE5FPH7F/z/TMJfoPA==}
 
   '@endo/env-options@1.1.7':
     resolution: {integrity: sha512-8twSTbM45rzIP0lHw99ei1EaW98H2BXYKjCTUcq1qgK2OvQWaoiXNcJvUQQo1g7i3oPwbXTQsY69L+nTNeCDyA==}
@@ -1026,6 +1040,9 @@ packages:
 
   '@lezer/common@1.2.2':
     resolution: {integrity: sha512-Z+R3hN6kXbgBWAuejUNPihylAL1Z5CaFqnIe0nTX8Ej+XlIy3EGtXxn6WtLMO+os2hRkQvm2yvaGMYliUzlJaw==}
+
+  '@lezer/common@1.2.3':
+    resolution: {integrity: sha512-w7ojc8ejBqr2REPsWxJjrMFsA/ysDCFICn8zEOR9mrqzOu2amhITYuLD8ag6XZf0CFXDrhKqw7+tW8cX66NaDA==}
 
   '@lezer/highlight@1.2.1':
     resolution: {integrity: sha512-Z5duk4RN/3zuVO7Jq0pGLJ3qynpxUVsh7IbUbGj88+uV2ApSAn6kWg2au3iJb+0Zi7kKtqffIESgNcRXWZWmSA==}
@@ -2453,8 +2470,8 @@ packages:
     resolution: {integrity: sha512-GGTKBX4SD7Wdb8mqeDLni2oaRGYQWjWHGKPQ24ZMnUtKfcsVoiv4uX8+LJr1K6U5VW2Lu1BwJnj7uiori0YtRw==}
     engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
 
-  happy-dom@15.8.3:
-    resolution: {integrity: sha512-YR9nUWN/T2bH7pPLEYMhTp4DQExPH+mC4KulJDgimCb+FY3Er0Vp6SOOcBXrNfMTri3lAk9uSZqUTG2hgZOYwg==}
+  happy-dom@15.10.1:
+    resolution: {integrity: sha512-FuGnj/qIB4QnBL6fWmD7Wnh6STxevLgOVWB6+nopDGgWG1+t9CXkNB2ldZ+iqwD2UKxD2D0SU8el8A6AX6Q1+g==}
     engines: {node: '>=18.0.0'}
 
   has-flag@3.0.0:
@@ -4064,12 +4081,28 @@ snapshots:
       '@lezer/common': 1.2.2
     optional: true
 
+  '@codemirror/autocomplete@6.18.2(@codemirror/language@6.10.3)(@codemirror/state@6.4.1)(@codemirror/view@6.34.2)(@lezer/common@1.2.2)':
+    dependencies:
+      '@codemirror/language': 6.10.3
+      '@codemirror/state': 6.4.1
+      '@codemirror/view': 6.34.2
+      '@lezer/common': 1.2.2
+    optional: true
+
   '@codemirror/commands@6.7.0':
     dependencies:
       '@codemirror/language': 6.10.3
       '@codemirror/state': 6.4.1
       '@codemirror/view': 6.34.1
       '@lezer/common': 1.2.2
+    optional: true
+
+  '@codemirror/commands@6.7.1':
+    dependencies:
+      '@codemirror/language': 6.10.3
+      '@codemirror/state': 6.4.1
+      '@codemirror/view': 6.34.2
+      '@lezer/common': 1.2.3
     optional: true
 
   '@codemirror/lang-javascript@6.2.2':
@@ -4100,10 +4133,10 @@ snapshots:
       crelt: 1.0.6
     optional: true
 
-  '@codemirror/search@6.5.6':
+  '@codemirror/search@6.5.7':
     dependencies:
       '@codemirror/state': 6.4.1
-      '@codemirror/view': 6.34.1
+      '@codemirror/view': 6.34.2
       crelt: 1.0.6
     optional: true
 
@@ -4111,6 +4144,13 @@ snapshots:
     optional: true
 
   '@codemirror/view@6.34.1':
+    dependencies:
+      '@codemirror/state': 6.4.1
+      style-mod: 4.1.2
+      w3c-keyname: 2.2.8
+    optional: true
+
+  '@codemirror/view@6.34.2':
     dependencies:
       '@codemirror/state': 6.4.1
       style-mod: 4.1.2
@@ -4433,6 +4473,9 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.0
 
   '@lezer/common@1.2.2':
+    optional: true
+
+  '@lezer/common@1.2.3':
     optional: true
 
   '@lezer/highlight@1.2.1':
@@ -4955,7 +4998,7 @@ snapshots:
       msw: 2.5.2(@types/node@22.8.7)(typescript@5.6.3)
       sirv: 3.0.0
       tinyrainbow: 1.2.0
-      vitest: 2.1.4(@types/node@22.8.7)(@vitest/browser@2.1.4)(@vitest/ui@2.1.4)(happy-dom@15.8.3)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.28.1)(msw@2.5.2(@types/node@22.8.7)(typescript@5.6.3))(sass@1.80.6)(terser@5.34.1)
+      vitest: 2.1.4(@types/node@22.8.7)(@vitest/browser@2.1.4)(@vitest/ui@2.1.4)(happy-dom@15.10.1)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.28.1)(msw@2.5.2(@types/node@22.8.7)(typescript@5.6.3))(sass@1.80.6)(terser@5.34.1)
       ws: 8.18.0
     optionalDependencies:
       playwright: 1.48.2
@@ -5010,7 +5053,7 @@ snapshots:
       sirv: 3.0.0
       tinyglobby: 0.2.9
       tinyrainbow: 1.2.0
-      vitest: 2.1.4(@types/node@22.8.7)(@vitest/browser@2.1.4)(@vitest/ui@2.1.4)(happy-dom@15.8.3)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.28.1)(msw@2.5.2(@types/node@22.8.7)(typescript@5.6.3))(sass@1.80.6)(terser@5.34.1)
+      vitest: 2.1.4(@types/node@22.8.7)(@vitest/browser@2.1.4)(@vitest/ui@2.1.4)(happy-dom@15.10.1)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.28.1)(msw@2.5.2(@types/node@22.8.7)(typescript@5.6.3))(sass@1.80.6)(terser@5.34.1)
 
   '@vitest/utils@2.1.4':
     dependencies:
@@ -5462,13 +5505,13 @@ snapshots:
 
   codemirror@6.0.1(@lezer/common@1.2.2):
     dependencies:
-      '@codemirror/autocomplete': 6.18.1(@codemirror/language@6.10.3)(@codemirror/state@6.4.1)(@codemirror/view@6.34.1)(@lezer/common@1.2.2)
-      '@codemirror/commands': 6.7.0
+      '@codemirror/autocomplete': 6.18.2(@codemirror/language@6.10.3)(@codemirror/state@6.4.1)(@codemirror/view@6.34.2)(@lezer/common@1.2.2)
+      '@codemirror/commands': 6.7.1
       '@codemirror/language': 6.10.3
       '@codemirror/lint': 6.8.2
-      '@codemirror/search': 6.5.6
+      '@codemirror/search': 6.5.7
       '@codemirror/state': 6.4.1
-      '@codemirror/view': 6.34.1
+      '@codemirror/view': 6.34.2
     transitivePeerDependencies:
       - '@lezer/common'
     optional: true
@@ -5989,7 +6032,7 @@ snapshots:
 
   graphql@16.9.0: {}
 
-  happy-dom@15.8.3:
+  happy-dom@15.10.1:
     dependencies:
       entities: 4.5.0
       webidl-conversions: 7.0.0
@@ -7190,7 +7233,7 @@ snapshots:
       sass: 1.80.6
       terser: 5.34.1
 
-  vitest@2.1.4(@types/node@22.8.7)(@vitest/browser@2.1.4)(@vitest/ui@2.1.4)(happy-dom@15.8.3)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.28.1)(msw@2.5.2(@types/node@22.8.7)(typescript@5.6.3))(sass@1.80.6)(terser@5.34.1):
+  vitest@2.1.4(@types/node@22.8.7)(@vitest/browser@2.1.4)(@vitest/ui@2.1.4)(happy-dom@15.10.1)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.28.1)(msw@2.5.2(@types/node@22.8.7)(typescript@5.6.3))(sass@1.80.6)(terser@5.34.1):
     dependencies:
       '@vitest/expect': 2.1.4
       '@vitest/mocker': 2.1.4(msw@2.5.2(@types/node@22.8.7)(typescript@5.6.3))(vite@5.4.10(@types/node@22.8.7)(lightningcss@1.28.1)(sass@1.80.6)(terser@5.34.1))
@@ -7216,7 +7259,7 @@ snapshots:
       '@types/node': 22.8.7
       '@vitest/browser': 2.1.4(@types/node@22.8.7)(playwright@1.48.2)(typescript@5.6.3)(vite@5.4.10(@types/node@22.8.7)(lightningcss@1.28.1)(sass@1.80.6)(terser@5.34.1))(vitest@2.1.4)
       '@vitest/ui': 2.1.4(vitest@2.1.4)
-      happy-dom: 15.8.3
+      happy-dom: 15.10.1
       jsdom: 25.0.1(canvas@2.11.2)
     transitivePeerDependencies:
       - less
