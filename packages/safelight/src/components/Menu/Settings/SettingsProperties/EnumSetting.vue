@@ -22,7 +22,7 @@
         {{ setting.labelKey ? getByPath(defaultValue, setting.labelKey) : defaultValue }})
         <i class="ph ph-arrow-u-down-left" style="font-size: 15px" />
     </a>
-    <Dropdown
+    <Select
         :model-value="enumValue"
         :options="setting.options"
         :option-label="setting.labelKey"
@@ -38,7 +38,7 @@ import {
     type SettingsEnumProperty
 } from '@safelight/shared/Settings/SettingsManager';
 import { getByPath } from 'dot-path-value';
-import Dropdown from 'primevue/dropdown';
+import Select from 'primevue/select';
 import { computed } from 'vue';
 import VueMarkdown from 'vue-markdown-render';
 

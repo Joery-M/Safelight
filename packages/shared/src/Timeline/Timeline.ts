@@ -1,13 +1,13 @@
 import { useManualRefHistory } from '@vueuse/core';
 import { v4 as uuidv4 } from 'uuid';
-import { computed, ref, shallowReactive, watchEffect } from 'vue';
+import { computed, ref, shallowReactive, watch } from 'vue';
 import {
     MediaItem,
     MediaSourceType,
     type MediaItemMetadata,
     type MediaItemTypes
 } from '../Media/Media';
-import type { TimelineItem } from '../base/TimelineItem';
+import { TimelineItem } from './TimelineItem';
 
 export class Timeline extends MediaItem<TimelineItemMetadata> {
     public id = uuidv4();
@@ -36,7 +36,8 @@ export class Timeline extends MediaItem<TimelineItemMetadata> {
         this.framerate.value = config.framerate;
 
         this.addMetadata('timelineConfig', config);
-        watchEffect(() => {
+
+        watch([this.framerate, this.height, this.width, this.name], () => {
             this.addMetadata('timelineConfig', {
                 framerate: this.framerate.value,
                 height: this.height.value,
@@ -46,12 +47,28 @@ export class Timeline extends MediaItem<TimelineItemMetadata> {
             this.save();
         });
 
+        watch(this.items, (items) => {
+            this.addMetadata('items', Array.from(items.keys()));
+            this.save();
+        });
+
         this.pbPosHistory.commit();
 
         for (const item of initItems) {
             this.items.set(item.id, item);
         }
-        this.save();
+    }
+
+    //#region Timeline items
+
+    async createTimelineItem() {
+        const item = new TimelineItem(this);
+        item.save();
+        this.items.set(item.id, item);
+
+        await this.save();
+
+        return item;
     }
 
     /**
@@ -71,10 +88,12 @@ export class Timeline extends MediaItem<TimelineItemMetadata> {
     }
 
     public async deleteItem(item: TimelineItem) {
-        item.Delete();
+        item.delete();
         this.items.delete(item.id);
         await this.save();
     }
+
+    //#endregion Timeline items
 
     //#region Playback
 
@@ -152,4 +171,5 @@ export interface TimelineConfig {
 
 export interface TimelineItemMetadata extends MediaItemMetadata {
     timelineConfig: TimelineConfig;
+    items: string[];
 }

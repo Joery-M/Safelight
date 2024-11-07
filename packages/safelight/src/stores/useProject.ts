@@ -1,4 +1,3 @@
-import { router } from '@/router';
 import { Storage } from '@safelight/shared/base/Storage';
 import type { Project } from '@safelight/shared/Project/Project';
 import type { Timeline } from '@safelight/shared/Timeline/Timeline';
@@ -17,15 +16,6 @@ export const useProject = defineStore('Project', () => {
         }
     }
 
-    async function toEditor(projectId: string) {
-        await router.push({
-            name: `Editor`,
-            params: {
-                projectId
-            }
-        });
-    }
-
     async function openProject(selectedProject: { id: string }) {
         if (!Storage.hasStorage()) {
             const IndexedDbStorageController = (
@@ -41,8 +31,16 @@ export const useProject = defineStore('Project', () => {
         return !!project;
     }
 
+    async function deleteProject(projectId: string) {
+        const storage = new (
+            await import('@safelight/shared/Storage/LocalStorage/IndexedDbStorage')
+        ).IndexedDbStorageController();
+
+        await storage.deleteProject(projectId);
+    }
+
     const creators = {
-        async newSimpleProject(goToEditor = true) {
+        async newSimpleProject() {
             const IndexedDbStorageController = (
                 await import('@safelight/shared/Storage/LocalStorage/IndexedDbStorage')
             ).IndexedDbStorageController;
@@ -64,7 +62,6 @@ export const useProject = defineStore('Project', () => {
 
             await proj.save();
 
-            if (goToEditor) await toEditor(proj.id);
             return proj;
         }
     };
@@ -86,7 +83,7 @@ export const useProject = defineStore('Project', () => {
         },
         selectedTimeline,
         openProject,
-        toEditor,
+        deleteProject,
         creators,
         $reset
     };

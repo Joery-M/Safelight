@@ -42,7 +42,11 @@
         </div>
         <div class="relative min-h-0 flex-1">
             <Suspense>
-                <component :is="activeComponent" />
+                <component :is="activeComponent" v-if="activeComponent" />
+
+                <template #fallback>
+                    <LoadingPanel />
+                </template>
             </Suspense>
         </div>
     </div>
@@ -80,11 +84,11 @@ import Popover from 'primevue/popover';
 import TabMenu from 'primevue/tabmenu';
 import {
     computed,
-    createStaticVNode,
-    createTextVNode,
     defineAsyncComponent,
     ref,
     shallowRef,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    Suspense,
     type Component,
     type ComponentInstance,
     type StyleValue
@@ -121,19 +125,12 @@ const activeComponent = shallowRef<Component>();
 watchImmediate(activeTab, (tab) => {
     if (!tab) return;
 
-    activeComponent.value = defineAsyncComponent({
-        loader:
-            PanelManager.allPanels.get(tab.panelId ?? '')?.component ??
-            (async () =>
-                createStaticVNode(
-                    `<div style="flex: 1; display: grid; place-items: center; height: 100%;">${tab.panelId}</div>`,
-                    1
-                )),
-        loadingComponent: LoadingPanel,
-        suspensible: true,
-        errorComponent: createTextVNode(tab.panelId),
-        timeout: 3000
-    });
+    const panel = PanelManager.allPanels.get(tab.panelId ?? '');
+    if (panel) {
+        activeComponent.value = defineAsyncComponent(panel.component);
+    } else {
+        activeComponent.value = undefined;
+    }
 });
 
 const allAvailablePanels = computed<MenuItem[]>(() =>

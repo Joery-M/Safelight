@@ -84,6 +84,7 @@ export abstract class MoveableTimelineItem implements TimelineItem {
         manager.events.on('mouseUp', () => {
             if (this.isDragging.value) {
                 this.isDragging.value = false;
+                this.events.emit('drop', this.start.value, this.end.value, this.layer.value);
             }
         });
 
@@ -117,4 +118,5 @@ export abstract class MoveableTimelineItem implements TimelineItem {
 export interface MoveableItemEvent {
     layerChange: [newLayer: number, oldLayer: number];
     move: [newStart: number, newEnd: number];
+    drop: [newStart: number, newEnd: number, newLayer: number];
 }

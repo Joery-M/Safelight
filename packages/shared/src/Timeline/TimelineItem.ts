@@ -1,26 +1,39 @@
 import { v4 as uuidv4 } from 'uuid';
-import { ref, shallowReactive } from 'vue';
+import { computed, ref, shallowReactive } from 'vue';
 import type { Timeline } from '../Timeline/Timeline';
+import { Storage } from '../base/Storage';
 
-export abstract class TimelineItem {
-    public id = uuidv4();
-    public type: TimelineItemType = 'Base';
+export class TimelineItem {
+    id = uuidv4();
+    name = ref('');
+    /**
+     * What type this timelineItem should represent.
+     *
+     * In order:
+     * @returns `Video` when a source contains video.
+     * @returns `Audio` when a source contains audio.
+     * @returns `Image` when a source is an image.
+     * @returns `EffectLayer` when this timeline item contains no source effects,
+     *          which will apply the other effects to subsequent layers.
+     * @returns `Base` when no other option applies.
+     */
+    type = computed<TimelineItemType>(() => 'Base');
 
-    public name = ref('');
-
-    public linkedItems = shallowReactive(new Set<TimelineItem>());
+    linkedItems = shallowReactive(new Set<TimelineItem>());
+    // TODO: Implement effects
+    effects = shallowReactive<any[]>([]);
 
     private lastStart = ref(0);
     private lastEnd = ref(0);
     private lastLayer = ref(0);
 
-    public start = ref(0);
-    public end = ref(0);
-    public layer = ref(0);
+    start = ref(0);
+    end = ref(1000);
+    layer = ref(0);
 
-    // Might want to change this to BaseTimeline depending on
-    // what happens with in terms of other types of timelines
-    private timeline!: Timeline;
+    constructor(private timeline: Timeline) {}
+
+    //#region Movement
 
     /**
      * Whether this timeline item is a ghost.
@@ -28,9 +41,9 @@ export abstract class TimelineItem {
      * Ghosts are used for when an item is being dragged
      * and shouldn't interact with surrounding items.
      */
-    public isGhost = ref(false);
+    isGhost = ref(false);
 
-    public onMoveStart() {
+    onMoveStart() {
         this.isGhost.value = true;
         this.lastStart.value = this.start.value;
         this.lastEnd.value = this.end.value;
@@ -46,7 +59,7 @@ export abstract class TimelineItem {
     /**
      * @param offset Offset in milliseconds
      */
-    public onMoveDrag(offset: number) {
+    onMoveDrag(offset: number) {
         this.start.value += offset;
         this.end.value += offset;
 
@@ -55,7 +68,7 @@ export abstract class TimelineItem {
             item.end.value += offset;
         });
     }
-    public onMoveCancel() {
+    onMoveCancel() {
         this.start.value = this.lastStart.value;
         this.end.value = this.lastEnd.value;
         this.layer.value = this.lastLayer.value;
@@ -68,7 +81,7 @@ export abstract class TimelineItem {
             item.isGhost.value = false;
         });
     }
-    public onDrop() {
+    onDrop() {
         this.isGhost.value = false;
 
         this.linkedItems.forEach((item) => {
@@ -79,7 +92,7 @@ export abstract class TimelineItem {
         this.timeline.itemDropped(this);
     }
 
-    public onDroppedOn(otherItem: TimelineItem) {
+    onDroppedOn(otherItem: TimelineItem) {
         if (otherItem.end.value > this.start.value && otherItem.start.value < this.start.value) {
             // ▼  [====]    < Other item
             // ▼    [=====] < This item
@@ -105,7 +118,7 @@ export abstract class TimelineItem {
      *
      * @param time New millisecond time to move to.
      */
-    public MoveTo(time: number) {
+    moveTo(time: number) {
         this.linkedItems.forEach((item) => {
             // Offset between current item and other item
             const offset = item.start.value - this.start.value;
@@ -125,11 +138,25 @@ export abstract class TimelineItem {
         this.timeline.itemDropped(this);
     }
 
-    public Delete() {
+    //#endregion Movement
+
+    async save() {
+        if (!Storage.hasStorage()) return false;
+
+        const storage = Storage.getStorage();
+
+        const res = await storage.saveTimelineItem(this);
+        return res == 'Success';
+    }
+
+    async delete() {
         this.linkedItems.forEach((item) => {
             // Delete myself from other linked items
             item.linkedItems.delete(this);
         });
+        if (!Storage.hasStorage()) return;
+        const storage = Storage.getStorage();
+        await storage.deleteTimelineItem(this.id);
     }
 }
 

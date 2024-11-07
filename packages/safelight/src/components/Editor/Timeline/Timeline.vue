@@ -1,26 +1,24 @@
 <template>
-    <canvas ref="canvas" class="size-full"></canvas>
+    <div class="relative size-full">
+        <canvas ref="canvas" class="size-full"></canvas>
+        <div class="bg-surface-900 absolute right-0 top-0 p-4">
+            <Button @click="addTimelineItem()"> Add item </Button>
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts">
 import { useProject } from '@/stores/useProject';
-import type { TimelineItem } from '@safelight/shared/base/TimelineItem';
 import { SettingsManager } from '@safelight/shared/Settings/SettingsManager';
+import type { TimelineItem } from '@safelight/shared/Timeline/TimelineItem';
 import { createTimelineManager, type CreateTimelineFn } from '@safelight/timeline';
 import { TimelineCursorElement } from '@safelight/timeline/elements/TimelineCursorElement';
 import { TimelineGrid } from '@safelight/timeline/elements/TimelineGrid';
 import { TimelineLayer } from '@safelight/timeline/elements/TimelineLayer';
 import { VideoTimelineElement } from '@safelight/timeline/elements/VideoTimelineElement';
 import { syncRef, watchArray } from '@vueuse/core';
-import {
-    computed,
-    onBeforeUnmount,
-    onMounted,
-    ref,
-    shallowReactive,
-    watch,
-    watchEffect
-} from 'vue';
+import Button from 'primevue/button';
+import { computed, onMounted, ref, shallowReactive, shallowRef, watch, watchEffect } from 'vue';
 
 const project = useProject();
 const projectTimeline = computed(() => project.timeline);
@@ -31,7 +29,7 @@ const invertScrollAxes = SettingsManager.getSetting<boolean>('editor.timeline.us
 // const zoomFactor = SettingsManager.getSetting<number>('editor.timeline.zoomFactor');
 // const alignment = SettingsManager.getSetting<'top' | 'bottom'>('editor.timeline.align');
 
-const timelineManager = ref<CreateTimelineFn>();
+const timelineManager = shallowRef<CreateTimelineFn>();
 onMounted(() => {
     if (canvas.value) {
         watch(
@@ -69,18 +67,22 @@ onMounted(() => {
                     }
                 );
 
-                watchEffect(() => {
-                    if (projectTimeline) {
-                        pbCursor.frameInterval.value = projectTimeline.frameDuration.value;
-                    }
-                });
+                onCleanup(
+                    watchEffect(() => {
+                        if (projectTimeline) {
+                            pbCursor.frameInterval.value = projectTimeline.frameDuration.value;
+                        }
+                    })
+                );
 
-                syncRef(pbCursor.cursorPos, projectTimeline.pbPos, {
-                    transform: {
-                        ltr: (val) => Math.round(val / projectTimeline.frameDuration.value),
-                        rtl: (val) => val * projectTimeline.frameDuration.value
-                    }
-                });
+                onCleanup(
+                    syncRef(projectTimeline.pbPos, pbCursor.cursorPos, {
+                        transform: {
+                            ltr: (val) => val * projectTimeline.frameDuration.value,
+                            rtl: (val) => Math.round(val / projectTimeline.frameDuration.value)
+                        }
+                    })
+                );
 
                 const layers = shallowReactive<TimelineLayer[]>([new TimelineLayer()]);
 
@@ -93,18 +95,20 @@ onMounted(() => {
                     }
                 });
 
-                watchArray(
-                    layers,
-                    (_cur, _old, added, removed) => {
-                        for (const layer of added) {
-                            timelineManager.value!.addLayer(layer);
-                        }
-                        if (removed)
-                            for (const layer of removed) {
-                                timelineManager.value!.removeLayer(layer);
+                onCleanup(
+                    watchArray(
+                        layers,
+                        (_cur, _old, added, removed) => {
+                            for (const layer of added) {
+                                timelineManager.value!.addLayer(layer);
                             }
-                    },
-                    { immediate: true, deep: false }
+                            if (removed)
+                                for (const layer of removed) {
+                                    timelineManager.value!.removeLayer(layer);
+                                }
+                        },
+                        { immediate: true, deep: false }
+                    )
                 );
 
                 const projectItems = computed(() =>
@@ -113,35 +117,53 @@ onMounted(() => {
                 const projectItemsToTimelineItems = shallowReactive(
                     new WeakMap<TimelineItem, VideoTimelineElement>()
                 );
-                watchArray(
-                    projectItems,
-                    (_cur, _old, added, removed) => {
-                        for (const item of added) {
-                            const layerItem = new VideoTimelineElement();
-                            syncRef(item.layer, layerItem.layer);
+                onCleanup(
+                    watchArray(
+                        projectItems,
+                        (_cur, _old, added, removed, onCleanup) => {
+                            for (const item of added) {
+                                const layerItem = new VideoTimelineElement();
+                                layerItem.layer.value = item.layer.value;
+                                layerItem.start.value = item.start.value;
+                                layerItem.end.value = item.end.value;
 
-                            watch(item.layer, (layerIndex) => {
-                                while (layers.length < layerIndex) {
-                                    layers.push(new TimelineLayer());
-                                }
-                            });
-                            timelineManager.value!.addLayerItem(layerItem);
+                                onCleanup(syncRef(item.layer, layerItem.layer));
+                                onCleanup(syncRef(item.start, layerItem.start));
+                                onCleanup(syncRef(item.end, layerItem.end));
+                                onCleanup(
+                                    syncRef(
+                                        layerItem.frameInterval,
+                                        project.timeline!.frameDuration,
+                                        {
+                                            direction: 'rtl'
+                                        }
+                                    )
+                                );
+                                timelineManager.value!.addLayerItem(layerItem);
 
-                            projectItemsToTimelineItems.set(item, layerItem);
-                        }
+                                layerItem.events.on('drop', () => {
+                                    item.save();
+                                });
+                                onCleanup(() => {
+                                    layerItem.events.removeAllListeners('drop');
+                                });
 
-                        if (removed)
-                            for (const item of removed) {
-                                if (projectItemsToTimelineItems.has(item)) {
-                                    timelineManager.value!.removeLayerItem(
-                                        projectItemsToTimelineItems.get(item)!
-                                    );
-                                }
+                                projectItemsToTimelineItems.set(item, layerItem);
                             }
-                    },
-                    {
-                        immediate: true
-                    }
+
+                            if (removed)
+                                for (const item of removed) {
+                                    if (projectItemsToTimelineItems.has(item)) {
+                                        timelineManager.value!.removeLayerItem(
+                                            projectItemsToTimelineItems.get(item)!
+                                        );
+                                    }
+                                }
+                        },
+                        {
+                            immediate: true
+                        }
+                    )
                 );
                 onCleanup(() => {
                     const curItems = Array.from(
@@ -152,25 +174,39 @@ onMounted(() => {
                     }
                 });
 
-                // Settings
-                syncRef(invertScrollAxes, timelineManager.value!.manager.invertScrollAxes, {
-                    direction: 'ltr',
-                    immediate: false // dunno why
-                });
+                // Max layer
+                onCleanup(
+                    watchEffect(() => {
+                        if (!timelineManager.value) return;
+
+                        const highestLayer =
+                            Array.from(timelineManager.value.manager.allLayerItems.values())
+                                .sort((a, b) => a.layer.value - b.layer.value)
+                                .at(0)?.layer.value ?? 0;
+
+                        while (layers.length <= highestLayer + 1) {
+                            layers.push(new TimelineLayer());
+                        }
+                        while (layers.length > highestLayer + 2) {
+                            // layers.push(new TimelineLayer());
+                            layers.pop();
+                        }
+                    })
+                );
             },
             { immediate: true }
         );
     }
 });
 
-onBeforeUnmount(() => {
-    timelineManager.value?.destroy();
+// Settings
+watchEffect(() => {
+    if (timelineManager.value)
+        timelineManager.value.manager.invertScrollAxes.value = invertScrollAxes?.value ?? false;
 });
-</script>
 
-<style lang="scss" scoped>
-.timeline {
-    --surface-100: var(--p-splitter-gutter-background);
-    --red-600: var(--p-red-600);
+// TODO: This is temporary
+async function addTimelineItem() {
+    await project.timeline?.createTimelineItem();
 }
-</style>
+</script>

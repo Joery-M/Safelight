@@ -4,13 +4,14 @@ import type { MediaItem, MediaItemTypes } from '../Media/Media';
 import type { MediaFileItem } from '../Media/MediaFile';
 import type { Project } from '../Project/Project';
 import type { Timeline } from '../Timeline/Timeline';
-import type { TimelineItemType } from './TimelineItem';
+import type { TimelineItem } from '../Timeline/TimelineItem';
 
 export default abstract class BaseStorageController {
     public version: string = '0.0.0';
 
     abstract saveProject(project: Project): Promise<SaveResults>;
     abstract loadProject(projectId: string): Promise<Project | undefined>;
+    abstract deleteProject(projectId: string): Promise<SaveResults>;
     abstract patchStoredProject(
         project: SetRequired<Partial<StoredProject>, 'id'>
     ): Promise<SaveResults>;
@@ -33,6 +34,14 @@ export default abstract class BaseStorageController {
         start?: number,
         size?: number
     ): Promise<ArrayBuffer | undefined>;
+    abstract deleteFile(filePath: FilePath): Promise<void>;
+
+    abstract saveTimelineItem(item: TimelineItem): Promise<SaveResults>;
+    abstract loadTimelineItem(
+        itemId: string,
+        timeline: Timeline
+    ): Promise<TimelineItem | undefined>;
+    abstract deleteTimelineItem(itemId: string): Promise<SaveResults>;
 }
 
 export class Storage {
@@ -110,19 +119,16 @@ export interface StoredProject {
     metadata: { [key: string | number]: any };
 }
 
-// TODO Add all necessary properties
-export interface StoredSimpleTimelineItem {
+export interface StoredTimelineItem {
     id: string;
     name: string;
-    type: TimelineItemType;
-    /**
-     * The ID of a stored media item.
-     *
-     * Media has to be included in the stored project's media list to be used.
-     */
-    media?: string;
     start: number;
     end: number;
     layer: number;
-    duration?: number;
+    effects: StoredEffect[];
+}
+
+// TODO Add all necessary properties
+export interface StoredEffect {
+    id: string;
 }

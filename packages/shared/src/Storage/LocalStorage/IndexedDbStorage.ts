@@ -2,12 +2,14 @@ import { toValue } from '@vueuse/core';
 import { DateTime } from 'luxon';
 import * as opfsTools from 'opfs-tools';
 import type { SetRequired } from 'type-fest';
+import { toRaw } from 'vue';
 import type {
     FilePath,
     FilePathTypes,
     SaveResults,
     StoredMedia,
-    StoredProject
+    StoredProject,
+    StoredTimelineItem
 } from '../../base/Storage';
 import BaseStorageController from '../../base/Storage';
 import {
@@ -17,7 +19,8 @@ import {
 import { MediaItem } from '../../Media/Media';
 import { MediaFileItem, type MediaFileItemMetadata } from '../../Media/MediaFile';
 import { Project } from '../../Project/Project';
-import { Timeline, type TimelineConfig } from '../../Timeline/Timeline';
+import { Timeline, type TimelineItemMetadata } from '../../Timeline/Timeline';
+import { TimelineItem } from '../../Timeline/TimelineItem';
 import { NotificationService } from '../../UI/Notifications/NotificationService';
 import { SafelightIndexedDB } from './db';
 
@@ -80,6 +83,25 @@ export class IndexedDbStorageController extends BaseStorageController {
         project.deserializeFileTree(storedProject.fileTree);
 
         return project;
+    }
+    async deleteProject(projectId: string): Promise<SaveResults> {
+        // Delete media and timeline items, then delete actual project
+        const storedProject = await this.db.project.get(projectId);
+        if (!storedProject) return 'Error';
+
+        for (const mediaId of storedProject.media) {
+            const media = await this.db.media.get(mediaId);
+            if (!media) continue;
+
+            if (media.type == 'Timeline') {
+                const timelineItemIds: string[] = media.metadata.items ?? [];
+
+                await this.db.timelineItem.bulkDelete(timelineItemIds);
+            }
+            await this.deleteMedia(media);
+        }
+        await this.db.project.delete(projectId);
+        return 'Success';
     }
     async patchStoredProject(
         project: SetRequired<Partial<StoredProject>, 'id'>
@@ -166,6 +188,17 @@ export class IndexedDbStorageController extends BaseStorageController {
             console.error('Error deleting file from OPFS', error);
         }
 
+        // Check if timeline, if so, delete timelineItems
+        const timelineItems: string[] =
+            media.type == 'Timeline' ? (media.metadata.items ?? []) : [];
+        try {
+            if (timelineItems.length > 0) {
+                await this.db.timelineItem.bulkDelete(timelineItems);
+            }
+        } catch (error) {
+            console.error('Error deleting timeline items', error);
+        }
+
         await this.db.media.delete(id);
         return 'Success';
     }
@@ -181,18 +214,22 @@ export class IndexedDbStorageController extends BaseStorageController {
                 .filter((m) => mediaList.includes(m.id))
                 .toArray();
 
-            return storedMedias
-                .map((storedMedia) => this.mapStoredMediaToMediaItem(storedMedia))
-                .filter((m) => !!m);
+            return (
+                await Promise.all(
+                    storedMedias.map((storedMedia) => this.mapStoredMediaToMediaItem(storedMedia))
+                )
+            ).filter((m) => !!m);
         } else {
             const storedMedias = await this.db.media.filter((m) => m.type !== 'Timeline').toArray();
-            return storedMedias
-                .map((storedMedia) => this.mapStoredMediaToMediaItem(storedMedia))
-                .filter((m) => !!m);
+            return (
+                await Promise.all(
+                    storedMedias.map((storedMedia) => this.mapStoredMediaToMediaItem(storedMedia))
+                )
+            ).filter((m) => !!m);
         }
     }
 
-    private mapStoredMediaToMediaItem(storedMedia?: StoredMedia) {
+    private async mapStoredMediaToMediaItem(storedMedia?: StoredMedia) {
         switch (storedMedia?.type) {
             case 'ChunkedMediaFile': {
                 const item = new ChunkedMediaFileItem(
@@ -211,18 +248,25 @@ export class IndexedDbStorageController extends BaseStorageController {
                 return item;
             }
             case 'Timeline': {
-                const config = storedMedia.metadata['timelineConfig'] as TimelineConfig;
-                if (!config) {
+                const metadata = storedMedia.metadata as TimelineItemMetadata;
+                if (!metadata) {
                     return;
                 }
 
-                const item = new Timeline(config);
-                for (const [path, value] of Object.entries(storedMedia.metadata)) {
-                    item.addMetadata(path as any, value);
-                }
-                item.id = storedMedia.id;
+                const timeline = new Timeline(metadata.timelineConfig);
+                timeline.id = storedMedia.id;
 
-                return item;
+                const promises = (metadata.items ?? []).map(async (itemId) => {
+                    const item = await this.loadTimelineItem(itemId, timeline);
+                    if (item) timeline.items.set(itemId, item);
+                });
+                await Promise.allSettled(promises);
+
+                for (const [path, value] of Object.entries(storedMedia.metadata)) {
+                    timeline.addMetadata(path as any, value);
+                }
+
+                return timeline;
             }
 
             default:
@@ -267,9 +311,51 @@ export class IndexedDbStorageController extends BaseStorageController {
         await opfsTools.write('/' + filePath.join('/'), data, { overwrite: true });
     }
 
-    async DeleteFile(filePath: string[]) {
+    async deleteFile(filePath: FilePath) {
         const file = opfsTools.file(filePath.join('/'));
         await file.remove();
+    }
+
+    async loadTimelineItem(itemId: string, timeline: Timeline): Promise<TimelineItem | undefined> {
+        const storedItem = await this.db.timelineItem.get({ id: itemId });
+        if (!storedItem) return;
+
+        const item = new TimelineItem(timeline);
+        item.id = storedItem.id;
+        item.end.value = storedItem.end;
+        item.layer.value = storedItem.layer;
+        item.name.value = storedItem.name;
+        item.start.value = storedItem.start;
+        // TODO: Map stored effects to effect objects
+        // item.effects.push(...)
+
+        return item;
+    }
+
+    async deleteTimelineItem(itemId: string): Promise<SaveResults> {
+        await this.db.timelineItem.delete(itemId);
+        return 'Success';
+    }
+
+    async saveTimelineItem(item: TimelineItem): Promise<SaveResults> {
+        this.checkPersistentStorage();
+
+        const storedTimelineItem: StoredTimelineItem = {
+            name: toValue(item.name),
+            id: item.id,
+            effects: toRaw(item.effects),
+            end: toValue(item.end),
+            layer: toValue(item.layer),
+            start: toValue(item.start)
+        };
+
+        try {
+            await this.db.timelineItem.put(storedTimelineItem);
+            return 'Success';
+        } catch (error) {
+            console.error(error);
+            return 'Error';
+        }
     }
 
     private notificationShown = false;

@@ -1,12 +1,13 @@
 <template>
     <DataTable
-        :value="projects"
-        :loading
+        class="datatable"
+        :value="loadList.state.value"
+        :loading="loadList.isLoading.value"
         edit-mode="cell"
         sort-field="updated"
         removable-sort
         :sort-order="-1"
-        @row-dblclick="curProject.toEditor($event.data.id)"
+        @row-dblclick="$router.push(`/editor/${$event.data.id}`)"
     >
         <template #header>
             <div class="align-items-center justify-content-between flex flex-wrap gap-2">
@@ -15,13 +16,18 @@
                     rounded
                     :title="$t('general.descriptions.refresh')"
                     icon="ph ph-arrows-clockwise"
-                    @click="loadList()"
+                    @click="loadList.execute()"
                 />
                 <SplitButton
                     :label="$t('project.new')"
                     rounded
                     :model="projectTypes"
-                    @click="useProject().creators.newSimpleProject()"
+                    @click="
+                        async () => {
+                            const project = await curProject.creators.newSimpleProject();
+                            $router.push({ name: 'Editor', params: { projectId: project.id } });
+                        }
+                    "
                 />
             </div>
         </template>
@@ -81,23 +87,24 @@
         <Column style="width: 0">
             <template #body="{ data }">
                 <Button
-                    v-tooltip="$t('general.actions.open')"
+                    v-tooltip="$t('general.actions.delete')"
+                    class="delete-btn"
                     text
                     rounded
                     plain
-                    icon="ph ph-caret-right"
-                    @click="$router.push(`/editor/${data.id}`)"
+                    icon="ph ph-trash"
+                    @click="curProject.deleteProject(data.id).then(() => loadList.execute())"
                 />
             </template>
         </Column>
         <Column style="width: 0">
             <template #body="{ data }">
                 <Button
-                    v-tooltip="$t('general.actions.delete')"
+                    v-tooltip="$t('general.actions.open')"
                     text
                     rounded
                     plain
-                    icon="ph ph-trash"
+                    icon="ph ph-caret-right"
                     @click="$router.push(`/editor/${data.id}`)"
                 />
             </template>
@@ -108,50 +115,37 @@
 <script setup lang="ts">
 import { useProject } from '@/stores/useProject';
 import { Storage, type StoredProject } from '@safelight/shared/base/Storage';
+import { useAsyncState } from '@vueuse/core';
 import Button from 'primevue/button';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 import InputText from 'primevue/inputtext';
 import type { MenuItem } from 'primevue/menuitem';
 import SplitButton from 'primevue/splitbutton';
-import { computed, onMounted, ref, shallowRef } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 
 const { t } = useI18n();
 
 const curProject = useProject();
+const router = useRouter();
 
 const projectTypes = computed<MenuItem[]>(
     () =>
         [
             {
                 label: t('project.types.simple'),
-                command: () => curProject.creators.newSimpleProject()
+                command: async () => {
+                    const project = await curProject.creators.newSimpleProject();
+                    router.push({ name: 'Editor', params: { projectId: project.id } });
+                }
             },
             { label: 'Test', command() {} }
         ] as const
 );
 
-const projects = shallowRef<StoredProject[]>([]);
-
-const loading = ref(true);
-
-onMounted(() => {
-    loadList();
-});
-function loadList() {
-    loading.value = true;
-    Storage.getProjects()
-        .then((p) => {
-            projects.value = p;
-        })
-        .catch((err) => {
-            console.error(err);
-        })
-        .finally(() => {
-            loading.value = false;
-        });
-}
+const loadList = useAsyncState(Storage.getProjects, [], { immediate: true });
 
 async function setProjectName(newName: string, project: StoredProject) {
     if (!newName || newName.length == 0) {
@@ -163,6 +157,21 @@ async function setProjectName(newName: string, project: StoredProject) {
     ).IndexedDbStorageController();
 
     await storage?.patchStoredProject({ id: project.id, name: newName });
-    loadList();
+    loadList.execute();
 }
 </script>
+
+<style lang="scss" scoped>
+.datatable :deep(tr) {
+    .delete-btn {
+        @apply transition-opacity;
+
+        opacity: 0;
+    }
+
+    &:hover .delete-btn,
+    .delete-btn:focus-visible {
+        opacity: 1;
+    }
+}
+</style>
