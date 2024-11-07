@@ -141,11 +141,12 @@ export class TimelineItem {
     //#endregion Movement
 
     async save() {
-        if (!Storage.hasStorage()) return;
+        if (!Storage.hasStorage()) return false;
 
         const storage = Storage.getStorage();
 
-        await storage.saveTimelineItem(this);
+        const res = await storage.saveTimelineItem(this);
+        return res == 'Success';
     }
 
     async delete() {
