@@ -9,23 +9,11 @@
             <div>
                 <Select
                     :model-value="$i18n.locale"
-                    :options="
-                        Object.entries(LocaleManager.locales).map(([name, reg]) => ({
-                            name,
-                            reg
-                        }))
-                    "
-                    @update:model-value="LocaleManager.switchLocale($event.name)"
-                >
-                    <template #value="{ value }">
-                        <div v-if="value">
-                            {{ LocaleManager.locales[value].localeName }} - {{ value }}
-                        </div>
-                    </template>
-                    <template #option="{ option }">
-                        <div>{{ option.reg.localeName }} - {{ option.name }}</div>
-                    </template>
-                </Select>
+                    :options="allLocales"
+                    option-label="displayName"
+                    option-value="name"
+                    @update:model-value="LocaleManager.switchLocale($event)"
+                />
                 <p><span>general.actions.search:</span> {{ $t('general.actions.search') }}</p>
             </div>
             <hr />
@@ -82,6 +70,12 @@ const previewDtFormat = ref<string>('long');
 
 const i18n = useI18n();
 
+const allLocales = computed(() =>
+    Array.from(LocaleManager.locales.entries()).map(([name, reg]) => ({
+        name,
+        displayName: reg.localeName + ' - ' + name
+    }))
+);
 const allPaths = computed(() => {
     if (i18n.locale.value == i18n.fallbackLocale.value.toString()) {
         return groupMessages(i18n.messages.value[i18n.locale.value]);

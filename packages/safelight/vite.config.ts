@@ -4,6 +4,7 @@ import vue from '@vitejs/plugin-vue';
 import path from 'node:path';
 import VueRouter from 'unplugin-vue-router/vite';
 import { defineConfig } from 'vite';
+import HotGlob from 'vite-plugin-hot-glob';
 import mkcert from 'vite-plugin-mkcert';
 import generateI18n from './buildscripts/vite-plugin-generate-i18n';
 
@@ -15,7 +16,8 @@ export default defineConfig({
     plugins: [
         VueRouter({
             routesFolder: {
-                src: path.join(import.meta.dirname, './src/views')
+                src: path.join(import.meta.dirname, './src/views'),
+                exclude: path.join(import.meta.dirname, './src/views/editor.vue')
             }
         }),
         vue(),
@@ -23,7 +25,8 @@ export default defineConfig({
         generateI18n({
             localesDir: path.join(import.meta.dirname, '../shared/src/Localization/i18n/'),
             outputFile: path.join(import.meta.dirname, './types/i18n.d.ts')
-        })
+        }),
+        HotGlob()
     ],
     resolve: {
         alias: {
