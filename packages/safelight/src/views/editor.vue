@@ -137,12 +137,6 @@ function showNoProjectDialog() {
     });
 }
 
-definePage({
-    meta: {
-        overridePageName: true
-    }
-});
-
 watchEffect(() => {
     useTitle(project.p?.name.value ? project.p?.name.value + ' | Safelight' : 'Safelight');
 });

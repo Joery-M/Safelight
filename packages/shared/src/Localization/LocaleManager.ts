@@ -1,5 +1,5 @@
-import { reactive, ref } from 'vue';
-import { type I18n, type IntlDateTimeFormat } from 'vue-i18n';
+import { ref, shallowReactive } from 'vue';
+import { type I18n, type IntlDateTimeFormat, type DefineLocaleMessage } from 'vue-i18n';
 
 /**
  * Locale names in their respective language
@@ -12,13 +12,13 @@ const defaultLocaleNames = {
 export class LocaleManager {
     public static activeLocale = ref('en-US');
 
-    public static locales = reactive<{ [locale: string]: RegisteredLocale }>({});
+    public static locales = shallowReactive(new Map<string, RegisteredLocale>());
 
     public static i18n: I18n<{}, {}, {}, string, false>;
 
     static async init(i18n: I18n<{}, {}, {}, string, false>) {
         this.i18n = i18n;
-        for (const member in this.locales) delete this.locales[member];
+        for (const member in this.locales) this.locales.delete(member);
 
         const globImport = import.meta.glob<LocalizationFile>('./i18n/*.json', {
             import: 'default'
@@ -74,11 +74,11 @@ export class LocaleManager {
     }
 
     private static async loadLocale(locale: string) {
-        if (!(locale in this.locales)) {
+        if (!this.locales.has(locale)) {
             console.error(`Locale ${locale} not found in registered locales`);
         } else {
             try {
-                const messages = await this.locales[locale].loadFn();
+                const messages = await this.locales.get(locale)!.loadFn();
                 return messages;
             } catch (error) {
                 console.error('Error loading locale:', error);
@@ -87,7 +87,7 @@ export class LocaleManager {
     }
 
     static registerLocale(locale: string, desc: RegisteredLocale) {
-        this.locales[locale] = desc;
+        this.locales.set(locale, desc);
         if (!this.i18n.global.availableLocales.includes(locale)) {
             this.i18n.global.availableLocales.push(locale);
         }
@@ -99,7 +99,7 @@ interface RegisteredLocale {
     localeName: string;
 }
 
-export interface LocalizationFile {
+export type LocalizationFile = DefineLocaleMessage & {
     localeSettings?: {
         dateTimeFormat?: {
             short: IntlDateTimeFormat[string];
@@ -115,30 +115,22 @@ export interface LocalizationFile {
          */
         fallback?: string;
     };
-    [key: string]: any;
-}
+};
 
-// Theres no way to use HMR accept on globs
 function setupHmr() {
     if (import.meta.hot) {
-        import.meta.hot.accept('./i18n/en-US.json', (mod) => {
-            const localeFile = mod?.default;
-            if (!localeFile) return;
+        import.meta.hot.accept({ glob: ['./i18n/*.json'] }, (mod) => {
+            for (const [path, file] of Object.entries(mod)) {
+                const localeFile = file?.default;
+                if (!localeFile) continue;
 
-            LocaleManager.locales['en-US'] = {
-                loadFn: async () => localeFile,
-                localeName: defaultLocaleNames['en-US']
-            };
-            LocaleManager.switchLocale(LocaleManager.activeLocale.value);
-        });
-        import.meta.hot.accept('./i18n/nl-NL.json', (mod) => {
-            const localeFile = mod?.default;
-            if (!localeFile) return;
+                const locale = path.split('i18n/')[1].split('.json')[0];
 
-            LocaleManager.locales['nl-NL'] = {
-                loadFn: async () => localeFile,
-                localeName: defaultLocaleNames['nl-NL']
-            };
+                LocaleManager.registerLocale(locale, {
+                    loadFn: async () => localeFile,
+                    localeName: defaultLocaleNames[locale as keyof typeof defaultLocaleNames]
+                });
+            }
             LocaleManager.switchLocale(LocaleManager.activeLocale.value);
         });
     }

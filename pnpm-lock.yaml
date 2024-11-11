@@ -59,6 +59,9 @@ importers:
       vite:
         specifier: ^5.4.10
         version: 5.4.10(@types/node@22.9.0)(lightningcss@1.28.1)(sass@1.80.6)(terser@5.34.1)
+      vite-plugin-hot-glob:
+        specifier: ^1.0.0
+        version: 1.0.0(vite@5.4.10(@types/node@22.9.0)(lightningcss@1.28.1)(sass@1.80.6)(terser@5.34.1))
       vitest:
         specifier: ^2.1.4
         version: 2.1.4(@types/node@22.9.0)(@vitest/browser@2.1.4)(@vitest/ui@2.1.4)(happy-dom@15.10.2)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.28.1)(msw@2.5.2(@types/node@22.9.0)(typescript@5.6.3))(sass@1.80.6)(terser@5.34.1)
@@ -2345,6 +2348,14 @@ packages:
       picomatch:
         optional: true
 
+  fdir@6.4.2:
+    resolution: {integrity: sha512-KnhMXsKSPZlAhp7+IjUkRZKPb4fUyccpDrdFXbi4QL1qkmFh9kVY09Yox+n4MaOb3lHZ1Tv829C3oaaXoMYPDQ==}
+    peerDependencies:
+      picomatch: ^3 || ^4
+    peerDependenciesMeta:
+      picomatch:
+        optional: true
+
   fflate@0.8.2:
     resolution: {integrity: sha512-cPJU47OaAoCbg0pBvzsgpTPhmhqI5eJjh/JIu8tPj5q+T7iLvW/JAYUqmE7KOB4R1ZyEhzBaIQpQpardBF5z8A==}
 
@@ -2660,6 +2671,9 @@ packages:
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
+
+  js-tokens@9.0.0:
+    resolution: {integrity: sha512-WriZw1luRMlmV3LGJaR6QOJjWwgLUTf89OwT2lUOyjX2dJGBwgmIkbcz+7WFZjrZM635JOIR517++e/67CP9dQ==}
 
   js-yaml@4.1.0:
     resolution: {integrity: sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==}
@@ -3516,6 +3530,9 @@ packages:
     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
     engines: {node: '>=8'}
 
+  strip-literal@2.1.0:
+    resolution: {integrity: sha512-Op+UycaUt/8FbN/Z2TWPBLge3jWrP3xj10f3fnYxf052bKuS3EKs1ZQcVGjnEMdsNVAM+plXRdmjrZ/KgG3Skw==}
+
   strnum@1.0.5:
     resolution: {integrity: sha512-J8bbNyKKXl5qYcR36TIO8W3mVGVHrmmxsd5PAItGkmyzwJvybiw2IVq5nqd0i4LSNSkB/sx9VHllbfFdr9k1JA==}
 
@@ -3591,6 +3608,10 @@ packages:
 
   tinyexec@0.3.1:
     resolution: {integrity: sha512-WiCJLEECkO18gwqIp6+hJg0//p23HXp4S+gGtAKu3mI2F2/sXC4FvHvXvB0zJVVaTPhx1/tOwdbRsa1sOBIKqQ==}
+
+  tinyglobby@0.2.10:
+    resolution: {integrity: sha512-Zc+8eJlFMvgatPZTl6A9L/yht8QqdmUNtURHaKZLmKBE12hNPSrqNkUp2cs3M/UKmNVVAMFQYSjYIVHDjW5zew==}
+    engines: {node: '>=12.0.0'}
 
   tinyglobby@0.2.9:
     resolution: {integrity: sha512-8or1+BGEdk1Zkkw2ii16qSS7uVrQJPre5A9o/XkWPATkk23FZh/15BKFxPnlTy6vkljZxLqYCzzBMj30ZrSvjw==}
@@ -3771,6 +3792,11 @@ packages:
     peerDependenciesMeta:
       vite:
         optional: true
+
+  vite-plugin-hot-glob@1.0.0:
+    resolution: {integrity: sha512-fDs/+A8mpzKipDFTT4eEmaKKB6LB2uSthDdpaBcZ7qlNCL0q5w6hMWMj11/k8JUFR41qvzxQ6rc9evrm2SxnEg==}
+    peerDependencies:
+      vite: ^3.1.0 || ^4.0.0 || ^5.0.0
 
   vite-plugin-mkcert@1.17.6:
     resolution: {integrity: sha512-4JR1RN0HEg/w17eRQJ/Ve2pSa6KCVQcQO6yKtIaKQCFDyd63zGfXHWpygBkvvRSpqa0GcqNKf0fjUJ0HiJQXVQ==}
@@ -5940,6 +5966,10 @@ snapshots:
     optionalDependencies:
       picomatch: 4.0.2
 
+  fdir@6.4.2(picomatch@4.0.2):
+    optionalDependencies:
+      picomatch: 4.0.2
+
   fflate@0.8.2: {}
 
   file-entry-cache@8.0.0:
@@ -6254,6 +6284,8 @@ snapshots:
   js-cookie@3.0.5: {}
 
   js-tokens@4.0.0: {}
+
+  js-tokens@9.0.0: {}
 
   js-yaml@4.1.0:
     dependencies:
@@ -6990,6 +7022,10 @@ snapshots:
 
   strip-json-comments@3.1.1: {}
 
+  strip-literal@2.1.0:
+    dependencies:
+      js-tokens: 9.0.0
+
   strnum@1.0.5: {}
 
   style-mod@4.1.2:
@@ -7095,6 +7131,11 @@ snapshots:
   tinybench@2.9.0: {}
 
   tinyexec@0.3.1: {}
+
+  tinyglobby@0.2.10:
+    dependencies:
+      fdir: 6.4.2(picomatch@4.0.2)
+      picomatch: 4.0.2
 
   tinyglobby@0.2.9:
     dependencies:
@@ -7283,6 +7324,14 @@ snapshots:
       - '@types/node'
       - rollup
       - supports-color
+
+  vite-plugin-hot-glob@1.0.0(vite@5.4.10(@types/node@22.9.0)(lightningcss@1.28.1)(sass@1.80.6)(terser@5.34.1)):
+    dependencies:
+      magic-string: 0.30.12
+      picomatch: 4.0.2
+      strip-literal: 2.1.0
+      tinyglobby: 0.2.10
+      vite: 5.4.10(@types/node@22.9.0)(lightningcss@1.28.1)(sass@1.80.6)(terser@5.34.1)
 
   vite-plugin-mkcert@1.17.6(vite@5.4.10(@types/node@22.9.0)(lightningcss@1.28.1)(sass@1.80.6)(terser@5.34.1)):
     dependencies:
