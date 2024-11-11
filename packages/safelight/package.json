@@ -56,7 +56,7 @@
         "@types/luxon": "^3.4.2",
         "@types/node": "^22.9.0",
         "@types/uuid": "^10.0.0",
-        "@vitejs/plugin-vue": "^5.1.4",
+        "@vitejs/plugin-vue": "^5.1.5",
         "@vue/tsconfig": "^0.6.0",
         "autoprefixer": "^10.4.20",
         "browserslist": "^4.24.2",
@@ -69,7 +69,7 @@
         "tsx": "^4.19.2",
         "typescript": "^5.6.3",
         "unplugin-vue-router": "^0.10.8",
-        "vite": "^5.4.10",
+        "vite": "^5.4.11",
         "vite-plugin-mkcert": "^1.17.6",
         "vue-tsc": "^2.1.10"
     },
