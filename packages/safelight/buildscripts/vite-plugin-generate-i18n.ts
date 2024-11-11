@@ -39,7 +39,11 @@ interface Options {
 async function compileTypes({ localesDir: dir, outputFile: output }: Options) {
     const files = await glob(dir + '/*.json', {
         signal: AbortSignal.timeout(1000)
+    }).catch((err) => {
+        console.error('Could not find i18n files:', err);
+        return [] as string[];
     });
+    if (!files.length) return;
 
     // Combine all files into 1 object
     const allFiles: Record<string, any> = {};
@@ -94,7 +98,9 @@ declare module 'vue-i18n' {
     outputFile = outputFile.replace(/((?<!\r)\n|\r(?!\n))/g, '\r\n');
 
     // No need to wait for finishing writing, if it does take long, skip it
-    writeFile(output, outputFile, { signal: AbortSignal.timeout(100) });
+    writeFile(output, outputFile, { signal: AbortSignal.timeout(100) }).catch((err) =>
+        console.error('Error writing i18n definitions:', err)
+    );
 }
 
 // Source: https://stackoverflow.com/a/34749873
