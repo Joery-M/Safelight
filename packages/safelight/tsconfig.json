@@ -1,18 +1,13 @@
 {
-    "files": [],
+    "extends": "../../tsconfig.json",
     "compilerOptions": {
         "composite": true,
-        "allowSyntheticDefaultImports": true
-    },
-    "references": [
-        {
-            "path": "./tsconfig.node.json"
-        },
-        {
-            "path": "./tsconfig.app.json"
-        },
-        {
-            "path": "./src/workers/tsconfig.json"
-        }
-    ]
+        "types": [
+            "vite/client",
+            "vue-i18n",
+            "@types/dom-webcodecs",
+            "@types/wicg-file-system-access",
+            "unplugin-vue-router/client"
+        ]
+    }
 }

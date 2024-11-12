@@ -1,6 +1,6 @@
 import { readFile } from 'fs/promises';
 import path from 'path';
-import { Elements, MatroskaElements, WebmReader } from '../src';
+import { Elements, MatroskaElements, WebmReader } from '..';
 import { XMLParser } from 'fast-xml-parser';
 
 test.concurrent('test 1', async () => {
