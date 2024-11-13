@@ -167,6 +167,7 @@
 </template>
 
 <script setup lang="ts">
+import type { Dependency, DependencyWithName, Packages } from '@@/types/packages';
 import { useDebounce, useFetch } from '@vueuse/core';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
@@ -177,7 +178,6 @@ import TabList from 'primevue/tablist';
 import TabPanel from 'primevue/tabpanel';
 import TabPanels from 'primevue/tabpanels';
 import Tabs from 'primevue/tabs';
-import type { Dependency, DependencyWithName, Packages } from 'types/packages';
 import { onMounted, reactive, ref, watch } from 'vue';
 import VueMarkdown from 'vue-markdown-render';
 import { RouterLink } from 'vue-router/auto';

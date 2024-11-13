@@ -21,7 +21,7 @@
       "import": "./src/elements/index.ts"
     },
     "./devtools": {
-      "import": "./src/devtools/index.ts"
+      "import": "./src/devtools.ts"
     }
   },
   "types": "./dist/index.d.ts",

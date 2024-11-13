@@ -1,7 +1,7 @@
-import { CustomInspectorState } from '@vue/devtools-api';
+import type { CustomInspectorState } from '@vue/devtools-kit';
 import EventEmitter from 'eventemitter3';
-import { TimelineItem, TimelineItemRenderPayload } from '..';
-import { MoveableItemEvent, MoveableTimelineItem } from './MoveableTimelineItem';
+import type { TimelineItem, TimelineItemRenderPayload } from '..';
+import { type MoveableItemEvent, MoveableTimelineItem } from './MoveableTimelineItem';
 
 export class VideoTimelineElement extends MoveableTimelineItem implements TimelineItem {
     private tempHue = 0;

@@ -1,6 +1,6 @@
 import { EventEmitter } from 'eventemitter3';
 import { Block } from './Block';
-import { DataReader, EbmlElementTag, Reader } from './DataReader';
+import { DataReader, type EbmlElementTag, Reader } from './DataReader';
 import { EbmlElements, type ElementEventMap, ElementInfo, MatroskaElements } from './elements';
 
 export class WebmReader {

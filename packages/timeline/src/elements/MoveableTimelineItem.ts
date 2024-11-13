@@ -1,6 +1,6 @@
 import EventEmitter from 'eventemitter3';
 import { ref, watch } from 'vue';
-import { TimelineItem, TimelineItemInitPayload, TimelineItemRenderPayload } from '..';
+import type { TimelineItem, TimelineItemInitPayload, TimelineItemRenderPayload } from '..';
 import { useSteppedRef } from '../tools/useSteppedRef';
 
 export abstract class MoveableTimelineItem implements TimelineItem {

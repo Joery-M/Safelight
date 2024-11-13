@@ -1,4 +1,4 @@
-import { EbmlElements, ElementEventMap, ElementInfo, ElementType } from './elements';
+import { EbmlElements, type ElementEventMap, ElementInfo, ElementType } from './elements';
 
 export class DataReader {
     private _totalBuffer = new ArrayBuffer(0);
