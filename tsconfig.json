@@ -1,0 +1,52 @@
+{
+    "include": ["./packages/**/*.ts", "./packages/**/*.vue", "./types/**/*.ts"],
+    "compilerOptions": {
+        "target": "ES2020",
+        "lib": ["DOM", "ESNext"],
+        "baseUrl": ".",
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "paths": {
+            "@safelight/darkroom": ["./packages/darkroom"],
+            "@safelight/plugin-types": ["./packages/plugin-types"],
+            "@safelight/safelight": ["./packages/safelight/"],
+            "@safelight/shared/*": ["./packages/shared/src/*"],
+            "@safelight/timeline": ["./packages/timeline"],
+            "@safelight/tswebm": ["./packages/tswebm"],
+            "@safelight/tswebm/*": ["./packages/tswebm"]
+        },
+
+        // Style
+        "verbatimModuleSyntax": true,
+        "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true,
+        "strict": true,
+        "noImplicitThis": true,
+
+        "useDefineForClassFields": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "skipLibCheck": true,
+        "composite": true,
+
+        // Types
+        "types": [
+            "vite/client",
+            "vue-i18n",
+            "@types/dom-webcodecs",
+            "@types/wicg-file-system-access",
+            "vite-plugin-hot-glob/types"
+        ]
+    },
+    "references": [
+        {
+            "path": "./packages/safelight/tsconfig.json"
+        },
+        {
+            "path": "./tsconfig.node.json"
+        },
+        {
+            "path": "./tsconfig.test.json"
+        }
+    ]
+}

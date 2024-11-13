@@ -1,0 +1,5 @@
+{
+    "extends": "./tsconfig.json",
+    "include": ["./packages/*/vitest.config*.ts", "./packages/**/*.spec.ts"],
+    "compilerOptions": { "composite": true, "types": ["vite/client", "vitest/globals"] }
+}

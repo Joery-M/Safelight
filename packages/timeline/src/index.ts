@@ -1,6 +1,6 @@
 import type { CustomInspectorNode, CustomInspectorState } from '@vue/devtools-kit';
 import {
-    MaybeRefOrGetter,
+    type MaybeRefOrGetter,
     syncRef,
     useDevicePixelRatio,
     useElementBounding,
@@ -14,7 +14,7 @@ import {
     getCurrentInstance,
     onBeforeUnmount,
     reactive,
-    Ref,
+    type Ref,
     ref,
     shallowReactive,
     toRaw,
@@ -488,7 +488,7 @@ export class TimelineManager {
         whenever(
             __DEVTOOLS_AVAILABLE__,
             () => {
-                import('./devtools/').then((dev) => {
+                import('./devtools').then((dev) => {
                     if (dev.registerTimelineManager) {
                         const unregister = dev.registerTimelineManager(this);
                         this.events.once('unmount', () => unregister());

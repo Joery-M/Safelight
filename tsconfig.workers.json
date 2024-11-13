@@ -1,0 +1,5 @@
+{
+    "extends": "./tsconfig.json",
+    "include": ["./packages/**/*.worker.ts"],
+    "compilerOptions": { "composite": true, "lib": ["WebWorker", "ESNext"] }
+}

@@ -1,7 +1,7 @@
-import { CustomInspectorNode, CustomInspectorState } from '@vue/devtools-api';
+import type { CustomInspectorNode, CustomInspectorState } from '@vue/devtools-kit';
 import { toValue, watchArray } from '@vueuse/core';
 import { computed, ref, shallowReactive } from 'vue';
-import { __DEVTOOLS_AVAILABLE__, ItemContainer, TimelineItem, TimelineManager } from '..';
+import { __DEVTOOLS_AVAILABLE__, type ItemContainer, type TimelineItem, TimelineManager } from '..';
 
 export class TimelineLayer {
     public __RENDER_TIME__ = ref(0);

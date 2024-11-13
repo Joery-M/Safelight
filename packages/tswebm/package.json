@@ -32,10 +32,10 @@
     "type": "module",
     "scripts": {
         "dev": "vite build --mode=development --watch",
-        "clean": "rimraf -g ./dist/* ./tsconfig.lib.tsbuildinfo",
-        "build": "pnpm run \"/(clean|generate:elements)/\" && pnpm run --sequential \"/(build:).*/\"",
+        "clean": "rimraf -g ./dist/*",
+        "build": "pnpm run \"/(clean|generate:elements)/\" && pnpm build:vite && pnpm build:tsc",
         "build:vite": "vite build",
-        "build:tsc": "tsc --emitDeclarationOnly --project tsconfig.lib.json && rm ./tsconfig.lib.tsbuildinfo",
+        "build:tsc": "tsc --emitDeclarationOnly --project tsconfig.json",
         "generate:elements": "tsx ./tools/SchemaParser.ts https://raw.githubusercontent.com/ietf-wg-cellar/matroska-specification/master/ebml_matroska.xml && prettier ./src/elements.ts --write --print-width 110",
         "test": "vitest --ui",
         "test:run": "vitest run --ui false"

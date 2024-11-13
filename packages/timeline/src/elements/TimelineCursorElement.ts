@@ -1,7 +1,7 @@
-import { CustomInspectorState } from '@vue/devtools-api';
-import { MaybeRefOrGetter, toValue } from '@vueuse/core';
+import type { CustomInspectorState } from '@vue/devtools-kit';
+import { type MaybeRefOrGetter, toValue } from '@vueuse/core';
 import { computed, ref } from 'vue';
-import { TimelineElement, TimelineElementRenderPayload, TimelineManager } from '..';
+import type { TimelineElement, TimelineElementRenderPayload, TimelineManager } from '..';
 import { useSmoothNum } from '../tools/useSmoothNum';
 
 export class TimelineCursorElement implements TimelineElement {

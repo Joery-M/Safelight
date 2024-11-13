@@ -1,6 +1,6 @@
-import { CustomInspectorState } from '@vue/devtools-api';
+import type { CustomInspectorState } from '@vue/devtools-kit';
 import { computed, ref } from 'vue';
-import { TimelineElement, TimelineElementRenderPayload } from '..';
+import type { TimelineElement, TimelineElementRenderPayload } from '..';
 import { useSmoothNum } from '../tools/useSmoothNum';
 
 export class TimelineScrollbarHoriz implements TimelineElement {

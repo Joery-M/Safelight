@@ -1,6 +1,6 @@
-import { MaybeRefOrGetter, toValue } from '@vueuse/core';
+import { type MaybeRefOrGetter, toValue } from '@vueuse/core';
 import { computed, ref, shallowReactive } from 'vue';
-import { TimelineElement, TimelineElementRenderPayload } from '..';
+import type { TimelineElement, TimelineElementRenderPayload } from '..';
 
 export class TimelineGrid implements TimelineElement {
     name = 'Grid';

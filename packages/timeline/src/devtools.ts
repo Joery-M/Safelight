@@ -1,8 +1,8 @@
-import { App, setupDevToolsPlugin } from '@vue/devtools-kit';
+import { type App, setupDevToolsPlugin } from '@vue/devtools-kit';
 import { watchArray } from '@vueuse/core';
 import { computed, shallowReactive, watchEffect } from 'vue';
-import { __DEVTOOLS_AVAILABLE__, TimelineManager } from '..';
-import { TimelineLayer } from '../elements/TimelineLayer';
+import { __DEVTOOLS_AVAILABLE__, TimelineManager } from '.';
+import { TimelineLayer } from './elements/TimelineLayer';
 
 const INSPECTOR_ID = 'timeline-inspector';
 

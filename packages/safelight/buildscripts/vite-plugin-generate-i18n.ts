@@ -1,7 +1,7 @@
 import { readFile, writeFile } from 'fs/promises';
 import { glob } from 'glob';
 import path from 'path';
-import { Plugin } from 'vite';
+import type { Plugin } from 'vite';
 
 export default function generatePlugin(options: Options): Plugin {
     return {
