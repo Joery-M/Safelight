@@ -16,7 +16,6 @@
         "dot-path-value": "^0.0.11",
         "hash-wasm": "^4.11.0",
         "luxon": "^3.5.0",
-        "mediainfo.js": "^0.3.3",
         "mime-matcher": "^1.0.5",
         "mp4box": "^0.5.3",
         "opfs-tools": "^0.6.1",

@@ -208,7 +208,7 @@ importers:
         specifier: ^0.0.11
         version: 0.0.11
       eventemitter3:
-        specifier: ~5.0.1
+        specifier: ^5.0.1
         version: 5.0.1
       fuzzysearch:
         specifier: ^1.0.3
@@ -222,9 +222,6 @@ importers:
       luxon:
         specifier: ^3.5.0
         version: 3.5.0
-      mediainfo.js:
-        specifier: ~0.3.3
-        version: 0.3.3
       mime-matcher:
         specifier: ^1.0.5
         version: 1.0.5
@@ -361,9 +358,6 @@ importers:
       luxon:
         specifier: ^3.5.0
         version: 3.5.0
-      mediainfo.js:
-        specifier: ^0.3.3
-        version: 0.3.3
       mime-matcher:
         specifier: ^1.0.5
         version: 1.0.5
@@ -2888,11 +2882,6 @@ packages:
 
   mdurl@1.0.1:
     resolution: {integrity: sha512-/sKlQJCBYVY9Ers9hqzKou4H6V5UWc/M59TH2dvkt+84itfnq7uFOMLpOiOS4ujvHP4etln18fmIxA5R5fll0g==}
-
-  mediainfo.js@0.3.3:
-    resolution: {integrity: sha512-+k6cobEQ0Ies/XajglElyHZyguxzEfnztGrZ+bEcuJ4gK74MeN1T0aX1DIFAMRwmFsnJlTJVTiOHJHWZssEJjA==}
-    engines: {node: '>=18.0.0'}
-    hasBin: true
 
   merge2@1.4.1:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
@@ -6488,10 +6477,6 @@ snapshots:
       uc.micro: 1.0.6
 
   mdurl@1.0.1: {}
-
-  mediainfo.js@0.3.3:
-    dependencies:
-      yargs: 17.7.2
 
   merge2@1.4.1: {}
 
