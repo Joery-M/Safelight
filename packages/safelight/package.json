@@ -29,7 +29,7 @@
         "@vueuse/math": "^11.2.0",
         "@vueuse/rxjs": "^11.2.0",
         "comlink": "^4.4.2",
-        "dexie": "^4.0.9",
+        "dexie": "^4.0.10",
         "dot-path-value": "^0.0.11",
         "fuzzysearch": "^1.0.3",
         "hash-wasm": "^4.11.0",
@@ -62,10 +62,10 @@
         "browserslist": "^4.24.2",
         "glob": "^11.0.0",
         "lightningcss": "^1.28.1",
-        "postcss": "^8.4.48",
-        "sass": "^1.80.6",
+        "postcss": "^8.4.49",
+        "sass": "^1.81.0",
         "strip-ansi": "^7.1.0",
-        "tailwindcss": "^3.4.14",
+        "tailwindcss": "^3.4.15",
         "tsx": "^4.19.2",
         "typescript": "^5.6.3",
         "unplugin-vue-router": "^0.10.8",
@@ -75,6 +75,6 @@
     },
     "peerDependencies": {
         "eventemitter3": "~5.0.1",
-        "mediainfo.js": "~0.3.2"
+        "mediainfo.js": "~0.3.3"
     }
 }
