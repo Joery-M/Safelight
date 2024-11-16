@@ -12,16 +12,15 @@
     },
     "dependencies": {
         "@safelight/tswebm": "workspace:^",
-        "dexie": "^4.0.9",
+        "dexie": "^4.0.10",
         "dot-path-value": "^0.0.11",
         "hash-wasm": "^4.11.0",
         "luxon": "^3.5.0",
-        "mediainfo.js": "^0.3.2",
         "mime-matcher": "^1.0.5",
         "mp4box": "^0.5.3",
         "opfs-tools": "^0.6.1",
         "rxjs": "^7.8.1",
-        "type-fest": "^4.26.1",
+        "type-fest": "^4.27.0",
         "uuid": "^11.0.3"
     },
     "devDependencies": {
@@ -33,7 +32,7 @@
         "@vitest/ui": "^2.1.5",
         "@vue/tsconfig": "^0.6.0",
         "fake-indexeddb": "^6.0.0",
-        "happy-dom": "^15.11.0",
+        "happy-dom": "^15.11.6",
         "vitest": "^2.1.5"
     },
     "peerDependencies": {
