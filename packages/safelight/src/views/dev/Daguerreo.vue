@@ -27,13 +27,17 @@
 
 <script setup lang="ts">
 import { type DaguerreoTransformEffect, Daguerreo } from '@safelight/daguerreo';
-import { CatTestSource, GradientTestSource } from '@safelight/daguerreo/sources/TestSource.js';
-import { tryOnMounted, watchImmediate } from '@vueuse/core';
+import {
+    CatTestSource,
+    GifTestSource,
+    GradientTestSource
+} from '@safelight/daguerreo/sources/TestSource.js';
+import { tryOnMounted, useRafFn, watchImmediate } from '@vueuse/core';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import Listbox from 'primevue/listbox';
 import Select from 'primevue/select';
-import { onUnmounted, ref, useTemplateRef } from 'vue';
+import { ref, useTemplateRef } from 'vue';
 
 const availableTransforms: DaguerreoTransformEffect[] = [];
 
@@ -41,39 +45,42 @@ let daguerreo = new Daguerreo();
 
 const sources = [
     { label: 'gradient', value: () => GradientTestSource() },
-    { label: 'cat', value: () => CatTestSource() }
+    { label: 'cat', value: () => CatTestSource() },
+    { label: 'gif', value: () => GifTestSource() }
 ];
 const activeSource = ref(sources[1]);
 
 const canvas = useTemplateRef('canvas');
 
 tryOnMounted(() => {
-    watchImmediate(activeSource, async () => {
-        await daguerreo.stop();
-        daguerreo = new Daguerreo();
-        daguerreo.setSource(activeSource.value?.value());
-        startRender();
-    });
-});
-
-async function startRender() {
     if (!canvas.value) return;
 
     const ctx = canvas.value.getContext('2d');
 
     if (!ctx) return;
-    const reader = daguerreo.process();
 
-    while (true) {
-        const { done, value } = await reader.read();
-        if (done) return;
-        canvas.value.width = value.data.width;
-        canvas.value.height = value.data.height;
-        ctx.putImageData(value.data, 0, 0);
-    }
-}
+    watchImmediate(activeSource, async () => {
+        daguerreo = new Daguerreo();
+        daguerreo.setSource(activeSource.value?.value());
+    });
 
-onUnmounted(() => {
-    daguerreo.stop();
+    let counter = 0;
+
+    useRafFn(
+        async () => {
+            const value = await daguerreo.process({
+                frame: counter,
+                frameDuration: 1000 / 60,
+                width: 1280,
+                height: 720
+            });
+
+            canvas.value!.width = value.data.width;
+            canvas.value!.height = value.data.height;
+            ctx.putImageData(value.data, 0, 0);
+            counter++;
+        },
+        { fpsLimit: 60 }
+    );
 });
 </script>

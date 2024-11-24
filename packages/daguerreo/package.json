@@ -16,5 +16,12 @@
         "./sources/": {
             "import": "./src/sources/"
         }
+    },
+    "devDependencies": {
+        "type-fest": "^4.27.0"
+    },
+    "dependencies": {
+        "defu": "^6.1.4",
+        "gifuct-js": "^2.1.2"
     }
 }
