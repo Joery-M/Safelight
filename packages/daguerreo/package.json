@@ -1,0 +1,20 @@
+{
+    "name": "@safelight/daguerreo",
+    "version": "1.0.0",
+    "author": "Joery Münninghoff",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Joery-M/Safelight"
+    },
+    "contributors": [],
+    "license": "MIT",
+    "type": "module",
+    "exports": {
+        ".": {
+            "import": "./src/index.ts"
+        },
+        "./sources/": {
+            "import": "./src/sources/"
+        }
+    }
+}

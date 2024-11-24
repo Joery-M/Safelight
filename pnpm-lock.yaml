@@ -81,6 +81,8 @@ importers:
         specifier: 10.0.4
         version: 10.0.4(vue@3.5.13(typescript@5.6.3))
 
+  packages/daguerreo: {}
+
   packages/darkroom:
     dependencies:
       '@endo/static-module-record':
@@ -177,6 +179,9 @@ importers:
       '@primevue/themes':
         specifier: ^4.2.3
         version: 4.2.3
+      '@safelight/daguerreo':
+        specifier: workspace:^
+        version: link:../daguerreo
       '@safelight/shared':
         specifier: workspace:*
         version: link:../shared
