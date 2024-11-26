@@ -14,13 +14,13 @@
         "@safelight/tswebm": "workspace:^",
         "dexie": "^4.0.10",
         "dot-path-value": "^0.0.11",
-        "hash-wasm": "^4.11.0",
+        "hash-wasm": "^4.12.0",
         "luxon": "^3.5.0",
         "mime-matcher": "^1.0.5",
         "mp4box": "^0.5.3",
         "opfs-tools": "^0.6.1",
         "rxjs": "^7.8.1",
-        "type-fest": "^4.27.0",
+        "type-fest": "^4.28.1",
         "uuid": "^11.0.3"
     },
     "devDependencies": {
