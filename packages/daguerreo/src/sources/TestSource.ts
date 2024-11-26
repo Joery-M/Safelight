@@ -1,15 +1,12 @@
+import { decompressFrames, parseGIF, type ParsedFrame } from 'gifuct-js';
 import type { DaguerreoSourceEffect } from '..';
-import { parseGIF, decompressFrames, type ParsedFrame } from 'gifuct-js';
 
 export function GradientTestSource() {
-    const canvas = document.createElement('canvas');
-    canvas.width = 1280;
-    canvas.height = 720;
+    const canvas = new OffscreenCanvas(1280, 720);
     const ctx = canvas.getContext('2d')!;
 
     return {
         name: 'gradient-test-source',
-        type: 'source',
         source: ({ frame }) => {
             ctx.clearRect(0, 0, 1280, 720);
 
@@ -39,28 +36,27 @@ export function GradientTestSource() {
             ctx.fillText(Math.floor((frame / 10) % 100).toString(), 20, 75);
 
             return {
-                data: ctx.getImageData(0, 0, 1280, 720),
+                ctx,
+                frame,
                 frameDuration: 1 / 60,
                 height: 720,
-                width: 1280
+                width: 1280,
+                matrix: ctx.getTransform()
             };
         }
     } as DaguerreoSourceEffect;
 }
 
 export function CatTestSource() {
-    const canvas = document.createElement('canvas');
-    canvas.width = 1280;
-    canvas.height = 720;
+    const canvas = new OffscreenCanvas(1280, 720);
     const ctx = canvas.getContext('2d')!;
 
     let catImage: HTMLImageElement;
 
     return {
         name: 'cat-test-source',
-        type: 'source',
-        source: async () => {
-            ctx.clearRect(0, 0, 1280, 720);
+        async source({ frame }) {
+            ctx.reset();
 
             if (catImage) {
                 ctx.drawImage(catImage, 0, 0);
@@ -82,19 +78,19 @@ export function CatTestSource() {
             }
 
             return {
-                data: ctx.getImageData(0, 0, 1280, 720),
+                ctx,
+                frame,
                 frameDuration: 1 / 60,
                 width: 1280,
-                height: 720
+                height: 720,
+                matrix: ctx.getTransform()
             };
         }
     } as DaguerreoSourceEffect;
 }
 
 export function GifTestSource() {
-    const canvas = document.createElement('canvas');
-    canvas.width = 1280;
-    canvas.height = 720;
+    const canvas = new OffscreenCanvas(1280, 720);
     const ctx = canvas.getContext('2d')!;
 
     const frames: ParsedFrame[] = [];
@@ -116,7 +112,6 @@ export function GifTestSource() {
 
     return {
         name: 'gif-test-source',
-        type: 'source',
         source: async ({ frame, frameDuration }) => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             const curTime = (frame * frameDuration) % gifLength;
@@ -130,6 +125,7 @@ export function GifTestSource() {
                 if (!frame) {
                     return {
                         data: ctx.getImageData(0, 0, canvas.width, canvas.height),
+                        frame,
                         frameDuration: 1 / 60,
                         width: canvas.width,
                         height: canvas.height
@@ -156,10 +152,12 @@ export function GifTestSource() {
             }
 
             return {
-                data: ctx.getImageData(0, 0, canvas.width, canvas.height),
+                ctx,
+                frame,
                 frameDuration: 1 / 60,
                 width: canvas.width,
-                height: canvas.height
+                height: canvas.height,
+                matrix: ctx.getTransform()
             };
         }
     } as DaguerreoSourceEffect;

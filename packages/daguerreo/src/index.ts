@@ -1,9 +1,8 @@
-import { defu } from 'defu';
 import type { Promisable } from 'type-fest';
 
 export class Daguerreo {
     private source: DaguerreoSourceEffect | undefined;
-    private effects: DaguerreoTransformEffect[] = [];
+    readonly effects: DaguerreoTransformEffect[] = [];
 
     addEffect(effect: DaguerreoTransformEffect) {
         this.effects.push(effect);
@@ -12,39 +11,45 @@ export class Daguerreo {
         this.effects.slice(this.effects.indexOf(effect) - 1, 1);
     }
     setSource(source: DaguerreoSourceEffect) {
-        if (this.source) {
-            return;
-        }
         this.source = source;
     }
 
-    async process(config: DaguerreoSourcePayload) {
+    async process(config: DaguerreoSourcePayload): Promise<DaguerreoResult> {
         const effectBase = this.source;
         if (!effectBase) throw new Error('No source effect defined');
 
-        let payload = await effectBase.source(config);
+        const payload = await effectBase.source(config);
+
+        // Run initialize methods
+        const initFunctions = this.effects
+            .map((e) => e.sourceInitialized?.({ height: payload.height, width: payload.width }))
+            .filter((p) => !!p);
+        await Promise.allSettled(initFunctions);
+
+        // Run effects
         for await (const effect of this.effects) {
-            const newConfig = await effect.transform(payload);
-            if (newConfig) {
-                payload = defu(newConfig, payload);
-            }
+            await effect.transform(payload);
         }
 
-        return payload;
+        return {
+            width: payload.width,
+            height: payload.height,
+            image: payload.ctx.canvas.transferToImageBitmap(),
+            matrix: payload.matrix
+        };
     }
 }
 
 export interface DaguerreoTransformEffect {
     name: string;
-    type: 'transform';
-    transform: (
-        config: DaguerreoStreamPayload
-    ) => Promisable<Partial<DaguerreoStreamPayload> | undefined>;
+    sourceInitialized?: (
+        config: Pick<DaguerreoTransformPayload, 'width' | 'height'>
+    ) => Promisable<void>;
+    transform: (config: DaguerreoTransformPayload) => Promisable<void>;
 }
 export interface DaguerreoSourceEffect {
     name: string;
-    type: 'source';
-    source: (config: DaguerreoSourcePayload) => Promisable<DaguerreoStreamPayload>;
+    source: (config: DaguerreoSourcePayload) => Promisable<DaguerreoTransformPayload>;
 }
 
 export type DaguerreoEffect = DaguerreoSourceEffect | DaguerreoTransformEffect;
@@ -68,7 +73,11 @@ export interface DaguerreoSourcePayload {
     height: number;
 }
 
-export interface DaguerreoStreamPayload {
+export interface DaguerreoTransformPayload {
+    /**
+     * Current frame number
+     */
+    frame: number;
     /**
      * How long the current frame will last for in milliseconds.
      */
@@ -82,5 +91,22 @@ export interface DaguerreoStreamPayload {
      */
     height: number;
 
-    data: ImageData;
+    ctx: OffscreenCanvasRenderingContext2D;
+
+    matrix: DOMMatrix;
+}
+
+export interface DaguerreoResult {
+    /**
+     * Current frame width
+     */
+    width: number;
+    /**
+     * Current frame height
+     */
+    height: number;
+
+    image: ImageBitmap;
+
+    matrix: DOMMatrix;
 }

@@ -13,15 +13,17 @@
         ".": {
             "import": "./src/index.ts"
         },
-        "./sources/": {
-            "import": "./src/sources/"
+        "./sources/*": {
+            "import": "./src/sources/*.ts"
+        },
+        "./transformers/*": {
+            "import": "./src/transformers/*.ts"
         }
     },
     "devDependencies": {
         "type-fest": "^4.27.0"
     },
     "dependencies": {
-        "defu": "^6.1.4",
         "gifuct-js": "^2.1.2"
     }
 }
