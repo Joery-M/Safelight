@@ -7,22 +7,22 @@
         </template>
         <template #content>
             <template
-                v-for="route in $router
+                v-for="otherRoute in router
                     .getRoutes()
                     .filter(
                         (a) =>
-                            a.path.startsWith($route.path) &&
-                            a.path !== $route.path &&
+                            a.path.startsWith(route.path) &&
+                            a.path !== route.path &&
                             !a.path.includes('storage/')
                     )"
-                :key="route.path"
+                :key="otherRoute.path"
             >
                 <div class="mb-2">
-                    <RouterLink :to="route.path">
+                    <RouterLink :to="otherRoute.path">
                         <Button>
                             {{
-                                (route.name?.toString() ?? route.path)
-                                    .replace($route.path, '')
+                                (otherRoute.name?.toString() ?? otherRoute.path)
+                                    .replace(route.path, '')
                                     .replace(/^\//, '')
                             }}
                         </Button>
@@ -36,7 +36,10 @@
 <script setup lang="ts">
 import Button from 'primevue/button';
 import Card from 'primevue/card';
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
+
+const router = useRouter();
+const route = useRoute();
 </script>
 
 <route lang="json">

@@ -21,7 +21,7 @@
         }
     },
     "devDependencies": {
-        "type-fest": "^4.27.0"
+        "type-fest": "^4.28.1"
     },
     "dependencies": {
         "gifuct-js": "^2.1.2"

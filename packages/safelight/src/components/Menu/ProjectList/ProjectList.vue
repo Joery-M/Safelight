@@ -7,7 +7,7 @@
         sort-field="updated"
         removable-sort
         :sort-order="-1"
-        @row-dblclick="$router.push(`/editor/${$event.data.id}`)"
+        @row-dblclick="router.push(`/editor/${$event.data.id}`)"
     >
         <template #header>
             <div class="align-items-center justify-content-between flex flex-wrap gap-2">
@@ -25,7 +25,7 @@
                     @click="
                         async () => {
                             const project = await curProject.creators.newSimpleProject();
-                            $router.push({ name: 'Editor', params: { projectId: project.id } });
+                            router.push({ name: 'Editor', params: { projectId: project.id } });
                         }
                     "
                 />
@@ -105,7 +105,7 @@
                     rounded
                     plain
                     icon="ph ph-caret-right"
-                    @click="$router.push(`/editor/${data.id}`)"
+                    @click="router.push(`/editor/${data.id}`)"
                 />
             </template>
         </Column>
