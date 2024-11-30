@@ -1,65 +1,65 @@
 {
-    "name": "@safelight/darkroom",
-    "version": "1.0.0",
-    "description": "The plugin compiler and 'runtime' for Safelight",
-    "author": "Joery Münninghoff",
-    "license": "Apache-2.0",
-    "type": "module",
-    "types": "dist/lib/main.d.ts",
-    "main": "dist/darkroom.js",
-    "browser": "dist/darkroom.js",
-    "module": "dist/darkroom.js",
-    "exports": {
-        ".": {
-            "types": "./dist/lib/main.d.ts",
-            "import": "./dist/darkroom.js",
-            "default": "./dist/darkroom.js"
-        }
-    },
-    "files": [
-        "dist"
-    ],
-    "scripts": {
-        "dev": "vite build --watch",
-        "dev:web": "vite ./dev/",
-        "build": "rimraf ./dist/ && pnpm build:vite && pnpm build:tsc",
-        "build:vite": "vite build",
-        "build:tsc": "tsc --emitDeclarationOnly --project tsconfig.lib.json",
-        "test": "vitest",
-        "test-firefox": "vitest -c ./vitest.config.firefox.ts --test-timeout=10000",
-        "test:run": "vitest run --ui false",
-        "test:run-firefox": "vitest run --ui false -c ./vitest.config.firefox.ts --test-timeout=10000",
-        "postinstall": "playwright install"
-    },
-    "dependencies": {
-        "@endo/static-module-record": "^1.1.2",
-        "esbuild-wasm": "^0.24.0",
-        "path-browserify": "^1.0.1",
-        "rxjs": "^7.8.1",
-        "ses": "^1.10.0"
-    },
-    "devDependencies": {
-        "@tsconfig/node20": "^20.1.4",
-        "@types/path-browserify": "^1.0.3",
-        "@vitest/browser": "^2.1.6",
-        "@vitest/ui": "^2.1.6",
-        "playwright": "^1.49.0",
-        "rimraf": "^6.0.1",
-        "typescript": "~5.6.3",
-        "vite": "^6.0.1",
-        "vite-plugin-dts": "^4.3.0",
-        "vitest": "^2.1.6"
-    },
-    "optionalDependencies": {
-        "@codemirror/lang-javascript": "^6.2.2",
-        "@types/node": "^22.10.0",
-        "@vitejs/plugin-vue": "^5.2.1",
-        "@vue/tsconfig": "^0.7.0",
-        "@vueuse/core": "^12.0.0",
-        "@vueuse/rxjs": "^12.0.0",
-        "timer-shim": "^0.3.0",
-        "util": "^0.12.5",
-        "vite-plugin-mkcert": "^1.17.6",
-        "vue-codemirror": "^6.1.1"
+  "name": "@safelight/darkroom",
+  "version": "1.0.0",
+  "description": "The plugin compiler and 'runtime' for Safelight",
+  "author": "Joery Münninghoff",
+  "license": "Apache-2.0",
+  "type": "module",
+  "types": "dist/lib/main.d.ts",
+  "main": "dist/darkroom.js",
+  "browser": "dist/darkroom.js",
+  "module": "dist/darkroom.js",
+  "exports": {
+    ".": {
+      "types": "./dist/lib/main.d.ts",
+      "import": "./dist/darkroom.js",
+      "default": "./dist/darkroom.js"
     }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite build --watch",
+    "dev:web": "vite ./dev/",
+    "build": "rimraf ./dist/ && pnpm build:vite && pnpm build:tsc",
+    "build:vite": "vite build",
+    "build:tsc": "tsc --emitDeclarationOnly --project tsconfig.lib.json",
+    "test": "vitest",
+    "test-firefox": "vitest -c ./vitest.config.firefox.ts --test-timeout=10000",
+    "test:run": "vitest run --ui false",
+    "test:run-firefox": "vitest run --ui false -c ./vitest.config.firefox.ts --test-timeout=10000",
+    "postinstall": "playwright install"
+  },
+  "dependencies": {
+    "@endo/static-module-record": "^1.1.2",
+    "esbuild-wasm": "^0.24.0",
+    "path-browserify": "^1.0.1",
+    "rxjs": "^7.8.1",
+    "ses": "^1.10.0"
+  },
+  "devDependencies": {
+    "@tsconfig/node20": "^20.1.4",
+    "@types/path-browserify": "^1.0.3",
+    "@vitest/browser": "^2.1.6",
+    "@vitest/ui": "^2.1.6",
+    "playwright": "^1.49.0",
+    "rimraf": "^6.0.1",
+    "typescript": "~5.6.3",
+    "vite": "^6.0.1",
+    "vite-plugin-dts": "^4.3.0",
+    "vitest": "^2.1.6"
+  },
+  "optionalDependencies": {
+    "@codemirror/lang-javascript": "^6.2.2",
+    "@types/node": "^22.10.0",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/tsconfig": "^0.7.0",
+    "@vueuse/core": "^12.0.0",
+    "@vueuse/rxjs": "^12.0.0",
+    "timer-shim": "^0.3.0",
+    "util": "^0.12.5",
+    "vite-plugin-mkcert": "^1.17.6",
+    "vue-codemirror": "^6.1.1"
+  }
 }
