@@ -69,8 +69,8 @@ importers:
         specifier: ^6.0.1
         version: 6.0.1(@types/node@22.10.0)(jiti@1.21.6)(lightningcss@1.28.2)(sass@1.81.0)(terser@5.34.1)(tsx@4.19.2)(yaml@2.6.0)
       vite-plugin-hot-glob:
-        specifier: ^1.0.0
-        version: 1.0.0(vite@6.0.1(@types/node@22.10.0)(jiti@1.21.6)(lightningcss@1.28.2)(sass@1.81.0)(terser@5.34.1)(tsx@4.19.2)(yaml@2.6.0))
+        specifier: ^1.0.1
+        version: 1.0.1(vite@6.0.1(@types/node@22.10.0)(jiti@1.21.6)(lightningcss@1.28.2)(sass@1.81.0)(terser@5.34.1)(tsx@4.19.2)(yaml@2.6.0))
       vitest:
         specifier: ^2.1.6
         version: 2.1.6(@types/node@22.10.0)(@vitest/browser@2.1.6)(@vitest/ui@2.1.6)(happy-dom@15.11.6)(jiti@1.21.6)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.28.2)(msw@2.6.4(@types/node@22.10.0)(typescript@5.6.3))(sass@1.81.0)(terser@5.34.1)(tsx@4.19.2)(yaml@2.6.0)
@@ -3821,10 +3821,10 @@ packages:
       vite:
         optional: true
 
-  vite-plugin-hot-glob@1.0.0:
-    resolution: {integrity: sha512-fDs/+A8mpzKipDFTT4eEmaKKB6LB2uSthDdpaBcZ7qlNCL0q5w6hMWMj11/k8JUFR41qvzxQ6rc9evrm2SxnEg==}
+  vite-plugin-hot-glob@1.0.1:
+    resolution: {integrity: sha512-9P0i4pmqSHx7IE92nHsa1GLUYy44tLKu/vDcQqThraNnSmIcCsKxAcFMYxwJtes2zph3cmoZoKcEnTeJiuI59Q==}
     peerDependencies:
-      vite: ^3.1.0 || ^4.0.0 || ^5.0.0
+      vite: ^3.1.0 || ^4.0.0 || ^5.0.0 || ^6.0.0
 
   vite-plugin-mkcert@1.17.6:
     resolution: {integrity: sha512-4JR1RN0HEg/w17eRQJ/Ve2pSa6KCVQcQO6yKtIaKQCFDyd63zGfXHWpygBkvvRSpqa0GcqNKf0fjUJ0HiJQXVQ==}
@@ -7482,7 +7482,7 @@ snapshots:
       - rollup
       - supports-color
 
-  vite-plugin-hot-glob@1.0.0(vite@6.0.1(@types/node@22.10.0)(jiti@1.21.6)(lightningcss@1.28.2)(sass@1.81.0)(terser@5.34.1)(tsx@4.19.2)(yaml@2.6.0)):
+  vite-plugin-hot-glob@1.0.1(vite@6.0.1(@types/node@22.10.0)(jiti@1.21.6)(lightningcss@1.28.2)(sass@1.81.0)(terser@5.34.1)(tsx@4.19.2)(yaml@2.6.0)):
     dependencies:
       magic-string: 0.30.12
       picomatch: 4.0.2
