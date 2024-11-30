@@ -30,22 +30,22 @@
     "test:run": "vitest run --ui false"
   },
   "dependencies": {
-    "@vue/devtools-kit": "^7.6.4",
-    "@vueuse/core": "^11.3.0",
+    "@vue/devtools-kit": "^7.6.7",
+    "@vueuse/core": "^12.0.0",
     "@vueuse/gesture": "^2.0.0",
-    "@vueuse/math": "^11.3.0",
+    "@vueuse/math": "^12.0.0",
     "eventemitter3": "^5.0.1",
     "vue": "^3.5.13"
   },
   "devDependencies": {
-    "@types/node": "^22.10.0",
+    "@types/node": "^22.10.1",
     "@vue/test-utils": "^2.4.6",
-    "@vue/tsconfig": "^0.6.0",
+    "@vue/tsconfig": "^0.7.0",
     "canvas": "^2.11.2",
-    "happy-dom": "^15.11.6",
+    "happy-dom": "^15.11.7",
     "jsdom": "^25.0.1",
     "typescript": "~5.6.3",
-    "vitest": "^2.1.5",
+    "vitest": "^2.1.6",
     "vue-tsc": "^2.1.10"
   }
 }
