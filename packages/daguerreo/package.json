@@ -1,29 +1,29 @@
 {
-    "name": "@safelight/daguerreo",
-    "version": "1.0.0",
-    "author": "Joery Münninghoff",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/Joery-M/Safelight"
+  "name": "@safelight/daguerreo",
+  "version": "1.0.0",
+  "author": "Joery Münninghoff",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Joery-M/Safelight"
+  },
+  "contributors": [],
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
     },
-    "contributors": [],
-    "license": "MIT",
-    "type": "module",
-    "exports": {
-        ".": {
-            "import": "./src/index.ts"
-        },
-        "./sources/*": {
-            "import": "./src/sources/*.ts"
-        },
-        "./transformers/*": {
-            "import": "./src/transformers/*.ts"
-        }
+    "./sources/*": {
+      "import": "./src/sources/*.ts"
     },
-    "devDependencies": {
-        "type-fest": "^4.28.1"
-    },
-    "dependencies": {
-        "gifuct-js": "^2.1.2"
+    "./transformers/*": {
+      "import": "./src/transformers/*.ts"
     }
+  },
+  "devDependencies": {
+    "type-fest": "^4.28.1"
+  },
+  "dependencies": {
+    "gifuct-js": "^2.1.2"
+  }
 }
