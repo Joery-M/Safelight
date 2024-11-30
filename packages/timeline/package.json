@@ -30,7 +30,7 @@
     "test:run": "vitest run --ui false"
   },
   "dependencies": {
-    "@vue/devtools-kit": "^7.6.4",
+    "@vue/devtools-kit": "^7.6.7",
     "@vueuse/core": "^12.0.0",
     "@vueuse/gesture": "^2.0.0",
     "@vueuse/math": "^12.0.0",
@@ -40,7 +40,7 @@
   "devDependencies": {
     "@types/node": "^22.10.0",
     "@vue/test-utils": "^2.4.6",
-    "@vue/tsconfig": "^0.6.0",
+    "@vue/tsconfig": "^0.7.0",
     "canvas": "^2.11.2",
     "happy-dom": "^15.11.6",
     "jsdom": "^25.0.1",
