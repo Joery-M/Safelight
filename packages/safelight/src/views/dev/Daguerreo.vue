@@ -14,11 +14,9 @@
                     :options="sources"
                     option-label="label"
                 />
-                <p>{{ canvasWidth }} x {{ canvasHeight }}</p>
                 <h3>Effects</h3>
                 <div id="effect-list" class="flex h-80 max-w-screen-sm gap-4">
                     <Listbox
-                        ref="allTransformsList"
                         :options="availableTransforms"
                         data-key="name"
                         option-label="name"
@@ -122,13 +120,35 @@
             </div>
             <div class="absolute right-4 top-4 size-min">
                 <canvas ref="canvas" class="max-w-2xl"></canvas>
+                <div class="flex justify-center">
+                    <ButtonGroup>
+                        <Button
+                            icon="ph ph-skip-back"
+                            @click="
+                                frameNum--;
+                                renderFrame();
+                            "
+                        />
+                        <Button
+                            :icon="'ph ' + (isPaused ? 'ph-play' : 'ph-pause')"
+                            @click="isPaused = !isPaused"
+                        />
+                        <Button
+                            icon="ph ph-skip-forward"
+                            @click="
+                                frameNum += 1;
+                                renderFrame();
+                            "
+                        />
+                    </ButtonGroup>
+                </div>
             </div>
         </template>
     </Card>
 </template>
 
 <script setup lang="ts">
-import { type DaguerreoTransformEffect, Daguerreo } from '@safelight/daguerreo';
+import { Daguerreo, type DaguerreoTransformEffect } from '@safelight/daguerreo';
 import {
     CatTestSource,
     GifTestSource,
@@ -142,11 +162,12 @@ import {
 } from '@safelight/daguerreo/transformers/TranslateTransform';
 import { tryOnMounted, useRafFn, watchImmediate } from '@vueuse/core';
 import Button from 'primevue/button';
+import ButtonGroup from 'primevue/buttongroup';
 import Card from 'primevue/card';
 import Listbox from 'primevue/listbox';
 import Select from 'primevue/select';
 import { v4 as uuidv4 } from 'uuid';
-import { ref, shallowReactive, shallowRef, useTemplateRef } from 'vue';
+import { ref, shallowReactive, shallowRef, useTemplateRef, watch } from 'vue';
 
 const availableTransforms = shallowReactive<LibraryTransformEntry[]>([
     { name: 'dg-translate-transform', transform: () => TranslateTransform() },
@@ -165,53 +186,37 @@ const sources = [
 ];
 const activeSource = ref(sources[1]);
 
-const allTransformsList = useTemplateRef('allTransformsList');
 const transformSelectedFromLibrary = shallowRef<() => DaguerreoTransformEffect>();
 const selectedActiveTransform = shallowRef<ActiveTransformEntry>();
 
 const canvas = useTemplateRef('canvas');
 const canvasWidth = ref<number>();
 const canvasHeight = ref<number>();
+let ctx: CanvasRenderingContext2D | null = null;
+
+const isPaused = ref(false);
+const frameNum = ref(0);
 
 tryOnMounted(() => {
     if (!canvas.value) return;
 
-    const ctx = canvas.value.getContext('2d');
-
-    if (!ctx) return;
-
-    let counter = 0;
+    ctx = canvas.value.getContext('2d');
 
     watchImmediate(activeSource, () => {
         daguerreo.setSource(activeSource.value?.value());
-        counter = 0;
+        frameNum.value = 0;
+        renderFrame();
     });
 
     // Render at (at best) 60fps
-    useRafFn(
-        async () => {
-            const value = await daguerreo.process({
-                frame: counter,
-                frameDuration: 1000 / 60,
-                width: 1280,
-                height: 720
-            });
-
-            // Set preview canvas size
-            if (canvas.value?.width !== value.width || canvas.value.height !== value.height) {
-                canvas.value!.width = value.width;
-                canvas.value!.height = value.height;
-                canvasWidth.value = value.width;
-                canvasHeight.value = value.height;
-            }
-            ctx.reset();
-            ctx.setTransform(value.matrix);
-            ctx.drawImage(value.image, 0, 0);
-            value.image.close();
-            counter++;
+    const raf = useRafFn(
+        () => {
+            frameNum.value++;
+            renderFrame();
         },
         { fpsLimit: 60 }
     );
+    watch(isPaused, () => (isPaused.value ? raf.pause() : raf.resume()));
 
     // Set transforms
 
@@ -221,8 +226,37 @@ tryOnMounted(() => {
         for (const transform of transforms) {
             daguerreo.addEffect(transform.transform);
         }
+
+        if (isPaused.value) {
+            renderFrame();
+        }
     });
 });
+
+async function renderFrame() {
+    if (!ctx) return;
+
+    const value = await daguerreo.process({
+        frame: frameNum.value,
+        frameDuration: 1000 / 60,
+        width: 1280,
+        height: 720
+    });
+
+    // Set preview canvas size
+    if (canvas.value?.width !== value.width || canvas.value.height !== value.height) {
+        canvas.value!.width = value.width;
+        canvas.value!.height = value.height;
+        canvasWidth.value = value.width;
+        canvasHeight.value = value.height;
+    }
+    ctx.reset();
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+    ctx.setTransform(value.matrix);
+    ctx.drawImage(value.image, 0, 0);
+    value.image.close();
+}
 
 /**
  * Move an element in an array in-place

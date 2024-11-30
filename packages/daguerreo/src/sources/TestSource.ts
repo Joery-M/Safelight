@@ -96,22 +96,27 @@ export function GifTestSource() {
     const frames: ParsedFrame[] = [];
     let gifLength = 0;
 
-    import('../assets/fish-fish-eating.gif?url').then(async ({ default: url }) => {
-        const arrayBuffer = await fetch(url).then((r) => r.arrayBuffer());
+    const loadPromise = import('../assets/fish-fish-eating.gif?url').then(
+        async ({ default: url }) => {
+            const arrayBuffer = await fetch(url).then((r) => r.arrayBuffer());
 
-        const gif = parseGIF(arrayBuffer);
-        console.log(gif);
-        frames.push(...decompressFrames(gif, true));
-        gifLength = frames.reduce((l, f) => l + f.delay, 0);
+            const gif = parseGIF(arrayBuffer);
+            console.log(gif);
+            frames.push(...decompressFrames(gif, true));
+            gifLength = frames.reduce((l, f) => l + f.delay, 0);
 
-        canvas.width = Math.max(...frames.map(({ dims: { width } }) => width));
-        canvas.height = Math.max(...frames.map(({ dims: { height } }) => height));
-    });
+            canvas.width = Math.max(...frames.map(({ dims: { width } }) => width));
+            canvas.height = Math.max(...frames.map(({ dims: { height } }) => height));
+        }
+    );
 
     let frameImageData: ImageData | undefined;
 
     return {
         name: 'gif-test-source',
+        async load() {
+            await loadPromise;
+        },
         source: async ({ frame, frameDuration }) => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             const curTime = (frame * frameDuration) % gifLength;

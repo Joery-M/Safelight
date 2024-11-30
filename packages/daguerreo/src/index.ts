@@ -18,6 +18,8 @@ export class Daguerreo {
         const effectBase = this.source;
         if (!effectBase) throw new Error('No source effect defined');
 
+        await effectBase.load?.();
+
         const payload = await effectBase.source(config);
 
         // Run initialize methods
@@ -42,6 +44,7 @@ export class Daguerreo {
 
 export interface DaguerreoTransformEffect {
     name: string;
+    load?: () => Promisable<void>;
     sourceInitialized?: (
         config: Pick<DaguerreoTransformPayload, 'width' | 'height'>
     ) => Promisable<void>;
@@ -49,6 +52,7 @@ export interface DaguerreoTransformEffect {
 }
 export interface DaguerreoSourceEffect {
     name: string;
+    load?: () => Promisable<void>;
     source: (config: DaguerreoSourcePayload) => Promisable<DaguerreoTransformPayload>;
 }
 
