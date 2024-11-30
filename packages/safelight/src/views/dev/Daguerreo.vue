@@ -114,13 +114,39 @@
                     </div>
                 </div>
                 <h3>Effect options</h3>
-                <p>
-                    {{ selectedActiveTransform?.id }}
-                </p>
+                <div v-if="selectedActiveTransform" class="flex flex-col gap-4">
+                    <p
+                        v-for="(opt, key) in selectedActiveTransform.transform.properties"
+                        :key="key"
+                        class="m-0"
+                    >
+                        <template v-if="opt.canHaveKeyframes === true">
+                            <template v-if="opt.type === 'number'">
+                                <InputNumber
+                                    :model-value="opt.value(frameNum)"
+                                    @value-change="opt.setKeyframe(frameNum, $event)"
+                                ></InputNumber>
+                            </template>
+                        </template>
+                        <template v-else>
+                            {{ opt.value }}
+                        </template>
+                    </p>
+                </div>
             </div>
-            <div class="absolute right-4 top-4 size-min">
+
+            <!-- Playback controls -->
+            <div class="right-4 top-4 size-min xl:absolute">
                 <canvas ref="canvas" class="max-w-2xl"></canvas>
-                <div class="flex justify-center">
+                <Slider
+                    v-model="frameNum"
+                    class="mb-5 mt-3"
+                    :step="1"
+                    :max="60 * 10"
+                    @value-change="isPaused && renderFrame()"
+                />
+                <div class="flex justify-center gap-2">
+                    <InputNumber v-model="frameNum" :max-fraction-digits="0" size="small" />
                     <ButtonGroup>
                         <Button
                             icon="ph ph-skip-back"
@@ -164,8 +190,10 @@ import { tryOnMounted, useRafFn, watchImmediate } from '@vueuse/core';
 import Button from 'primevue/button';
 import ButtonGroup from 'primevue/buttongroup';
 import Card from 'primevue/card';
+import InputNumber from 'primevue/inputnumber';
 import Listbox from 'primevue/listbox';
 import Select from 'primevue/select';
+import Slider from 'primevue/slider';
 import { v4 as uuidv4 } from 'uuid';
 import { ref, shallowReactive, shallowRef, useTemplateRef, watch } from 'vue';
 
@@ -219,7 +247,6 @@ tryOnMounted(() => {
     watch(isPaused, () => (isPaused.value ? raf.pause() : raf.resume()));
 
     // Set transforms
-
     watchImmediate(activeTransforms, (transforms) => {
         while (daguerreo.effects.shift());
 

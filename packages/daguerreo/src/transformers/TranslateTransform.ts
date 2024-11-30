@@ -1,38 +1,47 @@
-import type { DaguerreoTransformEffect } from '..';
+import { defineEffect } from '..';
+import { dgNumberProperty } from '../properties';
 
 export function TranslateTransform() {
-    return {
+    return defineEffect({
         name: 'dg-translate-transform',
-        transform: ({ frame, matrix }) => {
-            matrix.translateSelf(Math.sin(frame / 30) * 200, Math.cos(frame / 30) * 200);
+        properties: {
+            distance: dgNumberProperty(20),
+            speed: dgNumberProperty(30)
+        },
+        transform: ({ frame, matrix, properties }) => {
+            const distance = properties.distance * 10;
+            matrix.translateSelf(
+                Math.sin(frame / properties.speed) * distance,
+                Math.cos(frame / properties.speed) * distance
+            );
         }
-    } as DaguerreoTransformEffect;
+    });
 }
 
 export function RotateTransform() {
-    return {
+    return defineEffect({
         name: 'dg-rotate-transform',
         transform: ({ ctx, frame, matrix }) => {
             matrix.translateSelf(ctx.canvas.width / 2, ctx.canvas.height / 2);
             matrix.rotateSelf(frame);
             matrix.translateSelf(ctx.canvas.width / -2, ctx.canvas.height / -2);
         }
-    } as DaguerreoTransformEffect;
+    });
 }
 
 export function ScaleTransform() {
-    return {
+    return defineEffect({
         name: 'dg-scale-transform',
         transform: ({ ctx, frame, matrix }) => {
             matrix.translateSelf(ctx.canvas.width / 2, ctx.canvas.height / 2);
             matrix.scaleSelf(1 - (Math.sin(frame / 30) + 1) / 5);
             matrix.translateSelf(ctx.canvas.width / -2, ctx.canvas.height / -2);
         }
-    } as DaguerreoTransformEffect;
+    });
 }
 
 export function FlipTransform() {
-    return {
+    return defineEffect({
         name: 'dg-flip-transform',
         transform: ({ ctx, frame, matrix }) => {
             matrix.translateSelf(ctx.canvas.width / 2, ctx.canvas.height / 2);
@@ -44,5 +53,5 @@ export function FlipTransform() {
             }
             matrix.translateSelf(ctx.canvas.width / -2, ctx.canvas.height / -2);
         }
-    } as DaguerreoTransformEffect;
+    });
 }

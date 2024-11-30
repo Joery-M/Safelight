@@ -1,4 +1,9 @@
 import type { Promisable } from 'type-fest';
+import type {
+    DGComputedProperties,
+    DGTransformProperties,
+    DGTransformProperty
+} from './properties';
 
 export class Daguerreo {
     private source: DaguerreoSourceEffect | undefined;
@@ -30,26 +35,50 @@ export class Daguerreo {
 
         // Run effects
         for await (const effect of this.effects) {
-            await effect.transform(payload);
+            const props: DGTransformProperties = {};
+            if (effect.properties) {
+                for (const key in effect.properties) {
+                    if (Object.prototype.hasOwnProperty.call(effect.properties, key)) {
+                        const prop = effect.properties[key];
+                        props[key] = prop.value(config.frame);
+                    }
+                }
+            }
+            await effect.transform({ ...payload, properties: props });
         }
 
         return {
             width: payload.width,
             height: payload.height,
             image: payload.ctx.canvas.transferToImageBitmap(),
-            matrix: payload.matrix
-        };
+            matrix: payload.matrix,
+            alpha: 1,
+            compositeOperation: 'source-over'
+        } as DaguerreoResult;
     }
+}
+
+export function defineEffect<Properties extends DGTransformProperties = {}>(
+    def: Omit<DaguerreoTransformEffect, 'properties' | 'transform'> & {
+        properties?: Properties;
+        transform: (
+            config: DaguerreoTransformPayload & { properties: DGComputedProperties<Properties> }
+        ) => Promisable<void>;
+    }
+) {
+    return def as Omit<DaguerreoTransformEffect, 'properties'> & { properties: Properties };
 }
 
 export interface DaguerreoTransformEffect {
     name: string;
+    properties?: { [k: string]: DGTransformProperty };
     load?: () => Promisable<void>;
     sourceInitialized?: (
         config: Pick<DaguerreoTransformPayload, 'width' | 'height'>
     ) => Promisable<void>;
-    transform: (config: DaguerreoTransformPayload) => Promisable<void>;
+    transform: (config: DaguerreoTransformPayload & { properties: {} }) => Promisable<void>;
 }
+
 export interface DaguerreoSourceEffect {
     name: string;
     load?: () => Promisable<void>;
@@ -113,4 +142,8 @@ export interface DaguerreoResult {
     image: ImageBitmap;
 
     matrix: DOMMatrix;
+
+    compositeOperation: GlobalCompositeOperation;
+
+    alpha: number;
 }
