@@ -20,7 +20,7 @@
     "dev": "cd packages/safelight && pnpm dev",
     "dev:darkroom": "pnpm build:packages && cd packages/darkroom && pnpm dev:web",
     "lint": "pnpm lint:prettier && pnpm lint:eslint",
-    "lint:prettier": "prettier . --write --ignore-path .gitignore --ignore-path ./packages/safelight/.gitignore --ignore-path .prettierignore",
+    "lint:prettier": "prettier . --write --ignore-path .gitignore --ignore-path ./packages/safelight/.gitignore --ignore-path .prettierignore -u --cache -l",
     "lint:eslint": "eslint ./packages/**/*{.ts,.js,.vue}"
   },
   "workspaces": [

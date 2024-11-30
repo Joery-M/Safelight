@@ -6,3 +6,4 @@ pnpm-workspace.yaml
 
 # TsWebM generated file
 packages/tswebm/src/elements.ts
+packages/tswebm/matroska-test-files
