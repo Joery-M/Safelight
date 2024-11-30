@@ -43,7 +43,7 @@
                     autofocus
                     fluid
                     @keydown.enter="
-                        (event: KeyboardEvent) => {
+                        (event) => {
                             const value = (event.target as HTMLInputElement)?.value ?? '';
                             if (value !== data.name) {
                                 setProjectName(value, data);
@@ -51,7 +51,7 @@
                         }
                     "
                     @blur="
-                        (event: KeyboardEvent) => {
+                        (event) => {
                             const value = (event.target as HTMLInputElement)?.value ?? '';
                             if (value !== data.name) {
                                 setProjectName(value, data);
