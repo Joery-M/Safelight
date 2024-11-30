@@ -11,10 +11,10 @@ My second goal is to allow the user to make plugins that add functionality to th
 
 This would allow users to create extensions for:
 
--   Adding graphs with [chart.js](https://www.chartjs.org/) or [D3.js](https://d3js.org/)
--   Motion tracking with [tracking.js](https://trackingjs.com/)
--   3D rendering with [threejs](https://threejs.org/)
--   Speech recognition using the [SpeechRecognition API](https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition)
+- Adding graphs with [chart.js](https://www.chartjs.org/) or [D3.js](https://d3js.org/)
+- Motion tracking with [tracking.js](https://trackingjs.com/)
+- 3D rendering with [threejs](https://threejs.org/)
+- Speech recognition using the [SpeechRecognition API](https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition)
 
 And for my last goal, I wan't this project to be able to run in different environments.
 Like, it should be possible to turn this into an [Electron](https://www.electronjs.org/) app and use full [FFmpeg](https://ffmpeg.org/) to be able to export in special formats like [DCP](https://en.wikipedia.org/wiki/Digital_Cinema_Package).
