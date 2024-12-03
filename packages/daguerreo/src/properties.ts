@@ -1,5 +1,3 @@
-const defaultInterpolation: DGInterpolationFn = (t) => t;
-
 const lerp = (x: number, y: number, a: number) => x * (1 - a) + y * a;
 const clamp = (a: number, min = 0, max = 1) => Math.min(max, Math.max(min, a));
 const invlerp = (x: number, y: number, a: number) => clamp((a - x) / (y - x));
@@ -7,9 +5,7 @@ const range = (x1: number, y1: number, x2: number, y2: number, a: number) =>
     lerp(x2, y2, invlerp(x1, y1, a));
 
 export function dgNumberProperty(value: number): DGTransformProperty<number> {
-    let interpolationFn: DGInterpolationFn = defaultInterpolation;
-
-    const keyframes: { frame: number; value: number }[] = [];
+    const keyframes: DGKeyframe[] = [];
 
     return {
         type: 'number',
@@ -30,18 +26,22 @@ export function dgNumberProperty(value: number): DGTransformProperty<number> {
 
             const t = range(v1.frame, v2.frame, 0, 1, frame);
 
-            return lerp(v1.value, v2.value, interpolationFn(t));
+            if (v1.interpolation) {
+                const t2 = v1.interpolation(t);
+                if (t2 !== undefined) {
+                    return lerp(v1.value, v2.value, t2);
+                }
+            }
+            return lerp(v1.value, v2.value, t);
         },
 
         canHaveInterpolation: true,
         canHaveKeyframes: true,
 
-        setInterpolation: (fn = defaultInterpolation) => (interpolationFn = fn),
-
-        setKeyframe(frame, value) {
+        setKeyframe(frame, value, fn) {
             this.removeKeyframe(frame);
 
-            keyframes.push({ frame, value });
+            keyframes.push({ frame, value, interpolation: fn });
             keyframes.sort(({ frame: frameA }, { frame: frameB }) => frameA - frameB);
         },
         removeKeyframe(frameNum) {
@@ -55,6 +55,11 @@ export function dgNumberProperty(value: number): DGTransformProperty<number> {
 }
 
 export type DGInterpolationFn = (t: number) => number;
+export interface DGKeyframe {
+    frame: number;
+    value: number;
+    interpolation: DGInterpolationFn | undefined;
+}
 
 export type DGPropertyTypes = 'number';
 
@@ -65,7 +70,6 @@ export type DGTransformProperty<T = any> = {
     | {
           canHaveKeyframes: true;
 
-          setKeyframe(frame: number, value: T): void;
           removeKeyframe(frame: number): boolean;
       }
     | { canHaveKeyframes: false }
@@ -74,10 +78,12 @@ export type DGTransformProperty<T = any> = {
         | {
               canHaveInterpolation: true;
 
-              setInterpolation(fn?: DGInterpolationFn): void;
+              setKeyframe(frame: number, value: T, fn?: DGInterpolationFn): void;
           }
         | {
               canHaveInterpolation: false;
+
+              setKeyframe(frame: number, value: T): void;
           }
     );
 
