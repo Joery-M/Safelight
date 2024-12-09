@@ -1,9 +1,6 @@
 import type { Promisable } from 'type-fest';
-import type {
-    DGComputedProperties,
-    DGTransformProperties,
-    DGTransformProperty
-} from './properties';
+import type { DGTransformProperties } from './properties';
+import type { DaguerreoTransformEffect, DaguerreoTransformPayload } from './transformEffect';
 
 export class Daguerreo {
     private source: DaguerreoSourceEffect | undefined;
@@ -19,7 +16,31 @@ export class Daguerreo {
         this.source = source;
     }
 
-    async process(config: DaguerreoSourcePayload): Promise<DaguerreoResult> {
+    getAllTransformDefaults() {
+        const allProps: DGTransformProperties[] = [];
+        for (let i = 0; i < this.effects.length; i++) {
+            const effect = this.effects[i];
+
+            const props: DGTransformProperties = {};
+            if (effect.properties) {
+                for (const key in effect.properties) {
+                    if (key in effect.properties) {
+                        const prop = effect.properties[key];
+                        props[key] = prop.value();
+                    }
+                }
+            }
+
+            allProps[i] = props;
+        }
+
+        return allProps;
+    }
+
+    async process(
+        config: DaguerreoSourcePayload,
+        transformProps: DGTransformProperties[] = this.getAllTransformDefaults()
+    ): Promise<DaguerreoResult> {
         const effectBase = this.source;
         if (!effectBase) throw new Error('No source effect defined');
 
@@ -34,13 +55,15 @@ export class Daguerreo {
         await Promise.allSettled(initFunctions);
 
         // Run effects
-        for await (const effect of this.effects) {
-            const props: DGTransformProperties = {};
+        for (let i = 0; i < this.effects.length; i++) {
+            const effect = this.effects[i];
+
+            const props: DGTransformProperties = transformProps[i] ?? {};
             if (effect.properties) {
                 for (const key in effect.properties) {
-                    if (Object.prototype.hasOwnProperty.call(effect.properties, key)) {
+                    if (key in effect.properties && !(key in props)) {
                         const prop = effect.properties[key];
-                        props[key] = prop.value(config.frame);
+                        props[key] = prop.value();
                     }
                 }
             }
@@ -56,27 +79,6 @@ export class Daguerreo {
             compositeOperation: 'source-over'
         } as DaguerreoResult;
     }
-}
-
-export function defineEffect<Properties extends DGTransformProperties = {}>(
-    def: Omit<DaguerreoTransformEffect, 'properties' | 'transform'> & {
-        properties?: Properties;
-        transform: (
-            config: DaguerreoTransformPayload & { properties: DGComputedProperties<Properties> }
-        ) => Promisable<void>;
-    }
-) {
-    return def as Omit<DaguerreoTransformEffect, 'properties'> & { properties: Properties };
-}
-
-export interface DaguerreoTransformEffect {
-    name: string;
-    properties?: { [k: string]: DGTransformProperty };
-    load?: () => Promisable<void>;
-    sourceInitialized?: (
-        config: Pick<DaguerreoTransformPayload, 'width' | 'height'>
-    ) => Promisable<void>;
-    transform: (config: DaguerreoTransformPayload & { properties: {} }) => Promisable<void>;
 }
 
 export interface DaguerreoSourceEffect {
@@ -106,29 +108,6 @@ export interface DaguerreoSourcePayload {
     height: number;
 }
 
-export interface DaguerreoTransformPayload {
-    /**
-     * Current frame number
-     */
-    frame: number;
-    /**
-     * How long the current frame will last for in milliseconds.
-     */
-    frameDuration: number;
-    /**
-     * Current frame width
-     */
-    width: number;
-    /**
-     * Current frame height
-     */
-    height: number;
-
-    ctx: OffscreenCanvasRenderingContext2D;
-
-    matrix: DOMMatrix;
-}
-
 export interface DaguerreoResult {
     /**
      * Current frame width
@@ -147,3 +126,6 @@ export interface DaguerreoResult {
 
     alpha: number;
 }
+
+export * from './properties';
+export * from './transformEffect';

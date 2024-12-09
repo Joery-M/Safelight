@@ -55,3 +55,27 @@ export function FlipTransform() {
         }
     });
 }
+
+export function GenericTransform() {
+    return defineEffect({
+        name: 'dg-transform',
+        properties: {
+            x: dgNumberProperty(0),
+            y: dgNumberProperty(0),
+            scaleX: dgNumberProperty(1),
+            scaleY: dgNumberProperty(1),
+            rotation: dgNumberProperty(0)
+        },
+        transform({ matrix, properties }) {
+            if (properties.x !== 0 || properties.y !== 0) {
+                matrix.translateSelf(properties.x, properties.y);
+            }
+            if (properties.scaleX !== 1 || properties.scaleY !== 1) {
+                matrix.scaleSelf(properties.scaleX, properties.scaleY);
+            }
+            if (properties.rotation !== 0) {
+                matrix.rotateSelf(properties.rotation);
+            }
+        }
+    });
+}

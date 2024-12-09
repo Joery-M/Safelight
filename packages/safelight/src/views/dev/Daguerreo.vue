@@ -22,13 +22,14 @@
                         option-label="name"
                         filter
                         :filter-fields="['name']"
-                        @update:model-value="(ev) => (transformSelectedFromLibrary = ev?.transform)"
+                        @update:model-value="(ev) => (transformSelectedFromLibrary = ev)"
                         @option-dblclick="
                             (ev) => {
                                 if (ev)
                                     activeTransforms.push({
                                         id: uuidv4(),
-                                        transform: ev.value.transform()
+                                        transform: markRaw(ev.value.transform()),
+                                        values: {}
                                     });
                             }
                         "
@@ -43,7 +44,10 @@
                                     if (transformSelectedFromLibrary)
                                         activeTransforms.push({
                                             id: uuidv4(),
-                                            transform: transformSelectedFromLibrary()
+                                            transform: markRaw(
+                                                transformSelectedFromLibrary.transform()
+                                            ),
+                                            values: {}
                                         });
                                 }
                             "
@@ -120,16 +124,20 @@
                         :key="key"
                         class="m-0"
                     >
-                        <template v-if="opt.canHaveKeyframes === true">
-                            <template v-if="opt.type === 'number'">
-                                <InputNumber
-                                    :model-value="opt.value(frameNum)"
-                                    @value-change="opt.setKeyframe(frameNum, $event)"
-                                ></InputNumber>
-                            </template>
-                        </template>
-                        <template v-else>
-                            {{ opt.value }}
+                        <template v-if="opt.type === 'number'">
+                            <InputNumber
+                                :model-value="selectedActiveTransform.values[key] ?? opt.value()"
+                                @value-change="
+                                    (val) => {
+                                        if (selectedActiveTransform) {
+                                            selectedActiveTransform.values[key] = val;
+                                            if (val === opt.value()) {
+                                                delete selectedActiveTransform.values[key];
+                                            }
+                                        }
+                                    }
+                                "
+                            />
                         </template>
                     </p>
                 </div>
@@ -195,7 +203,16 @@ import Listbox from 'primevue/listbox';
 import Select from 'primevue/select';
 import Slider from 'primevue/slider';
 import { v4 as uuidv4 } from 'uuid';
-import { ref, shallowReactive, shallowRef, useTemplateRef, watch } from 'vue';
+import {
+    markRaw,
+    reactive,
+    ref,
+    shallowReactive,
+    shallowRef,
+    toRaw,
+    useTemplateRef,
+    type Raw
+} from 'vue';
 
 const availableTransforms = shallowReactive<LibraryTransformEntry[]>([
     { name: 'dg-translate-transform', transform: () => TranslateTransform() },
@@ -203,7 +220,7 @@ const availableTransforms = shallowReactive<LibraryTransformEntry[]>([
     { name: 'dg-scale-transform', transform: () => ScaleTransform() },
     { name: 'dg-flip-transform', transform: () => FlipTransform() }
 ]);
-const activeTransforms = shallowReactive<ActiveTransformEntry[]>([]);
+const activeTransforms = reactive<ActiveTransformEntry[]>([]);
 
 let daguerreo = new Daguerreo();
 
@@ -212,9 +229,9 @@ const sources = [
     { label: 'cat', value: () => CatTestSource() },
     { label: 'gif', value: () => GifTestSource() }
 ];
-const activeSource = ref(sources[1]);
+const activeSource = ref(sources[0]);
 
-const transformSelectedFromLibrary = shallowRef<() => DaguerreoTransformEffect>();
+const transformSelectedFromLibrary = shallowRef<LibraryTransformEntry>();
 const selectedActiveTransform = shallowRef<ActiveTransformEntry>();
 
 const canvas = useTemplateRef('canvas');
@@ -244,7 +261,7 @@ tryOnMounted(() => {
         },
         { fpsLimit: 60 }
     );
-    watch(isPaused, () => (isPaused.value ? raf.pause() : raf.resume()));
+    watchImmediate(isPaused, () => (isPaused.value ? raf.pause() : raf.resume()));
 
     // Set transforms
     watchImmediate(activeTransforms, (transforms) => {
@@ -263,12 +280,28 @@ tryOnMounted(() => {
 async function renderFrame() {
     if (!ctx) return;
 
-    const value = await daguerreo.process({
-        frame: frameNum.value,
-        frameDuration: 1000 / 60,
-        width: 1280,
-        height: 720
+    const props = daguerreo.getAllTransformDefaults();
+
+    activeTransforms.forEach((transform, i) => {
+        if (props[i]) {
+            props[i] = {
+                ...props[i],
+                ...toRaw(transform.values)
+            };
+        } else {
+            props[i] = toRaw(transform.values);
+        }
     });
+
+    const value = await daguerreo.process(
+        {
+            frame: frameNum.value,
+            frameDuration: 1000 / 60,
+            width: 1280,
+            height: 720
+        },
+        props
+    );
 
     // Set preview canvas size
     if (canvas.value?.width !== value.width || canvas.value.height !== value.height) {
@@ -315,11 +348,14 @@ function arrayMove(arr: any[], old_index: number, new_index: number) {
 
 interface LibraryTransformEntry {
     name: string;
-    transform: () => DaguerreoTransformEffect;
+    transform: () => DaguerreoTransformEffect<any>;
 }
 interface ActiveTransformEntry {
     id: string;
-    transform: DaguerreoTransformEffect;
+    transform: Raw<DaguerreoTransformEffect<any>>;
+    values: {
+        [key: string]: any;
+    };
 }
 </script>
 
