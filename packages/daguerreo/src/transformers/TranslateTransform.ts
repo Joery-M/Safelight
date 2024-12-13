@@ -74,7 +74,9 @@ export function GenericTransform() {
             originY: dgNumberProperty(1, {
                 transform: { toDisplay: (v) => v * 100, toValue: (v) => v / 100 }
             }),
-            rotation: dgNumberProperty(0),
+            rotation: dgNumberProperty(0, {
+                transform: { toValue: (v) => (v < 0 ? v + 360 : v % 360) }
+            }),
             opacity: dgNumberProperty(1, {
                 integerOnly: true,
                 min: 0,

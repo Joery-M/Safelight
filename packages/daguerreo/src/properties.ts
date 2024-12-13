@@ -1,9 +1,10 @@
+import type { PartialDeep } from 'type-fest';
 import { ref } from 'vue';
 
 export function dgNumberProperty(
     value: number,
-    meta?: Partial<NumberPropertyConfig>
-): DGTransformProperty<number, Partial<NumberPropertyConfig>> {
+    meta?: PartialDeep<NumberPropertyConfig>
+): DGTransformProperty<number, PartialDeep<NumberPropertyConfig>> {
     let curValue = ref(value);
     return {
         type: 'number',
