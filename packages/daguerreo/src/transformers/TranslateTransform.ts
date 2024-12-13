@@ -62,20 +62,45 @@ export function GenericTransform() {
         properties: {
             x: dgNumberProperty(0),
             y: dgNumberProperty(0),
-            scaleX: dgNumberProperty(1),
-            scaleY: dgNumberProperty(1),
-            rotation: dgNumberProperty(0)
+            scaleX: dgNumberProperty(1, {
+                transform: { toDisplay: (v) => v * 100, toValue: (v) => v / 100 }
+            }),
+            scaleY: dgNumberProperty(1, {
+                transform: { toDisplay: (v) => v * 100, toValue: (v) => v / 100 }
+            }),
+            originX: dgNumberProperty(1, {
+                transform: { toDisplay: (v) => v * 100, toValue: (v) => v / 100 }
+            }),
+            originY: dgNumberProperty(1, {
+                transform: { toDisplay: (v) => v * 100, toValue: (v) => v / 100 }
+            }),
+            rotation: dgNumberProperty(0),
+            opacity: dgNumberProperty(1, {
+                integerOnly: true,
+                min: 0,
+                max: 100,
+                slider: true,
+                transform: { toDisplay: (v) => v * 100, toValue: (v) => v / 100 }
+            })
         },
-        transform({ matrix, properties }) {
+        transform({ matrix, properties, width, height, opacity }) {
             if (properties.x !== 0 || properties.y !== 0) {
                 matrix.translateSelf(properties.x, properties.y);
             }
             if (properties.scaleX !== 1 || properties.scaleY !== 1) {
-                matrix.scaleSelf(properties.scaleX, properties.scaleY);
+                matrix.scaleSelf(properties.scaleX, properties.scaleY, 1, width / 2, height / 2);
             }
             if (properties.rotation !== 0) {
-                matrix.rotateSelf(properties.rotation);
+                matrix
+                    .translateSelf(width / 2, height / 2)
+                    .rotateSelf(properties.rotation)
+                    .translateSelf(width / -2, height / -2);
             }
+
+            return {
+                matrix,
+                opacity: opacity * properties.opacity
+            };
         }
     });
 }

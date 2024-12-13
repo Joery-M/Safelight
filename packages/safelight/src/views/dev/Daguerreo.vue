@@ -28,8 +28,7 @@
                                 if (ev)
                                     activeTransforms.push({
                                         id: uuidv4(),
-                                        transform: markRaw(ev.value.transform()),
-                                        values: {}
+                                        transform: markRaw(ev.value.transform())
                                     });
                             }
                         "
@@ -46,8 +45,7 @@
                                             id: uuidv4(),
                                             transform: markRaw(
                                                 transformSelectedFromLibrary.transform()
-                                            ),
-                                            values: {}
+                                            )
                                         });
                                 }
                             "
@@ -118,29 +116,43 @@
                     </div>
                 </div>
                 <h3>Effect options</h3>
-                <div v-if="selectedActiveTransform" class="flex flex-col gap-4">
-                    <p
-                        v-for="(opt, key) in selectedActiveTransform.transform.properties"
-                        :key="key"
-                        class="m-0"
-                    >
-                        <template v-if="opt.type === 'number'">
-                            <InputNumber
-                                :model-value="selectedActiveTransform.values[key] ?? opt.value()"
-                                @value-change="
-                                    (val) => {
-                                        if (selectedActiveTransform) {
-                                            selectedActiveTransform.values[key] = val;
-                                            if (val === opt.value()) {
-                                                delete selectedActiveTransform.values[key];
-                                            }
-                                        }
-                                    }
-                                "
-                            />
-                        </template>
-                    </p>
-                </div>
+                <table v-if="selectedActiveTransform" class="mb-2">
+                    <thead>
+                        <tr>
+                            <th class="w-36">Property</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            v-for="(opt, key) in selectedActiveTransform.transform.properties"
+                            :key="key"
+                        >
+                            <td>
+                                {{ key }}
+                            </td>
+                            <td v-if="opt.type === 'number'">
+                                <InputNumber
+                                    v-if="!opt.meta?.slider"
+                                    :model-value="opt.displayValue()"
+                                    :max-fraction-digits="opt.meta?.integerOnly ? 0 : 10"
+                                    :min="opt.meta?.min"
+                                    :max="opt.meta?.max"
+                                    :step="opt.meta?.step"
+                                    @value-change="opt.setValue"
+                                />
+                                <Slider
+                                    v-else
+                                    :model-value="opt.displayValue()"
+                                    :min="opt.meta?.min"
+                                    :max="opt.meta?.max"
+                                    :step="opt.meta?.step"
+                                    @value-change="opt.setValue"
+                                />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
             <!-- Playback controls -->
@@ -190,6 +202,7 @@ import {
 } from '@safelight/daguerreo/sources/TestSource';
 import {
     FlipTransform,
+    GenericTransform,
     RotateTransform,
     ScaleTransform,
     TranslateTransform
@@ -203,22 +216,14 @@ import Listbox from 'primevue/listbox';
 import Select from 'primevue/select';
 import Slider from 'primevue/slider';
 import { v4 as uuidv4 } from 'uuid';
-import {
-    markRaw,
-    reactive,
-    ref,
-    shallowReactive,
-    shallowRef,
-    toRaw,
-    useTemplateRef,
-    type Raw
-} from 'vue';
+import { markRaw, reactive, ref, shallowReactive, shallowRef, useTemplateRef, type Raw } from 'vue';
 
 const availableTransforms = shallowReactive<LibraryTransformEntry[]>([
     { name: 'dg-translate-transform', transform: () => TranslateTransform() },
     { name: 'dg-rotate-transform', transform: () => RotateTransform() },
     { name: 'dg-scale-transform', transform: () => ScaleTransform() },
-    { name: 'dg-flip-transform', transform: () => FlipTransform() }
+    { name: 'dg-flip-transform', transform: () => FlipTransform() },
+    { name: 'dg-transform', transform: () => GenericTransform() }
 ]);
 const activeTransforms = reactive<ActiveTransformEntry[]>([]);
 
@@ -280,28 +285,12 @@ tryOnMounted(() => {
 async function renderFrame() {
     if (!ctx) return;
 
-    const props = daguerreo.getAllTransformDefaults();
-
-    activeTransforms.forEach((transform, i) => {
-        if (props[i]) {
-            props[i] = {
-                ...props[i],
-                ...toRaw(transform.values)
-            };
-        } else {
-            props[i] = toRaw(transform.values);
-        }
+    const value = await daguerreo.process({
+        frame: frameNum.value,
+        frameDuration: 1000 / 60,
+        width: 1280,
+        height: 720
     });
-
-    const value = await daguerreo.process(
-        {
-            frame: frameNum.value,
-            frameDuration: 1000 / 60,
-            width: 1280,
-            height: 720
-        },
-        props
-    );
 
     // Set preview canvas size
     if (canvas.value?.width !== value.width || canvas.value.height !== value.height) {
@@ -313,6 +302,8 @@ async function renderFrame() {
     ctx.reset();
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
+    ctx.globalAlpha = value.opacity;
+    ctx.globalCompositeOperation = value.compositeOperation;
     ctx.setTransform(value.matrix);
     ctx.drawImage(value.image, 0, 0);
     value.image.close();
@@ -348,14 +339,11 @@ function arrayMove(arr: any[], old_index: number, new_index: number) {
 
 interface LibraryTransformEntry {
     name: string;
-    transform: () => DaguerreoTransformEffect<any>;
+    transform: () => DaguerreoTransformEffect;
 }
 interface ActiveTransformEntry {
     id: string;
-    transform: Raw<DaguerreoTransformEffect<any>>;
-    values: {
-        [key: string]: any;
-    };
+    transform: Raw<DaguerreoTransformEffect>;
 }
 </script>
 

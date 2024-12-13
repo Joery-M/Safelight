@@ -1,8 +1,8 @@
-import type { Promisable } from 'type-fest';
+import type { PartialDeep, Promisable } from 'type-fest';
 import type { DGComputedProperties, DGTransformProperties } from './properties';
 
 export interface DaguerreoTransformEffect<
-    Properties extends DGTransformProperties = { [key: string]: any }
+    Properties extends DGTransformProperties = DGTransformProperties
 > {
     name: string;
     properties?: Properties;
@@ -12,7 +12,7 @@ export interface DaguerreoTransformEffect<
     ) => Promisable<void>;
     transform: (
         config: DaguerreoTransformPayload & { properties: DGComputedProperties<Properties> }
-    ) => Promisable<void>;
+    ) => Promisable<PartialDeep<DaguerreoTransformResult> | void>;
 }
 
 export interface DaguerreoTransformPayload {
@@ -32,19 +32,38 @@ export interface DaguerreoTransformPayload {
      * Current frame height
      */
     height: number;
+    /**
+     * Number ranging from 0-1 that defines the opacity used for compositing
+     */
+    opacity: number;
+    /**
+     * The blend mode used for compositing
+     */
+    compositeOperation: GlobalCompositeOperation;
 
     ctx: OffscreenCanvasRenderingContext2D;
 
     matrix: DOMMatrix;
 }
 
-export function defineEffect<Properties extends DGTransformProperties = {}>(
+export interface DaguerreoTransformResult {
+    /**
+     * Number ranging from 0-1 that defines the opacity used for compositing
+     */
+    opacity: number;
+    /**
+     * The blend mode used for compositing
+     */
+    compositeOperation: GlobalCompositeOperation;
+}
+
+export function defineEffect<Properties extends DGTransformProperties = DGTransformProperties>(
     def: Omit<DaguerreoTransformEffect, 'properties' | 'transform'> & {
         properties?: Properties;
         transform: (
             config: DaguerreoTransformPayload & { properties: DGComputedProperties<Properties> }
-        ) => Promisable<void>;
+        ) => Promisable<PartialDeep<DaguerreoTransformResult> | void>;
     }
 ) {
-    return def as DaguerreoTransformEffect<Properties>;
+    return def as DaguerreoTransformEffect;
 }

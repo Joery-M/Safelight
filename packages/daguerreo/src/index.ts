@@ -1,5 +1,5 @@
-import type { Promisable } from 'type-fest';
-import type { DGTransformProperties } from './properties';
+import type { DGTransformProperties, DGTransformProperty } from './properties';
+import type { DaguerreoSourceEffect, DaguerreoSourcePayload } from './sourceEffect';
 import type { DaguerreoTransformEffect, DaguerreoTransformPayload } from './transformEffect';
 
 export class Daguerreo {
@@ -16,7 +16,7 @@ export class Daguerreo {
         this.source = source;
     }
 
-    getAllTransformDefaults() {
+    getTransformProps() {
         const allProps: DGTransformProperties[] = [];
         for (let i = 0; i < this.effects.length; i++) {
             const effect = this.effects[i];
@@ -25,7 +25,7 @@ export class Daguerreo {
             if (effect.properties) {
                 for (const key in effect.properties) {
                     if (key in effect.properties) {
-                        const prop = effect.properties[key];
+                        const prop = effect.properties[key] as DGTransformProperty;
                         props[key] = prop.value();
                     }
                 }
@@ -39,14 +39,26 @@ export class Daguerreo {
 
     async process(
         config: DaguerreoSourcePayload,
-        transformProps: DGTransformProperties[] = this.getAllTransformDefaults()
+        transformProps: DGTransformProperties[] = this.getTransformProps()
     ): Promise<DaguerreoResult> {
         const effectBase = this.source;
         if (!effectBase) throw new Error('No source effect defined');
 
         await effectBase.load?.();
 
-        const payload = await effectBase.source(config);
+        const payload: DaguerreoTransformPayload = Object.assign(
+            // Default values
+            {
+                matrix: new DOMMatrix(),
+                compositeOperation: 'source-over',
+                opacity: 1,
+                frame: config.frame,
+                frameDuration: config.frameDuration,
+                width: config.width,
+                height: config.height
+            },
+            await effectBase.source(config)
+        );
 
         // Run initialize methods
         const initFunctions = this.effects
@@ -67,7 +79,9 @@ export class Daguerreo {
                     }
                 }
             }
-            await effect.transform({ ...payload, properties: props });
+            const result = await effect.transform({ ...payload, properties: props });
+            // Assign props
+            if (result) Object.assign(payload, result);
         }
 
         return {
@@ -75,38 +89,13 @@ export class Daguerreo {
             height: payload.height,
             image: payload.ctx.canvas.transferToImageBitmap(),
             matrix: payload.matrix,
-            alpha: 1,
-            compositeOperation: 'source-over'
+            opacity: payload.opacity,
+            compositeOperation: payload.compositeOperation
         } as DaguerreoResult;
     }
 }
 
-export interface DaguerreoSourceEffect {
-    name: string;
-    load?: () => Promisable<void>;
-    source: (config: DaguerreoSourcePayload) => Promisable<DaguerreoTransformPayload>;
-}
-
 export type DaguerreoEffect = DaguerreoSourceEffect | DaguerreoTransformEffect;
-
-export interface DaguerreoSourcePayload {
-    /**
-     * Current frame number
-     */
-    frame: number;
-    /**
-     * Frame duration in milliseconds.
-     */
-    frameDuration: number;
-    /**
-     * Timeline width
-     */
-    width: number;
-    /**
-     * Timeline height
-     */
-    height: number;
-}
 
 export interface DaguerreoResult {
     /**
@@ -121,11 +110,16 @@ export interface DaguerreoResult {
     image: ImageBitmap;
 
     matrix: DOMMatrix;
-
+    /**
+     * Number ranging from 0-1 that defines the opacity used for compositing
+     */
+    opacity: number;
+    /**
+     * The blend mode used for compositing
+     */
     compositeOperation: GlobalCompositeOperation;
-
-    alpha: number;
 }
 
 export * from './properties';
+export * from './sourceEffect';
 export * from './transformEffect';

@@ -8,7 +8,7 @@ export function GradientTestSource() {
     return {
         name: 'gradient-test-source',
         source: ({ frame }) => {
-            ctx.clearRect(0, 0, 1280, 720);
+            ctx.reset();
 
             const val = Math.sqrt(1280 ** 2 + 720 ** 2);
 
@@ -37,11 +37,8 @@ export function GradientTestSource() {
 
             return {
                 ctx,
-                frame,
-                frameDuration: 1 / 60,
-                height: 720,
-                width: 1280,
-                matrix: ctx.getTransform()
+                height: ctx.canvas.height,
+                width: ctx.canvas.width
             };
         }
     } as DaguerreoSourceEffect;
@@ -55,7 +52,7 @@ export function CatTestSource() {
 
     return {
         name: 'cat-test-source',
-        async source({ frame }) {
+        async source() {
             ctx.reset();
 
             if (catImage) {
@@ -79,11 +76,8 @@ export function CatTestSource() {
 
             return {
                 ctx,
-                frame,
-                frameDuration: 1 / 60,
-                width: 1280,
-                height: 720,
-                matrix: ctx.getTransform()
+                width: catImage.width,
+                height: catImage.height
             };
         }
     } as DaguerreoSourceEffect;
@@ -118,7 +112,7 @@ export function GifTestSource() {
             await loadPromise;
         },
         source: async ({ frame, frameDuration }) => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.reset();
             const curTime = (frame * frameDuration) % gifLength;
 
             if (frames.length > 0) {
@@ -158,11 +152,9 @@ export function GifTestSource() {
 
             return {
                 ctx,
-                frame,
                 frameDuration: 1 / 60,
                 width: canvas.width,
-                height: canvas.height,
-                matrix: ctx.getTransform()
+                height: canvas.height
             };
         }
     } as DaguerreoSourceEffect;
