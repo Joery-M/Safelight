@@ -14,6 +14,11 @@
                     :options="sources"
                     option-label="label"
                 />
+                <SelectButton
+                    v-model="quality"
+                    :options="['rough', 'preview', 'final']"
+                    class="mt-4 block"
+                />
                 <h3>Effects</h3>
                 <div id="effect-list" class="flex h-80 max-w-screen-sm gap-4">
                     <Listbox
@@ -139,7 +144,10 @@
                                     :min="opt.meta?.min"
                                     :max="opt.meta?.max"
                                     :step="opt.meta?.step"
-                                    @value-change="opt.setValue"
+                                    @value-change="
+                                        opt.setValue($event);
+                                        renderIfNeeded();
+                                    "
                                 />
                                 <Slider
                                     v-else
@@ -147,7 +155,10 @@
                                     :min="opt.meta?.min"
                                     :max="opt.meta?.max"
                                     :step="opt.meta?.step"
-                                    @value-change="opt.setValue"
+                                    @value-change="
+                                        opt.setValue($event);
+                                        renderIfNeeded();
+                                    "
                                 />
                             </td>
                         </tr>
@@ -163,10 +174,15 @@
                     class="mb-5 mt-3"
                     :step="1"
                     :max="60 * 10"
-                    @value-change="isPaused && renderFrame()"
+                    @value-change="renderIfNeeded()"
                 />
                 <div class="flex justify-center gap-2">
-                    <InputNumber v-model="frameNum" :max-fraction-digits="0" size="small" />
+                    <InputNumber
+                        v-model="frameNum"
+                        :max-fraction-digits="0"
+                        size="small"
+                        @value-change="renderIfNeeded()"
+                    />
                     <ButtonGroup>
                         <Button
                             icon="ph ph-skip-back"
@@ -194,7 +210,11 @@
 </template>
 
 <script setup lang="ts">
-import { Daguerreo, type DaguerreoTransformEffect } from '@safelight/daguerreo';
+import {
+    Daguerreo,
+    type DaguerreoTransformEffect,
+    type QualitySetting
+} from '@safelight/daguerreo';
 import {
     CatTestSource,
     GifTestSource,
@@ -214,6 +234,7 @@ import Card from 'primevue/card';
 import InputNumber from 'primevue/inputnumber';
 import Listbox from 'primevue/listbox';
 import Select from 'primevue/select';
+import SelectButton from 'primevue/selectbutton';
 import Slider from 'primevue/slider';
 import { v4 as uuidv4 } from 'uuid';
 import { markRaw, reactive, ref, shallowReactive, shallowRef, useTemplateRef, type Raw } from 'vue';
@@ -240,12 +261,11 @@ const transformSelectedFromLibrary = shallowRef<LibraryTransformEntry>();
 const selectedActiveTransform = shallowRef<ActiveTransformEntry>();
 
 const canvas = useTemplateRef('canvas');
-const canvasWidth = ref<number>();
-const canvasHeight = ref<number>();
 let ctx: CanvasRenderingContext2D | null = null;
 
 const isPaused = ref(false);
 const frameNum = ref(0);
+const quality = ref<QualitySetting>('final');
 
 tryOnMounted(() => {
     if (!canvas.value) return;
@@ -276,11 +296,15 @@ tryOnMounted(() => {
             daguerreo.addEffect(transform.transform);
         }
 
-        if (isPaused.value) {
-            renderFrame();
-        }
+        renderIfNeeded();
     });
 });
+
+function renderIfNeeded() {
+    if (isPaused.value) {
+        renderFrame();
+    }
+}
 
 async function renderFrame() {
     if (!ctx) return;
@@ -289,15 +313,14 @@ async function renderFrame() {
         frame: frameNum.value,
         frameDuration: 1000 / 60,
         width: 1280,
-        height: 720
+        height: 720,
+        quality: quality.value
     });
 
     // Set preview canvas size
     if (canvas.value?.width !== value.width || canvas.value.height !== value.height) {
         canvas.value!.width = value.width;
         canvas.value!.height = value.height;
-        canvasWidth.value = value.width;
-        canvasHeight.value = value.height;
     }
     ctx.reset();
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);

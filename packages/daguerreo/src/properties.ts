@@ -5,7 +5,7 @@ export function dgNumberProperty(
     value: number,
     meta?: PartialDeep<NumberPropertyConfig>
 ): DGTransformProperty<number, PartialDeep<NumberPropertyConfig>> {
-    let curValue = ref(value);
+    const curValue = ref(value);
     return {
         type: 'number',
         value() {

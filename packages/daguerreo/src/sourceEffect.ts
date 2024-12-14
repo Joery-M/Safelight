@@ -1,5 +1,6 @@
 import type { Promisable, SetRequired } from 'type-fest';
 import type { DaguerreoTransformPayload } from './transformEffect';
+import type { QualitySetting } from '.';
 
 export interface DaguerreoSourceEffect {
     name: string;
@@ -26,6 +27,13 @@ export interface DaguerreoSourcePayload {
      * Timeline height
      */
     height: number;
+    /**
+     * The desired rendering quality.
+     *
+     * For if your source effect is able to render with different
+     * performance characteristics.
+     */
+    quality: QualitySetting;
 }
 
 export function defineSource(def: DaguerreoSourceEffect) {

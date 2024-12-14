@@ -55,7 +55,10 @@ export class Daguerreo {
                 frame: config.frame,
                 frameDuration: config.frameDuration,
                 width: config.width,
-                height: config.height
+                height: config.height,
+                maxWidth: config.width,
+                maxHeight: config.height,
+                quality: config.quality
             },
             await effectBase.source(config)
         );
@@ -94,6 +97,8 @@ export class Daguerreo {
         } as DaguerreoResult;
     }
 }
+
+export type QualitySetting = 'rough' | 'preview' | 'final';
 
 export type DaguerreoEffect = DaguerreoSourceEffect | DaguerreoTransformEffect;
 

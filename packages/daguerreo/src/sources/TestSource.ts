@@ -7,12 +7,17 @@ export function GradientTestSource() {
 
     return {
         name: 'gradient-test-source',
-        source: ({ frame }) => {
+        source: ({ frame, width, height }) => {
+            if (canvas.width !== width || canvas.height !== height) {
+                canvas.width = width;
+                canvas.height = height;
+            }
             ctx.reset();
 
-            const val = Math.sqrt(1280 ** 2 + 720 ** 2);
+            // Never thought the day would come
+            const diagonal = Math.sqrt(width ** 2 + height ** 2);
 
-            const gradient = ctx.createLinearGradient(0, 0, 1280, 0);
+            const gradient = ctx.createLinearGradient(0, 0, width, 0);
 
             gradient.addColorStop(0, `hsl(${frame % 360}, 100%, 50%)`);
             gradient.addColorStop(0.5, `hsl(${(frame % 360) + 180}, 100%, 50%)`);
@@ -22,13 +27,13 @@ export function GradientTestSource() {
 
             const matrix = ctx
                 .getTransform()
-                .translate(1280 / 2, 720 / 2)
+                .translate(width / 2, height / 2)
                 .rotate(frame % 360)
-                .translate(1280 / -2, 720 / -2);
+                .translate(width / -2, height / -2);
 
             ctx.setTransform(matrix);
             // idk man, math shit
-            ctx.fillRect((val - 1280) / -2, (val - 720) / -2, val, val);
+            ctx.fillRect((diagonal - width) / -2, (diagonal - height) / -2, diagonal, diagonal);
             ctx.resetTransform();
 
             ctx.fillStyle = 'white';
@@ -36,9 +41,7 @@ export function GradientTestSource() {
             ctx.fillText(Math.floor((frame / 10) % 100).toString(), 20, 75);
 
             return {
-                ctx,
-                height: ctx.canvas.height,
-                width: ctx.canvas.width
+                ctx
             };
         }
     } as DaguerreoSourceEffect;
@@ -65,6 +68,8 @@ export function CatTestSource() {
                 await new Promise<void>((resolve, reject) => {
                     img.addEventListener('load', () => {
                         catImage = img;
+                        canvas.width = img.width;
+                        canvas.height = img.height;
                         ctx.drawImage(catImage, 0, 0);
                         resolve();
                     });

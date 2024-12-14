@@ -68,10 +68,10 @@ export function GenericTransform() {
             scaleY: dgNumberProperty(1, {
                 transform: { toDisplay: (v) => v * 100, toValue: (v) => v / 100 }
             }),
-            originX: dgNumberProperty(1, {
+            originX: dgNumberProperty(0.5, {
                 transform: { toDisplay: (v) => v * 100, toValue: (v) => v / 100 }
             }),
-            originY: dgNumberProperty(1, {
+            originY: dgNumberProperty(0.5, {
                 transform: { toDisplay: (v) => v * 100, toValue: (v) => v / 100 }
             }),
             rotation: dgNumberProperty(0, {
@@ -90,7 +90,13 @@ export function GenericTransform() {
                 matrix.translateSelf(properties.x, properties.y);
             }
             if (properties.scaleX !== 1 || properties.scaleY !== 1) {
-                matrix.scaleSelf(properties.scaleX, properties.scaleY, 1, width / 2, height / 2);
+                matrix.scaleSelf(
+                    properties.scaleX,
+                    properties.scaleY,
+                    1,
+                    width * properties.originX,
+                    height * properties.originY
+                );
             }
             if (properties.rotation !== 0) {
                 matrix
