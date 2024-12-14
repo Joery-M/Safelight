@@ -13,7 +13,8 @@
                 '@vitejs/**',
                 'rollup',
                 '@rollup/**',
-                'vue-tsc'
+                'vue-tsc',
+                'sass-embedded'
             ],
             groupName: 'build'
         },
