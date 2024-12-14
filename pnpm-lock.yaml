@@ -28,7 +28,7 @@ importers:
         version: 5.2.1(vite@6.0.3(@types/node@22.10.1)(jiti@1.21.6)(lightningcss@1.28.2)(sass@1.82.0)(terser@5.34.1)(tsx@4.19.2)(yaml@2.6.1))(vue@3.5.13(typescript@5.6.3))
       '@vitest/browser':
         specifier: ^2.1.8
-        version: 2.1.8(@types/node@22.10.1)(playwright@1.49.0)(typescript@5.6.3)(vite@6.0.3(@types/node@22.10.1)(jiti@1.21.6)(lightningcss@1.28.2)(sass@1.82.0)(terser@5.34.1)(tsx@4.19.2)(yaml@2.6.1))(vitest@2.1.8)
+        version: 2.1.8(@types/node@22.10.1)(playwright@1.49.1)(typescript@5.6.3)(vite@6.0.3(@types/node@22.10.1)(jiti@1.21.6)(lightningcss@1.28.2)(sass@1.82.0)(terser@5.34.1)(tsx@4.19.2)(yaml@2.6.1))(vitest@2.1.8)
       '@vitest/ui':
         specifier: ^2.1.8
         version: 2.1.8(vitest@2.1.8)
@@ -138,13 +138,13 @@ importers:
         version: 1.0.3
       '@vitest/browser':
         specifier: ^2.1.8
-        version: 2.1.8(@types/node@22.10.1)(playwright@1.49.0)(typescript@5.6.3)(vite@6.0.3(@types/node@22.10.1)(jiti@1.21.6)(lightningcss@1.28.2)(sass@1.82.0)(terser@5.34.1)(tsx@4.19.2)(yaml@2.6.1))(vitest@2.1.8)
+        version: 2.1.8(@types/node@22.10.1)(playwright@1.49.1)(typescript@5.6.3)(vite@6.0.3(@types/node@22.10.1)(jiti@1.21.6)(lightningcss@1.28.2)(sass@1.82.0)(terser@5.34.1)(tsx@4.19.2)(yaml@2.6.1))(vitest@2.1.8)
       '@vitest/ui':
         specifier: ^2.1.8
         version: 2.1.8(vitest@2.1.8)
       playwright:
-        specifier: ^1.49.0
-        version: 1.49.0
+        specifier: ^1.49.1
+        version: 1.49.1
       rimraf:
         specifier: ^6.0.1
         version: 6.0.1
@@ -3313,13 +3313,13 @@ packages:
   pkg-types@1.2.1:
     resolution: {integrity: sha512-sQoqa8alT3nHjGuTjuKgOnvjo4cljkufdtLMnO2LBP/wRwuDlo1tkaEdMxCRhyGRPacv/ztlZgDPm2b7FAmEvw==}
 
-  playwright-core@1.49.0:
-    resolution: {integrity: sha512-R+3KKTQF3npy5GTiKH/T+kdhoJfJojjHESR1YEWhYuEKRVfVaxH3+4+GvXE5xyCngCxhxnykk0Vlah9v8fs3jA==}
+  playwright-core@1.49.1:
+    resolution: {integrity: sha512-BzmpVcs4kE2CH15rWfzpjzVGhWERJfmnXmniSyKeRZUs9Ws65m+RGIi7mjJK/euCegfn3i7jvqWeWyHe9y3Vgg==}
     engines: {node: '>=18'}
     hasBin: true
 
-  playwright@1.49.0:
-    resolution: {integrity: sha512-eKpmys0UFDnfNb3vfsf8Vx2LEOtflgRebl0Im2eQQnYMA4Aqd+Zw8bEOB+7ZKvN76901mRnqdsiOGKxzVTbi7A==}
+  playwright@1.49.1:
+    resolution: {integrity: sha512-VYL8zLoNTBxVOrJBbDuRgDWa3i+mfQgDTrL8Ah9QXZ7ax4Dsj0MSq5bYgytRnDVVe+njoKnfsYkH3HzqVj5UZA==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -5320,7 +5320,7 @@ snapshots:
       vite: 6.0.3(@types/node@22.10.1)(jiti@1.21.6)(lightningcss@1.28.2)(sass@1.82.0)(terser@5.34.1)(tsx@4.19.2)(yaml@2.6.1)
       vue: 3.5.13(typescript@5.6.3)
 
-  '@vitest/browser@2.1.8(@types/node@22.10.1)(playwright@1.49.0)(typescript@5.6.3)(vite@6.0.3(@types/node@22.10.1)(jiti@1.21.6)(lightningcss@1.28.2)(sass@1.82.0)(terser@5.34.1)(tsx@4.19.2)(yaml@2.6.1))(vitest@2.1.8)':
+  '@vitest/browser@2.1.8(@types/node@22.10.1)(playwright@1.49.1)(typescript@5.6.3)(vite@6.0.3(@types/node@22.10.1)(jiti@1.21.6)(lightningcss@1.28.2)(sass@1.82.0)(terser@5.34.1)(tsx@4.19.2)(yaml@2.6.1))(vitest@2.1.8)':
     dependencies:
       '@testing-library/dom': 10.4.0
       '@testing-library/user-event': 14.5.2(@testing-library/dom@10.4.0)
@@ -5333,7 +5333,7 @@ snapshots:
       vitest: 2.1.8(@types/node@22.10.1)(@vitest/browser@2.1.8)(@vitest/ui@2.1.8)(happy-dom@15.11.7)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.28.2)(msw@2.6.4(@types/node@22.10.1)(typescript@5.6.3))(sass@1.82.0)(terser@5.34.1)
       ws: 8.18.0
     optionalDependencies:
-      playwright: 1.49.0
+      playwright: 1.49.1
     transitivePeerDependencies:
       - '@types/node'
       - bufferutil
@@ -5341,7 +5341,7 @@ snapshots:
       - utf-8-validate
       - vite
 
-  '@vitest/browser@2.1.8(@types/node@22.10.1)(playwright@1.49.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.1)(lightningcss@1.28.2)(sass@1.82.0)(terser@5.34.1))(vitest@2.1.8)':
+  '@vitest/browser@2.1.8(@types/node@22.10.1)(playwright@1.49.1)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.1)(lightningcss@1.28.2)(sass@1.82.0)(terser@5.34.1))(vitest@2.1.8)':
     dependencies:
       '@testing-library/dom': 10.4.0
       '@testing-library/user-event': 14.5.2(@testing-library/dom@10.4.0)
@@ -5354,7 +5354,7 @@ snapshots:
       vitest: 2.1.8(@types/node@22.10.1)(@vitest/browser@2.1.8)(@vitest/ui@2.1.8)(happy-dom@15.11.7)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.28.2)(msw@2.6.4(@types/node@22.10.1)(typescript@5.7.2))(sass@1.82.0)(terser@5.34.1)
       ws: 8.18.0
     optionalDependencies:
-      playwright: 1.49.0
+      playwright: 1.49.1
     transitivePeerDependencies:
       - '@types/node'
       - bufferutil
@@ -7136,11 +7136,11 @@ snapshots:
       mlly: 1.7.2
       pathe: 1.1.2
 
-  playwright-core@1.49.0: {}
+  playwright-core@1.49.1: {}
 
-  playwright@1.49.0:
+  playwright@1.49.1:
     dependencies:
-      playwright-core: 1.49.0
+      playwright-core: 1.49.1
     optionalDependencies:
       fsevents: 2.3.2
 
@@ -7808,7 +7808,7 @@ snapshots:
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 22.10.1
-      '@vitest/browser': 2.1.8(@types/node@22.10.1)(playwright@1.49.0)(typescript@5.6.3)(vite@6.0.3(@types/node@22.10.1)(jiti@1.21.6)(lightningcss@1.28.2)(sass@1.82.0)(terser@5.34.1)(tsx@4.19.2)(yaml@2.6.1))(vitest@2.1.8)
+      '@vitest/browser': 2.1.8(@types/node@22.10.1)(playwright@1.49.1)(typescript@5.6.3)(vite@6.0.3(@types/node@22.10.1)(jiti@1.21.6)(lightningcss@1.28.2)(sass@1.82.0)(terser@5.34.1)(tsx@4.19.2)(yaml@2.6.1))(vitest@2.1.8)
       '@vitest/ui': 2.1.8(vitest@2.1.8)
       happy-dom: 15.11.7
       jsdom: 25.0.1(canvas@2.11.2)
@@ -7847,7 +7847,7 @@ snapshots:
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 22.10.1
-      '@vitest/browser': 2.1.8(@types/node@22.10.1)(playwright@1.49.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.1)(lightningcss@1.28.2)(sass@1.82.0)(terser@5.34.1))(vitest@2.1.8)
+      '@vitest/browser': 2.1.8(@types/node@22.10.1)(playwright@1.49.1)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.1)(lightningcss@1.28.2)(sass@1.82.0)(terser@5.34.1))(vitest@2.1.8)
       '@vitest/ui': 2.1.8(vitest@2.1.8)
       happy-dom: 15.11.7
       jsdom: 25.0.1(canvas@2.11.2)
