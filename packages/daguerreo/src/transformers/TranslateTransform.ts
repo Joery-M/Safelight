@@ -100,9 +100,9 @@ export function GenericTransform() {
             }
             if (properties.rotation !== 0) {
                 matrix
-                    .translateSelf(width / 2, height / 2)
+                    .translateSelf(width * properties.originX, height * properties.originY)
                     .rotateSelf(properties.rotation)
-                    .translateSelf(width / -2, height / -2);
+                    .translateSelf(width * -properties.originX, height * -properties.originY);
             }
 
             return {

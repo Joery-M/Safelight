@@ -11,7 +11,7 @@ export interface DaguerreoTransformEffect<
     sourceInitialized?: (
         config: Pick<DaguerreoTransformPayload, 'width' | 'height'>
     ) => Promisable<void>;
-    transform: (
+    transform?: (
         config: DaguerreoTransformPayload & { properties: DGComputedProperties<Properties> }
     ) => Promisable<PartialDeep<DaguerreoTransformResult> | void>;
 }
@@ -76,7 +76,7 @@ export interface DaguerreoTransformResult {
 export function defineEffect<Properties extends DGTransformProperties = DGTransformProperties>(
     def: Omit<DaguerreoTransformEffect, 'properties' | 'transform'> & {
         properties?: Properties;
-        transform: (
+        transform?: (
             config: DaguerreoTransformPayload & { properties: DGComputedProperties<Properties> }
         ) => Promisable<PartialDeep<DaguerreoTransformResult> | void>;
     }

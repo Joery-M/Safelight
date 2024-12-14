@@ -1,10 +1,16 @@
+import { computed, shallowReactive, shallowRef } from 'vue';
 import type { DGTransformProperties, DGTransformProperty } from './properties';
 import type { DaguerreoSourceEffect, DaguerreoSourcePayload } from './sourceEffect';
 import type { DaguerreoTransformEffect, DaguerreoTransformPayload } from './transformEffect';
 
 export class Daguerreo {
-    private source: DaguerreoSourceEffect | undefined;
-    readonly effects: DaguerreoTransformEffect[] = [];
+    private source = shallowRef<DaguerreoSourceEffect | undefined>(undefined);
+    readonly effects = shallowReactive<DaguerreoTransformEffect[]>([]);
+    private effectsWithSourceInitHooks = computed(() =>
+        this.effects.filter((e) => !!e.sourceInitialized)
+    );
+    private effectsWithTransformHooks = computed(() => this.effects.filter((e) => !!e.transform));
+    private ranLoadFunction = false;
 
     addEffect(effect: DaguerreoTransformEffect) {
         this.effects.push(effect);
@@ -13,7 +19,14 @@ export class Daguerreo {
         this.effects.slice(this.effects.indexOf(effect) - 1, 1);
     }
     setSource(source: DaguerreoSourceEffect) {
-        this.source = source;
+        this.source.value = source;
+        this.ranLoadFunction = false;
+    }
+
+    reset() {
+        this.source.value = undefined;
+        this.ranLoadFunction = false;
+        this.effects.splice(0, this.effects.length);
     }
 
     getTransformProps() {
@@ -41,10 +54,13 @@ export class Daguerreo {
         config: DaguerreoSourcePayload,
         transformProps: DGTransformProperties[] = this.getTransformProps()
     ): Promise<DaguerreoResult> {
-        const effectBase = this.source;
+        const effectBase = this.source.value;
         if (!effectBase) throw new Error('No source effect defined');
 
-        await effectBase.load?.();
+        if (!this.ranLoadFunction) {
+            this.ranLoadFunction = true;
+            await effectBase.load?.();
+        }
 
         const payload: DaguerreoTransformPayload = Object.assign(
             // Default values
@@ -63,15 +79,28 @@ export class Daguerreo {
             await effectBase.source(config)
         );
 
+        switch (config.quality) {
+            case 'preview':
+                payload.ctx.imageSmoothingQuality = 'medium';
+                break;
+            case 'rough':
+                payload.ctx.imageSmoothingQuality = 'low';
+                break;
+
+            default:
+                payload.ctx.imageSmoothingQuality = 'high';
+                break;
+        }
+
         // Run initialize methods
-        const initFunctions = this.effects
-            .map((e) => e.sourceInitialized?.({ height: payload.height, width: payload.width }))
-            .filter((p) => !!p);
+        const initFunctions = this.effectsWithSourceInitHooks.value.map((e) =>
+            e.sourceInitialized?.({ height: payload.height, width: payload.width })
+        );
         await Promise.allSettled(initFunctions);
 
         // Run effects
-        for (let i = 0; i < this.effects.length; i++) {
-            const effect = this.effects[i];
+        for (let i = 0; i < this.effectsWithTransformHooks.value.length; i++) {
+            const effect = this.effectsWithTransformHooks.value[i];
 
             const props: DGTransformProperties = transformProps[i] ?? {};
             if (effect.properties) {
@@ -82,7 +111,7 @@ export class Daguerreo {
                     }
                 }
             }
-            const result = await effect.transform({ ...payload, properties: props });
+            const result = await effect.transform!({ ...payload, properties: props });
             // Assign props
             if (result) Object.assign(payload, result);
         }
@@ -90,6 +119,7 @@ export class Daguerreo {
         return {
             width: payload.width,
             height: payload.height,
+            frameDuration: config.frameDuration,
             image: payload.ctx.canvas.transferToImageBitmap(),
             matrix: payload.matrix,
             opacity: payload.opacity,
@@ -111,6 +141,10 @@ export interface DaguerreoResult {
      * Current frame height
      */
     height: number;
+    /**
+     * Current frame duration
+     */
+    frameDuration: number;
 
     image: ImageBitmap;
 

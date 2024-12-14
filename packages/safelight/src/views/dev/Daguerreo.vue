@@ -18,6 +18,7 @@
                     v-model="quality"
                     :options="['rough', 'preview', 'final']"
                     class="mt-4 block"
+                    @value-change="renderIfNeeded()"
                 />
                 <h3>Effects</h3>
                 <div id="effect-list" class="flex h-80 max-w-screen-sm gap-4">
@@ -169,6 +170,7 @@
             <!-- Playback controls -->
             <div class="right-4 top-4 size-min xl:absolute">
                 <canvas ref="canvas" class="max-w-2xl"></canvas>
+                <p>P: {{ times.process }}, C: {{ times.composite }}, T: {{ times.total }}</p>
                 <Slider
                     v-model="frameNum"
                     class="mb-5 mt-3"
@@ -251,9 +253,9 @@ const activeTransforms = reactive<ActiveTransformEntry[]>([]);
 let daguerreo = new Daguerreo();
 
 const sources = [
-    { label: 'gradient', value: () => GradientTestSource() },
-    { label: 'cat', value: () => CatTestSource() },
-    { label: 'gif', value: () => GifTestSource() }
+    { label: 'gradient', name: 'gradient-test-source', value: () => GradientTestSource() },
+    { label: 'cat', name: 'cat-test-source', value: () => CatTestSource() },
+    { label: 'gif', name: 'gif-test-source', value: () => GifTestSource() }
 ];
 const activeSource = ref(sources[0]);
 
@@ -266,6 +268,12 @@ let ctx: CanvasRenderingContext2D | null = null;
 const isPaused = ref(false);
 const frameNum = ref(0);
 const quality = ref<QualitySetting>('final');
+
+const times = reactive({
+    process: '',
+    composite: '',
+    total: ''
+});
 
 tryOnMounted(() => {
     if (!canvas.value) return;
@@ -309,6 +317,7 @@ function renderIfNeeded() {
 async function renderFrame() {
     if (!ctx) return;
 
+    const start = performance.now();
     const value = await daguerreo.process({
         frame: frameNum.value,
         frameDuration: 1000 / 60,
@@ -316,6 +325,7 @@ async function renderFrame() {
         height: 720,
         quality: quality.value
     });
+    const endProcess = performance.now();
 
     // Set preview canvas size
     if (canvas.value?.width !== value.width || canvas.value.height !== value.height) {
@@ -330,6 +340,11 @@ async function renderFrame() {
     ctx.setTransform(value.matrix);
     ctx.drawImage(value.image, 0, 0);
     value.image.close();
+    const endComposite = performance.now();
+
+    times.process = (endProcess - start).toFixed(2);
+    times.composite = (endComposite - endProcess).toFixed(2);
+    times.total = (endComposite - start).toFixed(2);
 }
 
 /**

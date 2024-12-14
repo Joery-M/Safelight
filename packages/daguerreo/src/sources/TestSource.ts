@@ -94,27 +94,23 @@ export function GifTestSource() {
 
     const frames: ParsedFrame[] = [];
     let gifLength = 0;
-
-    const loadPromise = import('../assets/fish-fish-eating.gif?url').then(
-        async ({ default: url }) => {
-            const arrayBuffer = await fetch(url).then((r) => r.arrayBuffer());
-
-            const gif = parseGIF(arrayBuffer);
-            console.log(gif);
-            frames.push(...decompressFrames(gif, true));
-            gifLength = frames.reduce((l, f) => l + f.delay, 0);
-
-            canvas.width = Math.max(...frames.map(({ dims: { width } }) => width));
-            canvas.height = Math.max(...frames.map(({ dims: { height } }) => height));
-        }
-    );
+    let frameTime = 1;
 
     let frameImageData: ImageData | undefined;
 
     return {
         name: 'gif-test-source',
         async load() {
-            await loadPromise;
+            const { default: url } = await import('../assets/fish-fish-eating.gif?url');
+            const arrayBuffer = await fetch(url).then((r) => r.arrayBuffer());
+
+            const gif = parseGIF(arrayBuffer);
+            frames.push(...decompressFrames(gif, true));
+            gifLength = frames.reduce((l, f) => l + f.delay, 0);
+            frameTime = gifLength / frames.length;
+
+            canvas.width = Math.max(...frames.map(({ dims: { width } }) => width));
+            canvas.height = Math.max(...frames.map(({ dims: { height } }) => height));
         },
         source: async ({ frame, frameDuration }) => {
             ctx.reset();
@@ -128,9 +124,7 @@ export function GifTestSource() {
                 });
                 if (!frame) {
                     return {
-                        data: ctx.getImageData(0, 0, canvas.width, canvas.height),
-                        frame,
-                        frameDuration: 1 / 60,
+                        ctx,
                         width: canvas.width,
                         height: canvas.height
                     };
@@ -157,7 +151,7 @@ export function GifTestSource() {
 
             return {
                 ctx,
-                frameDuration: 1 / 60,
+                frameDuration: 1000 / frameTime,
                 width: canvas.width,
                 height: canvas.height
             };
