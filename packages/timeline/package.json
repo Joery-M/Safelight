@@ -30,7 +30,7 @@
     "test:run": "vitest run --ui false"
   },
   "dependencies": {
-    "@vue/devtools-kit": "^7.6.7",
+    "@vue/devtools-kit": "^7.6.8",
     "@vueuse/core": "^12.0.0",
     "@vueuse/gesture": "^2.0.0",
     "@vueuse/math": "^12.0.0",
