@@ -56,7 +56,10 @@
                                         style="border-width: 1px"
                                     >
                                         <a
-                                            :href="item.homepage"
+                                            :href="
+                                                item.homepage ??
+                                                `https://www.npmjs.com/package/${item.name}`
+                                            "
                                             target="_blank"
                                             class="text-xl font-semibold text-white"
                                             style="
@@ -241,6 +244,14 @@ onMounted(() => {
         .then((r) => r.json())
         .then((packages: Packages) => {
             allPackagesPerProject['tswebm'] = [
+                ...convertDepsToDepsWithNames(packages.dependencies),
+                ...convertDepsToDepsWithNames(packages.devDependencies, true)
+            ];
+        });
+    fetch(new URL('@/generated/packages-daguerreo.json', import.meta.url))
+        .then((r) => r.json())
+        .then((packages: Packages) => {
+            allPackagesPerProject['daguerreo'] = [
                 ...convertDepsToDepsWithNames(packages.dependencies),
                 ...convertDepsToDepsWithNames(packages.devDependencies, true)
             ];
