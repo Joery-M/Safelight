@@ -43,13 +43,13 @@ importers:
         version: 5.2.1(@types/eslint@9.6.1)(eslint-config-prettier@9.1.0(eslint@9.17.0(jiti@1.21.6)))(eslint@9.17.0(jiti@1.21.6))(prettier@3.4.2)
       eslint-plugin-tailwindcss:
         specifier: ^3.17.5
-        version: 3.17.5(tailwindcss@3.4.16)
+        version: 3.17.5(tailwindcss@3.4.17)
       eslint-plugin-vue:
         specifier: ^9.32.0
         version: 9.32.0(eslint@9.17.0(jiti@1.21.6))
       globals:
-        specifier: ^15.13.0
-        version: 15.13.0
+        specifier: ^15.14.0
+        version: 15.14.0
       prettier:
         specifier: ^3.4.2
         version: 3.4.2
@@ -87,8 +87,8 @@ importers:
         specifier: ^1.1.2
         version: 1.1.2
       esbuild-wasm:
-        specifier: ^0.24.0
-        version: 0.24.0
+        specifier: ^0.24.2
+        version: 0.24.2
       path-browserify:
         specifier: ^1.0.1
         version: 1.0.1
@@ -236,7 +236,7 @@ importers:
         version: 7.8.1
       tailwindcss-primeui:
         specifier: ^0.3.4
-        version: 0.3.4(tailwindcss@3.4.16)
+        version: 0.3.4(tailwindcss@3.4.17)
       uuid:
         specifier: ^11.0.3
         version: 11.0.3
@@ -260,8 +260,8 @@ importers:
         specifier: ^3.2.0
         version: 3.2.0(eslint@9.17.0(jiti@1.21.6))
       '@quantco/pnpm-licenses':
-        specifier: ^2.1.0
-        version: 2.1.0
+        specifier: ^2.2.0
+        version: 2.2.0
       '@tsconfig/node20':
         specifier: ^20.1.4
         version: 20.1.4
@@ -308,8 +308,8 @@ importers:
         specifier: ^7.1.0
         version: 7.1.0
       tailwindcss:
-        specifier: ^3.4.16
-        version: 3.4.16
+        specifier: ^3.4.17
+        version: 3.4.17
       tsx:
         specifier: ^4.19.2
         version: 4.19.2
@@ -365,14 +365,14 @@ importers:
         specifier: ^0.5.3
         version: 0.5.3
       opfs-tools:
-        specifier: ^0.6.1
-        version: 0.6.1
+        specifier: ^0.6.2
+        version: 0.6.2
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
       type-fest:
-        specifier: ^4.30.1
-        version: 4.30.1
+        specifier: ^4.30.2
+        version: 4.30.2
       uuid:
         specifier: ^11.0.3
         version: 11.0.3
@@ -481,8 +481,8 @@ importers:
         specifier: ^5.0.1
         version: 5.0.1
       fast-xml-parser:
-        specifier: ^4.5.0
-        version: 4.5.0
+        specifier: ^4.5.1
+        version: 4.5.1
       happy-dom:
         specifier: ^15.11.7
         version: 15.11.7
@@ -1412,8 +1412,8 @@ packages:
     resolution: {integrity: sha512-8F7yA36xYIKtNuAuyBdZZEks/bKDwlhH5WjpqGGB0FdwfAEoBYsynQ5sdqcT2Lb/NsajHmS5lc++Ttlvr1g1Lw==}
     engines: {node: '>=12.11.0'}
 
-  '@quantco/pnpm-licenses@2.1.0':
-    resolution: {integrity: sha512-86HWUTOJ23Gz2aeLRIl5m5IECA6gmEdCvT9ArN4y/JqhTVDOkq0w0OpDBf/FpKelkheatI6PcaGMMwV8mUuyDw==}
+  '@quantco/pnpm-licenses@2.2.0':
+    resolution: {integrity: sha512-aoGVLP9YX/6OeJYB2AflOUQVRhZgei3Xsupm5aWPjvOD7tjnL0AOOL4KvD5PGxCZhFHyvv15rMEAh3NL4eDavA==}
     hasBin: true
 
   '@rollup/plugin-terser@0.4.4':
@@ -2347,8 +2347,8 @@ packages:
   es-module-lexer@1.5.4:
     resolution: {integrity: sha512-MVNK56NiMrOwitFB7cqDwq0CQutbw+0BvLshJSse0MUNU+y1FC3bUS/AQg7oUng+/wKrrki7JfmwtVHkVfPLlw==}
 
-  esbuild-wasm@0.24.0:
-    resolution: {integrity: sha512-xhNn5tL1AhkPg4ft59yXT6FkwKXiPSYyz1IeinJHUJpjvOHOIPvdmFQc0pGdjxlKSbzZc2mNmtVOWAR1EF/JAg==}
+  esbuild-wasm@0.24.2:
+    resolution: {integrity: sha512-03/7Z1gD+ohDnScFztvI4XddTAbKVmMEzCvvkBpQdWKEXJ+73dTyeNrmdxP1Q0zpDMFjzUJwtK4rLjqwiHbzkw==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -2500,8 +2500,8 @@ packages:
   fast-levenshtein@2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
 
-  fast-xml-parser@4.5.0:
-    resolution: {integrity: sha512-/PlTQCI96+fZMAOLMZK4CWG1ItCbfZ/0jx7UIJFChPNrx7tcEgerUgWbeieCM9MfHInUDyK8DWYZ+YrywDJuTg==}
+  fast-xml-parser@4.5.1:
+    resolution: {integrity: sha512-y655CeyUQ+jj7KBbYMc4FG01V8ZQqjN+gDYGJ50RtfsUB8iG9AmwmwoAgeKLJdmueKKMrH1RJ7yXHTSoczdv5w==}
     hasBin: true
 
   fastq@1.17.1:
@@ -2638,6 +2638,10 @@ packages:
 
   globals@15.13.0:
     resolution: {integrity: sha512-49TewVEz0UxZjr1WYYsWpPrhyC/B/pA8Bq0fUmet2n+eR7yn0IvNzNaoBwnK6mdkzcN+se7Ez9zUgULTz2QH4g==}
+    engines: {node: '>=18'}
+
+  globals@15.14.0:
+    resolution: {integrity: sha512-OkToC372DtlQeje9/zHIo5CT8lRP/FUgEOKBEhU4e0abL7J7CD24fD9ohiLN5hagG/kWCYj4K5oaxxtj2Z0Dig==}
     engines: {node: '>=18'}
 
   gopd@1.0.1:
@@ -3217,8 +3221,8 @@ packages:
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
 
-  opfs-tools@0.6.1:
-    resolution: {integrity: sha512-UAopBwr64jzyrNUr4LWWhLGZY2dAzNIKX/CTI48wR5V88dx3aqx0DN+NdosMY9vZ0heb12ZMTPQ0XpoC4cfSOA==}
+  opfs-tools@0.6.2:
+    resolution: {integrity: sha512-C2+ElLE6WL9jBqhNPM5vN8QW88adNrFo13lMqyqelUQGSdH1R5MSNa8n6CnqmYWoOyGUqkmCZ5jxNl0n+/xHLg==}
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -3873,8 +3877,8 @@ packages:
     peerDependencies:
       tailwindcss: '>=3.1.0'
 
-  tailwindcss@3.4.16:
-    resolution: {integrity: sha512-TI4Cyx7gDiZ6r44ewaJmt0o6BrMCT5aK5e0rmJ/G9Xq3w7CX/5VXl/zIPEJZFUK5VEqwByyhqNPycPlvcK4ZNw==}
+  tailwindcss@3.4.17:
+    resolution: {integrity: sha512-w33E2aCvSDP0tW9RZuNXadXlkHXqFzSkQew/aIa2i/Sj8fThxwovwlXHSPXTbAHwEIhBFXAedUhP2tueAKP8Og==}
     engines: {node: '>=14.0.0'}
     hasBin: true
 
@@ -3982,8 +3986,8 @@ packages:
     resolution: {integrity: sha512-t0rzBq87m3fVcduHDUFhKmyyX+9eo6WQjZvf51Ea/M0Q7+T374Jp1aUiyUl0GKxp8M/OETVHSDvmkyPgvX+X2w==}
     engines: {node: '>=10'}
 
-  type-fest@4.30.1:
-    resolution: {integrity: sha512-ojFL7eDMX2NF0xMbDwPZJ8sb7ckqtlAi1GsmgsFXvErT9kFTk1r0DuQKvrCh73M6D4nngeHJmvogF9OluXs7Hw==}
+  type-fest@4.30.2:
+    resolution: {integrity: sha512-UJShLPYi1aWqCdq9HycOL/gwsuqda1OISdBO3t8RlXQC4QvtuIz4b5FCfe2dQIWEpmlRExKmcTBfP1r9bhY7ig==}
     engines: {node: '>=16'}
 
   typescript-eslint@8.18.0:
@@ -4355,11 +4359,6 @@ packages:
   yaml-eslint-parser@1.2.3:
     resolution: {integrity: sha512-4wZWvE398hCP7O8n3nXKu/vdq1HcH01ixYlCREaJL5NUMwQ0g3MaGFUBNSlmBtKmhbtVG/Cm6lyYmSVTEVil8A==}
     engines: {node: ^14.17.0 || >=16.0.0}
-
-  yaml@2.6.0:
-    resolution: {integrity: sha512-a6ae//JvKDEra2kdi1qzCyrJW/WZCgFi8ydDV+eXExl95t+5R+ijnqHJbz9tmMh8FUjx3iv2fCQ4dclAQlO2UQ==}
-    engines: {node: '>= 14'}
-    hasBin: true
 
   yaml@2.6.1:
     resolution: {integrity: sha512-7r0XPzioN/Q9kXBro/XPnA6kznR73DHq+GXh5ON7ZozRO6aMjbmiBuKste2wslTFkC5d1dw0GooOCepZXJ2SAg==}
@@ -5204,7 +5203,7 @@ snapshots:
     dependencies:
       '@primeuix/styled': 0.3.2
 
-  '@quantco/pnpm-licenses@2.1.0':
+  '@quantco/pnpm-licenses@2.2.0':
     dependencies:
       ansi-colors: 4.1.3
       color-support: 1.1.3
@@ -6246,7 +6245,7 @@ snapshots:
 
   es-module-lexer@1.5.4: {}
 
-  esbuild-wasm@0.24.0: {}
+  esbuild-wasm@0.24.2: {}
 
   esbuild@0.21.5:
     optionalDependencies:
@@ -6353,11 +6352,11 @@ snapshots:
       '@types/eslint': 9.6.1
       eslint-config-prettier: 9.1.0(eslint@9.17.0(jiti@1.21.6))
 
-  eslint-plugin-tailwindcss@3.17.5(tailwindcss@3.4.16):
+  eslint-plugin-tailwindcss@3.17.5(tailwindcss@3.4.17):
     dependencies:
       fast-glob: 3.3.2
       postcss: 8.4.49
-      tailwindcss: 3.4.16
+      tailwindcss: 3.4.17
 
   eslint-plugin-vue@9.32.0(eslint@9.17.0(jiti@1.21.6)):
     dependencies:
@@ -6480,7 +6479,7 @@ snapshots:
 
   fast-levenshtein@2.0.6: {}
 
-  fast-xml-parser@4.5.0:
+  fast-xml-parser@4.5.1:
     dependencies:
       strnum: 1.0.5
 
@@ -6629,6 +6628,8 @@ snapshots:
   globals@14.0.0: {}
 
   globals@15.13.0: {}
+
+  globals@15.14.0: {}
 
   gopd@1.0.1:
     dependencies:
@@ -7097,7 +7098,7 @@ snapshots:
       outvariant: 1.4.3
       path-to-regexp: 6.3.0
       strict-event-emitter: 0.5.1
-      type-fest: 4.30.1
+      type-fest: 4.30.2
       yargs: 17.7.2
     optionalDependencies:
       typescript: 5.6.3
@@ -7122,7 +7123,7 @@ snapshots:
       outvariant: 1.4.3
       path-to-regexp: 6.3.0
       strict-event-emitter: 0.5.1
-      type-fest: 4.30.1
+      type-fest: 4.30.2
       yargs: 17.7.2
     optionalDependencies:
       typescript: 5.7.2
@@ -7195,7 +7196,7 @@ snapshots:
     dependencies:
       wrappy: 1.0.2
 
-  opfs-tools@0.6.1: {}
+  opfs-tools@0.6.2: {}
 
   optionator@0.9.4:
     dependencies:
@@ -7308,7 +7309,7 @@ snapshots:
   postcss-load-config@4.0.2(postcss@8.4.49):
     dependencies:
       lilconfig: 3.1.3
-      yaml: 2.6.0
+      yaml: 2.6.1
     optionalDependencies:
       postcss: 8.4.49
 
@@ -7731,11 +7732,11 @@ snapshots:
       '@pkgr/core': 0.1.1
       tslib: 2.7.0
 
-  tailwindcss-primeui@0.3.4(tailwindcss@3.4.16):
+  tailwindcss-primeui@0.3.4(tailwindcss@3.4.17):
     dependencies:
-      tailwindcss: 3.4.16
+      tailwindcss: 3.4.17
 
-  tailwindcss@3.4.16:
+  tailwindcss@3.4.17:
     dependencies:
       '@alloc/quick-lru': 5.2.0
       arg: 5.0.2
@@ -7860,7 +7861,7 @@ snapshots:
 
   type-fest@0.21.3: {}
 
-  type-fest@4.30.1: {}
+  type-fest@4.30.2: {}
 
   typescript-eslint@8.18.0(eslint@9.17.0(jiti@1.21.6))(typescript@5.6.3):
     dependencies:
@@ -8286,8 +8287,6 @@ snapshots:
       eslint-visitor-keys: 3.4.3
       lodash: 4.17.21
       yaml: 2.6.1
-
-  yaml@2.6.0: {}
 
   yaml@2.6.1: {}
 
