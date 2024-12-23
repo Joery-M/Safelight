@@ -81,6 +81,19 @@ importers:
         specifier: 10.0.5
         version: 10.0.5(vue@3.5.13(typescript@5.6.3))
 
+  packages/daguerreo:
+    dependencies:
+      gifuct-js:
+        specifier: ^2.1.2
+        version: 2.1.2
+      vue:
+        specifier: ^3.5.13
+        version: 3.5.13(typescript@5.7.2)
+    devDependencies:
+      type-fest:
+        specifier: ^4.30.2
+        version: 4.30.2
+
   packages/darkroom:
     dependencies:
       '@endo/static-module-record':
@@ -177,6 +190,9 @@ importers:
       '@primevue/themes':
         specifier: ^4.2.5
         version: 4.2.5
+      '@safelight/daguerreo':
+        specifier: workspace:^
+        version: link:../daguerreo
       '@safelight/shared':
         specifier: workspace:*
         version: link:../shared
@@ -2587,6 +2603,9 @@ packages:
   get-tsconfig@4.8.1:
     resolution: {integrity: sha512-k9PN+cFBmaLWtVz29SkUoqU5O0slLuHJXt/2P+tMVFT+phsSGXGkp9t3rQIqdz0e+06EHNGs3oM6ZX1s2zHxRg==}
 
+  gifuct-js@2.1.2:
+    resolution: {integrity: sha512-rI2asw77u0mGgwhV3qA+OEgYqaDn5UNqgs+Bx0FGwSpuqfYn+Ir6RQY5ENNQ8SbIiG/m5gVa7CD5RriO4f4Lsg==}
+
   glob-parent@5.1.2:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
     engines: {node: '>= 6'}
@@ -2815,6 +2834,9 @@ packages:
     resolution: {integrity: sha512-ESjNzSlt/sWE8sciZH8kBF8BPlwXPwhR6pWKAw8bw4Bwj+iZcnKW6ONWUutJ7eObuBZQpiIb8S7OYspWrKt7rA==}
     engines: {node: '>=14'}
     hasBin: true
+
+  js-binary-schema-parser@2.0.3:
+    resolution: {integrity: sha512-xezGJmOb4lk/M1ZZLTR/jaBHQ4gG/lqQnJqdIv4721DMggsa1bDVlHXNeHYogaIEHD9vCRv0fcL4hMA+Coarkg==}
 
   js-cookie@3.0.5:
     resolution: {integrity: sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==}
@@ -6536,6 +6558,10 @@ snapshots:
     dependencies:
       resolve-pkg-maps: 1.0.0
 
+  gifuct-js@2.1.2:
+    dependencies:
+      js-binary-schema-parser: 2.0.3
+
   glob-parent@5.1.2:
     dependencies:
       is-glob: 4.0.3
@@ -6757,6 +6783,8 @@ snapshots:
       glob: 10.4.5
       js-cookie: 3.0.5
       nopt: 7.2.1
+
+  js-binary-schema-parser@2.0.3: {}
 
   js-cookie@3.0.5: {}
 

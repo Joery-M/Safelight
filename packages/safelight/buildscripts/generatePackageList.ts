@@ -5,6 +5,10 @@ import { join } from 'path';
 
 const projects = [
     {
+        projectPath: 'packages/daguerreo',
+        outputFileName: 'packages-daguerreo.json'
+    },
+    {
         projectPath: 'packages/darkroom',
         outputFileName: 'packages-darkroom.json'
     },
