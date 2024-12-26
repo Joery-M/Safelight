@@ -1,0 +1,42 @@
+{
+  "name": "@safelight/daguerreo",
+  "version": "1.0.0",
+  "author": "Joery Münninghoff",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Joery-M/Safelight"
+  },
+  "contributors": [],
+  "license": "MIT",
+  "type": "module",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "types": "./src/index.ts"
+    },
+    "./sources/*": {
+      "import": "./src/sources/*.ts",
+      "types": "./src/sources/*.ts"
+    },
+    "./transformers/*": {
+      "import": "./src/transformers/*.ts",
+      "types": "./src/transformers/*.ts"
+    }
+  },
+  "scripts": {
+    "test": "vitest --browser.headless false",
+    "test:run": "vitest run"
+  },
+  "devDependencies": {
+    "type-fest": "^4.30.2",
+    "vitest": "^2.1.8"
+  },
+  "dependencies": {
+    "gifuct-js": "^2.1.2"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.13"
+  }
+}

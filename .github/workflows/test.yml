@@ -37,11 +37,11 @@ jobs:
             - name: Build Darkroom
               run: pnpm build:darkroom
 
-            - name: Test darkroom on Chromium
-              run: pnpm test:darkroom
+            - name: Test Daguerreo
+              run: pnpm test:daguerreo
 
-            - name: Test darkroom on Firefox
-              run: pnpm test:darkroom-firefox
+            - name: Test Darkroom
+              run: pnpm test:darkroom
 
             - name: Test shared
               run: pnpm test:shared

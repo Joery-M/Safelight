@@ -21,6 +21,7 @@
     "@phosphor-icons/vue": "^2.2.1",
     "@phosphor-icons/web": "^2.1.1",
     "@primevue/themes": "^4.2.5",
+    "@safelight/daguerreo": "workspace:^",
     "@safelight/shared": "workspace:*",
     "@safelight/timeline": "workspace:*",
     "@vueuse/core": "^12.1.0",

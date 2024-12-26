@@ -1,5 +1,11 @@
 {
     "extends": "./tsconfig.json",
-    "include": ["./packages/*/vitest.config*.ts", "./packages/**/*.spec.ts"],
-    "compilerOptions": { "composite": true, "types": ["vite/client", "vitest/globals"] }
+    "include": ["./packages/*/vitest.config*.ts", "./packages/**/*.spec.ts", "**/tests/**/*"],
+    "exclude": [],
+    "compilerOptions": { "composite": true, "types": ["vite/client", "vitest/globals"] },
+    "references": [
+        {
+            "path": "./tsconfig.json"
+        }
+    ]
 }

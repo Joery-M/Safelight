@@ -12,8 +12,9 @@
     "build:safelight": "cd packages/safelight && pnpm build",
     "build:tswebm": "cd packages/tswebm && pnpm build",
     "test": "vitest run",
+    "test:ui": "vitest --ui --open false",
+    "test:daguerreo": "cd packages/daguerreo && pnpm test:run",
     "test:darkroom": "cd packages/darkroom && pnpm test:run",
-    "test:darkroom-firefox": "cd packages/darkroom && pnpm test:run-firefox",
     "test:shared": "cd packages/shared && pnpm test:run",
     "test:timeline": "cd packages/timeline && pnpm test:run",
     "test:tswebm": "cd packages/tswebm && pnpm test:run",
@@ -21,14 +22,17 @@
     "dev:darkroom": "pnpm build:packages && cd packages/darkroom && pnpm dev:web",
     "lint": "pnpm lint:prettier && pnpm lint:eslint",
     "lint:prettier": "prettier . --write --ignore-path .gitignore --ignore-path ./packages/safelight/.gitignore --ignore-path .prettierignore -u --cache -l",
-    "lint:eslint": "eslint ./packages/**/*{.ts,.js,.vue}"
+    "lint:eslint": "eslint ./packages/**/*{.ts,.js,.vue}",
+    "postinstall": "playwright install"
   },
   "workspaces": [
-    "packages/timeline",
+    "packages/daguerreo",
     "packages/darkroom",
+    "packages/plugin-types",
     "packages/safelight",
     "packages/shared",
-    "packages/plugin-types"
+    "packages/timeline",
+    "packages/tswebm"
   ],
   "devDependencies": {
     "@eslint/js": "^9.17.0",
@@ -45,6 +49,7 @@
     "eslint-plugin-tailwindcss": "^3.17.5",
     "eslint-plugin-vue": "^9.32.0",
     "globals": "^15.14.0",
+    "playwright": "^1.49.1",
     "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.9",
     "typescript": "~5.6.3",
