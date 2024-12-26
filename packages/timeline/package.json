@@ -26,8 +26,8 @@
   },
   "types": "./dist/index.d.ts",
   "scripts": {
-    "test": "vitest --ui",
-    "test:run": "vitest run --ui false"
+    "test": "vitest --browser.headless false",
+    "test:run": "vitest run"
   },
   "dependencies": {
     "@vue/devtools-kit": "^7.6.8",

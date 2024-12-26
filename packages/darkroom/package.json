@@ -25,11 +25,8 @@
     "build": "rimraf ./dist/ && pnpm build:vite && pnpm build:tsc",
     "build:vite": "vite build",
     "build:tsc": "tsc --emitDeclarationOnly --project tsconfig.lib.json",
-    "test": "vitest",
-    "test-firefox": "vitest -c ./vitest.config.firefox.ts --test-timeout=10000",
-    "test:run": "vitest run --ui false",
-    "test:run-firefox": "vitest run --ui false -c ./vitest.config.firefox.ts --test-timeout=10000",
-    "postinstall": "playwright install"
+    "test": "vitest --browser.headless false",
+    "test:run": "vitest run"
   },
   "dependencies": {
     "@endo/static-module-record": "^1.1.2",
@@ -43,7 +40,6 @@
     "@types/path-browserify": "^1.0.3",
     "@vitest/browser": "^2.1.8",
     "@vitest/ui": "^2.1.8",
-    "playwright": "^1.49.1",
     "rimraf": "^6.0.1",
     "typescript": "~5.6.3",
     "vite": "^6.0.5",

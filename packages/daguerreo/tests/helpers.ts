@@ -12,4 +12,5 @@ export function showResult(result: ImageBitmap) {
     result.close();
 
     document.body.appendChild(canvas);
+    return ctx!;
 }

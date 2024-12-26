@@ -3,6 +3,7 @@ import { createTimelineManager } from '../src/';
 import { TimelineLayer } from '../src/elements/TimelineLayer';
 import { VideoTimelineElement } from '../src/elements/VideoTimelineElement';
 import { TimelineCursorElement } from '../src/elements/TimelineCursorElement';
+import { showTimeline } from './helpers';
 
 test('Create manager', () => {
     const canvas = document.createElement('canvas');
@@ -10,6 +11,8 @@ test('Create manager', () => {
     canvas.height = 720;
     const manager = createTimelineManager(canvas);
     expect(manager).toBeDefined();
+
+    showTimeline(canvas);
 });
 
 test('Create layer', () => {
@@ -25,6 +28,8 @@ test('Create layer', () => {
 
     expect(Array.from(manager.manager.layers)).toHaveLength(1);
     expect(manager.manager.layersSorted.value).toHaveLength(1);
+
+    showTimeline(canvas);
 });
 
 test('Create layer and item', () => {
@@ -47,6 +52,8 @@ test('Create layer and item', () => {
     expect(Array.from(manager.manager.layers)).toHaveLength(1);
     expect(Array.from(manager.manager.allLayerItems)).toHaveLength(1);
     expect(manager.manager.layersSorted.value).toHaveLength(1);
+
+    showTimeline(canvas);
 });
 
 test('Create element', () => {
@@ -65,4 +72,6 @@ test('Create element', () => {
 
     expect(renderCall).toBeCalledTimes(1);
     expect(Array.from(manager.manager.timelineElements)).toHaveLength(1);
+
+    showTimeline(canvas);
 });

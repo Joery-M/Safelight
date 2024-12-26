@@ -50,6 +50,9 @@ importers:
       globals:
         specifier: ^15.14.0
         version: 15.14.0
+      playwright:
+        specifier: ^1.49.1
+        version: 1.49.1
       prettier:
         specifier: ^3.4.2
         version: 3.4.2
@@ -90,15 +93,6 @@ importers:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.7.2)
     devDependencies:
-      '@vitest/browser':
-        specifier: ^2.1.8
-        version: 2.1.8(@types/node@22.10.2)(playwright@1.49.1)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.2)(lightningcss@1.28.2)(sass-embedded@1.83.0)(sass@1.83.0)(terser@5.34.1))(vitest@2.1.8)(webdriverio@9.4.5)
-      jsdom:
-        specifier: ^25.0.1
-        version: 25.0.1(canvas@2.11.2)
-      playwright:
-        specifier: ^1.49.1
-        version: 1.49.1
       type-fest:
         specifier: ^4.30.2
         version: 4.30.2
@@ -167,9 +161,6 @@ importers:
       '@vitest/ui':
         specifier: ^2.1.8
         version: 2.1.8(vitest@2.1.8)
-      playwright:
-        specifier: ^1.49.1
-        version: 1.49.1
       rimraf:
         specifier: ^6.0.1
         version: 6.0.1
@@ -6031,6 +6022,7 @@ snapshots:
       - typescript
       - utf-8-validate
       - vite
+    optional: true
 
   '@vitest/expect@2.1.8':
     dependencies:
@@ -8054,6 +8046,7 @@ snapshots:
       typescript: 5.7.2
     transitivePeerDependencies:
       - '@types/node'
+    optional: true
 
   muggle-string@0.4.1: {}
 
