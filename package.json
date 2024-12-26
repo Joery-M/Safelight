@@ -13,8 +13,8 @@
     "build:tswebm": "cd packages/tswebm && pnpm build",
     "test": "vitest run",
     "test:ui": "vitest --ui --open false",
+    "test:daguerreo": "cd packages/daguerreo && pnpm test:run",
     "test:darkroom": "cd packages/darkroom && pnpm test:run",
-    "test:darkroom-firefox": "cd packages/darkroom && pnpm test:run-firefox",
     "test:shared": "cd packages/shared && pnpm test:run",
     "test:timeline": "cd packages/timeline && pnpm test:run",
     "test:tswebm": "cd packages/tswebm && pnpm test:run",
@@ -26,11 +26,13 @@
     "postinstall": "playwright install"
   },
   "workspaces": [
-    "packages/timeline",
+    "packages/daguerreo",
     "packages/darkroom",
+    "packages/plugin-types",
     "packages/safelight",
     "packages/shared",
-    "packages/plugin-types"
+    "packages/timeline",
+    "packages/tswebm"
   ],
   "devDependencies": {
     "@eslint/js": "^9.17.0",

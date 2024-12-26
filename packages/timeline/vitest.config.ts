@@ -7,7 +7,6 @@ export default defineProject({
     test: {
         globals: true,
         name: 'timeline',
-        environment: 'jsdom',
         api: {
             port: 6139
         },
