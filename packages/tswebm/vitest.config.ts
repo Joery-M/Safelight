@@ -10,7 +10,6 @@ export default defineProject({
         globals: true,
         name: 'tswebm',
         environment: 'happy-dom',
-        open: false,
         api: {
             port: 6140
         }

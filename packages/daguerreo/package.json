@@ -26,9 +26,10 @@
     }
   },
   "devDependencies": {
-    "type-fest": "^4.30.2",
-    "canvas": "^2.11.2",
+    "@vitest/browser": "^2.1.8",
     "jsdom": "^25.0.1",
+    "playwright": "^1.49.1",
+    "type-fest": "^4.30.2",
     "vitest": "^2.1.8"
   },
   "dependencies": {

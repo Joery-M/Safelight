@@ -7,10 +7,15 @@ export default defineProject({
     plugins: [],
     test: {
         globals: true,
-        environment: 'jsdom',
-        name: 'daguerreo',
+        name: 'Daguerreo',
         api: {
             port: 6134
+        },
+        browser: {
+            enabled: true,
+            headless: true,
+            name: 'chromium',
+            provider: 'playwright'
         }
     }
 });

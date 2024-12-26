@@ -1,5 +1,6 @@
 {
     "include": ["./packages/**/*.ts", "./packages/**/*.vue", "./types/**/*.ts"],
+    "exclude": ["./packages/*/vitest.config*.ts", "./packages/**/*.spec.ts", "**/tests/**/*"],
     "compilerOptions": {
         "target": "ES2020",
         "lib": ["DOM", "ESNext"],
@@ -8,6 +9,8 @@
         "moduleResolution": "Bundler",
         "paths": {
             "@safelight/daguerreo": ["./packages/daguerreo"],
+            "@safelight/daguerreo/sources/*": ["./packages/daguerreo/src/sources/*"],
+            "@safelight/daguerreo/transformers/*": ["./packages/daguerreo/src/transformers/*"],
             "@safelight/darkroom": ["./packages/darkroom"],
             "@safelight/plugin-types": ["./packages/plugin-types"],
             "@safelight/safelight": ["./packages/safelight/"],
