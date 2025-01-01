@@ -24,11 +24,11 @@
     "@safelight/daguerreo": "workspace:^",
     "@safelight/shared": "workspace:*",
     "@safelight/timeline": "workspace:*",
-    "@vueuse/core": "^12.1.0",
+    "@vueuse/core": "^12.2.0",
     "@vueuse/gesture": "^2.0.0",
-    "@vueuse/integrations": "^12.1.0",
-    "@vueuse/math": "^12.1.0",
-    "@vueuse/rxjs": "^12.1.0",
+    "@vueuse/integrations": "^12.2.0",
+    "@vueuse/math": "^12.2.0",
+    "@vueuse/rxjs": "^12.2.0",
     "comlink": "^4.4.2",
     "dexie": "^4.0.10",
     "dot-path-value": "^0.0.11",
@@ -72,7 +72,7 @@
     "unplugin-vue-router": "^0.10.9",
     "vite": "^6.0.5",
     "vite-plugin-mkcert": "^1.17.6",
-    "vue-tsc": "^2.1.10"
+    "vue-tsc": "^2.2.0"
   },
   "peerDependencies": {
     "eventemitter3": "^5.0.1"
