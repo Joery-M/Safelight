@@ -18,9 +18,9 @@
     "luxon": "^3.5.0",
     "mime-matcher": "^1.0.5",
     "mp4box": "^0.5.3",
-    "opfs-tools": "^0.6.2",
+    "opfs-tools": "^0.7.0",
     "rxjs": "^7.8.1",
-    "type-fest": "^4.30.2",
+    "type-fest": "^4.31.0",
     "uuid": "^11.0.3"
   },
   "devDependencies": {
