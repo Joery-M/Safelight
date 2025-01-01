@@ -60,7 +60,7 @@ importers:
         specifier: ^0.6.9
         version: 0.6.9(prettier@3.4.2)
       typescript:
-        specifier: ~5.7.2
+        specifier: ^5.7.2
         version: 5.7.2
       typescript-eslint:
         specifier: ^8.19.0
@@ -165,7 +165,7 @@ importers:
         specifier: ^6.0.1
         version: 6.0.1
       typescript:
-        specifier: ~5.7.2
+        specifier: ^5.7.2
         version: 5.7.2
       vite:
         specifier: ^6.0.6
@@ -333,7 +333,7 @@ importers:
         specifier: ^4.19.2
         version: 4.19.2
       typescript:
-        specifier: ~5.7.2
+        specifier: ^5.7.2
         version: 5.7.2
       unplugin-vue-router:
         specifier: ^0.10.9
@@ -461,7 +461,7 @@ importers:
         specifier: ^0.7.0
         version: 0.7.0(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2))
       typescript:
-        specifier: ~5.7.2
+        specifier: ^5.7.2
         version: 5.7.2
       vitest:
         specifier: ^2.1.8
@@ -503,7 +503,7 @@ importers:
         specifier: ^4.19.2
         version: 4.19.2
       typescript:
-        specifier: ~5.7.2
+        specifier: ^5.7.2
         version: 5.7.2
       vite:
         specifier: ^6.0.6
@@ -5974,29 +5974,6 @@ snapshots:
       vite: 6.0.6(@types/node@22.10.3)(jiti@1.21.6)(lightningcss@1.28.2)(sass-embedded@1.83.0)(sass@1.83.0)(terser@5.34.1)(tsx@4.19.2)(yaml@2.6.1)
       vue: 3.5.13(typescript@5.7.2)
 
-  '@vitest/browser@2.1.8(@types/node@22.10.3)(playwright@1.49.1)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.3)(lightningcss@1.28.2)(sass-embedded@1.83.0)(sass@1.83.0)(terser@5.34.1))(vitest@2.1.8)(webdriverio@9.4.5)':
-    dependencies:
-      '@testing-library/dom': 10.4.0
-      '@testing-library/user-event': 14.5.2(@testing-library/dom@10.4.0)
-      '@vitest/mocker': 2.1.8(msw@2.6.4(@types/node@22.10.3)(typescript@5.7.2))(vite@5.4.11(@types/node@22.10.3)(lightningcss@1.28.2)(sass-embedded@1.83.0)(sass@1.83.0)(terser@5.34.1))
-      '@vitest/utils': 2.1.8
-      magic-string: 0.30.12
-      msw: 2.6.4(@types/node@22.10.3)(typescript@5.7.2)
-      sirv: 3.0.0
-      tinyrainbow: 1.2.0
-      vitest: 2.1.8(@types/node@22.10.3)(@vitest/browser@2.1.8)(@vitest/ui@2.1.8)(happy-dom@16.2.9)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.28.2)(msw@2.6.4(@types/node@22.10.3)(typescript@5.7.2))(sass-embedded@1.83.0)(sass@1.83.0)(terser@5.34.1)
-      ws: 8.18.0
-    optionalDependencies:
-      playwright: 1.49.1
-      webdriverio: 9.4.5
-    transitivePeerDependencies:
-      - '@types/node'
-      - bufferutil
-      - typescript
-      - utf-8-validate
-      - vite
-    optional: true
-
   '@vitest/browser@2.1.8(@types/node@22.10.3)(playwright@1.49.1)(typescript@5.7.2)(vite@6.0.6(@types/node@22.10.3)(jiti@1.21.6)(lightningcss@1.28.2)(sass-embedded@1.83.0)(sass@1.83.0)(terser@5.34.1)(tsx@4.19.2)(yaml@2.6.1))(vitest@2.1.8)(webdriverio@9.4.5)':
     dependencies:
       '@testing-library/dom': 10.4.0
@@ -9166,7 +9143,7 @@ snapshots:
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 22.10.3
-      '@vitest/browser': 2.1.8(@types/node@22.10.3)(playwright@1.49.1)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.3)(lightningcss@1.28.2)(sass-embedded@1.83.0)(sass@1.83.0)(terser@5.34.1))(vitest@2.1.8)(webdriverio@9.4.5)
+      '@vitest/browser': 2.1.8(@types/node@22.10.3)(playwright@1.49.1)(typescript@5.7.2)(vite@6.0.6(@types/node@22.10.3)(jiti@1.21.6)(lightningcss@1.28.2)(sass-embedded@1.83.0)(sass@1.83.0)(terser@5.34.1)(tsx@4.19.2)(yaml@2.6.1))(vitest@2.1.8)(webdriverio@9.4.5)
       '@vitest/ui': 2.1.8(vitest@2.1.8)
       happy-dom: 16.2.9
       jsdom: 25.0.1(canvas@2.11.2)
