@@ -6,10 +6,11 @@
   "author": "Joery Münninghoff",
   "license": "Apache-2.0",
   "scripts": {
-    "build": "pnpm \"/build:(?!(packages)|(safelight))/\" && pnpm build:safelight",
+    "build": "pnpm build:packages && pnpm build:safelight",
     "build:packages": "pnpm \"/build:(?!(packages)|(safelight))/\"",
     "build:darkroom": "cd packages/darkroom && pnpm build",
     "build:safelight": "cd packages/safelight && pnpm build",
+    "build:timeline": "cd packages/timeline && pnpm build",
     "build:tswebm": "cd packages/tswebm && pnpm build",
     "test": "vitest run",
     "test:ui": "vitest --ui --open false",
