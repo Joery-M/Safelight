@@ -8,26 +8,34 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./src/index.ts"
+      "development": "./src/index.ts",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
     },
     "./elements/*": {
-      "import": "./src/elements/*.ts"
+      "development": "./src/elements/*.ts",
+      "import": "./dist/elements/*.mjs",
+      "types": "./dist/elements/*.d.ts"
     },
     "./elements": {
-      "import": "./src/elements/index.ts"
+      "development": "./src/elements/index.ts",
+      "import": "./dist/elements/index.mjs",
+      "types": "./dist/elements/index.d.ts"
     },
     "./devtools": {
-      "import": "./src/devtools.ts"
+      "development": "./src/devtools.ts",
+      "import": "./dist/devtools.mjs",
+      "types": "./dist/devtools.d.ts"
     }
   },
-  "types": "./dist/index.d.ts",
   "scripts": {
     "test": "vitest --browser.headless false",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "build": "mkdist -d ."
   },
   "dependencies": {
     "@vue/devtools-kit": "^7.6.8",
@@ -40,6 +48,7 @@
   "devDependencies": {
     "@types/node": "^22.10.3",
     "@vue/tsconfig": "^0.7.0",
+    "mkdist": "^2.2.0",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8",
     "vue-tsc": "^2.2.0"

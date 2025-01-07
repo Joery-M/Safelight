@@ -33,6 +33,8 @@
         "skipLibCheck": true,
         "composite": true,
 
+        "customConditions": ["source"],
+
         // Types
         "types": [
             "vite/client",
