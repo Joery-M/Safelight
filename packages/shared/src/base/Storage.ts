@@ -128,7 +128,11 @@ export interface StoredTimelineItem {
     effects: StoredEffect[];
 }
 
-// TODO Add all necessary properties
 export interface StoredEffect {
-    id: string;
+    effectId: string;
+    keyframes: {
+        [time: number]: {
+            [property: string]: any;
+        };
+    };
 }

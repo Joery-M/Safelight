@@ -342,7 +342,7 @@ export class IndexedDbStorageController extends BaseStorageController {
         const storedTimelineItem: StoredTimelineItem = {
             name: toValue(item.name),
             id: item.id,
-            effects: toRaw(item.effects),
+            effects: toRaw(item.effects).map(({ serialize }) => serialize()),
             end: toValue(item.end),
             layer: toValue(item.layer),
             start: toValue(item.start)

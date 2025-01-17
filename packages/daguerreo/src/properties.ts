@@ -38,12 +38,12 @@ export interface NumberPropertyConfig {
     };
 }
 
-export type DGPropertyTypes = 'number';
+export type DGPropertyTypes = 'number' | 'boolean' | 'string' | (string & {});
 
 export type DGTransformProperty<T = any, Meta = Record<string, any>> = {
     type: DGPropertyTypes;
     value(): T;
-    displayValue(): T;
+    displayValue?: () => T;
     setValue(v: T): void;
     meta?: Meta;
 };

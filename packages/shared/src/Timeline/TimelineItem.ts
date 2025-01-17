@@ -1,7 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import { computed, ref, shallowReactive } from 'vue';
-import type { Timeline } from '../Timeline/Timeline';
 import { Storage } from '../base/Storage';
+import type { EffectInstance } from '../Effects/Effect';
+import type { Timeline } from '../Timeline/Timeline';
 
 export class TimelineItem {
     id = uuidv4();
@@ -20,8 +21,7 @@ export class TimelineItem {
     type = computed<TimelineItemType>(() => 'Base');
 
     linkedItems = shallowReactive(new Set<TimelineItem>());
-    // TODO: Implement effects
-    effects = shallowReactive<any[]>([]);
+    effects = shallowReactive<EffectInstance[]>([]);
 
     private lastStart = ref(0);
     private lastEnd = ref(0);
