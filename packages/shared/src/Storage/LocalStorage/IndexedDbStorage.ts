@@ -1,8 +1,7 @@
-import { toValue } from '@vueuse/core';
 import { DateTime } from 'luxon';
 import * as opfsTools from 'opfs-tools';
 import type { SetRequired } from 'type-fest';
-import { toRaw } from 'vue';
+import { toRaw, toValue } from 'vue';
 import type {
     FilePath,
     FilePathTypes,

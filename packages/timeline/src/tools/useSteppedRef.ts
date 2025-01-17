@@ -1,5 +1,4 @@
-import { type MaybeRefOrGetter, toValue } from '@vueuse/core';
-import { customRef, watchEffect } from 'vue';
+import { customRef, type MaybeRefOrGetter, toValue, watchEffect } from 'vue';
 
 export function useSteppedRef(start: number, step: MaybeRefOrGetter<number>) {
     return customRef((track, trigger) => {

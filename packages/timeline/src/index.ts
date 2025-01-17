@@ -1,6 +1,5 @@
 import type { CustomInspectorNode, CustomInspectorState } from '@vue/devtools-kit';
 import {
-    type MaybeRefOrGetter,
     syncRef,
     useDevicePixelRatio,
     useElementBounding,
@@ -14,12 +13,13 @@ import {
     getCurrentInstance,
     onBeforeUnmount,
     reactive,
-    type Ref,
     ref,
     shallowReactive,
     toRaw,
     watch,
-    watchEffect
+    watchEffect,
+    type MaybeRefOrGetter,
+    type Ref
 } from 'vue';
 import { TimelineLayer } from './elements/TimelineLayer';
 import { useSmoothNum } from './tools/useSmoothNum';

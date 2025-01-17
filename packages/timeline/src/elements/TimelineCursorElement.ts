@@ -1,6 +1,5 @@
 import type { CustomInspectorState } from '@vue/devtools-kit';
-import { type MaybeRefOrGetter, toValue } from '@vueuse/core';
-import { computed, ref } from 'vue';
+import { computed, ref, toValue, type MaybeRefOrGetter } from 'vue';
 import type { TimelineElement, TimelineElementRenderPayload, TimelineManager } from '..';
 import { useSmoothNum } from '../tools/useSmoothNum';
 
