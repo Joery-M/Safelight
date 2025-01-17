@@ -17,13 +17,6 @@
   "types": "dist/index.d.ts",
   "exports": {
     "./*": {
-      "default": [
-        "./src/*.ts",
-        "./dist/*.js"
-      ],
-      "require": [
-        "./dist/*.cjs"
-      ],
       "import": [
         "./src/*.ts",
         "./dist/*.js"
@@ -34,13 +27,6 @@
       ]
     },
     ".": {
-      "default": [
-        "./src/index.ts",
-        "./dist/index.js"
-      ],
-      "require": [
-        "./dist/index.cjs"
-      ],
       "import": [
         "./src/index.ts",
         "./dist/index.js"
