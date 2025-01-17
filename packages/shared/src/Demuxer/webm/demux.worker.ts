@@ -293,14 +293,14 @@ function decodeVP9Header(data: DataView) {
 
 //#region AV1 header
 
-function decodeAV1Header(data: DataView) {
+function _decodeAV1Header(data: DataView) {
     const firstByte = data.getInt8(0);
     const forbiddenBit = (firstByte >> 7) & 0x1;
     if (forbiddenBit !== 0) {
         throw new Error('Data block does not have a valid AV1 OBU header');
     }
     // Idk man
-    const type = (firstByte >> 7) & 0x1;
+    const _type = (firstByte >> 7) & 0x1;
 }
 
 //#region AVC private data
