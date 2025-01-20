@@ -205,12 +205,6 @@ importers:
       '@vueuse/core':
         specifier: ^12.4.0
         version: 12.4.0(typescript@5.7.3)
-      '@vueuse/gesture':
-        specifier: ^2.0.0
-        version: 2.0.0(vue@3.5.13(typescript@5.7.3))
-      '@vueuse/integrations':
-        specifier: ^12.4.0
-        version: 12.4.0(axios@1.7.7)(change-case@5.4.4)(typescript@5.7.3)
       '@vueuse/math':
         specifier: ^12.4.0
         version: 12.4.0(typescript@5.7.3)
@@ -226,9 +220,6 @@ importers:
       dot-path-value:
         specifier: ^0.0.11
         version: 0.0.11
-      eventemitter3:
-        specifier: ^5.0.1
-        version: 5.0.1
       fuzzysearch:
         specifier: ^1.0.3
         version: 1.0.3
@@ -311,24 +302,18 @@ importers:
       browserslist:
         specifier: ^4.24.4
         version: 4.24.4
-      glob:
-        specifier: ^11.0.1
-        version: 11.0.1
-      lightningcss:
-        specifier: ^1.29.1
-        version: 1.29.1
       postcss:
         specifier: ^8.5.1
         version: 8.5.1
       sass-embedded:
         specifier: ^1.83.4
         version: 1.83.4
-      strip-ansi:
-        specifier: ^7.1.0
-        version: 7.1.0
       tailwindcss:
         specifier: ^3.4.17
         version: 3.4.17
+      tinyglobby:
+        specifier: ^0.2.10
+        version: 0.2.10
       tsx:
         specifier: ^4.19.2
         version: 4.19.2
@@ -1724,47 +1709,6 @@ packages:
       '@vue/composition-api':
         optional: true
 
-  '@vueuse/integrations@12.4.0':
-    resolution: {integrity: sha512-EZm+TLoZMeEwDnccnEqB54CvvcVKbVnJubOF380HqdyZAxWfQ8egnFCESdlXWEIbxFgjfhcGfZUvQx5Nqw9Ofw==}
-    peerDependencies:
-      async-validator: ^4
-      axios: ^1
-      change-case: ^5
-      drauu: ^0.4
-      focus-trap: ^7
-      fuse.js: ^7
-      idb-keyval: ^6
-      jwt-decode: ^4
-      nprogress: ^0.2
-      qrcode: ^1.5
-      sortablejs: ^1
-      universal-cookie: ^7
-    peerDependenciesMeta:
-      async-validator:
-        optional: true
-      axios:
-        optional: true
-      change-case:
-        optional: true
-      drauu:
-        optional: true
-      focus-trap:
-        optional: true
-      fuse.js:
-        optional: true
-      idb-keyval:
-        optional: true
-      jwt-decode:
-        optional: true
-      nprogress:
-        optional: true
-      qrcode:
-        optional: true
-      sortablejs:
-        optional: true
-      universal-cookie:
-        optional: true
-
   '@vueuse/math@12.4.0':
     resolution: {integrity: sha512-rVsmARhaFndB2ObpGyJgoeLRmNjko34t6QQ3x8DCmR4H9iAVIrSAyYtUf6anbLXo8KqMQ8obOagdYbcoWn9t1Q==}
 
@@ -2774,11 +2718,6 @@ packages:
 
   glob@11.0.0:
     resolution: {integrity: sha512-9UiX/Bl6J2yaBbxKoEBRm4Cipxgok8kQYcOPEhScPwebu2I0HoQOuYdIO6S3hLuWoZgpDpwQZMzTFxgpkyT76g==}
-    engines: {node: 20 || >=22}
-    hasBin: true
-
-  glob@11.0.1:
-    resolution: {integrity: sha512-zrQDm8XPnYEKawJScsnM0QzobJxlT/kHOOlRTio8IH/GrmxRE5fjllkzdaHclIuNjUQTJYH2xHNIGfdpJkDJUw==}
     engines: {node: 20 || >=22}
     hasBin: true
 
@@ -6250,17 +6189,6 @@ snapshots:
       vue: 3.5.13(typescript@5.7.3)
       vue-demi: 0.14.10(vue@3.5.13(typescript@5.7.3))
 
-  '@vueuse/integrations@12.4.0(axios@1.7.7)(change-case@5.4.4)(typescript@5.7.3)':
-    dependencies:
-      '@vueuse/core': 12.4.0(typescript@5.7.3)
-      '@vueuse/shared': 12.4.0(typescript@5.7.3)
-      vue: 3.5.13(typescript@5.7.3)
-    optionalDependencies:
-      axios: 1.7.7(debug@4.3.7)
-      change-case: 5.4.4
-    transitivePeerDependencies:
-      - typescript
-
   '@vueuse/math@12.4.0(typescript@5.7.3)':
     dependencies:
       '@vueuse/shared': 12.4.0(typescript@5.7.3)
@@ -6965,7 +6893,8 @@ snapshots:
 
   dequal@2.0.3: {}
 
-  detect-libc@1.0.3: {}
+  detect-libc@1.0.3:
+    optional: true
 
   detect-libc@2.0.3:
     optional: true
@@ -7481,15 +7410,6 @@ snapshots:
       package-json-from-dist: 1.0.1
       path-scurry: 2.0.0
 
-  glob@11.0.1:
-    dependencies:
-      foreground-child: 3.3.0
-      jackspeak: 4.0.2
-      minimatch: 10.0.1
-      minipass: 7.1.2
-      package-json-from-dist: 1.0.1
-      path-scurry: 2.0.0
-
   glob@7.2.3:
     dependencies:
       fs.realpath: 1.0.0
@@ -7872,6 +7792,7 @@ snapshots:
       lightningcss-linux-x64-musl: 1.29.1
       lightningcss-win32-arm64-msvc: 1.29.1
       lightningcss-win32-x64-msvc: 1.29.1
+    optional: true
 
   lilconfig@3.1.3: {}
 
