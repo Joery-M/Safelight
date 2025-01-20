@@ -1,6 +1,3 @@
-# Generated dev files
-/typed-router.d.ts
-
 # Generated items
 /src/generated/*
 /types/i18n.d.ts

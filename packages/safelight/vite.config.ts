@@ -2,7 +2,6 @@ import { fileURLToPath, URL } from 'node:url';
 
 import vue from '@vitejs/plugin-vue';
 import path from 'node:path';
-import VueRouter from 'unplugin-vue-router/vite';
 import { defineConfig } from 'vite';
 import HotGlob from 'vite-plugin-hot-glob';
 import mkcert from 'vite-plugin-mkcert';
@@ -14,12 +13,6 @@ export default defineConfig({
         __TEST__: false
     },
     plugins: [
-        VueRouter({
-            routesFolder: {
-                src: path.join(import.meta.dirname, './src/views'),
-                exclude: path.join(import.meta.dirname, './src/views/editor.vue')
-            }
-        }),
         vue(),
         mkcert(),
         generateI18n({
