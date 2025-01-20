@@ -183,7 +183,7 @@ import TabPanels from 'primevue/tabpanels';
 import Tabs from 'primevue/tabs';
 import { onMounted, reactive, ref, watch } from 'vue';
 import VueMarkdown from 'vue-markdown-render';
-import { RouterLink } from 'vue-router/auto';
+import { RouterLink } from 'vue-router';
 
 const showDisclaimer = ref(false);
 const showDisclaimerThrottle = useDebounce(showDisclaimer, 1000);
