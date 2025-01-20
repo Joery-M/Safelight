@@ -119,7 +119,7 @@ import Button from 'primevue/button';
 import Card from 'primevue/card';
 import Slider from 'primevue/slider';
 import { computed, onMounted, reactive, ref, shallowReactive, shallowRef, watch } from 'vue';
-import { RouterLink } from 'vue-router/auto';
+import { RouterLink } from 'vue-router';
 
 const canvas = ref<HTMLCanvasElement>();
 
