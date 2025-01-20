@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // This file is to figure out how to extract the codec private data from AVC
 
 // Main source: mkvtoolnix
