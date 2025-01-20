@@ -10,16 +10,15 @@ on:
 jobs:
     test-all:
         runs-on: ubuntu-latest
-        if: ${{ github.triggering_actor != 'dependabot[bot]' }}
 
         strategy:
             matrix:
-                node-version: [20.12.0] # Latest LTS
+                node-version: [22.13.0] # Latest LTS
 
         steps:
             - uses: actions/checkout@v4
               with:
-                submodules: recursive
+                  submodules: recursive
 
             - name: Enable Corepack
               run: corepack enable
@@ -32,7 +31,6 @@ jobs:
 
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
-            # if: steps.playwright-cache.outputs.cache-hit != 'true'
 
             - name: Build Darkroom
               run: pnpm build:darkroom

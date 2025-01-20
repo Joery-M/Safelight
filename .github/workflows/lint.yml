@@ -1,14 +1,10 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: Build
+name: Lint
 
 on:
     pull_request:
         branches: ['main']
-
 jobs:
-    build-all:
+    build:
         runs-on: ubuntu-latest
 
         strategy:
@@ -30,14 +26,5 @@ jobs:
             - name: Install dependencies
               run: pnpm install --ignore-scripts --frozen-lockfile
 
-            - name: Build Darkroom
-              run: pnpm build:darkroom
-
-            - name: Build Timeline
-              run: pnpm build:timeline
-
-            - name: Build TsWebm
-              run: pnpm build:tswebm
-
-            - name: Build Safelight
-              run: pnpm build:safelight
+            - name: Lint ESLint
+              run: pnpm lint:eslint
