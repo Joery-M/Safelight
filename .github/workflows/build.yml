@@ -4,40 +4,40 @@
 name: Build
 
 on:
-    pull_request:
-        branches: ['main']
+  pull_request:
+    branches: ['main']
 
 jobs:
-    build-all:
-        runs-on: ubuntu-latest
+  build-all:
+    runs-on: ubuntu-latest
 
-        strategy:
-            matrix:
-                node-version: [22.13.0] # Latest LTS
+    strategy:
+      matrix:
+        node-version: [22.13.0] # Latest LTS
 
-        steps:
-            - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-            - name: Enable Corepack
-              run: corepack enable
+      - name: Enable Corepack
+        run: corepack enable
 
-            - name: Install Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: ${{ matrix.node-version }}
-                  cache: 'pnpm'
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
 
-            - name: Install dependencies
-              run: pnpm install --ignore-scripts --frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts --frozen-lockfile
 
-            - name: Build Darkroom
-              run: pnpm build:darkroom
+      - name: Build Darkroom
+        run: pnpm build:darkroom
 
-            - name: Build Timeline
-              run: pnpm build:timeline
+      - name: Build Timeline
+        run: pnpm build:timeline
 
-            - name: Build TsWebm
-              run: pnpm build:tswebm
+      - name: Build TsWebm
+        run: pnpm build:tswebm
 
-            - name: Build Safelight
-              run: pnpm build:safelight
+      - name: Build Safelight
+        run: pnpm build:safelight

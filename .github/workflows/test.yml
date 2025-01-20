@@ -4,45 +4,45 @@
 name: Test
 
 on:
-    pull_request:
-        branches: ['main']
+  pull_request:
+    branches: ['main']
 
 jobs:
-    test-all:
-        runs-on: ubuntu-latest
+  test-all:
+    runs-on: ubuntu-latest
 
-        strategy:
-            matrix:
-                node-version: [22.13.0] # Latest LTS
+    strategy:
+      matrix:
+        node-version: [22.13.0] # Latest LTS
 
-        steps:
-            - uses: actions/checkout@v4
-              with:
-                  submodules: recursive
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-            - name: Enable Corepack
-              run: corepack enable
+      - name: Enable Corepack
+        run: corepack enable
 
-            - name: Install Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: ${{ matrix.node-version }}
-                  cache: 'pnpm'
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
 
-            - name: Install dependencies
-              run: pnpm install --frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-            - name: Build Darkroom
-              run: pnpm build:darkroom
+      - name: Build Darkroom
+        run: pnpm build:darkroom
 
-            - name: Test Daguerreo
-              run: pnpm test:daguerreo
+      - name: Test Daguerreo
+        run: pnpm test:daguerreo
 
-            - name: Test Darkroom
-              run: pnpm test:darkroom
+      - name: Test Darkroom
+        run: pnpm test:darkroom
 
-            - name: Test shared
-              run: pnpm test:shared
+      - name: Test shared
+        run: pnpm test:shared
 
-            - name: Test tswebm
-              run: pnpm test:tswebm
+      - name: Test tswebm
+        run: pnpm test:tswebm
