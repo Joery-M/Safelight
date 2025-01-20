@@ -131,11 +131,11 @@ importers:
         specifier: ^0.7.0
         version: 0.7.0(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2))
       '@vueuse/core':
-        specifier: ^12.3.0
-        version: 12.3.0(typescript@5.7.2)
+        specifier: ^12.4.0
+        version: 12.4.0(typescript@5.7.2)
       '@vueuse/rxjs':
-        specifier: ^12.3.0
-        version: 12.3.0(rxjs@7.8.1)(typescript@5.7.2)
+        specifier: ^12.4.0
+        version: 12.4.0(rxjs@7.8.1)(typescript@5.7.2)
       timer-shim:
         specifier: ^0.3.0
         version: 0.3.0
@@ -203,20 +203,20 @@ importers:
         specifier: workspace:*
         version: link:../timeline
       '@vueuse/core':
-        specifier: ^12.3.0
-        version: 12.3.0(typescript@5.7.2)
+        specifier: ^12.4.0
+        version: 12.4.0(typescript@5.7.2)
       '@vueuse/gesture':
         specifier: ^2.0.0
         version: 2.0.0(vue@3.5.13(typescript@5.7.2))
       '@vueuse/integrations':
-        specifier: ^12.3.0
-        version: 12.3.0(axios@1.7.7)(change-case@5.4.4)(typescript@5.7.2)
+        specifier: ^12.4.0
+        version: 12.4.0(axios@1.7.7)(change-case@5.4.4)(typescript@5.7.2)
       '@vueuse/math':
-        specifier: ^12.3.0
-        version: 12.3.0(typescript@5.7.2)
+        specifier: ^12.4.0
+        version: 12.4.0(typescript@5.7.2)
       '@vueuse/rxjs':
-        specifier: ^12.3.0
-        version: 12.3.0(rxjs@7.8.1)(typescript@5.7.2)
+        specifier: ^12.4.0
+        version: 12.4.0(rxjs@7.8.1)(typescript@5.7.2)
       comlink:
         specifier: ^4.4.2
         version: 4.4.2
@@ -357,11 +357,11 @@ importers:
         specifier: workspace:^
         version: link:../tswebm
       '@vueuse/core':
-        specifier: ^12.3.0
-        version: 12.3.0(typescript@5.7.2)
+        specifier: ^12.4.0
+        version: 12.4.0(typescript@5.7.2)
       '@vueuse/rxjs':
-        specifier: ^12.3.0
-        version: 12.3.0(rxjs@7.8.1)(typescript@5.7.2)
+        specifier: ^12.4.0
+        version: 12.4.0(rxjs@7.8.1)(typescript@5.7.2)
       comlink:
         specifier: ^4.4.2
         version: 4.4.2
@@ -436,17 +436,17 @@ importers:
   packages/timeline:
     dependencies:
       '@vue/devtools-kit':
-        specifier: ^7.6.8
-        version: 7.6.8
+        specifier: ^7.7.0
+        version: 7.7.0
       '@vueuse/core':
-        specifier: ^12.3.0
-        version: 12.3.0(typescript@5.7.2)
+        specifier: ^12.4.0
+        version: 12.4.0(typescript@5.7.2)
       '@vueuse/gesture':
         specifier: ^2.0.0
         version: 2.0.0(vue@3.5.13(typescript@5.7.2))
       '@vueuse/math':
-        specifier: ^12.3.0
-        version: 12.3.0(typescript@5.7.2)
+        specifier: ^12.4.0
+        version: 12.4.0(typescript@5.7.2)
       eventemitter3:
         specifier: ^5.0.1
         version: 5.0.1
@@ -1662,11 +1662,11 @@ packages:
   '@vue/devtools-api@6.6.4':
     resolution: {integrity: sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g==}
 
-  '@vue/devtools-kit@7.6.8':
-    resolution: {integrity: sha512-JhJ8M3sPU+v0P2iZBF2DkdmR9L0dnT5RXJabJqX6o8KtFs3tebdvfoXV2Dm3BFuqeECuMJIfF1aCzSt+WQ4wrw==}
+  '@vue/devtools-kit@7.7.0':
+    resolution: {integrity: sha512-5cvZ+6SA88zKC8XiuxUfqpdTwVjJbvYnQZY5NReh7qlSGPvVDjjzyEtW+gdzLXNSd8tStgOjAdMCpvDQamUXtA==}
 
-  '@vue/devtools-shared@7.6.8':
-    resolution: {integrity: sha512-9MBPO5Z3X1nYGFqTJyohl6Gmf/J7UNN1oicHdyzBVZP4jnhZ4c20MgtaHDIzWmHDHCMYVS5bwKxT3jxh7gOOKA==}
+  '@vue/devtools-shared@7.7.0':
+    resolution: {integrity: sha512-jtlQY26R5thQxW9YQTpXbI0HoK0Wf9Rd4ekidOkRvSy7ChfK0kIU6vvcBtjj87/EcpeOSK49fZAicaFNJcoTcQ==}
 
   '@vue/language-core@2.1.10':
     resolution: {integrity: sha512-DAI289d0K3AB5TUG3xDp9OuQ71CnrujQwJrQnfuZDwo6eGNf0UoRlPuaVNO+Zrn65PC3j0oB2i7mNmVPggeGeQ==}
@@ -1712,8 +1712,8 @@ packages:
       vue:
         optional: true
 
-  '@vueuse/core@12.3.0':
-    resolution: {integrity: sha512-cnV8QDKZrsyKC7tWjPbeEUz2cD9sa9faxF2YkR8QqNwfofgbOhmfIgvSYmkp+ttSvfOw4E6hLcQx15mRPr0yBA==}
+  '@vueuse/core@12.4.0':
+    resolution: {integrity: sha512-XnjQYcJwCsyXyIafyA6SvyN/OBtfPnjvJmbxNxQjCcyWD198urwm5TYvIUUyAxEAN0K7HJggOgT15cOlWFyLeA==}
 
   '@vueuse/gesture@2.0.0':
     resolution: {integrity: sha512-+F0bhhd8j+gxHaXG4fJgfokrkFfWenQ10MtrWOJk68B5UaTwtJm4EpsZFiVdluA3jpKExG6H+HtroJpvO7Qx0A==}
@@ -1724,8 +1724,8 @@ packages:
       '@vue/composition-api':
         optional: true
 
-  '@vueuse/integrations@12.3.0':
-    resolution: {integrity: sha512-Ha42DSxc87BIf4JONUNammWod5X7iaUVqpYohMgzpDYBjAxhmhWtsMCcFpfUMXZYiMaS2xltUEiRldSXC9kmGw==}
+  '@vueuse/integrations@12.4.0':
+    resolution: {integrity: sha512-EZm+TLoZMeEwDnccnEqB54CvvcVKbVnJubOF380HqdyZAxWfQ8egnFCESdlXWEIbxFgjfhcGfZUvQx5Nqw9Ofw==}
     peerDependencies:
       async-validator: ^4
       axios: ^1
@@ -1765,19 +1765,19 @@ packages:
       universal-cookie:
         optional: true
 
-  '@vueuse/math@12.3.0':
-    resolution: {integrity: sha512-PblV/sohRCf/230BF6didqJhHn6gVlj2V6QdcjrK5YDFqaFKMW9BW+6kCqYkHCRKjauJ+Z6y9FUR8swX3/v2MQ==}
+  '@vueuse/math@12.4.0':
+    resolution: {integrity: sha512-rVsmARhaFndB2ObpGyJgoeLRmNjko34t6QQ3x8DCmR4H9iAVIrSAyYtUf6anbLXo8KqMQ8obOagdYbcoWn9t1Q==}
 
-  '@vueuse/metadata@12.3.0':
-    resolution: {integrity: sha512-M/iQHHjMffOv2npsw2ihlUx1CTiBwPEgb7DzByLq7zpg1+Ke8r7s9p5ybUWc5OIeGewtpY4Xy0R2cKqFqM8hFg==}
+  '@vueuse/metadata@12.4.0':
+    resolution: {integrity: sha512-AhPuHs/qtYrKHUlEoNO6zCXufu8OgbR8S/n2oMw1OQuBQJ3+HOLQ+EpvXs+feOlZMa0p8QVvDWNlmcJJY8rW2g==}
 
-  '@vueuse/rxjs@12.3.0':
-    resolution: {integrity: sha512-IjUWPEJvEOmfig0gLVTSQc2soi1Q8c1uCKDdcUG9SfC65GzzdT1mrXglujmR0XzuXVfJJnirtUeUNpvBB+nZfA==}
+  '@vueuse/rxjs@12.4.0':
+    resolution: {integrity: sha512-icFuuHUuebjh75j8vQXc5C6z4LPJRkYwFjXmfXSdxErjoGRLu7wHjlo954gsXOvYutttwrRidek+87X03akwLA==}
     peerDependencies:
       rxjs: '>=6.0.0'
 
-  '@vueuse/shared@12.3.0':
-    resolution: {integrity: sha512-X3YD35GUeW0d5Gajcwv9jdLAJTV2Jdb/Ll6Ii2JIYcKLYZqv5wxyLeKtiQkqWmHg3v0J0ZWjDUMVOw2E7RCXfA==}
+  '@vueuse/shared@12.4.0':
+    resolution: {integrity: sha512-9yLgbHVIF12OSCojnjTIoZL1+UA10+O4E1aD6Hpfo/DKVm5o3SZIwz6CupqGy3+IcKI8d6Jnl26EQj/YucnW0Q==}
 
   '@wdio/config@9.4.4':
     resolution: {integrity: sha512-w1Qo6QywLSGxmoglU4BiqDGNmFbwh/L6BRud4AO9nGgTuwKy6UkT7KevzlkIRiCHtdqkkjExR3xUi2OgjMdHAA==}
@@ -6154,9 +6154,9 @@ snapshots:
 
   '@vue/devtools-api@6.6.4': {}
 
-  '@vue/devtools-kit@7.6.8':
+  '@vue/devtools-kit@7.7.0':
     dependencies:
-      '@vue/devtools-shared': 7.6.8
+      '@vue/devtools-shared': 7.7.0
       birpc: 0.2.19
       hookable: 5.5.3
       mitt: 3.0.1
@@ -6164,7 +6164,7 @@ snapshots:
       speakingurl: 14.0.1
       superjson: 2.2.1
 
-  '@vue/devtools-shared@7.6.8':
+  '@vue/devtools-shared@7.7.0':
     dependencies:
       rfdc: 1.4.1
 
@@ -6223,11 +6223,11 @@ snapshots:
       typescript: 5.7.2
       vue: 3.5.13(typescript@5.7.2)
 
-  '@vueuse/core@12.3.0(typescript@5.7.2)':
+  '@vueuse/core@12.4.0(typescript@5.7.2)':
     dependencies:
       '@types/web-bluetooth': 0.0.20
-      '@vueuse/metadata': 12.3.0
-      '@vueuse/shared': 12.3.0(typescript@5.7.2)
+      '@vueuse/metadata': 12.4.0
+      '@vueuse/shared': 12.4.0(typescript@5.7.2)
       vue: 3.5.13(typescript@5.7.2)
     transitivePeerDependencies:
       - typescript
@@ -6240,10 +6240,10 @@ snapshots:
       vue: 3.5.13(typescript@5.7.2)
       vue-demi: 0.14.10(vue@3.5.13(typescript@5.7.2))
 
-  '@vueuse/integrations@12.3.0(axios@1.7.7)(change-case@5.4.4)(typescript@5.7.2)':
+  '@vueuse/integrations@12.4.0(axios@1.7.7)(change-case@5.4.4)(typescript@5.7.2)':
     dependencies:
-      '@vueuse/core': 12.3.0(typescript@5.7.2)
-      '@vueuse/shared': 12.3.0(typescript@5.7.2)
+      '@vueuse/core': 12.4.0(typescript@5.7.2)
+      '@vueuse/shared': 12.4.0(typescript@5.7.2)
       vue: 3.5.13(typescript@5.7.2)
     optionalDependencies:
       axios: 1.7.7(debug@4.3.7)
@@ -6251,24 +6251,24 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@vueuse/math@12.3.0(typescript@5.7.2)':
+  '@vueuse/math@12.4.0(typescript@5.7.2)':
     dependencies:
-      '@vueuse/shared': 12.3.0(typescript@5.7.2)
+      '@vueuse/shared': 12.4.0(typescript@5.7.2)
       vue: 3.5.13(typescript@5.7.2)
     transitivePeerDependencies:
       - typescript
 
-  '@vueuse/metadata@12.3.0': {}
+  '@vueuse/metadata@12.4.0': {}
 
-  '@vueuse/rxjs@12.3.0(rxjs@7.8.1)(typescript@5.7.2)':
+  '@vueuse/rxjs@12.4.0(rxjs@7.8.1)(typescript@5.7.2)':
     dependencies:
-      '@vueuse/shared': 12.3.0(typescript@5.7.2)
+      '@vueuse/shared': 12.4.0(typescript@5.7.2)
       rxjs: 7.8.1
       vue: 3.5.13(typescript@5.7.2)
     transitivePeerDependencies:
       - typescript
 
-  '@vueuse/shared@12.3.0(typescript@5.7.2)':
+  '@vueuse/shared@12.4.0(typescript@5.7.2)':
     dependencies:
       vue: 3.5.13(typescript@5.7.2)
     transitivePeerDependencies:
