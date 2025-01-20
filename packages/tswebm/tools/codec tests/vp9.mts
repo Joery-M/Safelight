@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // This file is temporary so i can figure out how to extract the VP9 codec string
 
 // VP9

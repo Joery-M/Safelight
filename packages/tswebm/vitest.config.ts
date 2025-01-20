@@ -6,7 +6,6 @@ export default defineProject({
     },
     plugins: [],
     test: {
-        reporters: process.env.GITHUB_ACTIONS ? ['default', 'github-actions'] : ['default'],
         globals: true,
         name: 'tswebm',
         environment: 'happy-dom',

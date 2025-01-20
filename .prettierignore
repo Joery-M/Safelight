@@ -1,8 +1,8 @@
-.github/workflows
-
 pnpm-lock.yaml
 pnpm-workspace.yaml
 
 # TsWebM generated file
 packages/tswebm/src/elements.ts
 packages/tswebm/matroska-test-files
+
+LICENSE.md

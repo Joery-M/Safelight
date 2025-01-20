@@ -4,7 +4,7 @@
         "./eslint.config.mjs",
         "./packages/*/vite.config.ts",
         "./packages/safelight/buildscripts/**/*.ts",
-        "./packages/tswebm/tools/**/*.ts"
+        "./packages/tswebm/tools/"
     ],
     "compilerOptions": {
         "composite": true,
