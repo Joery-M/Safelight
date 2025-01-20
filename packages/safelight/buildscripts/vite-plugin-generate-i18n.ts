@@ -1,7 +1,8 @@
 import { readFile, writeFile } from 'fs/promises';
-import { glob } from 'glob';
 import path from 'path';
-import type { Plugin } from 'vite';
+import { glob } from 'tinyglobby';
+import { format } from 'util';
+import { type Plugin } from 'vite';
 
 export default function generatePlugin(options: Options): Plugin {
     return {
@@ -37,13 +38,10 @@ interface Options {
 }
 
 async function compileTypes({ localesDir: dir, outputFile: output }: Options) {
-    const files = await glob(dir + '/*.json', {
-        signal: AbortSignal.timeout(1000)
-    }).catch((err) => {
-        console.error('Could not find i18n files:', err);
-        return [] as string[];
+    const files = await glob('*.json', { absolute: true, cwd: dir }).catch((err) => {
+        throw Error('Could not find i18n files:', err);
     });
-    if (!files.length) return;
+    if (!files.length) throw Error('Could not find i18n files');
 
     // Combine all files into 1 object
     const allFiles: Record<string, any> = {};
@@ -98,9 +96,9 @@ declare module 'vue-i18n' {
     outputFile = outputFile.replace(/((?<!\r)\n|\r(?!\n))/g, '\r\n');
 
     // No need to wait for finishing writing, if it does take long, skip it
-    writeFile(output, outputFile, { signal: AbortSignal.timeout(100) }).catch((err) =>
-        console.error('Error writing i18n definitions:', err)
-    );
+    writeFile(output, outputFile, { signal: AbortSignal.timeout(100) }).catch((err) => {
+        throw Error(format('Error writing i18n definitions:', err));
+    });
 }
 
 // Source: https://stackoverflow.com/a/34749873
