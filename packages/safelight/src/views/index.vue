@@ -16,7 +16,3 @@ import Button from 'primevue/button';
 import Card from 'primevue/card';
 import { RouterLink } from 'vue-router';
 </script>
-
-<route lang="json">
-{ "name": "Home" }
-</route>

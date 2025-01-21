@@ -148,7 +148,3 @@ function mergeDeep(target: Record<string, any>, ...sources: Record<string, any>[
     return mergeDeep(target, ...sources);
 }
 </script>
-
-<route lang="json">
-{ "path": "/dev/localization" }
-</route>
