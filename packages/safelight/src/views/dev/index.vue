@@ -41,10 +41,3 @@ import { RouterLink, useRoute, useRouter } from 'vue-router';
 const router = useRouter();
 const route = useRoute();
 </script>
-
-<route lang="json">
-{
-    "$schema": "https://raw.githubusercontent.com/posva/unplugin-vue-router/main/route.schema.json",
-    "name": "Dev"
-}
-</route>

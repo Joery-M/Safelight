@@ -219,7 +219,3 @@ body {
     overscroll-behavior-x: none;
 }
 </style>
-
-<route lang="json">
-{ "name": "Timeline" }
-</route>
