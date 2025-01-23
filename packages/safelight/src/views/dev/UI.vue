@@ -93,7 +93,3 @@ onMounted(() => {
     }
 });
 </script>
-
-<route lang="json">
-{ "name": "UI Components" }
-</route>

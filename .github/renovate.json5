@@ -34,7 +34,7 @@
             groupName: 'PrimeVue'
         },
         {
-            matchPackageNames: ['vue-**', 'vue', '@vueuse/**', '@vue/**', 'unplugin-vue-router'],
+            matchPackageNames: ['vue-**', 'vue', '@vueuse/**', '@vue/**'],
             groupName: 'vue'
         },
         {
