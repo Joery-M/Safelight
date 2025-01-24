@@ -41,7 +41,7 @@
                         >
                             <template #grid="slotProps: { items: DependencyWithName[] }">
                                 <div
-                                    class="grid-nogutter grid"
+                                    class="grid"
                                     style="
                                         grid-template-columns: repeat(
                                             auto-fill,
@@ -52,7 +52,7 @@
                                     <div
                                         v-for="item in slotProps.items"
                                         :key="item.name"
-                                        class="border-round m-2 flex min-h-48 flex-col rounded-md border-solid border-white/10 p-4"
+                                        class="border-rounded h-55 m-2 flex flex-col rounded-md border-solid border-white/10 p-4"
                                         style="border-width: 1px"
                                     >
                                         <a
@@ -81,7 +81,7 @@
                                         </a>
                                         <span
                                             v-if="item.author || item.license"
-                                            class="subtext text-sm font-medium"
+                                            class="text-primary text-sm font-medium"
                                         >
                                             <template v-if="item.author">
                                                 {{ item.author?.name }} -
@@ -94,7 +94,7 @@
                                                         : item.license.type)
                                                 "
                                                 target="_blank"
-                                                class="subtext"
+                                                class="text-primary"
                                             >
                                                 {{
                                                     typeof item.license === 'string'
@@ -106,7 +106,7 @@
                                         <div class="mt-2 line-clamp-3 grow">
                                             {{ item.description }}
                                         </div>
-                                        <div class="flex-column mt-4 flex gap-4">
+                                        <div class="mt-4 flex flex-col gap-4">
                                             <div class="flex gap-2">
                                                 <Button
                                                     v-if="item.homepage"
@@ -135,10 +135,7 @@
                     </TabPanel>
                     <TabPanel header="Disclaimer" value="disclaimer">
                         <div
-                            :class="{
-                                'overflow-y-auto': disclaimer.data.value,
-                                'overflow-y-clip': !disclaimer.data.value
-                            }"
+                            :overflow-y="disclaimer.data.value ? 'auto' : 'clip'"
                             style="max-height: 72vh"
                         >
                             <template v-if="!disclaimer.data.value">
@@ -146,9 +143,7 @@
                                     <Skeleton
                                         shape="rectangle"
                                         :width="Math.random() * 100 + '%'"
-                                        :class="{
-                                            ['mb-' + (Math.random() > 0.5 ? '2' : '4')]: true
-                                        }"
+                                        :mb="Math.random() > 0.5 ? '2' : '4'"
                                     />
                                 </template>
                             </template>
@@ -281,9 +276,3 @@ function convertDepsToDepsWithNames(
         .filter((dep) => !dep.name.includes('safelight'));
 }
 </script>
-
-<style lang="scss" scoped>
-.subtext {
-    color: var(--p-primary-color);
-}
-</style>

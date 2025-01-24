@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 //@ts-check
+
 import js from '@eslint/js';
 import vueI18n from '@intlify/eslint-plugin-vue-i18n';
 import prettierConfig from 'eslint-plugin-prettier/recommended';
-import tailwindcss from 'eslint-plugin-tailwindcss';
+import unocss from '@unocss/eslint-config/flat';
 import eslintPluginVue from 'eslint-plugin-vue';
 import globals from 'globals';
 import ts from 'typescript-eslint';
@@ -14,10 +16,14 @@ export default ts.config(
     },
     js.configs.recommended,
     ...ts.configs.recommended,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     ...eslintPluginVue.configs['flat/recommended'],
-    ...tailwindcss.configs['flat/recommended'],
+    {
+        files: ['**/packages/safelight/**/*.vue', '**/packages/shared/**/*.vue'],
+        // @ts-ignore
+        plugins: unocss.plugins,
+        rules: unocss.rules
+    },
 
     // ----- i18n -----
     // Use the base config, then re-add the rules on specific files
@@ -117,9 +123,7 @@ export default ts.config(
             'vue/no-v-model-argument': 'off',
             'no-async-promise-executor': 'off',
             'no-undef': 'off',
-            'no-dupe-class-members': 'off',
-
-            'tailwindcss/no-custom-classname': 'off'
+            'no-dupe-class-members': 'off'
         }
     },
     {

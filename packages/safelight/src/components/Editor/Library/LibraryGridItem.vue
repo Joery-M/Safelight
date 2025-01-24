@@ -1,7 +1,7 @@
 <template>
     <div
         role="gridcell"
-        class="border-round m-1 inline-flex h-fit select-text flex-col rounded-md border-solid border-white/10 align-top"
+        class="border-rounded m-1 inline-flex h-fit select-text flex-col rounded-md border-solid border-white/10 align-top"
         style="border-width: 1px"
         :style="{
             width: size + 'px'
@@ -20,7 +20,7 @@
         >
             <img
                 v-if="false"
-                class="overflow-none max-h-full max-w-full"
+                class="of-hidden max-h-full max-w-full"
                 :aria-label="item.name.value"
             />
             <template v-else-if="item.isDirectory">

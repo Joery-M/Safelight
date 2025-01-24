@@ -24,7 +24,7 @@
             <Button text severity="secondary" rounded icon="ph ph-x" @click="closeNotif" />
         </template>
         <p :id="'content-' + notif.id" class="mb-0">{{ $t(notif.config.text ?? '') }}</p>
-        <div v-if="buttons.length > 0" class="align-items-center mt-4 flex gap-2">
+        <div v-if="buttons.length > 0" class="mt-4 flex items-center gap-2">
             <template v-for="(btn, i) in buttons" :key="i">
                 <Button
                     :outlined="btn.type !== 'filled'"

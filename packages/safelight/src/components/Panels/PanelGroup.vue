@@ -3,10 +3,7 @@
         <div class="flex">
             <TabMenu :model="allTabs" @tab-change="activeIndex = $event.index">
                 <template #item="{ item, props: iProps }">
-                    <a
-                        v-bind="iProps.action"
-                        class="align-items-center flex min-w-36 gap-1 p-2 pr-1"
-                    >
+                    <a v-bind="iProps.action" class="items-center flex min-w-36 gap-1 p-2 pr-1">
                         <i v-if="item.icon" :class="item.icon" class="mr-2" />
                         <span class="flex-1 font-bold">{{ item.name }}</span>
                         <Button

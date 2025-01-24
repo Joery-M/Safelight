@@ -12,9 +12,10 @@ import FocusTrap from 'primevue/focustrap';
 import Ripple from 'primevue/ripple';
 import Tooltip from 'primevue/tooltip';
 
+import './style.scss';
+import 'virtual:uno.css';
 import { createI18n } from 'vue-i18n';
 import { router } from './router';
-import './style.scss';
 
 const app = createApp(App);
 
@@ -85,8 +86,7 @@ app.use(PrimeVue, {
         options: {
             darkModeSelector: '.dark',
             cssLayer: {
-                name: 'primevue',
-                order: 'tailwind-base, primevue, tailwind-utilities'
+                name: 'primevue'
             }
         }
     }

@@ -1,6 +1,5 @@
 {
     "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/prettierrc.json",
-    "plugins": ["prettier-plugin-tailwindcss"],
     "semi": true,
     "tabWidth": 4,
     "useTabs": false,

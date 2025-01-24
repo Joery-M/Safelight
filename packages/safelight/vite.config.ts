@@ -6,6 +6,7 @@ import { defineConfig } from 'vite';
 import HotGlob from 'vite-plugin-hot-glob';
 import mkcert from 'vite-plugin-mkcert';
 import generateI18n from './buildscripts/vite-plugin-generate-i18n';
+import UnoCSS from 'unocss/vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -13,6 +14,7 @@ export default defineConfig({
         __TEST__: false
     },
     plugins: [
+        UnoCSS(),
         vue(),
         mkcert(),
         generateI18n({

@@ -10,7 +10,7 @@
         @row-dblclick="router.push(`/editor/${$event.data.id}`)"
     >
         <template #header>
-            <div class="align-items-center justify-content-between flex flex-wrap gap-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
                 <h2 class="m-0 flex-1">{{ $t('general.descriptions.project', 2) }}</h2>
                 <Button
                     rounded
