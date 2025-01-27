@@ -32,7 +32,7 @@
         "skipLibCheck": true,
         "composite": true,
 
-        "customConditions": ["source"],
+        "customConditions": ["development"],
 
         // Types
         "types": [
