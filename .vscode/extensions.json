@@ -2,7 +2,7 @@
     "recommendations": [
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
-        "bradlc.vscode-tailwindcss",
+        "antfu.unocss",
         "vivaxy.vscode-conventional-commits",
         "vue.volar",
         "github.vscode-pull-request-github",

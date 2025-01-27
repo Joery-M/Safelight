@@ -1,17 +1,14 @@
 <template>
-    <div class="panel-group-menu flex h-full flex-col">
+    <div class="panel-group-menu h-full flex flex-col">
         <div class="flex">
             <TabMenu :model="allTabs" @tab-change="activeIndex = $event.index">
                 <template #item="{ item, props: iProps }">
-                    <a
-                        v-bind="iProps.action"
-                        class="align-items-center flex min-w-36 gap-1 p-2 pr-1"
-                    >
+                    <a v-bind="iProps.action" class="min-w-36 flex items-center gap-1 p-2 pr-1">
                         <i v-if="item.icon" :class="item.icon" class="mr-2" />
                         <span class="flex-1 font-bold">{{ item.name }}</span>
                         <Button
-                            rounded
                             text
+                            rounded
                             severity="secondary"
                             :aria-label="'Close panel ' + item.name"
                             style="width: 20px; height: 20px; padding: 0"
@@ -29,9 +26,9 @@
                 style="border-bottom: 1px var(--p-tabmenu-tablist-border-color) solid"
             >
                 <Button
-                    rounded
                     severity="secondary"
                     text
+                    rounded
                     aria-haspopup="true"
                     aria-controls="panel_add_menu"
                     :aria-label="$t('panels.addMenu')"
