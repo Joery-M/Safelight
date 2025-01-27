@@ -4,11 +4,12 @@
 import js from '@eslint/js';
 import vueI18n from '@intlify/eslint-plugin-vue-i18n';
 import prettierConfig from 'eslint-plugin-prettier/recommended';
-import unocss from '@unocss/eslint-config/flat';
+import unocss from '@unocss/eslint-plugin';
 import eslintPluginVue from 'eslint-plugin-vue';
 import globals from 'globals';
 import ts from 'typescript-eslint';
 import vueParser from 'vue-eslint-parser';
+import { fileURLToPath } from 'url';
 
 export default ts.config(
     {
@@ -20,9 +21,14 @@ export default ts.config(
     ...eslintPluginVue.configs['flat/recommended'],
     {
         files: ['**/packages/safelight/**/*.vue', '**/packages/shared/**/*.vue'],
-        // @ts-ignore
-        plugins: unocss.plugins,
-        rules: unocss.rules
+        settings: {
+            unocss: {
+                configPath: fileURLToPath(
+                    new URL('./packages/safelight/unocss.config.ts', import.meta.url)
+                )
+            }
+        },
+        extends: [unocss.configs.flat]
     },
 
     // ----- i18n -----

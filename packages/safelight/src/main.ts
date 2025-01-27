@@ -1,6 +1,7 @@
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 import App from './App.vue';
+import './style.scss';
 
 import { definePreset } from '@primevue/themes';
 import Aura from '@primevue/themes/aura';
@@ -11,9 +12,8 @@ import DialogService from 'primevue/dialogservice';
 import FocusTrap from 'primevue/focustrap';
 import Ripple from 'primevue/ripple';
 import Tooltip from 'primevue/tooltip';
-
-import './style.scss';
 import 'virtual:uno.css';
+
 import { createI18n } from 'vue-i18n';
 import { router } from './router';
 
