@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { computed, ref, shallowReactive } from 'vue';
 import { Storage } from '../base/Storage';
-import type { EffectInstance } from '../Effects/Effect';
+import type { EffectInstance } from '../Effects/effectInstance';
 import type { Timeline } from '../Timeline/Timeline';
 
 export class TimelineItem {

@@ -1,6 +1,6 @@
 import type { PartialDeep } from 'type-fest';
-import type { SLTransformProperty } from './Effect';
 import { ref } from 'vue';
+import type { SLTransformProperty } from './transformEffect';
 
 export interface NumberPropertyConfig {
     min: number;
