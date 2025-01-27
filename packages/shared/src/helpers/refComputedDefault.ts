@@ -1,5 +1,5 @@
-import { extendRef, toValue, type MaybeRefOrGetter } from '@vueuse/core';
-import { computed, type Ref } from 'vue';
+import { extendRef } from '@vueuse/core';
+import { computed, toValue, type MaybeRefOrGetter, type Ref } from 'vue';
 
 /**
  * Apply computed default value to a ref.

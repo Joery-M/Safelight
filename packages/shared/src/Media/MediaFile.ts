@@ -45,6 +45,7 @@ export interface MediaFileItemMetadata extends MediaItemMetadata {
          * Original filename
          */
         name?: string;
+        mimeType: string;
     };
     thumbnails: MediaThumbnailMetadata[];
 }

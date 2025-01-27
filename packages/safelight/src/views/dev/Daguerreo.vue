@@ -140,7 +140,9 @@
                             <td v-if="opt.type === 'number'">
                                 <InputNumber
                                     v-if="!opt.meta?.slider"
-                                    :model-value="opt.displayValue()"
+                                    :model-value="
+                                        opt.displayValue ? opt.displayValue() : opt.value()
+                                    "
                                     :max-fraction-digits="opt.meta?.integerOnly ? 0 : 10"
                                     :min="opt.meta?.min"
                                     :max="opt.meta?.max"
@@ -152,7 +154,9 @@
                                 />
                                 <Slider
                                     v-else
-                                    :model-value="opt.displayValue()"
+                                    :model-value="
+                                        opt.displayValue ? opt.displayValue() : opt.value()
+                                    "
                                     :min="opt.meta?.min"
                                     :max="opt.meta?.max"
                                     :step="opt.meta?.step"

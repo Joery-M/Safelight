@@ -74,12 +74,7 @@ export interface DaguerreoTransformResult {
 }
 
 export function defineEffect<Properties extends DGTransformProperties = DGTransformProperties>(
-    def: Omit<DaguerreoTransformEffect, 'properties' | 'transform'> & {
-        properties?: Properties;
-        transform?: (
-            config: DaguerreoTransformPayload & { properties: DGComputedProperties<Properties> }
-        ) => Promisable<PartialDeep<DaguerreoTransformResult> | void>;
-    }
+    def: DaguerreoTransformEffect<Properties>
 ) {
     return def as DaguerreoTransformEffect;
 }

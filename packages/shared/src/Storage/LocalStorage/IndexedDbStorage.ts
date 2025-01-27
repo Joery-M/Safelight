@@ -1,8 +1,7 @@
-import { toValue } from '@vueuse/core';
 import { DateTime } from 'luxon';
 import * as opfsTools from 'opfs-tools';
 import type { SetRequired } from 'type-fest';
-import { toRaw } from 'vue';
+import { toRaw, toValue } from 'vue';
 import type {
     FilePath,
     FilePathTypes,
@@ -343,7 +342,7 @@ export class IndexedDbStorageController extends BaseStorageController {
         const storedTimelineItem: StoredTimelineItem = {
             name: toValue(item.name),
             id: item.id,
-            effects: toRaw(item.effects),
+            effects: toRaw(item.effects).map(({ serialize }) => serialize()),
             end: toValue(item.end),
             layer: toValue(item.layer),
             start: toValue(item.start)

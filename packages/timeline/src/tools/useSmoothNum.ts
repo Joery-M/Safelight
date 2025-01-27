@@ -1,5 +1,4 @@
-import type { MaybeRefOrGetter } from '@vueuse/core';
-import { readonly, ref, toRef, toValue, watch } from 'vue';
+import { type MaybeRefOrGetter, readonly, ref, toRef, toValue, watch } from 'vue';
 
 export function useSmoothNum(
     source: MaybeRefOrGetter<number>,

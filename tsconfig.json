@@ -9,8 +9,7 @@
         "moduleResolution": "Bundler",
         "paths": {
             "@safelight/daguerreo": ["./packages/daguerreo"],
-            "@safelight/daguerreo/sources/*": ["./packages/daguerreo/src/sources/*"],
-            "@safelight/daguerreo/transformers/*": ["./packages/daguerreo/src/transformers/*"],
+            "@safelight/daguerreo/*": ["./packages/daguerreo"],
             "@safelight/darkroom": ["./packages/darkroom"],
             "@safelight/plugin-types": ["./packages/plugin-types"],
             "@safelight/safelight": ["./packages/safelight/"],
@@ -33,7 +32,7 @@
         "skipLibCheck": true,
         "composite": true,
 
-        "customConditions": ["source"],
+        "customConditions": ["development"],
 
         // Types
         "types": [
