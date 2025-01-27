@@ -52,7 +52,7 @@
                                     <div
                                         v-for="item in slotProps.items"
                                         :key="item.name"
-                                        class="border-rounded h-55 m-2 flex flex-col rounded-md border-solid border-white/10 p-4"
+                                        class="m-2 h-55 flex flex-col border-white/10 border-rounded rounded-md border-solid p-4"
                                         style="border-width: 1px"
                                     >
                                         <a
@@ -61,7 +61,7 @@
                                                 `https://www.npmjs.com/package/${item.name}`
                                             "
                                             target="_blank"
-                                            class="text-xl font-semibold text-white"
+                                            class="text-xl text-white font-semibold"
                                             style="
                                                 text-decoration: none;
                                                 text-decoration-line: none;
@@ -81,7 +81,7 @@
                                         </a>
                                         <span
                                             v-if="item.author || item.license"
-                                            class="text-primary text-sm font-medium"
+                                            class="text-sm text-primary font-medium"
                                         >
                                             <template v-if="item.author">
                                                 {{ item.author?.name }} -
@@ -103,7 +103,7 @@
                                                 }}
                                             </a>
                                         </span>
-                                        <div class="mt-2 line-clamp-3 grow">
+                                        <div class="line-clamp-3 mt-2 grow">
                                             {{ item.description }}
                                         </div>
                                         <div class="mt-4 flex flex-col gap-4">

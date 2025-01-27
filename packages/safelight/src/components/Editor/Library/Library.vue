@@ -2,7 +2,7 @@
     <DataView
         id="data-view"
         :value="sortedAndFiltered"
-        class="flex h-full flex-col"
+        class="h-full flex flex-col"
         data-key="id"
         :pt="{
             header: {
@@ -133,7 +133,7 @@
                         :min="50"
                         :max="300"
                         :step="10"
-                        class="w-48 max-w-full"
+                        class="max-w-full w-48"
                     />
                 </template>
                 <template #end>

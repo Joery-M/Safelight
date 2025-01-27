@@ -3,13 +3,13 @@
 
 import js from '@eslint/js';
 import vueI18n from '@intlify/eslint-plugin-vue-i18n';
-import prettierConfig from 'eslint-plugin-prettier/recommended';
 import unocss from '@unocss/eslint-plugin';
+import prettierConfig from 'eslint-plugin-prettier/recommended';
 import eslintPluginVue from 'eslint-plugin-vue';
 import globals from 'globals';
 import ts from 'typescript-eslint';
-import vueParser from 'vue-eslint-parser';
 import { fileURLToPath } from 'url';
+import vueParser from 'vue-eslint-parser';
 
 export default ts.config(
     {
@@ -28,6 +28,7 @@ export default ts.config(
                 )
             }
         },
+        // @ts-ignore
         extends: [unocss.configs.flat]
     },
 

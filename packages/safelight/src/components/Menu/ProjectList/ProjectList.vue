@@ -90,8 +90,8 @@
                     v-tooltip="$t('general.actions.delete')"
                     class="delete-btn"
                     text
-                    rounded
                     plain
+                    rounded
                     icon="ph ph-trash"
                     @click="curProject.deleteProject(data.id).then(() => loadList.execute())"
                 />
@@ -102,8 +102,8 @@
                 <Button
                     v-tooltip="$t('general.actions.open')"
                     text
-                    rounded
                     plain
+                    rounded
                     icon="ph ph-caret-right"
                     @click="router.push(`/editor/${data.id}`)"
                 />

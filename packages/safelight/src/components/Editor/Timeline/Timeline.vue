@@ -1,7 +1,7 @@
 <template>
     <div class="relative size-full">
         <canvas ref="canvas" class="size-full"></canvas>
-        <div class="bg-surface-900 absolute right-0 top-0 p-4">
+        <div class="absolute right-0 top-0 bg-surface-900 p-4">
             <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
             <Button @click="addTimelineItem()"> Add item </Button>
         </div>
