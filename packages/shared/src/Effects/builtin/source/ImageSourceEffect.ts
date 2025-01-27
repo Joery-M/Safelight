@@ -21,6 +21,7 @@ export function SLImageSource(media?: MediaItem) {
         },
         async source(cfg) {
             if (!decoder) return { ctx };
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             const image = await decoder.decode({
                 completeFramesOnly: true,
@@ -28,20 +29,21 @@ export function SLImageSource(media?: MediaItem) {
                     ? cfg.frame % (decoder.tracks.selectedTrack?.frameCount ?? Infinity)
                     : 0
             });
-            if (image.image) {
-                if (
-                    canvas.width !== image.image.displayWidth ||
-                    canvas.height !== image.image.displayHeight
-                ) {
-                    canvas.width = image.image.displayWidth;
-                    canvas.height = image.image.displayHeight;
-                }
-
-                ctx.drawImage(image?.image, 0, 0);
-                image.image.close();
+            const width = image.image.displayWidth;
+            const height = image.image.displayHeight;
+            if (canvas.width !== width || canvas.height !== height) {
+                canvas.width = width;
+                canvas.height = height;
             }
+
+            ctx.drawImage(image.image, 0, 0);
+
+            image.image.close();
+
             return {
-                ctx
+                ctx,
+                width,
+                height
             };
         }
     });
