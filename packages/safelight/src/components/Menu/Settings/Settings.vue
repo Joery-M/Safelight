@@ -1,5 +1,5 @@
 <template>
-    <div class="flex h-full">
+    <div class="h-full flex">
         <div class="tree">
             <Tree
                 v-model:expanded-keys="expandedKeys"

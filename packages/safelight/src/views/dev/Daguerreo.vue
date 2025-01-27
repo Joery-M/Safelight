@@ -21,7 +21,7 @@
                     @value-change="renderIfNeeded()"
                 />
                 <h3>Effects</h3>
-                <div id="effect-list" class="flex h-80 max-w-screen-sm gap-4">
+                <div id="effect-list" class="h-80 max-w-screen-sm flex gap-4">
                     <Listbox
                         :options="availableTransforms"
                         data-key="name"

@@ -1,7 +1,7 @@
 <template>
     <div
         role="gridcell"
-        class="border-round m-1 inline-flex h-fit select-text flex-col rounded-md border-solid border-white/10 align-top"
+        class="m-1 h-fit inline-flex flex-col select-text border-white/10 border-rounded rounded-md border-solid align-top"
         style="border-width: 1px"
         :style="{
             width: size + 'px'
@@ -16,11 +16,11 @@
         @dblclick="clickHandler"
     >
         <div
-            class="bg-checkerboard relative flex aspect-video w-full items-center justify-center text-clip rounded-t-md"
+            class="bg-checkerboard relative aspect-video w-full flex items-center justify-center text-clip rounded-t-md"
         >
             <img
                 v-if="false"
-                class="overflow-none max-h-full max-w-full"
+                class="max-h-full max-w-full of-hidden"
                 :aria-label="item.name.value"
             />
             <template v-else-if="item.isDirectory">
@@ -71,12 +71,12 @@
                 />
             </div>
         </div>
-        <div class="flex min-h-14 items-center gap-1 px-1">
+        <div class="min-h-14 flex items-center gap-1 px-1">
             <InplaceRename :value="item.name.value" @change="item.setName($event)">
                 <template #default="{ open }">
                     <p
                         v-tooltip.bottom="{ value: item.name.value, showDelay: 500 }"
-                        class="m-0 line-clamp-2 flex-1 cursor-pointer select-none text-base"
+                        class="line-clamp-2 m-0 flex-1 cursor-pointer select-none text-base"
                         tabindex="0"
                         @dblclick.stop="
                             open();
