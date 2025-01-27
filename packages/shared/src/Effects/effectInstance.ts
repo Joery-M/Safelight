@@ -13,23 +13,19 @@ export class EffectInstance<Properties extends SLEffectProperties = SLEffectProp
      */
     keyframes = new Map<number, Map<string, any>>();
 
-    setKeyframe<P extends keyof Properties>(
-        time: number,
-        propertyName: P,
-        value: ReturnType<Properties[P]['value']>
-    ) {
+    setKeyframe(time: number, propertyName: string, value: any) {
         const existingKeysAtTime = this.keyframes.get(time);
 
         if (!existingKeysAtTime) {
-            this.keyframes.set(time, new Map<string, any>([[propertyName as string, value]]));
+            this.keyframes.set(time, new Map<string, any>([[propertyName, value]]));
         } else {
-            existingKeysAtTime.set(propertyName as string, value);
+            existingKeysAtTime.set(propertyName, value);
         }
     }
 
-    deleteKeyframe<P extends keyof Properties>(time: number, propertyName: P) {
+    deleteKeyframe(time: number, propertyName: string) {
         const existingKeysAtTime = this.keyframes.get(time);
-        if (existingKeysAtTime) existingKeysAtTime.delete(propertyName as string);
+        if (existingKeysAtTime) existingKeysAtTime.delete(propertyName);
     }
 
     calculateKeyframeValues(time: number) {
