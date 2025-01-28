@@ -33,7 +33,7 @@
     "esbuild-wasm": "^0.24.2",
     "path-browserify": "^1.0.1",
     "rxjs": "^7.8.1",
-    "ses": "^1.10.0"
+    "ses": "^1.11.0"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.4",
@@ -48,7 +48,7 @@
   },
   "optionalDependencies": {
     "@codemirror/lang-javascript": "^6.2.2",
-    "@types/node": "^22.10.7",
+    "@types/node": "^22.12.0",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/tsconfig": "^0.7.0",
     "@vueuse/core": "^12.4.0",
