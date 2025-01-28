@@ -1,4 +1,4 @@
-import { Reader } from './DataReader';
+import { Reader } from './dataReader';
 
 const LacingMask = 0b11111001;
 
