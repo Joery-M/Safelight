@@ -1,4 +1,4 @@
-import { BlockFlags } from '@safelight/tswebm/Block';
+import { BlockFlags } from '@safelight/tswebm/block';
 import { Elements, MatroskaElements } from '@safelight/tswebm/elements';
 import { WebmReader } from '@safelight/tswebm/WebmReader';
 import { expose } from 'comlink';
