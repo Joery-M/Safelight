@@ -48,7 +48,7 @@
     "@types/node": "^22.10.7",
     "mkdist": "^2.2.0",
     "typescript": "^5.7.3",
-    "vitest": "^3.0.2",
+    "vitest": "^3.0.4",
     "vue-tsc": "^2.2.0"
   }
 }
