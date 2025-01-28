@@ -25,10 +25,10 @@
   "devDependencies": {
     "@types/luxon": "^3.4.2",
     "@types/uuid": "^10.0.0",
-    "@vitest/ui": "^3.0.2",
+    "@vitest/ui": "^3.0.4",
     "fake-indexeddb": "^6.0.0",
     "happy-dom": "^16.6.0",
-    "vitest": "^3.0.2"
+    "vitest": "^3.0.4"
   },
   "peerDependencies": {
     "@phosphor-icons/vue": "^2.2.1",
