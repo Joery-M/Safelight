@@ -99,7 +99,7 @@ export enum MatroskaElements {
     /**
      * @interface {@link Elements.SegmentUUID}
      * @definition
-     * A randomly generated UID that identifies the `Segment` amongst many others (128 bits). It is equivalent to a Universally Unique Identifier (UUID) v4 [@!RFC4122] with all bits randomly (or pseudorandomly) chosen.  An actual UUID v4 value, where some bits are not random, **MAY** also be used.
+     * A randomly generated UID that identifies the `Segment` amongst many others (128 bits). It is equivalent to a Universally Unique Identifier (UUID) v4 [@!RFC9562] with all bits randomly (or pseudorandomly) chosen.  An actual UUID v4 value, where some bits are not random, **MAY** also be used.
      *
      * @usage notes
      * If the `Segment` is a part of a `Linked Segment`, then this element is **REQUIRED**.
@@ -125,9 +125,12 @@ export enum MatroskaElements {
      *
      * @usage notes
      * If the `Segment` is a part of a `Linked Segment` that uses
-     * Hard Linking ((#hard-linking)),
-     * then either the `PrevUUID` or the `NextUUID` element is **REQUIRED**. If a `Segment` contains a `PrevUUID` but not a `NextUUID`,
-     * then it **MAY** be considered as the last `Segment` of the `Linked Segment`. The `PrevUUID` **MUST NOT** be equal to the `SegmentUUID`.
+     * Hard Linking ((#hard-linking)), then either the
+     * `PrevUUID` or the `NextUUID` element is
+     * **REQUIRED**. If a `Segment` contains a `PrevUUID`
+     * but not a `NextUUID`, then it **MAY** be considered as the
+     * last `Segment` of the `Linked Segment`. The `PrevUUID`
+     * **MUST NOT** be equal to the `SegmentUUID`.
      *
      * @maxOccurs 1
      * @id 0x3CB923
@@ -153,8 +156,7 @@ export enum MatroskaElements {
      *
      * @usage notes
      * If the `Segment` is a part of a `Linked Segment` that uses Hard Linking ((#hard-linking)),
-     * then either the `PrevUUID` or the `NextUUID` element is **REQUIRED**. If a `Segment` contains a `NextUUID` but not a `PrevUUID`,
-     * then it **MAY** be considered as the first `Segment` of the `Linked Segment`. The `NextUUID` **MUST NOT** be equal to the `SegmentUUID`.
+     * then either the `PrevUUID` or the `NextUUID` element is **REQUIRED**. If a `Segment` contains a `NextUUID` but not a `PrevUUID`, then it **MAY** be considered as the first `Segment` of the `Linked Segment`. The `NextUUID` **MUST NOT** be equal to the `SegmentUUID`.
      *
      * @maxOccurs 1
      * @id 0x3EB923
@@ -176,7 +178,7 @@ export enum MatroskaElements {
     /**
      * @interface {@link Elements.SegmentFamily}
      * @definition
-     * A UID that all `Segments` of a `Linked Segment` **MUST** share (128 bits). It is equivalent to a UUID v4 [@!RFC4122] with all bits randomly (or pseudorandomly) chosen. An actual UUID v4 value, where some bits are not random, **MAY** also be used.
+     * A UID that all `Segments` of a `Linked Segment` **MUST** share (128 bits). It is equivalent to a UUID v4 [@!RFC9562] with all bits randomly (or pseudorandomly) chosen. An actual UUID v4 value, where some bits are not random, **MAY** also be used.
      *
      * @usage notes
      * If the `Segment` `Info` contains a `ChapterTranslate` element, this element is **REQUIRED**.
@@ -187,7 +189,8 @@ export enum MatroskaElements {
     /**
      * @interface {@link Elements.ChapterTranslate}
      * @definition
-     * The mapping between this `Segment` and a segment value in the given Chapter Codec.
+     * The mapping between this `Segment` and a
+     *     segment value in the given Chapter Codec.
      *
      * @rationale
      * Chapter Codecs may need to address different segments, but they may not know of the way to identify such segments when stored in Matroska.
@@ -432,9 +435,10 @@ export enum MatroskaElements {
     /**
      * @interface {@link Elements.BlockAddID}
      * @definition
-     * An ID that identifies how to interpret the `BlockAdditional` data; see [@?I-D.ietf-cellar-codec, section 4.1.5] for more information.
-     * A value of 1 indicates that the `BlockAdditional` data is defined by the codec.
-     * Any other value indicates that the `BlockAdditional` data should be handled according to the `BlockAddIDType` that is located in the
+     * An ID that identifies how to interpret the `BlockAdditional` data; see [@?I-D.ietf-cellar-codec, section 4.1.5] for
+     *     more information. A value of 1 indicates that the `BlockAdditional` data is
+     *     defined by the codec. Any other value indicates that the `BlockAdditional` data
+     *     should be handled according to the `BlockAddIDType` that is located in the
      * `TrackEntry`.
      *
      * @usage notes
@@ -451,8 +455,10 @@ export enum MatroskaElements {
      * @interface {@link Elements.BlockDuration}
      * @definition
      * The duration of the `Block`, expressed in Track Ticks; see (#timestamp-ticks).
-     * The `BlockDuration` element can be useful at the end of a `Track` to define the duration of the last frame (as there is no subsequent `Block` available)
-     * or when there is a break in a track like for subtitle tracks.
+     * The `BlockDuration` element can be useful
+     * at the end of a `Track` to define the duration of the last frame (as
+     * there is no subsequent `Block` available) or when there is a break in a
+     * track like for subtitle tracks.
      *
      * @maxOccurs 1
      * @id 0x9B
@@ -478,9 +484,7 @@ export enum MatroskaElements {
      * The relative value **SHOULD** correspond to a valid `Block` that this `Block` depends on.
      * Historically, `Matroska Writers` didn't write the actual `Block(s)` that this `Block` depends on, but they did write *some* `Block(s)` in the past.
      *
-     * The value "0" **MAY** also be used to signify that this `Block` cannot be decoded on its own, but the necessary reference `Block(s)` is unknown. In this case, other `ReferenceBlock` elements **MUST NOT** be found in the same `BlockGroup`.
-     *
-     * If the `BlockGroup` doesn't have a `ReferenceBlock` element, then the `Block` it contains can be decoded without using any other `Block` data.
+     * The value "0" **MAY** also be used to signify that this `Block` cannot be decoded on its own, but the necessary reference `Block(s)` is unknown. In this case, other `ReferenceBlock` elements **MUST NOT** be found in the same `BlockGroup`. If the `BlockGroup` doesn't have a `ReferenceBlock` element, then the `Block` it contains can be decoded without using any other `Block` data.
      *
      * @id 0xFB
      */
@@ -510,9 +514,13 @@ export enum MatroskaElements {
     /**
      * @interface {@link Elements.DiscardPadding}
      * @definition
-     * Duration of the silent data added to the `Block`, expressed in Matroska Ticks -- i.e., in nanoseconds; see (#timestamp-ticks)
-     * (padding at the end of the `Block` for positive values and at the beginning of the `Block` for negative values).
-     * The duration of `DiscardPadding` is not calculated in the duration of the `TrackEntry` and **SHOULD** be discarded during playback.
+     * Duration of the silent data added to the `Block`, expressed in
+     *     Matroska Ticks -- i.e., in nanoseconds; see (#timestamp-ticks)
+     * (padding at the end of the `Block` for positive values and at the
+     * beginning of the `Block` for negative values).  The duration of
+     * `DiscardPadding` is not calculated in the duration of the
+     * `TrackEntry` and **SHOULD** be discarded during
+     * playback.
      *
      * @minver 4
      * @maxOccurs 1
@@ -799,7 +807,8 @@ export enum MatroskaElements {
     /**
      * @interface {@link Elements.FlagLacing}
      * @definition
-     * Set to 1 if the track **MAY** contain blocks that use lacing. When set to 0, all blocks **MUST** have their lacing flags set to "no lacing"; see (#block-lacing) on 'Block' Lacing.
+     * Set to 1 if the track **MAY** contain blocks that use lacing.
+     *     When set to 0, all blocks **MUST** have their lacing flags set to "no lacing"; see (#block-lacing) on 'Block' Lacing.
      *
      * @default 1
      * @range 0-1
@@ -1085,8 +1094,7 @@ export enum MatroskaElements {
      * @interface {@link Elements.TrackOverlay}
      * @definition
      * Specify that this track is an overlay track for the `Track` specified (in the u-integer).
-     * This means that when this track has a gap on `SilentTracks`,
-     * the overlay track should be used instead. The order of multiple `TrackOverlay` matters; the first one is the one that should be used.
+     * This means that when this track has a gap on `SilentTracks`, the overlay track should be used instead. The order of multiple `TrackOverlay` matters; the first one is the one that should be used.
      * If the first one is not found, it should be the second, etc.
      *
      * @maxver 0
@@ -1217,8 +1225,10 @@ export enum MatroskaElements {
     /**
      * @interface {@link Elements.AlphaMode}
      * @definition
-     * Indicates whether the `BlockAdditional` element with `BlockAddID` of "1" contains Alpha data as defined by the Codec Mapping for the `CodecID`.
-     *  Undefined values (i.e., values other than 0 or 1) **SHOULD NOT** be used, as the behavior of known implementations is different.
+     * Indicates whether the `BlockAdditional` element with `BlockAddID` of "1"
+     *     contains Alpha data as defined by the Codec Mapping for the `CodecID`.
+     *  Undefined values (i.e., values other than 0 or 1) **SHOULD NOT** be used, as the
+     *  behavior of known implementations is different.
      *
      * @default 0
      * @minver 3
@@ -1374,7 +1384,8 @@ export enum MatroskaElements {
     /**
      * @interface {@link Elements.FrameRate}
      * @definition
-     * Number of frames per second. This value is informational only. It is intended for constant frame rate streams and should not be used for a variable frame rate `TrackEntry`.
+     * Number of frames per second. This value is informational only. It is intended for constant frame rate streams and should not be
+     *     used for a variable frame rate `TrackEntry`.
      *
      * @range > 0x0p+0
      * @minver 0
@@ -1421,8 +1432,8 @@ export enum MatroskaElements {
     /**
      * @interface {@link Elements.ChromaSubsamplingHorz}
      * @definition
-     * The number of pixels to remove in the Cr and Cb channels for every pixel not removed horizontally.
-     * Example: For video with 4:2:0 chroma subsampling, the `ChromaSubsamplingHorz` **SHOULD** be set to 1.
+     * The number of pixels to remove in the Cr and Cb channels for every pixel not removed horizontally. Example: For video with 4:2:0 chroma subsampling, the `ChromaSubsamplingHorz`
+     *     **SHOULD** be set to 1.
      *
      * @minver 4
      * @maxOccurs 1
@@ -1433,7 +1444,8 @@ export enum MatroskaElements {
      * @interface {@link Elements.ChromaSubsamplingVert}
      * @definition
      * The number of pixels to remove in the Cr and Cb channels for every pixel not removed vertically.
-     * Example: For video with 4:2:0 chroma subsampling, the `ChromaSubsamplingVert` **SHOULD** be set to 1.
+     * Example: For video with 4:2:0 chroma subsampling, the `ChromaSubsamplingVert`
+     * **SHOULD** be set to 1.
      *
      * @minver 4
      * @maxOccurs 1
@@ -1444,8 +1456,9 @@ export enum MatroskaElements {
      * @interface {@link Elements.CbSubsamplingHorz}
      * @definition
      * The number of pixels to remove in the Cb channel for every pixel not removed horizontally.
-     * This is additive with `ChromaSubsamplingHorz`. Example: For video with 4:2:1 chroma subsampling,
-     * the `ChromaSubsamplingHorz` **SHOULD** be set to 1, and `CbSubsamplingHorz` **SHOULD** be set to 1.
+     * This is additive with `ChromaSubsamplingHorz`.
+     * Example: For video with 4:2:1 chroma
+     * subsampling, the `ChromaSubsamplingHorz` **SHOULD** be set to 1, and `CbSubsamplingHorz` **SHOULD** be set to 1.
      *
      * @minver 4
      * @maxOccurs 1
@@ -1715,9 +1728,7 @@ export enum MatroskaElements {
     /**
      * @interface {@link Elements.ProjectionPoseYaw}
      * @definition
-     * Specifies a yaw rotation to the projection.
-     *
-     * Value represents a clockwise rotation, in degrees, around the up vector. This rotation must be applied
+     * Specifies a yaw rotation to the projection. Value represents a clockwise rotation, in degrees, around the up vector. This rotation must be applied
      * before any `ProjectionPosePitch` or `ProjectionPoseRoll` rotations.
      * The value of this element **MUST** be in the -180 to 180 degree range, both inclusive.
      *
@@ -1734,9 +1745,7 @@ export enum MatroskaElements {
     /**
      * @interface {@link Elements.ProjectionPosePitch}
      * @definition
-     * Specifies a pitch rotation to the projection.
-     *
-     * Value represents a counter-clockwise rotation, in degrees, around the right vector. This rotation must be applied
+     * Specifies a pitch rotation to the projection. Value represents a counter-clockwise rotation, in degrees, around the right vector. This rotation must be applied
      * after the `ProjectionPoseYaw` rotation and before the `ProjectionPoseRoll` rotation.
      * The value of this element **MUST** be in the -90 to 90 degree range, both inclusive.
      *
@@ -1751,15 +1760,16 @@ export enum MatroskaElements {
     /**
      * @interface {@link Elements.ProjectionPoseRoll}
      * @definition
-     * Specifies a roll rotation to the projection.
-     *
-     * Value represents a counter-clockwise rotation, in degrees, around the forward vector. This rotation must be applied
-     * after the `ProjectionPoseYaw` and `ProjectionPosePitch` rotations.
-     * The value of this element **MUST** be in the -180 to 180 degree range, both inclusive.
-     *
-     * Setting `ProjectionPoseRoll` to 180 or -180 degrees and `ProjectionPoseYaw` to 180 or -180 degrees with `ProjectionPosePitch` set to 0 degrees flips the image vertically.
-     *
-     * Setting `ProjectionPoseRoll` to 180 or -180 degrees with `ProjectionPoseYaw` and `ProjectionPosePitch` set to 0 degrees flips the image horizontally and vertically.
+     * Specifies a roll rotation to the projection. Value represents a
+     *     counter-clockwise rotation, in degrees, around the forward vector. This
+     *     rotation must be applied after the `ProjectionPoseYaw` and
+     *     `ProjectionPosePitch` rotations.  The value of this element
+     *     **MUST** be in the -180 to 180 degree range, both inclusive. Setting `ProjectionPoseRoll` to 180 or -180 degrees and
+     *     `ProjectionPoseYaw` to 180 or -180 degrees with
+     *     `ProjectionPosePitch` set to 0 degrees flips the image vertically.
+     *     Setting `ProjectionPoseRoll` to 180 or -180 degrees with
+     *     `ProjectionPoseYaw` and `ProjectionPosePitch` set to 0 degrees
+     *     flips the image horizontally and vertically.
      *
      * @default 0x0p+0
      * @range >= -0xB4p+0, <= 0xB4p+0
@@ -1848,8 +1858,7 @@ export enum MatroskaElements {
     /**
      * @interface {@link Elements.TrackOperation}
      * @definition
-     * Operation that needs to be applied on tracks to create this virtual track.
-     * For more details, see (#track-operation).
+     * Operation that needs to be applied on tracks to create this virtual track. For more details, see (#track-operation).
      *
      * @minver 3
      * @maxOccurs 1
@@ -1945,7 +1954,8 @@ export enum MatroskaElements {
     /**
      * @interface {@link Elements.TrickTrackFlag}
      * @definition
-     * Set to 1 if this video track is a Smooth FF/RW track. If set to 1, `MasterTrackUID` and `MasterTrackSegUID` should be present, and `BlockGroups` for this track must contain ReferenceFrame structures.
+     * Set to 1 if this video track is a Smooth FF/RW track. If set to 1, `MasterTrackUID` and `MasterTrackSegUID` should be present, and
+     *     `BlockGroups` for this track must contain ReferenceFrame structures.
      * Otherwise, TrickTrackUID and TrickTrackSegUID must be present if this track has a corresponding Smooth FF/RW track. See [@?DivXTrickTrack].
      *
      * @default 0
@@ -2011,8 +2021,7 @@ export enum MatroskaElements {
     /**
      * @interface {@link Elements.ContentEncodingScope}
      * @definition
-     * A bit field that describes which elements have been modified in this way.
-     * Values (big-endian) can be OR'ed.
+     * A bit field that describes which elements have been modified in this way. Values (big-endian) can be OR'ed.
      *
      * @default 1
      * @range not 0
@@ -2049,10 +2058,7 @@ export enum MatroskaElements {
      * The compression algorithm used.
      *
      * @usage notes
-     * Compression method "1" (bzlib) and "2" (lzo1x) lack proper documentation on the format, which limits implementation possibilities.
-     * Due to licensing conflicts on commonly available libraries' compression methods, "2" (lzo1x) does not offer widespread interoperability.
-     * A `Matroska Writer` **SHOULD NOT** use these compression methods by default.
-     * A `Matroska Reader` **MAY** support methods "1" and "2" and **SHOULD** support other methods.
+     * Compression method "1" (bzlib) and "2" (lzo1x) lack proper documentation on the format, which limits implementation possibilities. Due to licensing conflicts on commonly available libraries' compression methods, "2" (lzo1x) does not offer widespread interoperability. A `Matroska Writer` **SHOULD NOT** use these compression methods by default. A `Matroska Reader` **MAY** support methods "1" and "2" and **SHOULD** support other methods.
      *
      * @default 0
      * @maxOccurs 1
@@ -2168,8 +2174,8 @@ export enum MatroskaElements {
     /**
      * @interface {@link Elements.Cues}
      * @definition
-     * A `Top-Level Element` to speed seeking access.
-     * All entries are local to the `Segment`.
+     * A `Top-Level Element` to speed seeking access.  All entries are
+     *     local to the `Segment`.
      *
      * @maxOccurs 1
      * @id 0x1C53BB6B
@@ -2259,8 +2265,9 @@ export enum MatroskaElements {
     /**
      * @interface {@link Elements.CueCodecState}
      * @definition
-     * The `Segment Position` ((#segment-position)) of the Codec State corresponding to this `Cues` element.
-     * 0 means that the data is taken from the initial `TrackEntry`.
+     * The `Segment Position` ((#segment-position)) of the
+     *     Codec State corresponding to this `Cues` element. 0 means that the
+     *     data is taken from the initial `TrackEntry`.
      *
      * @default 0
      * @minver 2
@@ -2409,7 +2416,8 @@ export enum MatroskaElements {
     /**
      * @interface {@link Elements.FileUsedStartTime}
      * @definition
-     * The timestamp at which this optimized font attachment comes into context, expressed in Segment Ticks, which are based on `TimestampScale`. See [@?DivXWorldFonts].
+     * The timestamp at which this optimized font attachment comes into context, expressed in Segment Ticks, which are based on
+     *     `TimestampScale`. See [@?DivXWorldFonts].
      *
      * @usage notes
      * This element is reserved for future use and if written **MUST** be the segment start timestamp.
@@ -2423,7 +2431,8 @@ export enum MatroskaElements {
     /**
      * @interface {@link Elements.FileUsedEndTime}
      * @definition
-     * The timestamp at which this optimized font attachment goes out of context, expressed in Segment Ticks, which are based on `TimestampScale`. See [@?DivXWorldFonts].
+     * The timestamp at which this optimized font attachment goes out of context, expressed in Segment Ticks, which are based on
+     *     `TimestampScale`. See [@?DivXWorldFonts].
      *
      * @usage notes
      * This element is reserved for future use and if written **MUST** be the segment end timestamp.
@@ -2588,7 +2597,8 @@ export enum MatroskaElements {
     /**
      * @interface {@link Elements.ChapterFlagHidden}
      * @definition
-     * Set to 1 if a chapter is hidden. Hidden chapters **SHOULD NOT** be available to the user interface
+     * Set to 1 if a chapter is hidden.
+     *     Hidden chapters **SHOULD NOT** be available to the user interface
      * (but still be available to Control Tracks; see (#chapterflaghidden) on `Chapter` flags).
      *
      * @default 0
@@ -2626,8 +2636,10 @@ export enum MatroskaElements {
     /**
      * @interface {@link Elements.ChapterSkipType}
      * @definition
-     * Indicates what type of content the `ChapterAtom` contains and might be skipped. It can be used to automatically skip content based on the type.
-     * If a `ChapterAtom` is inside a `ChapterAtom` that has a `ChapterSkipType` set, it **MUST NOT** have a `ChapterSkipType` or have a `ChapterSkipType` with the same value as it's parent `ChapterAtom`.
+     * Indicates what type of content the `ChapterAtom` contains and might be skipped.
+     *     It can be used to automatically skip content based on the type.
+     *     If a `ChapterAtom` is inside a `ChapterAtom` that has a `ChapterSkipType` set, it
+     *     **MUST NOT** have a `ChapterSkipType` or have a `ChapterSkipType` with the same value as it's parent `ChapterAtom`.
      * If the `ChapterAtom` doesn't contain a `ChapterTimeEnd`, the value of the `ChapterSkipType` is only valid until the next `ChapterAtom` with a `ChapterSkipType` value or the end of the file.
      *
      * @minver 5
@@ -2886,8 +2898,9 @@ export enum MatroskaElements {
      * A UID that identifies the Attachment(s) that the tags belong to.
      *
      * @usage notes
-     * If the value is 0 at this level, the tags apply to all the attachments in the `Segment`.
-     * If set to any other value, it **MUST** match the `FileUID` value of an attachment found in this `Segment`.
+     * If the value is 0 at this level, the tags apply to all the attachments in
+     *     the `Segment`.  If set to any other value, it **MUST** match
+     *     the `FileUID` value of an attachment found in this `Segment`.
      *
      * @default 0
      * @id 0x63C6
@@ -2915,8 +2928,7 @@ export enum MatroskaElements {
     /**
      * @interface {@link Elements.TagLanguage}
      * @definition
-     * Specifies the language of the specified tag
-     * in the Matroska languages form; see (#language-codes) on language codes.
+     * Specifies the language of the specified tag in the Matroska languages form; see (#language-codes) on language codes.
      * This element **MUST** be ignored if the `TagLanguageBCP47` element is used within the same `SimpleTag` element.
      *
      * @default und
@@ -7321,7 +7333,7 @@ export namespace Elements {
 
     /**
      * @definition
-     * A randomly generated UID that identifies the `Segment` amongst many others (128 bits). It is equivalent to a Universally Unique Identifier (UUID) v4 [@!RFC4122] with all bits randomly (or pseudorandomly) chosen.  An actual UUID v4 value, where some bits are not random, **MAY** also be used.
+     * A randomly generated UID that identifies the `Segment` amongst many others (128 bits). It is equivalent to a Universally Unique Identifier (UUID) v4 [@!RFC9562] with all bits randomly (or pseudorandomly) chosen.  An actual UUID v4 value, where some bits are not random, **MAY** also be used.
      *
      * @usage notes
      * If the `Segment` is a part of a `Linked Segment`, then this element is **REQUIRED**.
@@ -7347,9 +7359,12 @@ export namespace Elements {
      *
      * @usage notes
      * If the `Segment` is a part of a `Linked Segment` that uses
-     * Hard Linking ((#hard-linking)),
-     * then either the `PrevUUID` or the `NextUUID` element is **REQUIRED**. If a `Segment` contains a `PrevUUID` but not a `NextUUID`,
-     * then it **MAY** be considered as the last `Segment` of the `Linked Segment`. The `PrevUUID` **MUST NOT** be equal to the `SegmentUUID`.
+     * Hard Linking ((#hard-linking)), then either the
+     * `PrevUUID` or the `NextUUID` element is
+     * **REQUIRED**. If a `Segment` contains a `PrevUUID`
+     * but not a `NextUUID`, then it **MAY** be considered as the
+     * last `Segment` of the `Linked Segment`. The `PrevUUID`
+     * **MUST NOT** be equal to the `SegmentUUID`.
      *
      * @maxOccurs 1
      * @id 0x3CB923
@@ -7375,8 +7390,7 @@ export namespace Elements {
      *
      * @usage notes
      * If the `Segment` is a part of a `Linked Segment` that uses Hard Linking ((#hard-linking)),
-     * then either the `PrevUUID` or the `NextUUID` element is **REQUIRED**. If a `Segment` contains a `NextUUID` but not a `PrevUUID`,
-     * then it **MAY** be considered as the first `Segment` of the `Linked Segment`. The `NextUUID` **MUST NOT** be equal to the `SegmentUUID`.
+     * then either the `PrevUUID` or the `NextUUID` element is **REQUIRED**. If a `Segment` contains a `NextUUID` but not a `PrevUUID`, then it **MAY** be considered as the first `Segment` of the `Linked Segment`. The `NextUUID` **MUST NOT** be equal to the `SegmentUUID`.
      *
      * @maxOccurs 1
      * @id 0x3EB923
@@ -7398,7 +7412,7 @@ export namespace Elements {
 
     /**
      * @definition
-     * A UID that all `Segments` of a `Linked Segment` **MUST** share (128 bits). It is equivalent to a UUID v4 [@!RFC4122] with all bits randomly (or pseudorandomly) chosen. An actual UUID v4 value, where some bits are not random, **MAY** also be used.
+     * A UID that all `Segments` of a `Linked Segment` **MUST** share (128 bits). It is equivalent to a UUID v4 [@!RFC9562] with all bits randomly (or pseudorandomly) chosen. An actual UUID v4 value, where some bits are not random, **MAY** also be used.
      *
      * @usage notes
      * If the `Segment` `Info` contains a `ChapterTranslate` element, this element is **REQUIRED**.
@@ -7409,7 +7423,8 @@ export namespace Elements {
 
     /**
      * @definition
-     * The mapping between this `Segment` and a segment value in the given Chapter Codec.
+     * The mapping between this `Segment` and a
+     *     segment value in the given Chapter Codec.
      *
      * @rationale
      * Chapter Codecs may need to address different segments, but they may not know of the way to identify such segments when stored in Matroska.
@@ -7685,9 +7700,10 @@ export namespace Elements {
 
     /**
      * @definition
-     * An ID that identifies how to interpret the `BlockAdditional` data; see [@?I-D.ietf-cellar-codec, section 4.1.5] for more information.
-     * A value of 1 indicates that the `BlockAdditional` data is defined by the codec.
-     * Any other value indicates that the `BlockAdditional` data should be handled according to the `BlockAddIDType` that is located in the
+     * An ID that identifies how to interpret the `BlockAdditional` data; see [@?I-D.ietf-cellar-codec, section 4.1.5] for
+     *     more information. A value of 1 indicates that the `BlockAdditional` data is
+     *     defined by the codec. Any other value indicates that the `BlockAdditional` data
+     *     should be handled according to the `BlockAddIDType` that is located in the
      * `TrackEntry`.
      *
      * @usage notes
@@ -7704,8 +7720,10 @@ export namespace Elements {
     /**
      * @definition
      * The duration of the `Block`, expressed in Track Ticks; see (#timestamp-ticks).
-     * The `BlockDuration` element can be useful at the end of a `Track` to define the duration of the last frame (as there is no subsequent `Block` available)
-     * or when there is a break in a track like for subtitle tracks.
+     * The `BlockDuration` element can be useful
+     * at the end of a `Track` to define the duration of the last frame (as
+     * there is no subsequent `Block` available) or when there is a break in a
+     * track like for subtitle tracks.
      *
      * @maxOccurs 1
      * @id 0x9B
@@ -7731,9 +7749,7 @@ export namespace Elements {
      * The relative value **SHOULD** correspond to a valid `Block` that this `Block` depends on.
      * Historically, `Matroska Writers` didn't write the actual `Block(s)` that this `Block` depends on, but they did write *some* `Block(s)` in the past.
      *
-     * The value "0" **MAY** also be used to signify that this `Block` cannot be decoded on its own, but the necessary reference `Block(s)` is unknown. In this case, other `ReferenceBlock` elements **MUST NOT** be found in the same `BlockGroup`.
-     *
-     * If the `BlockGroup` doesn't have a `ReferenceBlock` element, then the `Block` it contains can be decoded without using any other `Block` data.
+     * The value "0" **MAY** also be used to signify that this `Block` cannot be decoded on its own, but the necessary reference `Block(s)` is unknown. In this case, other `ReferenceBlock` elements **MUST NOT** be found in the same `BlockGroup`. If the `BlockGroup` doesn't have a `ReferenceBlock` element, then the `Block` it contains can be decoded without using any other `Block` data.
      *
      * @id 0xFB
      */
@@ -7763,9 +7779,13 @@ export namespace Elements {
 
     /**
      * @definition
-     * Duration of the silent data added to the `Block`, expressed in Matroska Ticks -- i.e., in nanoseconds; see (#timestamp-ticks)
-     * (padding at the end of the `Block` for positive values and at the beginning of the `Block` for negative values).
-     * The duration of `DiscardPadding` is not calculated in the duration of the `TrackEntry` and **SHOULD** be discarded during playback.
+     * Duration of the silent data added to the `Block`, expressed in
+     *     Matroska Ticks -- i.e., in nanoseconds; see (#timestamp-ticks)
+     * (padding at the end of the `Block` for positive values and at the
+     * beginning of the `Block` for negative values).  The duration of
+     * `DiscardPadding` is not calculated in the duration of the
+     * `TrackEntry` and **SHOULD** be discarded during
+     * playback.
      *
      * @minver 4
      * @maxOccurs 1
@@ -8159,7 +8179,8 @@ export namespace Elements {
 
     /**
      * @definition
-     * Set to 1 if the track **MAY** contain blocks that use lacing. When set to 0, all blocks **MUST** have their lacing flags set to "no lacing"; see (#block-lacing) on 'Block' Lacing.
+     * Set to 1 if the track **MAY** contain blocks that use lacing.
+     *     When set to 0, all blocks **MUST** have their lacing flags set to "no lacing"; see (#block-lacing) on 'Block' Lacing.
      *
      * @default 1
      * @range 0-1
@@ -8450,8 +8471,7 @@ export namespace Elements {
     /**
      * @definition
      * Specify that this track is an overlay track for the `Track` specified (in the u-integer).
-     * This means that when this track has a gap on `SilentTracks`,
-     * the overlay track should be used instead. The order of multiple `TrackOverlay` matters; the first one is the one that should be used.
+     * This means that when this track has a gap on `SilentTracks`, the overlay track should be used instead. The order of multiple `TrackOverlay` matters; the first one is the one that should be used.
      * If the first one is not found, it should be the second, etc.
      *
      * @maxver 0
@@ -8718,8 +8738,10 @@ export namespace Elements {
 
     /**
      * @definition
-     * Indicates whether the `BlockAdditional` element with `BlockAddID` of "1" contains Alpha data as defined by the Codec Mapping for the `CodecID`.
-     *  Undefined values (i.e., values other than 0 or 1) **SHOULD NOT** be used, as the behavior of known implementations is different.
+     * Indicates whether the `BlockAdditional` element with `BlockAddID` of "1"
+     *     contains Alpha data as defined by the Codec Mapping for the `CodecID`.
+     *  Undefined values (i.e., values other than 0 or 1) **SHOULD NOT** be used, as the
+     *  behavior of known implementations is different.
      *
      * @default 0
      * @minver 3
@@ -8927,7 +8949,8 @@ export namespace Elements {
 
     /**
      * @definition
-     * Number of frames per second. This value is informational only. It is intended for constant frame rate streams and should not be used for a variable frame rate `TrackEntry`.
+     * Number of frames per second. This value is informational only. It is intended for constant frame rate streams and should not be
+     *     used for a variable frame rate `TrackEntry`.
      *
      * @range > 0x0p+0
      * @minver 0
@@ -9035,8 +9058,8 @@ export namespace Elements {
 
     /**
      * @definition
-     * The number of pixels to remove in the Cr and Cb channels for every pixel not removed horizontally.
-     * Example: For video with 4:2:0 chroma subsampling, the `ChromaSubsamplingHorz` **SHOULD** be set to 1.
+     * The number of pixels to remove in the Cr and Cb channels for every pixel not removed horizontally. Example: For video with 4:2:0 chroma subsampling, the `ChromaSubsamplingHorz`
+     *     **SHOULD** be set to 1.
      *
      * @minver 4
      * @maxOccurs 1
@@ -9047,7 +9070,8 @@ export namespace Elements {
     /**
      * @definition
      * The number of pixels to remove in the Cr and Cb channels for every pixel not removed vertically.
-     * Example: For video with 4:2:0 chroma subsampling, the `ChromaSubsamplingVert` **SHOULD** be set to 1.
+     * Example: For video with 4:2:0 chroma subsampling, the `ChromaSubsamplingVert`
+     * **SHOULD** be set to 1.
      *
      * @minver 4
      * @maxOccurs 1
@@ -9058,8 +9082,9 @@ export namespace Elements {
     /**
      * @definition
      * The number of pixels to remove in the Cb channel for every pixel not removed horizontally.
-     * This is additive with `ChromaSubsamplingHorz`. Example: For video with 4:2:1 chroma subsampling,
-     * the `ChromaSubsamplingHorz` **SHOULD** be set to 1, and `CbSubsamplingHorz` **SHOULD** be set to 1.
+     * This is additive with `ChromaSubsamplingHorz`.
+     * Example: For video with 4:2:1 chroma
+     * subsampling, the `ChromaSubsamplingHorz` **SHOULD** be set to 1, and `CbSubsamplingHorz` **SHOULD** be set to 1.
      *
      * @minver 4
      * @maxOccurs 1
@@ -9493,9 +9518,7 @@ export namespace Elements {
 
     /**
      * @definition
-     * Specifies a yaw rotation to the projection.
-     *
-     * Value represents a clockwise rotation, in degrees, around the up vector. This rotation must be applied
+     * Specifies a yaw rotation to the projection. Value represents a clockwise rotation, in degrees, around the up vector. This rotation must be applied
      * before any `ProjectionPosePitch` or `ProjectionPoseRoll` rotations.
      * The value of this element **MUST** be in the -180 to 180 degree range, both inclusive.
      *
@@ -9512,9 +9535,7 @@ export namespace Elements {
 
     /**
      * @definition
-     * Specifies a pitch rotation to the projection.
-     *
-     * Value represents a counter-clockwise rotation, in degrees, around the right vector. This rotation must be applied
+     * Specifies a pitch rotation to the projection. Value represents a counter-clockwise rotation, in degrees, around the right vector. This rotation must be applied
      * after the `ProjectionPoseYaw` rotation and before the `ProjectionPoseRoll` rotation.
      * The value of this element **MUST** be in the -90 to 90 degree range, both inclusive.
      *
@@ -9529,15 +9550,16 @@ export namespace Elements {
 
     /**
      * @definition
-     * Specifies a roll rotation to the projection.
-     *
-     * Value represents a counter-clockwise rotation, in degrees, around the forward vector. This rotation must be applied
-     * after the `ProjectionPoseYaw` and `ProjectionPosePitch` rotations.
-     * The value of this element **MUST** be in the -180 to 180 degree range, both inclusive.
-     *
-     * Setting `ProjectionPoseRoll` to 180 or -180 degrees and `ProjectionPoseYaw` to 180 or -180 degrees with `ProjectionPosePitch` set to 0 degrees flips the image vertically.
-     *
-     * Setting `ProjectionPoseRoll` to 180 or -180 degrees with `ProjectionPoseYaw` and `ProjectionPosePitch` set to 0 degrees flips the image horizontally and vertically.
+     * Specifies a roll rotation to the projection. Value represents a
+     *     counter-clockwise rotation, in degrees, around the forward vector. This
+     *     rotation must be applied after the `ProjectionPoseYaw` and
+     *     `ProjectionPosePitch` rotations.  The value of this element
+     *     **MUST** be in the -180 to 180 degree range, both inclusive. Setting `ProjectionPoseRoll` to 180 or -180 degrees and
+     *     `ProjectionPoseYaw` to 180 or -180 degrees with
+     *     `ProjectionPosePitch` set to 0 degrees flips the image vertically.
+     *     Setting `ProjectionPoseRoll` to 180 or -180 degrees with
+     *     `ProjectionPoseYaw` and `ProjectionPosePitch` set to 0 degrees
+     *     flips the image horizontally and vertically.
      *
      * @default 0x0p+0
      * @range >= -0xB4p+0, <= 0xB4p+0
@@ -9706,8 +9728,7 @@ export namespace Elements {
 
     /**
      * @definition
-     * Operation that needs to be applied on tracks to create this virtual track.
-     * For more details, see (#track-operation).
+     * Operation that needs to be applied on tracks to create this virtual track. For more details, see (#track-operation).
      *
      * @minver 3
      * @maxOccurs 1
@@ -9823,7 +9844,8 @@ export namespace Elements {
 
     /**
      * @definition
-     * Set to 1 if this video track is a Smooth FF/RW track. If set to 1, `MasterTrackUID` and `MasterTrackSegUID` should be present, and `BlockGroups` for this track must contain ReferenceFrame structures.
+     * Set to 1 if this video track is a Smooth FF/RW track. If set to 1, `MasterTrackUID` and `MasterTrackSegUID` should be present, and
+     *     `BlockGroups` for this track must contain ReferenceFrame structures.
      * Otherwise, TrickTrackUID and TrickTrackSegUID must be present if this track has a corresponding Smooth FF/RW track. See [@?DivXTrickTrack].
      *
      * @default 0
@@ -9897,8 +9919,7 @@ export namespace Elements {
 
     /**
      * @definition
-     * A bit field that describes which elements have been modified in this way.
-     * Values (big-endian) can be OR'ed.
+     * A bit field that describes which elements have been modified in this way. Values (big-endian) can be OR'ed.
      *
      * @default 1
      * @range not 0
@@ -9967,10 +9988,7 @@ export namespace Elements {
      * The compression algorithm used.
      *
      * @usage notes
-     * Compression method "1" (bzlib) and "2" (lzo1x) lack proper documentation on the format, which limits implementation possibilities.
-     * Due to licensing conflicts on commonly available libraries' compression methods, "2" (lzo1x) does not offer widespread interoperability.
-     * A `Matroska Writer` **SHOULD NOT** use these compression methods by default.
-     * A `Matroska Reader` **MAY** support methods "1" and "2" and **SHOULD** support other methods.
+     * Compression method "1" (bzlib) and "2" (lzo1x) lack proper documentation on the format, which limits implementation possibilities. Due to licensing conflicts on commonly available libraries' compression methods, "2" (lzo1x) does not offer widespread interoperability. A `Matroska Writer` **SHOULD NOT** use these compression methods by default. A `Matroska Reader` **MAY** support methods "1" and "2" and **SHOULD** support other methods.
      *
      * @default 0
      * @maxOccurs 1
@@ -10197,8 +10215,8 @@ export namespace Elements {
 
     /**
      * @definition
-     * A `Top-Level Element` to speed seeking access.
-     * All entries are local to the `Segment`.
+     * A `Top-Level Element` to speed seeking access.  All entries are
+     *     local to the `Segment`.
      *
      * @maxOccurs 1
      * @id 0x1C53BB6B
@@ -10301,8 +10319,9 @@ export namespace Elements {
 
     /**
      * @definition
-     * The `Segment Position` ((#segment-position)) of the Codec State corresponding to this `Cues` element.
-     * 0 means that the data is taken from the initial `TrackEntry`.
+     * The `Segment Position` ((#segment-position)) of the
+     *     Codec State corresponding to this `Cues` element. 0 means that the
+     *     data is taken from the initial `TrackEntry`.
      *
      * @default 0
      * @minver 2
@@ -10467,7 +10486,8 @@ export namespace Elements {
 
     /**
      * @definition
-     * The timestamp at which this optimized font attachment comes into context, expressed in Segment Ticks, which are based on `TimestampScale`. See [@?DivXWorldFonts].
+     * The timestamp at which this optimized font attachment comes into context, expressed in Segment Ticks, which are based on
+     *     `TimestampScale`. See [@?DivXWorldFonts].
      *
      * @usage notes
      * This element is reserved for future use and if written **MUST** be the segment start timestamp.
@@ -10481,7 +10501,8 @@ export namespace Elements {
 
     /**
      * @definition
-     * The timestamp at which this optimized font attachment goes out of context, expressed in Segment Ticks, which are based on `TimestampScale`. See [@?DivXWorldFonts].
+     * The timestamp at which this optimized font attachment goes out of context, expressed in Segment Ticks, which are based on
+     *     `TimestampScale`. See [@?DivXWorldFonts].
      *
      * @usage notes
      * This element is reserved for future use and if written **MUST** be the segment end timestamp.
@@ -10672,7 +10693,8 @@ export namespace Elements {
 
     /**
      * @definition
-     * Set to 1 if a chapter is hidden. Hidden chapters **SHOULD NOT** be available to the user interface
+     * Set to 1 if a chapter is hidden.
+     *     Hidden chapters **SHOULD NOT** be available to the user interface
      * (but still be available to Control Tracks; see (#chapterflaghidden) on `Chapter` flags).
      *
      * @default 0
@@ -10710,8 +10732,10 @@ export namespace Elements {
 
     /**
      * @definition
-     * Indicates what type of content the `ChapterAtom` contains and might be skipped. It can be used to automatically skip content based on the type.
-     * If a `ChapterAtom` is inside a `ChapterAtom` that has a `ChapterSkipType` set, it **MUST NOT** have a `ChapterSkipType` or have a `ChapterSkipType` with the same value as it's parent `ChapterAtom`.
+     * Indicates what type of content the `ChapterAtom` contains and might be skipped.
+     *     It can be used to automatically skip content based on the type.
+     *     If a `ChapterAtom` is inside a `ChapterAtom` that has a `ChapterSkipType` set, it
+     *     **MUST NOT** have a `ChapterSkipType` or have a `ChapterSkipType` with the same value as it's parent `ChapterAtom`.
      * If the `ChapterAtom` doesn't contain a `ChapterTimeEnd`, the value of the `ChapterSkipType` is only valid until the next `ChapterAtom` with a `ChapterSkipType` value or the end of the file.
      *
      * @minver 5
@@ -10760,7 +10784,13 @@ export namespace Elements {
          * Advertisement within the content.
          *
          */
-        Advertisement = 6
+        Advertisement = 6,
+        /**
+         * @definition
+         * A pause of content between main parts of the content.
+         *
+         */
+        Intermission = 7
     }
 
     /**
@@ -11169,8 +11199,9 @@ export namespace Elements {
      * A UID that identifies the Attachment(s) that the tags belong to.
      *
      * @usage notes
-     * If the value is 0 at this level, the tags apply to all the attachments in the `Segment`.
-     * If set to any other value, it **MUST** match the `FileUID` value of an attachment found in this `Segment`.
+     * If the value is 0 at this level, the tags apply to all the attachments in
+     *     the `Segment`.  If set to any other value, it **MUST** match
+     *     the `FileUID` value of an attachment found in this `Segment`.
      *
      * @default 0
      * @id 0x63C6
@@ -11206,8 +11237,7 @@ export namespace Elements {
 
     /**
      * @definition
-     * Specifies the language of the specified tag
-     * in the Matroska languages form; see (#language-codes) on language codes.
+     * Specifies the language of the specified tag in the Matroska languages form; see (#language-codes) on language codes.
      * This element **MUST** be ignored if the `TagLanguageBCP47` element is used within the same `SimpleTag` element.
      *
      * @default und

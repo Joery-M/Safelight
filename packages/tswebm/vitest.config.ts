@@ -4,7 +4,9 @@ export default defineProject({
     define: {
         __TEST__: true
     },
-    plugins: [],
+    resolve: {
+        conditions: ['development']
+    },
     test: {
         globals: true,
         name: 'tswebm',

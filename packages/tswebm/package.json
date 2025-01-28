@@ -12,38 +12,50 @@
   },
   "contributors": [],
   "license": "MIT",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
-    "./*": {
-      "import": [
-        "./src/*.ts",
-        "./dist/*.js"
-      ],
-      "types": [
-        "./src/*.ts",
-        "./dist/*.d.ts"
-      ]
+    "./block": {
+      "development": "./src/block.ts",
+      "types": "./dist/block.d.ts",
+      "import": "./dist/block.js",
+      "require": "./dist/block.cjs"
+    },
+    "./elements": {
+      "development": "./src/elements.ts",
+      "types": "./dist/elements.d.ts",
+      "import": "./dist/elements.js",
+      "require": "./dist/elements.cjs"
+    },
+    "./dataReader": {
+      "development": "./src/dataReader.ts",
+      "types": "./dist/dataReader.d.ts",
+      "import": "./dist/dataReader.js",
+      "require": "./dist/dataReader.cjs"
+    },
+    "./WebmReader": {
+      "development": "./src/WebmReader.ts",
+      "types": "./dist/WebmReader.d.ts",
+      "import": "./dist/WebmReader.js",
+      "require": "./dist/WebmReader.cjs"
     },
     ".": {
-      "import": [
-        "./src/index.ts",
-        "./dist/index.js"
-      ],
-      "types": [
-        "./src/index.ts",
-        "./dist/index.d.ts"
-      ]
+      "development": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     }
   },
-  "type": "module",
   "scripts": {
     "dev": "vite build --mode=development --watch",
     "clean": "rimraf -g ./dist/*",
-    "build": "pnpm run \"/(clean|generate:elements)/\" && pnpm build:vite && pnpm build:tsc",
-    "build:vite": "vite build",
-    "build:tsc": "tsc --emitDeclarationOnly --project tsconfig.json",
+    "build": "pnpm generate:elements && pnpm build:no-gen",
+    "build:no-gen": "pkgroll --clean-dist --minify",
     "generate:elements": "tsx ./tools/SchemaParser.ts https://raw.githubusercontent.com/ietf-wg-cellar/matroska-specification/master/ebml_matroska.xml && prettier ./src/elements.ts --write --print-width 110",
     "test": "vitest --ui",
     "test:run": "vitest run --ui false"
@@ -56,6 +68,7 @@
     "eventemitter3": "^5.0.1",
     "fast-xml-parser": "^4.5.1",
     "happy-dom": "^16.6.0",
+    "pkgroll": "^2.6.1",
     "prettier": "^3.4.2",
     "rimraf": "^6.0.1",
     "tsx": "^4.19.2",
