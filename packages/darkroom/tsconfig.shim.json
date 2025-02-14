@@ -1,7 +1,8 @@
 {
     "extends": "./tsconfig.json",
     "compilerOptions": {
-        "composite": true
+        "composite": true,
+        "isolatedDeclarations": false
     },
-    "include": ["/lib/shim/*.ts", "types/isolatedGlobals.d.ts"]
+    "include": ["./src/shim/*.ts", "types/isolatedGlobals.d.ts"]
 }

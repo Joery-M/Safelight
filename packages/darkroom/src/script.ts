@@ -16,17 +16,17 @@ export class Script {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    registerModule(name: string, content: string) {
+    registerModule(name: string, content: string): void {
         throw new Error('Method not implemented');
     }
 
-    execute() {
+    execute(): any {
         this.compartment = new Compartment(this.globals);
 
         return this.compartment.evaluate(this.content);
     }
 
-    defineGlobals(globals: any) {
+    defineGlobals(globals: any): void {
         this.globals = globals;
     }
 }
