@@ -81,7 +81,7 @@ importers:
         specifier: ^9.4.3
         version: 9.4.3(eslint@9.19.0(jiti@2.4.2))
       vue-i18n:
-        specifier: 11.1.1
+        specifier: ^11.1.1
         version: 11.1.1(vue@3.5.13(typescript@5.7.3))
 
   packages/daguerreo:
@@ -214,7 +214,7 @@ importers:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.7.3)
       vue-i18n:
-        specifier: 11.1.1
+        specifier: ^11.1.1
         version: 11.1.1(vue@3.5.13(typescript@5.7.3))
       vue-markdown-render:
         specifier: ^2.2.1
@@ -317,7 +317,7 @@ importers:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.7.3)
       vue-i18n:
-        specifier: 11.1.1
+        specifier: ^11.1.1
         version: 11.1.1(vue@3.5.13(typescript@5.7.3))
     devDependencies:
       '@types/luxon':
