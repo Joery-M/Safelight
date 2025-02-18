@@ -52,16 +52,14 @@
     }
   },
   "scripts": {
-    "dev": "vite build --mode=development --watch",
-    "clean": "rimraf -g ./dist/*",
+    "dev": "pkgroll --clean-dist -m -w",
     "build": "pnpm generate:elements && pnpm build:no-gen",
-    "build:no-gen": "pkgroll --clean-dist --minify",
+    "build:no-gen": "pkgroll --clean-dist -m",
     "generate:elements": "tsx ./tools/SchemaParser.ts https://raw.githubusercontent.com/ietf-wg-cellar/matroska-specification/master/ebml_matroska.xml && prettier ./src/elements.ts --write --print-width 110",
     "test": "vitest --ui",
     "test:run": "vitest run --ui false"
   },
   "devDependencies": {
-    "@rollup/plugin-terser": "^0.4.4",
     "@types/node": "^22.12.0",
     "@vitest/ui": "^3.0.4",
     "change-case": "^5.4.4",
@@ -70,11 +68,8 @@
     "happy-dom": "^16.7.3",
     "pkgroll": "^2.6.1",
     "prettier": "^3.4.2",
-    "rimraf": "^6.0.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3",
-    "vite": "^6.0.11",
-    "vite-plugin-dts": "^4.5.0",
     "vitest": "^3.0.4"
   }
 }

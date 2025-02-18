@@ -1,5 +1,5 @@
 import { OnLoadArgs, OnResolveArgs, Plugin, PluginBuild } from 'esbuild-wasm';
-import Path from 'path-browserify';
+import { dirname, extname, join } from 'pathe';
 import shim from './shim/darkroom-shim?raw';
 
 const internalPaths = new Map<string, string>([['/@darkroom-internal/darkroom-shim.ts', shim]]);
@@ -40,9 +40,9 @@ export function customResolver(tree: Record<string, string>): Plugin {
                         };
                     }
 
-                    const dirname = Path.dirname(args.importer);
+                    const dir = dirname(args.importer);
 
-                    const path = Path.join(dirname, args.path);
+                    const path = join(dir, args.path);
 
                     return { path, external: false };
                 }
@@ -77,7 +77,7 @@ export function customResolver(tree: Record<string, string>): Plugin {
                 if (!map.has(args.path) && !map.has(args.path + '.ts')) {
                     throw Error('Could not load ' + args.path);
                 }
-                const ext = Path.extname(args.path) ?? '.ts';
+                const ext = extname(args.path) ?? '.ts';
 
                 const contents = map.get(args.path)!;
 

@@ -4,7 +4,7 @@ import 'ses';
 import { customResolver } from './moduleResolver';
 
 export class Compiler {
-    esbuildReady = new BehaviorSubject<boolean>(false);
+    esbuildReady: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     private esbuildWasm: string = '';
 
     private esBuildOptions: esbuild.BuildOptions = {
@@ -43,7 +43,7 @@ export class Compiler {
             });
     }
 
-    async restartEsbuild() {
+    async restartEsbuild(): Promise<void> {
         this.esbuildReady.next(false);
         await esbuild.stop();
         await esbuild.initialize({
@@ -52,7 +52,7 @@ export class Compiler {
         this.esbuildReady.next(true);
     }
 
-    waitForReady() {
+    waitForReady(): Promise<void> {
         return new Promise<void>((resolve) => {
             this.esbuildReady.subscribe((ready) => {
                 if (ready) {
@@ -62,7 +62,7 @@ export class Compiler {
         });
     }
 
-    async compileSingleScript(script: string) {
+    async compileSingleScript(script: string): Promise<esbuild.BuildResult> {
         const compilation = await esbuild.build({
             ...this.esBuildOptions,
             entryPoints: ['index.ts'],
@@ -79,7 +79,7 @@ export class Compiler {
         return compilation;
     }
 
-    async compileScripts(scripts: { [filename: string]: string }) {
+    async compileScripts(scripts: { [filename: string]: string }): Promise<esbuild.BuildResult> {
         const compilation = await esbuild.build({
             ...this.esBuildOptions,
             entryPoints: ['index.ts'],
