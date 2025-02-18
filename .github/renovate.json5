@@ -1,6 +1,6 @@
 {
     $schema: 'https://docs.renovatebot.com/renovate-schema.json',
-    enabledManagers: ['npm'],
+    enabledManagers: ['npm', 'github-actions'],
     labels: ['dependencies'],
     extends: ['config:recommended', 'group:allNonMajor'],
     schedule: ['every weekend'],
@@ -40,6 +40,10 @@
         {
             extends: ['packages:linters'],
             groupName: 'linters'
+        },
+        {
+            matchManagers: ['github-actions'],
+            groupName: 'ci'
         }
     ],
     ignoreDeps: [
