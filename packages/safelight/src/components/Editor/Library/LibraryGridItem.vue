@@ -180,7 +180,7 @@ import type { MenuItem } from 'primevue/menuitem';
 import Popover from 'primevue/popover';
 import Skeleton from 'primevue/skeleton';
 import Toolbar from 'primevue/toolbar';
-import { ref, type ComponentInstance } from 'vue';
+import { ref, useTemplateRef } from 'vue';
 
 const props = defineProps<{
     item: FileTreeItem;
@@ -201,7 +201,7 @@ const menuItems = ref<MenuItem[]>([
     }
 ]);
 
-const overlay = ref<ComponentInstance<typeof Popover>>();
+const overlay = useTemplateRef('overlay');
 
 function closeOtherOverlays() {
     if (document.activeElement && 'blur' in document.activeElement) {
