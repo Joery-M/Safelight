@@ -19,7 +19,7 @@ import { useProject } from '@/stores/useProject';
 import Timecode from '@safelight/shared/Timecode';
 import Inplace from 'primevue/inplace';
 import InputMask from 'primevue/inputmask';
-import { computed, ref, type ComponentInstance } from 'vue';
+import { computed, useTemplateRef } from 'vue';
 
 const project = useProject();
 
@@ -29,7 +29,7 @@ const timecodeVal = computed(() =>
         : 0
 );
 
-const inplace = ref<ComponentInstance<typeof Inplace>>();
+const inplace = useTemplateRef('inplace');
 
 function onChange(ev: Event) {
     if (!project.timeline) return;

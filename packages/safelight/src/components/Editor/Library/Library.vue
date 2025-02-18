@@ -99,12 +99,7 @@
                         @open-directory="
                             (item) => {
                                 directoryPath.unshift(item);
-                                nextTick(() => {
-                                    // Scroll to last item in breadcrumb
-                                    breadCrumbPath?.$el
-                                        .querySelector('li:last-of-type')
-                                        .scrollIntoView();
-                                });
+                                nextTick(scrollToLastBreadcrumb);
                             }
                         "
                     />
@@ -175,8 +170,9 @@ import {
     ref,
     shallowReactive,
     shallowRef,
+    useTemplateRef,
     watchEffect,
-    type ComponentInstance
+    type ComponentPublicInstance
 } from 'vue';
 import { useI18n } from 'vue-i18n';
 import LibraryGridItem from './LibraryGridItem.vue';
@@ -223,7 +219,7 @@ const sortBy = ref<sortOptions>('name');
 const sortDescending = ref(false);
 const gridItemSize = ref(176); // 11rem
 
-const breadCrumbPath = ref<ComponentInstance<typeof Breadcrumb>>();
+const breadCrumbPath = useTemplateRef('breadCrumbPath');
 const directoryPath = shallowReactive<FileTreeItem[]>([]);
 const curDir = computed(() => directoryPath[0] ?? project.p?.fileTree);
 const breadcrumbItems = computed(() => {
@@ -317,6 +313,14 @@ function fileDialogOpenDblClick(event: MouseEvent) {
     event.preventDefault();
     document.getSelection()?.removeAllRanges();
     fileDialog.open();
+}
+
+function scrollToLastBreadcrumb() {
+    const comp: HTMLUListElement | undefined = (
+        breadCrumbPath.value as ComponentPublicInstance | null
+    )?.$el;
+
+    comp?.querySelector('li:last-of-type')?.scrollIntoView();
 }
 
 type sortOptions = 'name' | 'duration' | 'fileType';

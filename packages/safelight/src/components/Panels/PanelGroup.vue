@@ -86,8 +86,8 @@ import {
     shallowRef,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     Suspense,
+    useTemplateRef,
     type Component,
-    type ComponentInstance,
     type StyleValue
 } from 'vue';
 import { type Panel, type PanelGroupConfig } from './injection';
@@ -138,7 +138,7 @@ const allAvailablePanels = computed<MenuItem[]>(() =>
     }))
 );
 
-const addOverlay = ref<ComponentInstance<typeof Popover>>();
+const addOverlay = useTemplateRef('addOverlay');
 
 // TODO: Be able to send a signal to the top level to remove a panel from the group
 // OR, be able to modify the local config to affect the top config.
