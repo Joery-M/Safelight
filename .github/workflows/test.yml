@@ -20,14 +20,14 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Enable Corepack
-        run: corepack enable
-
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
+
+      - name: Enable Corepack
+        run: corepack enable
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
