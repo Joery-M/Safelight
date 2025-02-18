@@ -8,27 +8,27 @@
   "files": [
     "dist"
   ],
-  "module": "./dist/index.mjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "development": "./src/index.ts",
-      "import": "./dist/index.mjs",
+      "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
     "./elements/*": {
       "development": "./src/elements/*.ts",
-      "import": "./dist/elements/*.mjs",
+      "import": "./dist/elements/*.js",
       "types": "./dist/elements/*.d.ts"
     },
     "./elements": {
       "development": "./src/elements/index.ts",
-      "import": "./dist/elements/index.mjs",
+      "import": "./dist/elements/index.js",
       "types": "./dist/elements/index.d.ts"
     },
     "./devtools": {
       "development": "./src/devtools.ts",
-      "import": "./dist/devtools.mjs",
+      "import": "./dist/devtools.js",
       "types": "./dist/devtools.d.ts"
     }
   },
