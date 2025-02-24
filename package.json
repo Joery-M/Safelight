@@ -39,7 +39,6 @@
     "@eslint/js": "^9.21.0",
     "@intlify/eslint-plugin-vue-i18n": "^3.2.0",
     "@types/dom-webcodecs": "^0.1.13",
-    "@types/eslint__js": "^8.42.3",
     "@types/node": "^22.13.4",
     "@types/wicg-file-system-access": "^2023.10.5",
     "@unocss/eslint-plugin": "^66.0.0",
