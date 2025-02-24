@@ -3,8 +3,8 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import './style.scss';
 
-import { definePreset } from '@primevue/themes';
-import Aura from '@primevue/themes/aura';
+import { definePreset } from '@primeuix/themes';
+import Aura from '@primeuix/themes/aura';
 import { LocaleManager } from '@safelight/shared/Localization/LocaleManager';
 import PrimeVue, { type PrimeVueConfiguration } from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
