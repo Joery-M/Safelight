@@ -27,12 +27,12 @@
     "@endo/static-module-record": "^1.1.2",
     "esbuild-wasm": "^0.25.0",
     "pathe": "^2.0.3",
-    "rxjs": "^7.8.1",
+    "rxjs": "^7.8.2",
     "ses": "^1.11.0"
   },
   "devDependencies": {
     "@codemirror/lang-javascript": "^6.2.3",
-    "@types/node": "^22.13.4",
+    "@types/node": "^22.13.5",
     "@vitest/browser": "^3.0.5",
     "@vitest/ui": "^3.0.5",
     "premove": "^4.0.0",
