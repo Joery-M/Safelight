@@ -5,6 +5,7 @@
     extends: ['config:recommended', 'group:allNonMajor'],
     schedule: ['every weekend'],
     rangeStrategy: 'bump',
+    postUpdateOptions: ["pnpmDedupe"],
     packageRules: [
         {
             matchPackageNames: [
