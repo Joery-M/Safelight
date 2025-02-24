@@ -6,7 +6,6 @@ import vueI18n from '@intlify/eslint-plugin-vue-i18n';
 import unocss from '@unocss/eslint-plugin';
 import prettierConfig from 'eslint-plugin-prettier/recommended';
 import eslintPluginVue from 'eslint-plugin-vue';
-import globals from 'globals';
 import ts from 'typescript-eslint';
 import { fileURLToPath } from 'url';
 import vueParser from 'vue-eslint-parser';
@@ -42,7 +41,6 @@ export default ts.config(
         languageOptions: {
             ecmaVersion: 2018,
             sourceType: 'module',
-            globals: globals.browser,
             parserOptions: {
                 ecmaFeatures: {
                     jsx: true
