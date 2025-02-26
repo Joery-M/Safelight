@@ -3,6 +3,7 @@ import path from 'path';
 import { glob } from 'tinyglobby';
 import { format } from 'util';
 import { type Plugin } from 'vite';
+import prettier from 'prettier';
 
 export default function generatePlugin(options: Options): Plugin {
     return {
@@ -67,33 +68,23 @@ declare module 'vue-i18n' {
         4
     );
 
-    // Convert "keys" to keys
-    jsonRes = jsonRes.replace(/"([^"]*)"(?=:)/g, '$1');
     // Convert "string" to string
     jsonRes = jsonRes.replace(/(?<=: )"([^"]*)",?/g, '$1;');
 
-    // Format to not get complaints from prettier
-    jsonRes = jsonRes
-        .split('\n')
-        .map((line, i) => {
-            if (i == 0) {
-                return line;
-            } else {
-                if (line.endsWith(' }')) {
-                    line = line.replace(' }', ' };');
-                }
-                if (line.endsWith(' },')) {
-                    line = line.replace(' },', ' };');
-                }
-                return '    ' + line;
-            }
-        })
-        .join('\n');
     outputFile += jsonRes;
     // Finishing touches
     outputFile += `\n}\n`;
-    // LF to CRLF
-    outputFile = outputFile.replace(/((?<!\r)\n|\r(?!\n))/g, '\r\n');
+
+    outputFile = await prettier.format(outputFile, {
+        semi: true,
+        tabWidth: 4,
+        useTabs: false,
+        singleQuote: true,
+        printWidth: 100,
+        trailingComma: 'none',
+        endOfLine: 'crlf',
+        parser: 'babel-ts'
+    });
 
     // No need to wait for finishing writing, if it does take long, skip it
     writeFile(output, outputFile, { signal: AbortSignal.timeout(100) }).catch((err) => {
