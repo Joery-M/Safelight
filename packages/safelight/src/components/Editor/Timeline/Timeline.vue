@@ -41,6 +41,7 @@ onMounted(() => {
                 }
 
                 timelineManager.value = createTimelineManager(canvas.value!);
+                onCleanup(() => timelineManager.value?.destroy());
 
                 const pbCursor = new TimelineCursorElement();
                 const timelineGrid = new TimelineGrid();

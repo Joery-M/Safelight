@@ -88,6 +88,15 @@ export abstract class MoveableTimelineItem implements TimelineItem {
             }
         });
 
+        // This really doesn't work atm, needs to take drag distance into account
+        // This should eventually get replaced with a better interaction system
+        manager.events.on('mouseClick', () => {
+            if (this.cursorInside.value) {
+                this.events.emit('click');
+                console.log('Click');
+            }
+        });
+
         watch(this.isDragging, (isDragging) => {
             if (isDragging) {
                 manager.cursor.set(this.id, ['grabbing', 100]);
@@ -119,4 +128,5 @@ export interface MoveableItemEvent {
     layerChange: [newLayer: number, oldLayer: number];
     move: [newStart: number, newEnd: number];
     drop: [newStart: number, newEnd: number, newLayer: number];
+    click: [];
 }

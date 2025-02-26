@@ -10,8 +10,6 @@ import { useAverage, useRound } from '@vueuse/math';
 import EventEmitter from 'eventemitter3';
 import {
     computed,
-    getCurrentInstance,
-    onBeforeUnmount,
     reactive,
     ref,
     shallowReactive,
@@ -83,21 +81,25 @@ export function createTimelineManager(canvas: HTMLCanvasElement): CreateTimeline
         },
         hasLayerItem(item) {
             return manager.allLayerItems.has(item);
+        },
+        destroy() {
+            manager.destroy();
         }
     };
 }
 
 export interface CreateTimelineFn {
     manager: TimelineManager;
-    addElement: (element: TimelineElement) => void;
-    removeElement: (element: TimelineElement) => boolean;
-    hasElement: (element: TimelineElement) => boolean;
-    addLayer: (layer: TimelineLayer) => void;
-    removeLayer: (layer: TimelineLayer) => boolean;
-    hasLayer: (layer: TimelineLayer) => boolean;
-    addLayerItem: (item: TimelineItem) => void;
-    removeLayerItem: (item: TimelineItem) => boolean;
-    hasLayerItem: (item: TimelineItem) => boolean;
+    addElement(element: TimelineElement): void;
+    removeElement(element: TimelineElement): boolean;
+    hasElement(element: TimelineElement): boolean;
+    addLayer(layer: TimelineLayer): void;
+    removeLayer(layer: TimelineLayer): boolean;
+    hasLayer(layer: TimelineLayer): boolean;
+    addLayerItem(item: TimelineItem): void;
+    removeLayerItem(item: TimelineItem): boolean;
+    hasLayerItem(item: TimelineItem): boolean;
+    destroy(): void;
 }
 
 class ClearableWeakMap<K extends WeakKey = WeakKey, V = any> implements WeakMap<K, V> {
@@ -478,12 +480,6 @@ export class TimelineManager {
             }
         });
 
-        const instance = getCurrentInstance();
-        onBeforeUnmount(() => {
-            this.events.emit('unmount', this);
-            this.events.removeAllListeners();
-        }, instance);
-
         // Import devtools
         whenever(
             __DEVTOOLS_AVAILABLE__,
@@ -699,6 +695,11 @@ export class TimelineManager {
         }
     }
 
+    destroy() {
+        this.events.emit('unmount', this);
+        this.events.removeAllListeners();
+    }
+
     public _devtools_get_state = (): CustomInspectorState => {
         return {
             viewport: [
@@ -797,7 +798,7 @@ interface TimelineEvents {
     mouseDown: [payload: MouseEventPayload];
     mouseUp: [payload: MouseEventPayload];
     mouseMove: [payload: MouseEventPayload];
-    mouseClick: [payload: MouseEventPayload<true>];
+    mouseClick: [payload: MouseEventPayload<MouseEvent>];
     zoom: [manager: TimelineManager];
     pan: [manager: TimelineManager];
     unmount: [manager: TimelineManager];
@@ -812,8 +813,8 @@ export interface MouseEventData {
     hoverLayer?: TimelineLayer;
 }
 
-export interface MouseEventPayload<isClick = false> {
-    ev: isClick extends true ? MouseEvent : PointerEvent;
+export interface MouseEventPayload<Event extends UIEventInit = PointerEvent> {
+    ev: Event;
     manager: TimelineManager;
     mouseData: MouseEventData;
     canvas: HTMLCanvasElement;
