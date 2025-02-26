@@ -9,6 +9,7 @@
 </template>
 
 <script setup lang="ts">
+import { useEditor } from '@/stores/useEditor';
 import { useProject } from '@/stores/useProject';
 import { SettingsManager } from '@safelight/shared/Settings/SettingsManager';
 import type { TimelineItem } from '@safelight/shared/Timeline/TimelineItem';
@@ -22,6 +23,7 @@ import Button from 'primevue/button';
 import { computed, onMounted, ref, shallowReactive, shallowRef, watch, watchEffect } from 'vue';
 
 const project = useProject();
+const editor = useEditor();
 const projectTimeline = computed(() => project.timeline);
 
 const canvas = ref<HTMLCanvasElement>();
@@ -143,10 +145,15 @@ onMounted(() => {
                                 );
                                 timelineManager.value!.addLayerItem(layerItem);
 
+                                layerItem.events.on('click', () => {
+                                    editor.selectedTimelineItem = item;
+                                });
                                 layerItem.events.on('drop', () => {
+                                    item.onDrop();
                                     item.save();
                                 });
                                 onCleanup(() => {
+                                    layerItem.events.removeAllListeners('click');
                                     layerItem.events.removeAllListeners('drop');
                                 });
 
@@ -181,10 +188,12 @@ onMounted(() => {
                     watchEffect(() => {
                         if (!timelineManager.value) return;
 
-                        const highestLayer =
-                            Array.from(timelineManager.value.manager.allLayerItems.values())
-                                .sort((a, b) => a.layer.value - b.layer.value)
-                                .at(0)?.layer.value ?? 0;
+                        const highestLayer = Math.max(
+                            ...Array.from(timelineManager.value.manager.allLayerItems.values()).map(
+                                (v) => v.layer.value
+                            ),
+                            0
+                        );
 
                         while (layers.length <= highestLayer + 1) {
                             layers.push(new TimelineLayer());

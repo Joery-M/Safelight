@@ -1,23 +1,27 @@
 <template>
     <div class="panel-group-menu h-full flex flex-col">
         <div class="flex">
-            <TabMenu :model="allTabs" @tab-change="activeIndex = $event.index">
-                <template #item="{ item, props: iProps }">
-                    <a v-bind="iProps.action" class="min-w-36 flex items-center gap-1 p-2 pr-1">
-                        <i v-if="item.icon" :class="item.icon" class="mr-2" />
-                        <span class="flex-1 font-bold">{{ item.name }}</span>
+            <TabMenu
+                :model="allTabs"
+                :active-index="activeIndex"
+                @tab-change="activeIndex = $event.index"
+            >
+                <template #item="{ item, props: p }">
+                    <a v-bind="p.action" class="min-w-36 flex items-center gap-1 p-2 pr-1">
+                        <i v-if="toValue(item.icon)" :class="toValue(item.icon)" class="mr-2" />
+                        <span class="flex-1 font-bold">{{ toValue(item.name) }}</span>
                         <Button
                             text
                             rounded
                             severity="secondary"
-                            :aria-label="'Close panel ' + item.name"
+                            :aria-label="'Close panel ' + toValue(item.name)"
+                            :title="'Close panel ' + toValue(item.name)"
                             style="width: 20px; height: 20px; padding: 0"
-                            @click.stop="removePanel(item as unknown as Panel)"
-                        >
-                            <template #icon>
-                                <i class="ph ph-x text-sm" />
-                            </template>
-                        </Button>
+                            icon="ph ph-x text-sm"
+                            @click="removePanel(item as unknown as Panel)"
+                            @keydown.enter="removePanel(item as unknown as Panel)"
+                            @keydown.space="removePanel(item as unknown as Panel)"
+                        />
                     </a>
                 </template>
             </TabMenu>
@@ -38,13 +42,12 @@
             </div>
         </div>
         <div class="relative min-h-0 flex-1">
-            <Suspense>
-                <component :is="activeComponent" v-if="activeComponent" />
-
-                <template #fallback>
-                    <LoadingPanel />
-                </template>
-            </Suspense>
+            <template v-if="activeComponent.isReady.value && activeComponent.state.value">
+                <component :is="activeComponent.state.value" />
+            </template>
+            <template v-else>
+                <LoadingPanel />
+            </template>
         </div>
     </div>
     <Popover
@@ -72,33 +75,25 @@
 </template>
 
 <script setup lang="ts">
-import PanelManager from '@safelight/shared/UI/Panels/PanelManager';
-import { watchImmediate } from '@vueuse/core';
+import { useEditor } from '@/stores/useEditor';
+import { useAsyncState } from '@vueuse/core';
 import Button from 'primevue/button';
 import Menu from 'primevue/menu';
 import type { MenuItem } from 'primevue/menuitem';
 import Popover from 'primevue/popover';
 import TabMenu from 'primevue/tabmenu';
-import {
-    computed,
-    defineAsyncComponent,
-    ref,
-    shallowRef,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    Suspense,
-    useTemplateRef,
-    type Component,
-    type StyleValue
-} from 'vue';
+import { computed, ref, toValue, useTemplateRef, type StyleValue } from 'vue';
 import { type Panel, type PanelGroupConfig } from './injection';
 import LoadingPanel from './LoadingPanel.vue';
+
+const editor = useEditor();
 
 const props = defineProps<{
     config: PanelGroupConfig;
     groupStyle?: StyleValue;
 }>();
 
-const activeIndex = ref(0);
+const activeIndex = ref(props.config.activePanelIndex || 0);
 
 const allTabs = computed<MenuItem[]>(() => {
     const panelGroup = props.config;
@@ -106,7 +101,7 @@ const allTabs = computed<MenuItem[]>(() => {
 
     return panelGroup.panels
         .sort((p1, p2) => p1.order - p2.order)
-        .map(({ panelId }) => PanelManager.allPanels.get(panelId))
+        .map(({ panelId }) => editor.allPanels.get(panelId))
         .filter((p) => !!p) as unknown as MenuItem[];
 });
 
@@ -118,22 +113,17 @@ const activeTab = computed(() => {
     return panel;
 });
 
-const activeComponent = shallowRef<Component>();
-watchImmediate(activeTab, (tab) => {
-    if (!tab) return;
-
-    const panel = PanelManager.allPanels.get(tab.panelId ?? '');
-    if (panel) {
-        activeComponent.value = defineAsyncComponent(panel.component);
-    } else {
-        activeComponent.value = undefined;
-    }
-});
+const activeComponent = useAsyncState(() => {
+    const panel = editor.allPanels.get(activeTab.value?.panelId ?? '');
+    return panel
+        ? panel.component().then((c) => ('default' in c ? c.default : c))
+        : Promise.resolve(undefined);
+}, undefined);
 
 const allAvailablePanels = computed<MenuItem[]>(() =>
-    Array.from(PanelManager.allPanels.values()).map<MenuItem>((panel) => ({
+    Array.from(editor.allPanels.values()).map<MenuItem>((panel) => ({
         command: () => addPanel(panel),
-        icon: panel.icon,
+        icon: toValue(panel.icon),
         label: panel.name
     }))
 );
@@ -159,13 +149,12 @@ function addPanel(panel: Panel) {
             transition: opacity 250ms 0s;
         }
 
-        &:hover,
-        &:focus-within,
-        &:focus-visible {
-            .p-button {
-                opacity: 1;
-                visibility: visible;
-            }
+        &:hover .p-button,
+        &:focus-visible .p-button,
+        &:focus-within .p-button,
+        .p-button:focus-visible {
+            opacity: 1;
+            visibility: visible;
         }
     }
 }

@@ -67,6 +67,9 @@
         "monitor": {
             "title": "Monitor"
         },
+        "item-properties": {
+            "title": "Eigenschappen"
+        },
         "addMenu": "Paneel toevoegen"
     },
     "storage": {

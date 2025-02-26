@@ -45,8 +45,6 @@ import { onBeforeRouteLeave, useRoute } from 'vue-router';
 const project = useProject();
 const editor = useEditor();
 
-editor.AddDefaultPanels();
-
 const projectLoaded = ref(false);
 
 const projectErrorDialog = useConfirm();
