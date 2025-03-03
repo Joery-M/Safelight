@@ -5,41 +5,41 @@
     extends: ['config:recommended', 'group:allNonMajor'],
     schedule: ['every weekend'],
     rangeStrategy: 'bump',
-    postUpdateOptions: ["pnpmDedupe"],
+    postUpdateOptions: ['pnpmDedupe'],
     packageRules: [
         {
+            extends: ['packages:vite'],
             matchPackageNames: [
-                'vite',
-                '**vite-plugin**',
-                '@vitejs/**',
-                'rollup',
+                '@quantco/pnpm-licenses',
                 '@rollup/**',
+                'pkgroll',
+                'premove',
+                'rolldown',
+                'rollup',
+                'sass-embedded',
+                'typescript',
+                'unocss',
                 'vue-tsc'
             ],
             groupName: 'build'
         },
         {
             extends: ['packages:test', 'monorepo:vitest', 'monorepo:playwright'],
-            matchPackageNames: [
-                'vitest',
-                'playwright',
-                'jsdom',
-                'happy-dom',
-                '@vitest/**',
-                '@intlify/eslint-plugin-vue-i18n'
-            ],
+            matchPackageNames: ['fake-indexeddb', 'happy-dom', 'jsdom', 'playwright'],
             groupName: 'testing'
         },
         {
-            matchPackageNames: ['primevue', '@primevue/**'],
+            matchPackageNames: ['primevue', '@primevue/**', '@primeuix/**'],
             groupName: 'PrimeVue'
         },
         {
-            matchPackageNames: ['vue-**', 'vue', '@vueuse/**', '@vue/**'],
+            extends: ['monorepo:vue', 'monorepo:vueuse'],
+            matchPackageNames: ['vue-**', '@vue/**'],
             groupName: 'vue'
         },
         {
             extends: ['packages:linters'],
+            matchPackageNames: ['@intlify/eslint-plugin-vue-i18n'],
             groupName: 'linters'
         },
         {
@@ -47,10 +47,5 @@
             groupName: 'ci'
         }
     ],
-    ignoreDeps: [
-        'pnpm',
-
-        // Pinned
-        '@vue/devtools-api'
-    ]
+    ignoreDeps: ['pnpm']
 }
