@@ -21,11 +21,13 @@
                 'unocss',
                 'vue-tsc'
             ],
+            automerge: true,
             groupName: 'build'
         },
         {
             extends: ['packages:test', 'monorepo:vitest', 'monorepo:playwright'],
             matchPackageNames: ['fake-indexeddb', 'happy-dom', 'jsdom', 'playwright'],
+            automerge: true,
             groupName: 'testing'
         },
         {
@@ -35,15 +37,18 @@
         {
             extends: ['monorepo:vue', 'monorepo:vueuse'],
             matchPackageNames: ['vue-**', '@vue/**'],
+            automerge: true,
             groupName: 'vue'
         },
         {
             extends: ['packages:linters'],
             matchPackageNames: ['@intlify/eslint-plugin-vue-i18n'],
+            automerge: true,
             groupName: 'linters'
         },
         {
             matchManagers: ['github-actions'],
+            automerge: true,
             groupName: 'ci'
         }
     ],
