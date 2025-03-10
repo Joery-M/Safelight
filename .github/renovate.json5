@@ -3,7 +3,10 @@
     enabledManagers: ['npm', 'github-actions'],
     labels: ['dependencies'],
     extends: ['config:recommended', 'group:allNonMajor'],
-    schedule: ['every weekend'],
+    // Make PR on Friday
+    schedule: ['* * * * 5'],
+    // Auto-merge on Monday
+    automergeSchedule: ['* * * * 1'],
     rangeStrategy: 'bump',
     postUpdateOptions: ['pnpmDedupe'],
     packageRules: [
