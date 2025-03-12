@@ -37,7 +37,7 @@
   ],
   "devDependencies": {
     "@eslint/js": "^9.22.0",
-    "@intlify/eslint-plugin-vue-i18n": "^3.2.0",
+    "@intlify/eslint-plugin-vue-i18n": "^4.0.0",
     "@types/dom-webcodecs": "^0.1.13",
     "@types/node": "^22.13.5",
     "@types/wicg-file-system-access": "^2023.10.5",
@@ -48,7 +48,7 @@
     "eslint": "^9.22.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.3",
-    "eslint-plugin-vue": "^9.33.0",
+    "eslint-plugin-vue": "^10.0.0",
     "playwright": "^1.51.0",
     "prettier": "^3.5.3",
     "typescript": "^5.8.2",
