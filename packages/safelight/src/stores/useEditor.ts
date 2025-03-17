@@ -44,19 +44,19 @@ export const useEditor = defineStore('Editor', () => {
     function AddDefaultPanels() {
         PanelManager.RegisterPanel('SL-Timeline', {
             component: () => import('../components/Editor/Timeline/Timeline.vue'),
-            icon: 'ph ph-film-strip',
+            icon: 'i-ph-film-strip',
             name: 'Timeline'
         });
 
         PanelManager.RegisterPanel('SL-Library', {
             component: () => import('../components/Editor/Library/Library.vue'),
-            icon: 'ph ph-folders',
+            icon: 'i-ph-folders',
             name: 'Library'
         });
 
         PanelManager.RegisterPanel('SL-Monitor', {
             component: () => import('../components/Editor/Monitor/Monitor.vue'),
-            icon: 'ph ph-frame-corners',
+            icon: 'i-ph-frame-corners',
             name: 'Monitor'
         });
     }

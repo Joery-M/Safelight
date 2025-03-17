@@ -1,24 +1,6 @@
 @use '@fontsource-variable/inter';
-@use '@phosphor-icons/web/regular';
-@use '@phosphor-icons/web/thin';
-@use '@phosphor-icons/web/light';
-@use '@phosphor-icons/web/bold';
-@use '@phosphor-icons/web/fill';
-@use '@phosphor-icons/web/duotone';
 
-// In separate layer so unocss can override
-@layer ph-icons {
-    .ph-bold,
-    .ph-duotone,
-    .ph-fill,
-    .ph-light,
-    .ph-thin,
-    .ph {
-        font-size: 18px;
-    }
-}
-
-@layer preflights, primevue, ph-icons, default;
+@layer preflights, primevue, icons, default;
 
 body {
     margin: 0;

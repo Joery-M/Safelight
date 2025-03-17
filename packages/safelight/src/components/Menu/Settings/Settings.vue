@@ -17,7 +17,7 @@
             </Tree>
             <Button
                 severity="secondary"
-                icon="ph ph-download"
+                icon="i-ph-download"
                 :label="$t('settings.downloadJson')"
                 @click="SettingsManager.downloadSettings()"
             />

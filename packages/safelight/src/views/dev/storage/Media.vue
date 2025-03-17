@@ -2,7 +2,7 @@
     <Card>
         <template #subtitle>
             <RouterLink to="/dev/storage">
-                <Button icon="ph ph-arrow-left" />
+                <Button icon="i-ph-arrow-left" />
             </RouterLink>
         </template>
         <template #content>
@@ -18,7 +18,7 @@
                         <Button
                             v-if="data?.isMedia"
                             rounded
-                            icon="ph ph-trash"
+                            icon="i-ph-trash"
                             @click="deleteMedia(data.id)"
                         />
                     </template>
@@ -32,7 +32,7 @@
                         <Button
                             v-if="data?.isMedia"
                             rounded
-                            icon="ph ph-list-dashes"
+                            icon="i-ph-list-dashes"
                             @click="selectedMedia = data.media"
                         />
                     </template>

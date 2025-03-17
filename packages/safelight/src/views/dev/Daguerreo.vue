@@ -2,7 +2,7 @@
     <Card>
         <template #subtitle>
             <RouterLink to="/dev">
-                <Button icon="ph ph-house" />
+                <Button icon="i-ph-house" />
             </RouterLink>
         </template>
         <template #content>
@@ -41,7 +41,7 @@
                     />
                     <div class="flex items-center justify-center">
                         <Button
-                            icon="ph ph-caret-right"
+                            icon="i-ph-caret-right"
                             severity="secondary"
                             :disabled="!transformSelectedFromLibrary"
                             @click="
@@ -69,7 +69,7 @@
                     </Listbox>
                     <div class="flex flex-col items-center justify-center gap-2">
                         <Button
-                            icon="ph ph-caret-up"
+                            icon="i-ph-caret-up"
                             severity="secondary"
                             :disabled="!selectedActiveTransform"
                             @click="
@@ -85,7 +85,7 @@
                             "
                         />
                         <Button
-                            icon="ph ph-caret-down"
+                            icon="i-ph-caret-down"
                             severity="secondary"
                             :disabled="!selectedActiveTransform"
                             @click="
@@ -101,7 +101,7 @@
                             "
                         />
                         <Button
-                            icon="ph ph-trash"
+                            icon="i-ph-trash"
                             severity="secondary"
                             :disabled="!selectedActiveTransform"
                             @click="
@@ -191,18 +191,18 @@
                     />
                     <ButtonGroup>
                         <Button
-                            icon="ph ph-skip-back"
+                            icon="i-ph-skip-back"
                             @click="
                                 frameNum--;
                                 renderFrame();
                             "
                         />
                         <Button
-                            :icon="'ph ' + (isPaused ? 'ph-play' : 'ph-pause')"
+                            :icon="isPaused ? 'i-ph-play' : 'i-ph-pause'"
                             @click="isPaused = !isPaused"
                         />
                         <Button
-                            icon="ph ph-skip-forward"
+                            icon="i-ph-skip-forward"
                             @click="
                                 frameNum += 1;
                                 renderFrame();

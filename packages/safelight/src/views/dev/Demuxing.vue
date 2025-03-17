@@ -2,7 +2,7 @@
     <Panel>
         <template #header>
             <RouterLink to="/dev/">
-                <Button icon="ph ph-arrow-left" />
+                <Button icon="i-ph-arrow-left" />
             </RouterLink>
         </template>
 
@@ -13,7 +13,7 @@
         <div class="flex items-center gap-3">
             <Button
                 :disabled="!(!fileDialog.files.value || fileDialog.files.value.length == 0)"
-                icon="ph ph-upload"
+                icon="i-ph-upload"
                 label="Upload"
                 @click="fileDialog.open()"
             />

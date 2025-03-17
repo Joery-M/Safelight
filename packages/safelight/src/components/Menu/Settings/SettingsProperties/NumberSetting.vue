@@ -19,7 +19,7 @@
         "
     >
         ({{ $t('general.default') }}: {{ defaultValue }})
-        <i class="ph ph-arrow-u-down-left" style="font-size: 15px" />
+        <div class="i-ph-arrow-u-down-left size-3.5 inline-block v-middle" />
     </a>
     <div class="number-slider-combo">
         <InputNumber

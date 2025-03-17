@@ -31,7 +31,6 @@
     "vitest": "^3.0.8"
   },
   "peerDependencies": {
-    "@phosphor-icons/vue": "^2.2.1",
     "@vueuse/core": "^13.0.0",
     "@vueuse/rxjs": "^13.0.0",
     "comlink": "^4.4.2",
