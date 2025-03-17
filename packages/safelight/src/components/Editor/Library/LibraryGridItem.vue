@@ -24,7 +24,7 @@
                 :aria-label="item.name.value"
             />
             <template v-else-if="item.isDirectory">
-                <div class="i-ph-folder-bold size-max-80% size-18" />
+                <div class="i-ph-folder-bold size-18 size-max-80%" />
             </template>
             <Skeleton
                 v-else
@@ -230,7 +230,7 @@ function clickHandler() {
 }
 
 .media-type {
-    @apply left-0 top-0 h-full w-full gap-2 p-2;
+    @apply p-2   left-0 top-0 h-full w-full gap-2;
 
     position: absolute;
     display: flex;

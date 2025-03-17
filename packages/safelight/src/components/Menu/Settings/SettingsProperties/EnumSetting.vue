@@ -20,7 +20,7 @@
     >
         ({{ $t('general.default') }}:
         {{ setting.labelKey ? getByPath(defaultValue, setting.labelKey) : defaultValue }})
-        <div class="i-ph-arrow-u-down-left size-3.5 inline-block v-middle" />
+        <div class="i-ph-arrow-u-down-left inline-block size-3.5 v-middle" />
     </a>
     <Select
         :model-value="enumValue"

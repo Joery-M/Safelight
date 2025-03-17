@@ -46,9 +46,7 @@
                                     ? $t('general.actions.sortAscending')
                                     : $t('general.actions.sortDescending')
                             "
-                            :icon="
-                                sortDescending ? 'i-ph-sort-descending' : 'i-ph-sort-ascending'
-                            "
+                            :icon="sortDescending ? 'i-ph-sort-descending' : 'i-ph-sort-ascending'"
                             @click="sortDescending = !sortDescending"
                         />
                         <Select
