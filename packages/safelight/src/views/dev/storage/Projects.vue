@@ -3,11 +3,11 @@
         <template #subtitle>
             <div class="flex">
                 <RouterLink to="/dev/storage">
-                    <Button icon="ph ph-arrow-left" />
+                    <Button icon="i-ph-arrow-left" />
                 </RouterLink>
                 <div class="grow"></div>
                 <Button
-                    icon="ph ph-arrow-counter-clockwise"
+                    icon="i-ph-arrow-counter-clockwise"
                     rounded
                     @click="projectGetting.execute()"
                 />

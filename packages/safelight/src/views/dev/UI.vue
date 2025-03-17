@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/no-v-model-argument -->
 <template>
     <RouterLink to="/dev">
-        <Button icon="ph ph-arrow-left" />
+        <Button icon="i-ph-arrow-left" />
     </RouterLink>
 
     <Card title="Timeline">

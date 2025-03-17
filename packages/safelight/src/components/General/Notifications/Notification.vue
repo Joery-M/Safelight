@@ -10,18 +10,18 @@
             <template v-if="notif.config.severity && notif.config.severity !== 'none'">
                 <i
                     v-if="notif.config.severity == 'info'"
-                    class="ph ph-info"
+                    class="i-ph-info"
                     style="color: var(--blue-500)"
                 />
                 <i
                     v-if="notif.config.severity == 'error'"
-                    class="ph ph-warning-circle"
+                    class="i-ph-warning-circle"
                     style="color: var(--red-500)"
                 />
-                <i v-if="notif.config.severity == 'warning'" class="ph ph-warning" />
+                <i v-if="notif.config.severity == 'warning'" class="i-ph-warning" />
             </template>
             <h3>{{ $t(notif.config.title ?? '', 'notification.defaultTitle') }}</h3>
-            <Button text severity="secondary" rounded icon="ph ph-x" @click="closeNotif" />
+            <Button text severity="secondary" rounded icon="i-ph-x" @click="closeNotif" />
         </template>
         <p :id="'content-' + notif.id" class="mb-0">{{ $t(notif.config.text ?? '') }}</p>
         <div v-if="buttons.length > 0" class="mt-4 flex items-center gap-2">

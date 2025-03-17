@@ -24,7 +24,7 @@
                 :aria-label="item.name.value"
             />
             <template v-else-if="item.isDirectory">
-                <PhFolder weight="bold" style="max-width: 80%; max-height: 80%" :size="70" />
+                <div class="i-ph-folder-bold size-18 size-max-80%" />
             </template>
             <Skeleton
                 v-else
@@ -36,37 +36,37 @@
                 <i
                     v-if="item.media.value.isOfType(MediaSourceType.Video)"
                     v-tooltip.top="$t('media.attrs.video')"
-                    class="ph-bold ph-video-camera"
+                    class="i-ph-video-camera-bold"
                     :aria-label="$t('media.attrs.video')"
                 />
                 <i
                     v-if="item.media.value.isOfType(MediaSourceType.Audio)"
                     v-tooltip.top="$t('media.attrs.audio')"
-                    class="ph-bold ph-speaker-high"
+                    class="i-ph-speaker-high-bold"
                     :aria-label="$t('media.attrs.audio')"
                 />
                 <i
                     v-if="item.media.value.isOfType(MediaSourceType.Subtitles)"
                     v-tooltip.top="$t('media.attrs.subtitles')"
-                    class="ph-bold ph-subtitles"
+                    class="i-ph-subtitles-bold"
                     :aria-label="$t('media.attrs.subtitles')"
                 />
                 <i
                     v-if="item.media.value.isOfType(MediaSourceType.Image)"
                     v-tooltip.top="$t('media.attrs.image')"
-                    class="ph-bold ph-image"
+                    class="i-ph-image-bold"
                     :aria-label="$t('media.attrs.image')"
                 />
                 <i
                     v-if="item.media.value.isOfType(MediaSourceType.Timeline)"
                     v-tooltip.top="$t('media.attrs.timeline')"
-                    class="ph-bold ph-film-strip"
+                    class="i-ph-film-strip-bold"
                     :aria-label="$t('media.attrs.timeline')"
                 />
                 <i
                     v-if="item.media.value.isOfType(MediaSourceType.Special)"
                     v-tooltip.top="$t('media.attrs.special')"
-                    class="ph-bold ph-sparkle"
+                    class="i-ph-sparkle-bold"
                     :aria-label="$t('media.attrs.special')"
                 />
             </div>
@@ -125,7 +125,7 @@
                 severity="secondary"
                 aria-haspopup="true"
                 aria-controls="library_item_menu"
-                icon="ph ph-dots-three-vertical"
+                icon="i-ph-dots-three-vertical"
                 @click="overlay?.toggle"
             />
         </div>
@@ -152,7 +152,7 @@
                     v-tooltip.top="{ value: 'Delete', showDelay: 500 }"
                     severity="secondary"
                     text
-                    icon="ph ph-trash"
+                    icon="i-ph-trash"
                     @click="item.deleteSelf()"
                 />
             </template>
@@ -170,7 +170,6 @@
 <script setup lang="ts">
 import InplaceRename from '@/components/InplaceRename.vue';
 import { useProject } from '@/stores/useProject';
-import { PhFolder } from '@phosphor-icons/vue';
 import { MediaSourceType } from '@safelight/shared/Media/Media';
 import type { FileTreeItem } from '@safelight/shared/Project/ProjectFileTree';
 import Button from 'primevue/button';
@@ -231,7 +230,7 @@ function clickHandler() {
 }
 
 .media-type {
-    @apply left-0 top-0 h-full w-full gap-2 p-2;
+    @apply p-2   left-0 top-0 h-full w-full gap-2;
 
     position: absolute;
     display: flex;

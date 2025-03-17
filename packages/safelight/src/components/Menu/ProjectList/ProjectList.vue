@@ -15,7 +15,7 @@
                 <Button
                     rounded
                     :title="$t('general.descriptions.refresh')"
-                    icon="ph ph-arrows-clockwise"
+                    icon="i-ph-arrows-clockwise"
                     @click="loadList.execute()"
                 />
                 <SplitButton
@@ -92,7 +92,7 @@
                     text
                     plain
                     rounded
-                    icon="ph ph-trash"
+                    icon="i-ph-trash"
                     @click="curProject.deleteProject(data.id).then(() => loadList.execute())"
                 />
             </template>
@@ -104,7 +104,7 @@
                     text
                     plain
                     rounded
-                    icon="ph ph-caret-right"
+                    icon="i-ph-caret-right"
                     @click="router.push(`/editor/${data.id}`)"
                 />
             </template>

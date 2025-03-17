@@ -24,7 +24,7 @@ import { computed, ref, watch } from 'vue';
 import VueMarkdown from 'vue-markdown-render';
 import SettingsGroup from './SettingsProperties/SettingsGroup.vue';
 
-const props = withDefaults(defineProps<{ path: string }>(), {
+const props = withDefaults(defineProps<{ path?: string }>(), {
     path: () => 'general'
 });
 

@@ -2,7 +2,7 @@
     <Card>
         <template #subtitle>
             <RouterLink to="/dev">
-                <Button icon="ph ph-arrow-left" />
+                <Button icon="i-ph-arrow-left" />
             </RouterLink>
         </template>
         <template #content>
@@ -74,10 +74,10 @@
                                                     pt: { root: { style: 'margin-left: 9px;' } }
                                                 }"
                                                 style="width: 20px"
-                                                class="ph ph-dev-to-logo align-text-top"
+                                                class="i-ph-dev-to-logo align-text-top"
                                             />
                                             {{ item.from }}
-                                            <i class="ph ph-arrow-square-out align-text-top" />
+                                            <i class="i-ph-arrow-square-out align-text-top" />
                                         </a>
                                         <span
                                             v-if="item.author || item.license"
@@ -111,7 +111,7 @@
                                                 <Button
                                                     v-if="item.homepage"
                                                     role="link"
-                                                    icon="ph ph-house"
+                                                    icon="i-ph-house"
                                                     @click="openUrl(item.homepage)"
                                                 />
                                                 <Button
@@ -119,7 +119,7 @@
                                                     outlined
                                                     :title="'Open code repository for ' + item.from"
                                                     role="link"
-                                                    icon="ph ph-git-branch"
+                                                    icon="i-ph-git-branch"
                                                     @click="
                                                         openUrl(
                                                             item.repository!.replace('git+', '')
