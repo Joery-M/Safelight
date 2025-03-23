@@ -42,7 +42,7 @@
     "@types/node": "^22.13.11",
     "@types/wicg-file-system-access": "^2023.10.5",
     "@unocss/eslint-plugin": "^66.0.0",
-    "@vitejs/plugin-vue": "^5.2.2",
+    "@vitejs/plugin-vue": "^5.2.3",
     "@vitest/browser": "^3.0.8",
     "@vitest/ui": "^3.0.8",
     "eslint": "^9.22.0",
