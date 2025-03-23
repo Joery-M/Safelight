@@ -3,54 +3,57 @@
     enabledManagers: ['npm', 'github-actions'],
     labels: ['dependencies'],
     extends: ['config:recommended', 'group:allNonMajor'],
-    schedule: ['every weekend'],
+    // Make PR on Friday
+    schedule: ['* * * * 5'],
+    // Auto-merge on Monday
+    automergeSchedule: ['* * * * 1'],
     rangeStrategy: 'bump',
-    postUpdateOptions: ["pnpmDedupe"],
+    postUpdateOptions: ['pnpmDedupe'],
     packageRules: [
         {
+            extends: ['packages:vite'],
             matchPackageNames: [
-                'vite',
-                '**vite-plugin**',
-                '@vitejs/**',
-                'rollup',
+                '@quantco/pnpm-licenses',
                 '@rollup/**',
+                'pkgroll',
+                'premove',
+                'rolldown',
+                'rollup',
+                'sass-embedded',
+                'typescript',
+                'unocss',
                 'vue-tsc'
             ],
+            automerge: true,
             groupName: 'build'
         },
         {
             extends: ['packages:test', 'monorepo:vitest', 'monorepo:playwright'],
-            matchPackageNames: [
-                'vitest',
-                'playwright',
-                'jsdom',
-                'happy-dom',
-                '@vitest/**',
-                '@intlify/eslint-plugin-vue-i18n'
-            ],
+            matchPackageNames: ['fake-indexeddb', 'happy-dom', 'jsdom', 'playwright'],
+            automerge: true,
             groupName: 'testing'
         },
         {
-            matchPackageNames: ['primevue', '@primevue/**'],
+            matchPackageNames: ['primevue', '@primevue/**', '@primeuix/**'],
             groupName: 'PrimeVue'
         },
         {
-            matchPackageNames: ['vue-**', 'vue', '@vueuse/**', '@vue/**'],
+            extends: ['monorepo:vue', 'monorepo:vueuse'],
+            matchPackageNames: ['vue-**', '@vue/**'],
+            automerge: true,
             groupName: 'vue'
         },
         {
             extends: ['packages:linters'],
+            matchPackageNames: ['@intlify/eslint-plugin-vue-i18n'],
+            automerge: true,
             groupName: 'linters'
         },
         {
             matchManagers: ['github-actions'],
+            automerge: true,
             groupName: 'ci'
         }
     ],
-    ignoreDeps: [
-        'pnpm',
-
-        // Pinned
-        '@vue/devtools-api'
-    ]
+    ignoreDeps: ['pnpm']
 }

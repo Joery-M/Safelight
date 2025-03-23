@@ -2,7 +2,7 @@
     <Card>
         <template #subtitle>
             <RouterLink to="/dev">
-                <Button icon="ph ph-arrow-left" />
+                <Button icon="i-ph-arrow-left" />
             </RouterLink>
         </template>
         <template #content>

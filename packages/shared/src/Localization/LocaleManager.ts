@@ -4,7 +4,7 @@ import { type I18n, type IntlDateTimeFormat, type DefineLocaleMessage } from 'vu
 /**
  * Locale names in their respective language
  */
-const defaultLocaleNames = {
+const defaultLocaleNames: Record<string, string> = {
     'en-US': 'English',
     'nl-NL': 'Nederlands'
 };
@@ -28,8 +28,7 @@ export class LocaleManager {
 
             this.registerLocale(localeName, {
                 loadFn: fn,
-                localeName:
-                    defaultLocaleNames[localeName as keyof typeof defaultLocaleNames] ?? localeName
+                localeName: defaultLocaleNames[localeName] ?? localeName
             });
         });
 
@@ -128,7 +127,7 @@ function setupHmr() {
 
                 LocaleManager.registerLocale(locale, {
                     loadFn: async () => localeFile,
-                    localeName: defaultLocaleNames[locale as keyof typeof defaultLocaleNames]
+                    localeName: defaultLocaleNames[locale] ?? locale
                 });
             }
             LocaleManager.switchLocale(LocaleManager.activeLocale.value);

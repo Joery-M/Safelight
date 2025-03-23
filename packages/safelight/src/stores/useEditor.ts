@@ -53,25 +53,25 @@ export const useEditor = defineStore('Editor', () => {
 
     registerPanel('SL-Timeline', {
         component: () => import('../components/Editor/Timeline/Timeline.vue'),
-        icon: 'ph ph-film-strip',
+        icon: 'i-ph-film-strip',
         name: () => i18n.t('panels.timeline.title')
     });
 
     registerPanel('SL-Library', {
         component: () => import('../components/Editor/Library/Library.vue'),
-        icon: 'ph ph-folders',
+        icon: 'i-ph-folders',
         name: () => i18n.t('panels.library.title')
     });
 
     registerPanel('SL-ItemProperties', {
         component: () => import('../components/Editor/Properties/ItemProperties.vue'),
-        icon: 'ph ph-faders-horizontal',
+        icon: 'i-ph-faders-horizontal',
         name: () => i18n.t('panels.item-properties.title')
     });
 
     registerPanel('SL-Monitor', {
         component: () => import('../components/Editor/Monitor/Monitor.vue'),
-        icon: 'ph ph-frame-corners',
+        icon: 'i-ph-frame-corners',
         name: () => i18n.t('panels.monitor.title')
     });
 

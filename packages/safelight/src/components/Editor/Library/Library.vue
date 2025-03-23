@@ -25,7 +25,7 @@
                 <template #start>
                     <InputGroup class="mr-2">
                         <InputGroupAddon class="p-0">
-                            <i class="ph ph-magnifying-glass"></i>
+                            <i class="i-ph-magnifying-glass"></i>
                         </InputGroupAddon>
                         <InputText v-model="search" :placeholder="$t('general.actions.search')">
                         </InputText>
@@ -46,9 +46,7 @@
                                     ? $t('general.actions.sortAscending')
                                     : $t('general.actions.sortDescending')
                             "
-                            :icon="
-                                sortDescending ? 'ph ph-sort-descending' : 'ph ph-sort-ascending'
-                            "
+                            :icon="sortDescending ? 'i-ph-sort-descending' : 'i-ph-sort-ascending'"
                             @click="sortDescending = !sortDescending"
                         />
                         <Select
@@ -72,7 +70,7 @@
                 :model="breadcrumbItems"
                 :home="{
                     key: 'home',
-                    icon: 'ph-bold ph-house',
+                    icon: 'i-ph-house-bold',
                     command: () => {
                         while (directoryPath.shift());
                     }
@@ -136,7 +134,7 @@
                         outlined
                         severity="secondary"
                         :model="createMenuItems"
-                        icon="ph ph-plus"
+                        icon="i-ph-plus"
                         @click="fileDialog.open()"
                     />
                 </template>
@@ -337,7 +335,7 @@ type sortOptions = 'name' | 'duration' | 'fileType';
     scroll-behavior: smooth;
 }
 
-.p-breadcrumb ::v-deep(.ph-bold.ph-house) {
+.p-breadcrumb ::v-deep(.i-ph-house-bold) {
     @apply flex items-center;
 
     height: 22.4px;

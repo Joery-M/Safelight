@@ -8,7 +8,6 @@ import prettierConfig from 'eslint-plugin-prettier/recommended';
 import eslintPluginVue from 'eslint-plugin-vue';
 import ts from 'typescript-eslint';
 import { fileURLToPath } from 'url';
-import vueParser from 'vue-eslint-parser';
 
 export default ts.config(
     {
@@ -32,35 +31,16 @@ export default ts.config(
     },
 
     // ----- i18n -----
-    // Use the base config, then re-add the rules on specific files
-    ...vueI18n.configs['flat/base'],
     {
-        name: '@intlify/vue-i18n:recommended:setup',
+        extends: vueI18n.configs['flat/recommended'],
         files: ['**/packages/safelight/**/*.vue', '**/packages/shared/**/*.vue'],
         ignores: ['dist/**', 'generated/**', '**/*.scss', '**/views/dev/**'],
-        languageOptions: {
-            ecmaVersion: 2018,
-            sourceType: 'module',
-            parserOptions: {
-                ecmaFeatures: {
-                    jsx: true
-                }
+        settings: {
+            'vue-i18n': {
+                localeDir: './packages/shared/src/Localization/i18n/*.json'
             }
-        }
-    },
-    {
-        name: '@intlify/vue-i18n:recommended:rules',
-        files: ['**/packages/safelight/**/*.vue', '**/packages/shared/**/*.vue'],
-        ignores: ['dist/**', 'generated/**', '**/*.scss', '**/views/dev/**'],
+        },
         rules: {
-            '@intlify/vue-i18n/no-deprecated-i18n-component': 'warn',
-            '@intlify/vue-i18n/no-deprecated-i18n-place-attr': 'warn',
-            '@intlify/vue-i18n/no-deprecated-i18n-places-prop': 'warn',
-            '@intlify/vue-i18n/no-deprecated-modulo-syntax': 'warn',
-            '@intlify/vue-i18n/no-deprecated-tc': 'warn',
-            '@intlify/vue-i18n/no-html-messages': 'warn',
-            '@intlify/vue-i18n/no-i18n-t-path-prop': 'warn',
-            '@intlify/vue-i18n/no-missing-keys': 'off',
             '@intlify/vue-i18n/no-raw-text': [
                 'warn',
                 {
@@ -79,9 +59,7 @@ export default ts.config(
                     ignoreNodes: ['md-icon', 'v-icon'],
                     ignorePattern: '^[-#:()&]+$'
                 }
-            ],
-            '@intlify/vue-i18n/no-v-html': 'warn',
-            '@intlify/vue-i18n/valid-message-syntax': 'warn'
+            ]
         }
     },
 
@@ -96,7 +74,6 @@ export default ts.config(
     },
     {
         languageOptions: {
-            parser: vueParser,
             parserOptions: {
                 parser: ts.parser,
                 // extraFileExtensions: ['.vue'],

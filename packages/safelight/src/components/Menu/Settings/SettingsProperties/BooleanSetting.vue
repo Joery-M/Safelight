@@ -30,7 +30,7 @@
         "
     >
         ({{ $t('general.default') }}: {{ defaultValue }})
-        <i class="ph ph-arrow-u-down-left" style="font-size: 15px" />
+        <div class="i-ph-arrow-u-down-left inline-block size-3.5 v-middle" />
     </a>
 </template>
 

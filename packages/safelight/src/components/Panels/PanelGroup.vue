@@ -14,10 +14,10 @@
                             text
                             rounded
                             severity="secondary"
+                            icon="i-ph-x size-4"
                             :aria-label="'Close panel ' + toValue(item.name)"
                             :title="'Close panel ' + toValue(item.name)"
                             style="width: 20px; height: 20px; padding: 0"
-                            icon="ph ph-x text-sm"
                             @click="removePanel(item as unknown as Panel)"
                             @keydown.enter="removePanel(item as unknown as Panel)"
                             @keydown.space="removePanel(item as unknown as Panel)"
@@ -36,7 +36,7 @@
                     aria-haspopup="true"
                     aria-controls="panel_add_menu"
                     :aria-label="$t('panels.addMenu')"
-                    icon="ph ph-plus"
+                    icon="i-ph-plus"
                     @click="addOverlay?.toggle"
                 />
             </div>

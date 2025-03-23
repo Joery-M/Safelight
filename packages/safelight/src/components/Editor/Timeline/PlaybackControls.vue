@@ -6,20 +6,20 @@
                 severity="secondary"
                 :aria-label="$t('general.actions.skipBackFrame', 1)"
                 :title="$t('general.actions.skipBackFrame', 1)"
-                icon="ph ph-skip-back"
+                icon="i-ph-skip-back"
                 @click="if (!project.timeline.isPlaying.value) project.timeline.stepPlayback(true);"
             />
             <Button
                 severity="secondary"
                 :aria-label="project.timeline.isPlaying.value ? 'Stop playback' : 'Start playback'"
-                :icon="project.timeline.isPlaying.value ? 'ph ph-pause' : 'ph ph-play'"
+                :icon="project.timeline.isPlaying.value ? 'i-ph-pause' : 'i-ph-play'"
                 @click="playPause"
             />
             <Button
                 severity="secondary"
                 :aria-label="$t('general.actions.skipForwardFrame', 1)"
                 :title="$t('general.actions.skipForwardFrame', 1)"
-                icon="ph ph-skip-forward"
+                icon="i-ph-skip-forward"
                 @click="if (!project.timeline.isPlaying.value) project.timeline.stepPlayback();"
             />
         </ButtonGroup>

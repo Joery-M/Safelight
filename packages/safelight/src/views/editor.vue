@@ -53,11 +53,11 @@ const dialog = useDialog();
 const menuItems: MenuItem[] = [
     {
         label: 'File',
-        icon: 'ph ph-file',
+        icon: 'i-ph-file',
         items: [
             {
                 label: 'Settings',
-                icon: 'ph ph-gear',
+                icon: 'i-ph-gear',
                 disabled: false,
                 command: () => {
                     const settingsComponent = defineAsyncComponent(
@@ -83,7 +83,7 @@ const menuItems: MenuItem[] = [
             },
             {
                 label: 'Exit',
-                icon: 'ph ph-sign-out',
+                icon: 'i-ph-sign-out',
                 disabled: false,
                 command: () => {
                     router.push('/projects');

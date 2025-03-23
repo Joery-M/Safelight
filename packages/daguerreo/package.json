@@ -30,8 +30,8 @@
     "test:run": "vitest run"
   },
   "devDependencies": {
-    "type-fest": "^4.35.0",
-    "vitest": "^3.0.6"
+    "type-fest": "^4.37.0",
+    "vitest": "^3.0.8"
   },
   "dependencies": {
     "gifuct-js": "^2.1.2"

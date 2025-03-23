@@ -38,18 +38,18 @@ SettingsManager.setup([
     {
         name: 'editor',
         title: 'Editor',
-        icon: 'ph ph-sidebar',
+        icon: 'i-ph-sidebar',
         childNamespaces: [
             {
                 name: 'playback',
                 title: 'Playback',
-                icon: 'ph ph-play-pause',
+                icon: 'i-ph-play-pause',
                 settings: []
             },
             {
                 name: 'timeline',
                 title: 'Timeline',
-                icon: 'ph ph-film-strip',
+                icon: 'i-ph-film-strip',
                 settings: [
                     {
                         type: 'boolean',
@@ -86,7 +86,7 @@ SettingsManager.setup([
             {
                 name: 'library',
                 title: 'Library',
-                icon: 'ph ph-folders',
+                icon: 'i-ph-folders',
                 settings: [
                     {
                         type: 'group',
@@ -115,7 +115,7 @@ SettingsManager.setup([
     {
         name: 'keyboard',
         title: 'Keyboard',
-        icon: 'ph ph-keyboard',
+        icon: 'i-ph-keyboard',
         childNamespaces: [
             {
                 name: 'hotkeys',

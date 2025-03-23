@@ -25,20 +25,20 @@
   },
   "dependencies": {
     "@endo/static-module-record": "^1.1.2",
-    "esbuild-wasm": "^0.25.0",
+    "esbuild-wasm": "^0.25.1",
     "pathe": "^2.0.3",
     "rxjs": "^7.8.2",
     "ses": "^1.11.0"
   },
   "devDependencies": {
     "@codemirror/lang-javascript": "^6.2.3",
-    "@types/node": "^22.13.5",
-    "@vitest/browser": "^3.0.6",
-    "@vitest/ui": "^3.0.6",
+    "@types/node": "^22.13.11",
+    "@vitest/browser": "^3.0.8",
+    "@vitest/ui": "^3.0.8",
     "premove": "^4.0.0",
-    "rolldown": "1.0.0-beta.3",
-    "typescript": "^5.7.3",
-    "unplugin-isolated-decl": "^0.11.2",
-    "vitest": "^3.0.6"
+    "rolldown": "1.0.0-beta.4",
+    "typescript": "^5.8.2",
+    "unplugin-isolated-decl": "^0.13.5",
+    "vitest": "^3.0.8"
   }
 }
