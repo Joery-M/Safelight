@@ -61,7 +61,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.13.11",
-    "@vitest/ui": "^3.0.8",
+    "@vitest/ui": "^3.0.9",
     "change-case": "^5.4.4",
     "eventemitter3": "^5.0.1",
     "fast-xml-parser": "^5.0.9",
@@ -70,6 +70,6 @@
     "prettier": "^3.5.3",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2",
-    "vitest": "^3.0.8"
+    "vitest": "^3.0.9"
   }
 }
