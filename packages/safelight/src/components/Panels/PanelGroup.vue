@@ -42,8 +42,8 @@
             </div>
         </div>
         <div class="relative min-h-0 flex-1">
-            <template v-if="activeComponent.isReady.value && activeComponent.state.value">
-                <component :is="activeComponent.state.value" />
+            <template v-if="!loadingPanel && activeComponent">
+                <component :is="activeComponent" />
             </template>
             <template v-else>
                 <LoadingPanel />
@@ -76,7 +76,7 @@
 
 <script setup lang="ts">
 import { useEditor } from '@/stores/useEditor';
-import { useAsyncState } from '@vueuse/core';
+import { computedAsync } from '@vueuse/core';
 import Button from 'primevue/button';
 import Menu from 'primevue/menu';
 import type { MenuItem } from 'primevue/menuitem';
@@ -113,12 +113,17 @@ const activeTab = computed(() => {
     return panel;
 });
 
-const activeComponent = useAsyncState(() => {
-    const panel = editor.allPanels.get(activeTab.value?.panelId ?? '');
-    return panel
-        ? panel.component().then((c) => ('default' in c ? c.default : c))
-        : Promise.resolve(undefined);
-}, undefined);
+const loadingPanel = ref(false);
+const activeComponent = computedAsync(
+    () => {
+        const panel = editor.allPanels.get(activeTab.value?.panelId ?? '');
+        return panel
+            ? panel.component().then((c) => ('default' in c ? c.default : c))
+            : Promise.resolve(undefined);
+    },
+    null,
+    { evaluating: loadingPanel }
+);
 
 const allAvailablePanels = computed<MenuItem[]>(() =>
     Array.from(editor.allPanels.values()).map<MenuItem>((panel) => ({
