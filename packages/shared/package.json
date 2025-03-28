@@ -15,11 +15,11 @@
     "@safelight/tswebm": "workspace:^",
     "dexie": "^4.0.11",
     "dot-path-value": "^0.0.11",
-    "luxon": "^3.5.0",
+    "luxon": "^3.6.0",
     "mime-matcher": "^1.0.5",
     "mp4box": "^0.5.4",
     "opfs-tools": "^0.7.2",
-    "type-fest": "^4.37.0",
+    "type-fest": "^4.38.0",
     "uuid": "^11.1.0"
   },
   "devDependencies": {

@@ -60,7 +60,7 @@
     "test:run": "vitest run --ui false"
   },
   "devDependencies": {
-    "@types/node": "^22.13.11",
+    "@types/node": "^22.13.14",
     "@vitest/ui": "^3.0.9",
     "change-case": "^5.4.4",
     "eventemitter3": "^5.0.1",
