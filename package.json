@@ -39,7 +39,7 @@
     "@eslint/js": "^9.23.0",
     "@intlify/eslint-plugin-vue-i18n": "^4.0.0",
     "@types/dom-webcodecs": "^0.1.14",
-    "@types/node": "^22.13.11",
+    "@types/node": "^22.13.14",
     "@types/wicg-file-system-access": "^2023.10.5",
     "@unocss/eslint-plugin": "^66.0.0",
     "@vitejs/plugin-vue": "^5.2.3",
