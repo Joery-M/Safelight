@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import type { StoredEffect } from '../base/Storage';
 import type {
     SLComputedProperties,
@@ -6,6 +7,9 @@ import type {
 } from './transformEffect';
 
 export class EffectInstance<Properties extends SLEffectProperties = SLEffectProperties> {
+    // Only for lists, not used in storage
+    id = uuidv4();
+
     constructor(public effect: SLTransformEffect<Properties>) {}
 
     /**

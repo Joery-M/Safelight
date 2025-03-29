@@ -68,7 +68,8 @@
             "title": "Monitor"
         },
         "item-properties": {
-            "title": "Eigenschappen"
+            "title": "Eigenschappen",
+            "none-selected": "Geen tijdlijn item geselecteerd."
         },
         "addMenu": "Paneel toevoegen"
     },

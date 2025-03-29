@@ -68,7 +68,8 @@
             "title": "Monitor"
         },
         "item-properties": {
-            "title": "Properties"
+            "title": "Properties",
+            "none-selected": "No timeline item selected."
         },
         "addMenu": "Add panel"
     },
