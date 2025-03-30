@@ -1,23 +1,30 @@
-import { MediaSourceType, type MediaItem } from '../../../Media/Media';
+import { MediaSourceType } from '../../../Media/Media';
+import type { EffectMeta } from '../../EffectManager';
 import { defineSource } from '../../sourceEffect';
 
-export function SLImageSource(media?: MediaItem) {
-    if (!media?.isMediaFile() || !media.isOfType(MediaSourceType.Image)) return;
+export const meta: EffectMeta = {
+    name: 'sl:image-source',
+    category: 'source'
+};
 
+export default function SLImageSource() {
     const canvas = new OffscreenCanvas(1, 1);
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     let decoder: ImageDecoder | undefined;
-    const type = media.getMetadata('file.mimeType');
     return defineSource({
         name: 'sl:image-source',
-        async load() {
-            const file = await media.loadFile();
-            if (!file) return;
+        async load(media) {
+            if (!media?.isMediaFile() || !media.isOfType(MediaSourceType.Image)) return false;
 
+            const file = await media.loadFile();
+            if (!file) return false;
+
+            const type = media.getMetadata('file.mimeType');
             decoder = new ImageDecoder({ data: file, type });
             await decoder.tracks.ready;
+            return true;
         },
         async source(cfg) {
             if (!decoder) return { ctx };

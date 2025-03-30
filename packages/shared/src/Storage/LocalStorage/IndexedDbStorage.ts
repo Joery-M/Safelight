@@ -11,6 +11,9 @@ import type {
     StoredTimelineItem
 } from '../../base/Storage';
 import BaseStorageController from '../../base/Storage';
+import { EffectInstance } from '../../Effects/effectInstance';
+import { EffectManager } from '../../Effects/EffectManager';
+import { SourceEffectInstance } from '../../Effects/SourceEffectInstance';
 import {
     ChunkedMediaFileItem,
     type ChunkedMediaFileItemMetadata
@@ -325,8 +328,29 @@ export class IndexedDbStorageController extends BaseStorageController {
         item.layer.value = storedItem.layer;
         item.name.value = storedItem.name;
         item.start.value = storedItem.start;
-        // TODO: Map stored effects to effect objects
-        // item.effects.push(...)
+
+        const loadEffects$ = storedItem.effects.map(async (eff, i) => {
+            const effect = await EffectManager.getEffect(eff.effectId);
+            if (effect && 'transform' in effect) {
+                const keyframes = new Map(
+                    Object.entries(eff.keyframes).map(([k, v]) => [
+                        parseFloat(k),
+                        new Map(Object.entries(v))
+                    ])
+                );
+                const inst = new EffectInstance(effect, keyframes);
+                item.effects[i] = inst;
+            }
+        });
+        const loadSources$ = storedItem.sources.map(async (src, i) => {
+            const effect = await EffectManager.getEffect(src.effectId);
+            if (effect && !('transform' in effect)) {
+                const inst = new SourceEffectInstance(effect);
+                item.sources[i] = inst;
+            }
+        });
+
+        await Promise.all([...loadEffects$, ...loadSources$]);
 
         return item;
     }
@@ -343,6 +367,7 @@ export class IndexedDbStorageController extends BaseStorageController {
             name: toValue(item.name),
             id: item.id,
             effects: toRaw(item.effects).map(({ serialize }) => serialize()),
+            sources: toRaw(item.sources).map(({ serialize }) => serialize()),
             end: toValue(item.end),
             layer: toValue(item.layer),
             start: toValue(item.start)

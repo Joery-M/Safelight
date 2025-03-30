@@ -1,4 +1,10 @@
-import { defineConfig, presetIcons, presetWind3, transformerDirectives } from 'unocss';
+import {
+    defineConfig,
+    presetIcons,
+    presetWind3,
+    transformerDirectives,
+    presetAttributify
+} from 'unocss';
 import { presetPrime } from './buildscripts/unocss-preset-primeui';
 
 export default defineConfig({
@@ -14,5 +20,10 @@ export default defineConfig({
             ]
         }
     },
-    presets: [presetWind3(), presetPrime(), presetIcons({ scale: 18, unit: 'px' })]
+    presets: [
+        presetWind3(),
+        presetPrime(),
+        presetIcons({ scale: 18, unit: 'px' }),
+        presetAttributify()
+    ]
 });

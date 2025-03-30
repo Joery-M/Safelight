@@ -3,6 +3,11 @@
         {{ $t('panels.item-properties.none-selected') }}
     </p>
     <div v-else>
+        <ol v-for="source in item.sources" :key="source.id">
+            {{
+                source.effect.name
+            }}
+        </ol>
         <ol>
             <li v-for="effect in item.effects" :key="effect.id">
                 <template
@@ -31,8 +36,8 @@
                         />
                         {{ effect.effect.name }}
                     </button>
-                    <ul :id="effect.id">
-                        <li v-for="(prop, key) in effect.effect.properties" :key="key">
+                    <table :id="effect.id">
+                        <tr v-for="(prop, key) in effect.effect.properties" :key="key">
                             <td>
                                 {{ key }}
                             </td>
@@ -84,8 +89,8 @@
                                     @value-change="prop.setValue($event)"
                                 />
                             </td>
-                        </li>
-                    </ul>
+                        </tr>
+                    </table>
                 </template>
                 <template v-else>
                     <!-- Effect without properties -->
@@ -93,17 +98,85 @@
                 </template>
             </li>
         </ol>
+        <div w-full flex justify-center>
+            <Button
+                icon="i-ph-plus"
+                :label="$t('panels.item-properties.add-effect')"
+                @click="effectPopover?.toggle"
+            />
+        </div>
+        <Popover ref="add-effect-popover" :pt="{ content: { class: 'p-0' } }">
+            <Tree
+                :value="allEffects"
+                w-80
+                rounded-full
+                p-1
+                selection-mode="single"
+                @node-select="$event.data && addEffect($event.data)"
+            >
+            </Tree>
+        </Popover>
     </div>
 </template>
 
 <script setup lang="ts">
 import { useEditor } from '@/stores/useEditor';
-import type { EffectInstance } from '@safelight/shared/Effects/effectInstance';
-import { Checkbox, InputNumber, InputText, Slider, Textarea } from 'primevue';
-import { computed, shallowReactive } from 'vue';
+import { EffectInstance } from '@safelight/shared/Effects/effectInstance';
+import { EffectManager } from '@safelight/shared/Effects/EffectManager';
+import { SourceEffectInstance } from '@safelight/shared/Effects/SourceEffectInstance';
+import {
+    Button,
+    Checkbox,
+    InputNumber,
+    InputText,
+    Popover,
+    Slider,
+    Textarea,
+    Tree
+} from 'primevue';
+import type { TreeNode } from 'primevue/treenode';
+import { computed, shallowReactive, useTemplateRef } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const editor = useEditor();
 
+const effectPopover = useTemplateRef('add-effect-popover');
+
 const item = computed(() => editor.selectedTimelineItem);
 const collapsedEffects = shallowReactive(new WeakSet<EffectInstance>());
+
+const i18n = useI18n();
+
+const allEffects = computed<TreeNode[]>(() => {
+    const grouped = Object.groupBy(EffectManager.effectMap.values(), (item) => item.category);
+    return Object.entries(grouped).map(([category, effects]) => {
+        return {
+            label: i18n.t('effect.categories.' + category, category),
+            key: category,
+            data: category,
+            selectable: false,
+            children: effects?.map((effect) => {
+                return {
+                    label: i18n.t('effect.builtin.' + effect.name, effect.name),
+                    key: category + '-' + effect.name,
+                    data: effect.name,
+                    selectable: true
+                } satisfies TreeNode;
+            })
+        } satisfies TreeNode;
+    });
+});
+
+async function addEffect(name: string) {
+    if (!item.value) return;
+
+    const eff = await EffectManager.getEffect(name);
+    if (eff) {
+        if ('transform' in eff) {
+            item.value.effects.push(new EffectInstance(eff));
+        } else {
+            item.value.sources.push(new SourceEffectInstance(eff));
+        }
+    }
+}
 </script>

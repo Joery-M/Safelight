@@ -69,7 +69,8 @@
         },
         "item-properties": {
             "title": "Properties",
-            "none-selected": "No timeline item selected."
+            "none-selected": "No timeline item selected.",
+            "add-effect": "Add effect"
         },
         "addMenu": "Add panel"
     },
@@ -122,5 +123,14 @@
     },
     "settings": {
         "downloadJson": "Download JSON"
+    },
+    "effect": {
+        "categories": {
+            "source": "Source"
+        },
+        "builtin": {
+            "sl:image-source": "Image source",
+            "sl:chunked-source": "Chunked source"
+        }
     }
 }

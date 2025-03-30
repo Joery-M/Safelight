@@ -22,7 +22,7 @@ export type SLComputedProperties<P extends SLEffectProperties> = {
 
 export interface SLTransformEffect<Properties extends SLEffectProperties = SLEffectProperties>
     extends DaguerreoTransformEffect<Properties> {
-    transform?: (
+    transform: (
         config: DaguerreoTransformPayload & { properties?: SLComputedProperties<Properties> }
     ) => Promisable<PartialDeep<DaguerreoTransformResult> | void>;
 }

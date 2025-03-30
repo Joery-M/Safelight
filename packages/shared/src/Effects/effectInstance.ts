@@ -10,12 +10,14 @@ export class EffectInstance<Properties extends SLEffectProperties = SLEffectProp
     // Only for lists, not used in storage
     id = uuidv4();
 
-    constructor(public effect: SLTransformEffect<Properties>) {}
+    constructor(
+        public effect: SLTransformEffect<Properties>,
 
-    /**
-     * Keyframes per millisecond
-     */
-    keyframes = new Map<number, Map<string, any>>();
+        /**
+         * Keyframes per millisecond
+         */
+        public keyframes = new Map<number, Map<string, any>>()
+    ) {}
 
     setKeyframe(time: number, propertyName: string, value: any) {
         const existingKeysAtTime = this.keyframes.get(time);

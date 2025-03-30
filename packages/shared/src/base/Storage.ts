@@ -126,6 +126,7 @@ export interface StoredTimelineItem {
     end: number;
     layer: number;
     effects: StoredEffect[];
+    sources: StoredSource[];
 }
 
 export interface StoredEffect {
@@ -135,4 +136,8 @@ export interface StoredEffect {
             [property: string]: any;
         };
     };
+}
+
+export interface StoredSource {
+    effectId: string;
 }
