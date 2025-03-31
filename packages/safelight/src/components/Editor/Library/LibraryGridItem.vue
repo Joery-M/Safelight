@@ -1,7 +1,10 @@
 <template>
     <div
         role="gridcell"
-        class="m-1 h-fit inline-flex flex-col select-text border-white/10 border-rounded rounded-md border-solid align-top"
+        class="
+                m-1 h-fit inline-flex flex-col select-text border-white/10 border-rounded rounded-md
+                border-solid align-top
+            "
         style="border-width: 1px"
         :style="{
             width: size + 'px'
@@ -16,7 +19,10 @@
         @dblclick="clickHandler"
     >
         <div
-            class="bg-checkerboard relative aspect-video w-full flex items-center justify-center text-clip rounded-t-md"
+            class="
+                    bg-checkerboard relative aspect-video w-full flex items-center justify-center
+                    text-clip rounded-t-md
+                "
         >
             <img
                 v-if="false"
@@ -230,7 +236,7 @@ function clickHandler() {
 }
 
 .media-type {
-    @apply p-2   left-0 top-0 h-full w-full gap-2;
+    @apply left-0 top-0 h-full w-full gap-2 p-2;
 
     position: absolute;
     display: flex;

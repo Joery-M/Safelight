@@ -49,6 +49,7 @@
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.5",
     "eslint-plugin-vue": "^10.0.0",
+    "joery-prettier-plugin-unocss": "^1.0.3",
     "playwright": "^1.51.1",
     "prettier": "^3.5.3",
     "typescript": "^5.8.2",

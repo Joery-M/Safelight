@@ -96,7 +96,7 @@ function mapSettingsNs(ns: SettingsNamespace): TreeNode {
         @apply flex-1 overflow-y-auto;
     }
     > .p-button {
-        @apply flex w-full justify-center gap-2;
+        @apply w-full flex justify-center gap-2;
     }
 }
 
@@ -104,7 +104,7 @@ function mapSettingsNs(ns: SettingsNamespace): TreeNode {
     @apply mb-4 pl-4;
 
     h3 {
-        @apply -ml-2 mb-3 mt-0;
+        @apply mb-3 mt-0 -ml-2;
     }
     p {
         @apply m-0;
@@ -114,7 +114,8 @@ function mapSettingsNs(ns: SettingsNamespace): TreeNode {
     }
 
     a.default {
-        @apply invisible cursor-pointer align-middle text-sm font-extralight italic opacity-0 transition-all;
+        @apply invisible cursor-pointer align-middle text-sm font-extralight italic opacity-0
+            transition-all;
 
         &.show {
             @apply visible opacity-100;

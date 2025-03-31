@@ -47,6 +47,9 @@ importers:
       eslint-plugin-vue:
         specifier: ^10.0.0
         version: 10.0.0(eslint@9.23.0(jiti@2.4.2))(vue-eslint-parser@10.1.1(eslint@9.23.0(jiti@2.4.2)))
+      joery-prettier-plugin-unocss:
+        specifier: ^1.0.3
+        version: 1.0.3(@unocss/config@66.0.0)(@unocss/core@66.0.0)(prettier@3.5.3)
       playwright:
         specifier: ^1.51.1
         version: 1.51.1
@@ -2784,6 +2787,13 @@ packages:
   jiti@2.4.2:
     resolution: {integrity: sha512-rg9zJN+G4n2nfJl5MW3BMygZX56zKPNVEYYqq7adpmMh4Jn2QNEwhvQlFy6jPVdcod7txZtKHWnyZiA3a0zP7A==}
     hasBin: true
+
+  joery-prettier-plugin-unocss@1.0.3:
+    resolution: {integrity: sha512-2R1QhdnACqa9jQ1KkzNkYBs6ECcu6CSyp1QS36inH2PL+z5WZtOggLSeaUwipQCvS1AKZtVHrZxzuAJGzniL1w==}
+    peerDependencies:
+      '@unocss/config': '>0.50'
+      '@unocss/core': '>0.50'
+      prettier: '>3.0.0'
 
   js-binary-schema-parser@2.0.3:
     resolution: {integrity: sha512-xezGJmOb4lk/M1ZZLTR/jaBHQ4gG/lqQnJqdIv4721DMggsa1bDVlHXNeHYogaIEHD9vCRv0fcL4hMA+Coarkg==}
@@ -6870,6 +6880,12 @@ snapshots:
       '@pkgjs/parseargs': 0.11.0
 
   jiti@2.4.2: {}
+
+  joery-prettier-plugin-unocss@1.0.3(@unocss/config@66.0.0)(@unocss/core@66.0.0)(prettier@3.5.3):
+    dependencies:
+      '@unocss/config': 66.0.0
+      '@unocss/core': 66.0.0
+      prettier: 3.5.3
 
   js-binary-schema-parser@2.0.3: {}
 
