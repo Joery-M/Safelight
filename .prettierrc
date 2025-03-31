@@ -1,5 +1,6 @@
 {
     "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/prettierrc.json",
+    "plugins": ["joery-prettier-plugin-unocss"],
     "semi": true,
     "tabWidth": 4,
     "useTabs": false,
