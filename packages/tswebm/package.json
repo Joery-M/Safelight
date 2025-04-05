@@ -60,11 +60,11 @@
     "test:run": "vitest run --ui false"
   },
   "devDependencies": {
-    "@types/node": "^22.13.14",
+    "@types/node": "^22.14.0",
     "@vitest/ui": "^3.0.9",
     "change-case": "^5.4.4",
     "eventemitter3": "^5.0.1",
-    "fast-xml-parser": "^5.0.9",
+    "fast-xml-parser": "^5.2.0",
     "happy-dom": "^17.4.4",
     "pkgroll": "^2.12.1",
     "prettier": "^3.5.3",
