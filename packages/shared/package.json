@@ -15,15 +15,15 @@
     "@safelight/tswebm": "workspace:^",
     "dexie": "^4.0.11",
     "dot-path-value": "^0.0.11",
-    "luxon": "^3.6.0",
+    "luxon": "^3.6.1",
     "mime-matcher": "^1.0.5",
     "mp4box": "^0.5.4",
     "opfs-tools": "^0.7.2",
-    "type-fest": "^4.38.0",
+    "type-fest": "^4.39.1",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "@types/luxon": "^3.4.2",
+    "@types/luxon": "^3.6.2",
     "@types/uuid": "^10.0.0",
     "@vitest/ui": "^3.0.9",
     "fake-indexeddb": "^6.0.0",
@@ -36,6 +36,6 @@
     "comlink": "^4.4.2",
     "rxjs": "^7.8.2",
     "vue": "^3.5.13",
-    "vue-i18n": "^11.1.2"
+    "vue-i18n": "^11.1.3"
   }
 }
