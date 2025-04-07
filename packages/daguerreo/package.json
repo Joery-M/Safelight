@@ -30,7 +30,7 @@
     "test:run": "vitest run"
   },
   "devDependencies": {
-    "type-fest": "^4.38.0",
+    "type-fest": "^4.39.1",
     "vitest": "^3.0.9"
   },
   "dependencies": {
