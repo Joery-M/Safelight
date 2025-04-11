@@ -163,14 +163,14 @@ importers:
         specifier: workspace:*
         version: link:../timeline
       '@vueuse/core':
-        specifier: ^13.0.0
-        version: 13.0.0(vue@3.5.13(typescript@5.8.3))
+        specifier: ^13.1.0
+        version: 13.1.0(vue@3.5.13(typescript@5.8.3))
       '@vueuse/math':
-        specifier: ^13.0.0
-        version: 13.0.0(vue@3.5.13(typescript@5.8.3))
+        specifier: ^13.1.0
+        version: 13.1.0(vue@3.5.13(typescript@5.8.3))
       '@vueuse/rxjs':
-        specifier: ^13.0.0
-        version: 13.0.0(rxjs@7.8.2)(vue@3.5.13(typescript@5.8.3))
+        specifier: ^13.1.0
+        version: 13.1.0(rxjs@7.8.2)(vue@3.5.13(typescript@5.8.3))
       comlink:
         specifier: ^4.4.2
         version: 4.4.2
@@ -190,8 +190,8 @@ importers:
         specifier: ^1.0.5
         version: 1.0.5
       pinia:
-        specifier: ^3.0.1
-        version: 3.0.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+        specifier: ^3.0.2
+        version: 3.0.2(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
       primevue:
         specifier: ^4.3.3
         version: 4.3.3(vue@3.5.13(typescript@5.8.3))
@@ -269,11 +269,11 @@ importers:
         specifier: workspace:^
         version: link:../tswebm
       '@vueuse/core':
-        specifier: ^13.0.0
-        version: 13.0.0(vue@3.5.13(typescript@5.8.3))
+        specifier: ^13.1.0
+        version: 13.1.0(vue@3.5.13(typescript@5.8.3))
       '@vueuse/rxjs':
-        specifier: ^13.0.0
-        version: 13.0.0(rxjs@7.8.2)(vue@3.5.13(typescript@5.8.3))
+        specifier: ^13.1.0
+        version: 13.1.0(rxjs@7.8.2)(vue@3.5.13(typescript@5.8.3))
       comlink:
         specifier: ^4.4.2
         version: 4.4.2
@@ -336,11 +336,11 @@ importers:
         specifier: ^7.7.2
         version: 7.7.2
       '@vueuse/core':
-        specifier: ^13.0.0
-        version: 13.0.0(vue@3.5.13(typescript@5.8.3))
+        specifier: ^13.1.0
+        version: 13.1.0(vue@3.5.13(typescript@5.8.3))
       '@vueuse/math':
-        specifier: ^13.0.0
-        version: 13.0.0(vue@3.5.13(typescript@5.8.3))
+        specifier: ^13.1.0
+        version: 13.1.0(vue@3.5.13(typescript@5.8.3))
       eventemitter3:
         specifier: ^5.0.1
         version: 5.0.1
@@ -1710,27 +1710,27 @@ packages:
   '@vue/shared@3.5.13':
     resolution: {integrity: sha512-/hnE/qP5ZoGpol0a5mDi45bOd7t3tjYJBjsgCsivow7D48cJeV5l05RD82lPqi7gRiphZM37rnhW1l6ZoCNNnQ==}
 
-  '@vueuse/core@13.0.0':
-    resolution: {integrity: sha512-rkgb4a8/0b234lMGCT29WkCjPfsX0oxrIRR7FDndRoW3FsaC9NBzefXg/9TLhAgwM11f49XnutshM4LzJBrQ5g==}
+  '@vueuse/core@13.1.0':
+    resolution: {integrity: sha512-PAauvdRXZvTWXtGLg8cPUFjiZEddTqmogdwYpnn60t08AA5a8Q4hZokBnpTOnVNqySlFlTcRYIC8OqreV4hv3Q==}
     peerDependencies:
       vue: ^3.5.0
 
-  '@vueuse/math@13.0.0':
-    resolution: {integrity: sha512-OrDYBFZ4XUaUse7W7JkjfIk2Jr4dKVtk5cP1IqBQwP5RPfczqEE57jFRKyoCpXggP0gsK0R9z4v/qOjCuAjSjg==}
+  '@vueuse/math@13.1.0':
+    resolution: {integrity: sha512-iTpUKYUWhZHzc6RTbkEkpA9L/CJBtIY7nwN0Lc6JkX3KOFTRU1vmN9odX9ZTNnndlE51HS5d68VvUBh1v5n84A==}
     peerDependencies:
       vue: ^3.5.0
 
-  '@vueuse/metadata@13.0.0':
-    resolution: {integrity: sha512-TRNksqmvtvqsuHf7bbgH9OSXEV2b6+M3BSN4LR5oxWKykOFT9gV78+C2/0++Pq9KCp9KQ1OQDPvGlWNQpOb2Mw==}
+  '@vueuse/metadata@13.1.0':
+    resolution: {integrity: sha512-+TDd7/a78jale5YbHX9KHW3cEDav1lz1JptwDvep2zSG8XjCsVE+9mHIzjTOaPbHUAk5XiE4jXLz51/tS+aKQw==}
 
-  '@vueuse/rxjs@13.0.0':
-    resolution: {integrity: sha512-WnnjNsI9HL1sBzFtkqEfZoN1f4hkEaoZRFyZBniaq2G85EAIPUL+4RnGQZlYwPNeIdYWZvRt6smxHMmpCEpWMQ==}
+  '@vueuse/rxjs@13.1.0':
+    resolution: {integrity: sha512-/ItzpO8yky6K+frthSlUbBvmy4WSrKSHze/SyYPMgGGLh+xMYFUvmXQnO/daVC4fdWJN8Phb2dfa7d9WZTDQhQ==}
     peerDependencies:
       rxjs: '>=6.0.0'
       vue: ^3.5.0
 
-  '@vueuse/shared@13.0.0':
-    resolution: {integrity: sha512-9MiHhAPw+sqCF/RLo8V6HsjRqEdNEWVpDLm2WBRW2G/kSQjb8X901sozXpSCaeLG0f7TEfMrT4XNaA5m1ez7Dg==}
+  '@vueuse/shared@13.1.0':
+    resolution: {integrity: sha512-IVS/qRRjhPTZ6C2/AM3jieqXACGwFZwWTdw5sNTSKk2m/ZpkuuN+ri+WCVUP8TqaKwJYt/KuMwmXspMAw8E6ew==}
     peerDependencies:
       vue: ^3.5.0
 
@@ -3281,8 +3281,8 @@ packages:
     resolution: {integrity: sha512-M7BAV6Rlcy5u+m6oPhAPFgJTzAioX/6B0DxyvDlo9l8+T3nLKbrczg2WLUyzd45L8RqfUMyGPzekbMvX2Ldkwg==}
     engines: {node: '>=12'}
 
-  pinia@3.0.1:
-    resolution: {integrity: sha512-WXglsDzztOTH6IfcJ99ltYZin2mY8XZCXujkYWVIJlBjqsP6ST7zw+Aarh63E1cDVYeyUcPCxPHzJpEOmzB6Wg==}
+  pinia@3.0.2:
+    resolution: {integrity: sha512-sH2JK3wNY809JOeiiURUR0wehJ9/gd9qFN2Y828jCbxEzKEmEt0pzCXwqiSTfuRsK9vQsOflSdnbdBOGrhtn+g==}
     peerDependencies:
       typescript: '>=4.4.4'
       vue: ^2.7.0 || ^3.5.11
@@ -5685,27 +5685,27 @@ snapshots:
 
   '@vue/shared@3.5.13': {}
 
-  '@vueuse/core@13.0.0(vue@3.5.13(typescript@5.8.3))':
+  '@vueuse/core@13.1.0(vue@3.5.13(typescript@5.8.3))':
     dependencies:
       '@types/web-bluetooth': 0.0.21
-      '@vueuse/metadata': 13.0.0
-      '@vueuse/shared': 13.0.0(vue@3.5.13(typescript@5.8.3))
+      '@vueuse/metadata': 13.1.0
+      '@vueuse/shared': 13.1.0(vue@3.5.13(typescript@5.8.3))
       vue: 3.5.13(typescript@5.8.3)
 
-  '@vueuse/math@13.0.0(vue@3.5.13(typescript@5.8.3))':
+  '@vueuse/math@13.1.0(vue@3.5.13(typescript@5.8.3))':
     dependencies:
-      '@vueuse/shared': 13.0.0(vue@3.5.13(typescript@5.8.3))
+      '@vueuse/shared': 13.1.0(vue@3.5.13(typescript@5.8.3))
       vue: 3.5.13(typescript@5.8.3)
 
-  '@vueuse/metadata@13.0.0': {}
+  '@vueuse/metadata@13.1.0': {}
 
-  '@vueuse/rxjs@13.0.0(rxjs@7.8.2)(vue@3.5.13(typescript@5.8.3))':
+  '@vueuse/rxjs@13.1.0(rxjs@7.8.2)(vue@3.5.13(typescript@5.8.3))':
     dependencies:
-      '@vueuse/shared': 13.0.0(vue@3.5.13(typescript@5.8.3))
+      '@vueuse/shared': 13.1.0(vue@3.5.13(typescript@5.8.3))
       rxjs: 7.8.2
       vue: 3.5.13(typescript@5.8.3)
 
-  '@vueuse/shared@13.0.0(vue@3.5.13(typescript@5.8.3))':
+  '@vueuse/shared@13.1.0(vue@3.5.13(typescript@5.8.3))':
     dependencies:
       vue: 3.5.13(typescript@5.8.3)
 
@@ -7432,7 +7432,7 @@ snapshots:
 
   picomatch@4.0.2: {}
 
-  pinia@3.0.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3)):
+  pinia@3.0.2(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3)):
     dependencies:
       '@vue/devtools-api': 7.7.2
       vue: 3.5.13(typescript@5.8.3)
