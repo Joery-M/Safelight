@@ -6,7 +6,7 @@ import type {
 } from '@safelight/daguerreo';
 import type { JsonPrimitive, PartialDeep, Promisable } from 'type-fest';
 
-export interface SLTransformProperty<T = any, Meta = Record<string, any>>
+export interface SLEffectProperty<T = any, Meta = Record<string, any>>
     extends DGTransformProperty<T, Meta> {
     default?: T;
     serialize?: (value: T) => JsonPrimitive;
@@ -14,7 +14,7 @@ export interface SLTransformProperty<T = any, Meta = Record<string, any>>
 }
 
 export interface SLEffectProperties {
-    [key: string]: SLTransformProperty;
+    [key: string]: SLEffectProperty;
 }
 export type SLComputedProperties<P extends SLEffectProperties> = {
     [K in keyof P]: ReturnType<NonNullable<P>[K]['value']>;

@@ -338,14 +338,20 @@ export class IndexedDbStorageController extends BaseStorageController {
                         new Map(Object.entries(v))
                     ])
                 );
-                const inst = new EffectInstance(effect, keyframes);
+                const inst = new EffectInstance(item, effect, keyframes);
                 item.effects[i] = inst;
             }
         });
         const loadSources$ = storedItem.sources.map(async (src, i) => {
             const effect = await EffectManager.getEffect(src.effectId);
             if (effect && !('transform' in effect)) {
-                const inst = new SourceEffectInstance(effect);
+                const keyframes = new Map(
+                    Object.entries(src.keyframes).map(([k, v]) => [
+                        parseFloat(k),
+                        new Map(Object.entries(v))
+                    ])
+                );
+                const inst = new SourceEffectInstance(item, effect, keyframes);
                 item.sources[i] = inst;
             }
         });

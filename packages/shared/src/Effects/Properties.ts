@@ -1,8 +1,9 @@
 import type { PartialDeep } from 'type-fest';
-import { ref } from 'vue';
-import type { SLTransformProperty } from './transformEffect';
+import { ref, shallowRef } from 'vue';
+import type { MediaItemTypes } from '../Media/Media';
+import type { SLEffectProperty } from './transformEffect';
 
-export interface NumberPropertyConfig {
+export type NumberPropertyConfig = PartialDeep<{
     min: number;
     max: number;
     step: number;
@@ -15,11 +16,12 @@ export interface NumberPropertyConfig {
         toDisplay: (value: number) => number;
         toValue: (display: number) => number;
     };
-}
+}>;
+
 export function numberProperty(
     value: number,
-    meta?: PartialDeep<NumberPropertyConfig>
-): SLTransformProperty<number, PartialDeep<NumberPropertyConfig>> {
+    meta?: NumberPropertyConfig
+): SLEffectProperty<number, NumberPropertyConfig> {
     const curValue = ref(value);
     return {
         type: 'number',
@@ -41,8 +43,8 @@ export function numberProperty(
 
 export function booleanProperty(
     value: boolean,
-    meta: Record<string, any>
-): SLTransformProperty<boolean> {
+    meta?: Record<string, any>
+): SLEffectProperty<boolean> {
     const curValue = ref(value);
 
     return {
@@ -60,8 +62,8 @@ export function booleanProperty(
 
 export function stringProperty(
     value: string,
-    meta: Record<string, any>
-): SLTransformProperty<string> {
+    meta?: Record<string, any>
+): SLEffectProperty<string> {
     const curValue = ref(value);
 
     return {
@@ -69,6 +71,27 @@ export function stringProperty(
         default: value,
         value() {
             return curValue.value ?? '';
+        },
+        setValue(v) {
+            curValue.value = v;
+        },
+        meta
+    };
+}
+
+export type MediaPropertyConfig = PartialDeep<{
+    allowedTypes: MediaItemTypes[];
+}>;
+
+export function mediaItemProperty(
+    meta?: MediaPropertyConfig
+): SLEffectProperty<string | null, MediaPropertyConfig> {
+    const curValue = shallowRef<string | null>(null);
+    return {
+        type: 'MediaItem',
+        default: null,
+        value() {
+            return curValue.value;
         },
         setValue(v) {
             curValue.value = v;

@@ -1,5 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
+import { reactive } from 'vue';
 import type { StoredEffect } from '../base/Storage';
+import type { TimelineItem } from '../Timeline/TimelineItem';
 import type {
     SLComputedProperties,
     SLEffectProperties,
@@ -11,12 +13,13 @@ export class EffectInstance<Properties extends SLEffectProperties = SLEffectProp
     id = uuidv4();
 
     constructor(
+        private item: TimelineItem,
         public effect: SLTransformEffect<Properties>,
 
         /**
          * Keyframes per millisecond
          */
-        public keyframes = new Map<number, Map<string, any>>()
+        public keyframes = reactive(new Map<number, Map<string, any>>())
     ) {}
 
     setKeyframe(time: number, propertyName: string, value: any) {
@@ -27,14 +30,34 @@ export class EffectInstance<Properties extends SLEffectProperties = SLEffectProp
         } else {
             existingKeysAtTime.set(propertyName, value);
         }
+        this.item.save();
     }
 
     deleteKeyframe(time: number, propertyName: string) {
         const existingKeysAtTime = this.keyframes.get(time);
         if (existingKeysAtTime) existingKeysAtTime.delete(propertyName);
+        this.item.save();
     }
 
-    calculateKeyframeValues(time: number) {
+    calculatePropertyValue(time: number, propertyName: string) {
+        if (!this.effect.properties) return;
+        let value = this.effect.properties[propertyName]?.default;
+        const timeRecords = [...this.keyframes.entries()].sort(([a], [b]) => a - b);
+
+        // Step through the sorted times
+        for (const [kTime, keyframe] of timeRecords) {
+            // Break when the time is more than the desired time
+            if (kTime > time) break;
+
+            // For each property, set the current value to the most recent value
+            if (keyframe.has(propertyName)) {
+                value = keyframe.get(propertyName)!;
+            }
+        }
+        return value;
+    }
+
+    calculatePropertyValues(time: number) {
         if (!this.effect.properties) return;
 
         // Set default values

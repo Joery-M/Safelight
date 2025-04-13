@@ -56,3 +56,20 @@ export type DGComputedProperties<P extends DGTransformProperties | undefined> = 
     : {
           [K in keyof P]: ReturnType<NonNullable<P>[K]['value']>;
       };
+
+export function getDefaultProperties(
+    props?: DGTransformProperties,
+    overrides?: DGTransformProperties
+) {
+    if (!props) return overrides ?? {};
+
+    const defProps: DGTransformProperties = {};
+    for (const key in props) {
+        if (key in props && !(key in props)) {
+            const prop = props[key];
+            defProps[key] = prop.value();
+        }
+    }
+
+    return defProps;
+}

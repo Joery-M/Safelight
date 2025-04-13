@@ -1,5 +1,9 @@
 import { computed, shallowReactive, shallowRef } from 'vue';
-import type { DGTransformProperties, DGTransformProperty } from './properties';
+import {
+    getDefaultProperties,
+    type DGTransformProperties,
+    type DGTransformProperty
+} from './properties';
 import type { DaguerreoSourceEffect, DaguerreoSourcePayload } from './sourceEffect';
 import type { DaguerreoTransformEffect, DaguerreoTransformPayload } from './transformEffect';
 
@@ -52,6 +56,7 @@ export class Daguerreo {
 
     async process(
         config: DaguerreoSourcePayload,
+        sourceProps: DGTransformProperties,
         transformProps: DGTransformProperties[] = this.getTransformProps()
     ): Promise<DaguerreoResult> {
         const effectBase = this.source.value;
@@ -61,6 +66,8 @@ export class Daguerreo {
             this.ranLoadFunction = true;
             await effectBase.load?.();
         }
+
+        const props = getDefaultProperties(sourceProps, this.source.value?.properties);
 
         const payload: DaguerreoTransformPayload = Object.assign(
             // Default values
@@ -76,7 +83,7 @@ export class Daguerreo {
                 maxHeight: config.height,
                 quality: config.quality
             },
-            await effectBase.source(config)
+            await effectBase.source({ ...config, properties: props })
         );
 
         switch (config.quality) {
@@ -102,15 +109,8 @@ export class Daguerreo {
         for (let i = 0; i < this.effectsWithTransformHooks.value.length; i++) {
             const effect = this.effectsWithTransformHooks.value[i];
 
-            const props: DGTransformProperties = transformProps[i] ?? {};
-            if (effect.properties) {
-                for (const key in effect.properties) {
-                    if (key in effect.properties && !(key in props)) {
-                        const prop = effect.properties[key];
-                        props[key] = prop.value();
-                    }
-                }
-            }
+            const props = getDefaultProperties(effect.properties, transformProps[i]);
+
             const result = await effect.transform!({ ...payload, properties: props });
             // Assign props
             if (result) Object.assign(payload, result);

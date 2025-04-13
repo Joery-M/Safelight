@@ -19,7 +19,7 @@ export class Project {
     id = uuidv4();
 
     media = shallowReactive(new Map<string, MediaItem>());
-    fileTree = new FileTreeItem(this);
+    fileTree = new FileTreeItem(this, undefined, undefined, true);
 
     async save() {
         return await Storage.getStorage().saveProject(this);

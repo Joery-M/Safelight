@@ -167,9 +167,7 @@ import {
     reactive,
     ref,
     shallowReactive,
-    shallowRef,
     useTemplateRef,
-    watchEffect,
     type ComponentPublicInstance
 } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -269,12 +267,8 @@ const createMenuItems = reactive<MenuItem[]>([
     }
 ]);
 
-const sortedAndFiltered = shallowRef<FileTreeItem[]>([]);
-
-watchEffect(sortAndFilter);
-
-function sortAndFilter() {
-    if (!project.p) return;
+const sortedAndFiltered = computed(() => {
+    if (!project.p) return [];
 
     const filtered = Array.from(curDir.value?.children).filter((elem) => {
         if (search.value.length == 0) {
@@ -304,8 +298,8 @@ function sortAndFilter() {
         }
     });
 
-    sortedAndFiltered.value = filtered;
-}
+    return filtered;
+});
 
 function fileDialogOpenDblClick(event: MouseEvent) {
     event.preventDefault();

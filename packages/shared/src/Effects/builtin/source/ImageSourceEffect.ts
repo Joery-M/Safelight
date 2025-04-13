@@ -1,5 +1,6 @@
 import { MediaSourceType } from '../../../Media/Media';
 import type { EffectMeta } from '../../EffectManager';
+import { mediaItemProperty } from '../../Properties';
 import { defineSource } from '../../sourceEffect';
 
 export const meta: EffectMeta = {
@@ -15,6 +16,9 @@ export default function SLImageSource() {
     let decoder: ImageDecoder | undefined;
     return defineSource({
         name: 'sl:image-source',
+        properties: {
+            source: mediaItemProperty({ allowedTypes: ['MediaFile'] })
+        },
         async load(media) {
             if (!media?.isMediaFile() || !media.isOfType(MediaSourceType.Image)) return false;
 

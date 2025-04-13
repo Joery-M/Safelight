@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { computed, ref, shallowReactive } from 'vue';
+import { computed, ref, shallowReactive, watchEffect } from 'vue';
 import { Storage } from '../base/Storage';
 import type { EffectInstance } from '../Effects/effectInstance';
 import type { SourceEffectInstance } from '../Effects/SourceEffectInstance';
@@ -33,7 +33,14 @@ export class TimelineItem {
     end = ref(1000);
     layer = ref(0);
 
-    constructor(private timeline: Timeline) {}
+    constructor(private timeline: Timeline) {
+        watchEffect(() => {
+            this.sources.forEach((s) => {
+                s.serialize();
+            });
+            console.log(this.effects, this.sources);
+        });
+    }
 
     //#region Movement
 
@@ -144,6 +151,7 @@ export class TimelineItem {
 
     async save() {
         if (!Storage.hasStorage()) return false;
+        console.log('save', this.id);
 
         const storage = Storage.getStorage();
 

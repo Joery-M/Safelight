@@ -1,11 +1,16 @@
 import type { Promisable, SetRequired } from 'type-fest';
+import type { DGComputedProperties, DGTransformProperties, QualitySetting } from '.';
 import type { DaguerreoTransformPayload } from './transformEffect';
-import type { QualitySetting } from '.';
 
-export interface DaguerreoSourceEffect {
+export interface DaguerreoSourceEffect<
+    Properties extends DGTransformProperties = DGTransformProperties
+> {
     name: string;
+    properties?: Properties;
     load?: () => Promisable<void>;
-    source: (config: DaguerreoSourcePayload) => Promisable<DaguerreoSourceResult>;
+    source: (
+        config: DaguerreoSourcePayload & { properties: DGComputedProperties<Properties> }
+    ) => Promisable<DaguerreoSourceResult>;
 }
 
 export type DaguerreoSourceResult = SetRequired<Partial<DaguerreoTransformPayload>, 'ctx'>;

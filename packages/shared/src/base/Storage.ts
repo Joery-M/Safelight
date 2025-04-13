@@ -140,4 +140,9 @@ export interface StoredEffect {
 
 export interface StoredSource {
     effectId: string;
+    keyframes: {
+        [time: number]: {
+            [property: string]: any;
+        };
+    };
 }

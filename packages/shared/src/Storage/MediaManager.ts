@@ -8,6 +8,7 @@ import {
     type MediaFileTracks
 } from '../Media/ChunkedMediaFile';
 import { MediaSourceType, type MediaItem } from '../Media/Media';
+import { MediaFileItem } from '../Media/MediaFile';
 
 export default class MediaManager {
     static storeMedia(file: File) {
@@ -101,11 +102,29 @@ export default class MediaManager {
                 await media.save();
                 resolve(media);
                 return;
+            } else {
+                // If no demuxer could be found, just write the file to storage and use it
+
+                const media = new MediaFileItem();
+
+                // Set base media stuff
+                const path = storage.getBaseFilePath('media-files');
+                media.addMetadata('file.location', [...path, media.id]);
+                media.addMetadata('file.name', file.name);
+                media.name.value = file.name;
+
+                await storage.writeStream([...path, media.id], file.stream());
+                media.addMetadata('file.size', file.size);
+                media.addMetadata('file.mimeType', file.type);
+                media.addMetadata('media.sourceType', MediaSourceType.Unknown);
+                media.addMetadata('media.created', DateTime.now().toISO());
+
+                await media.save();
+                resolve(media);
+                return;
             }
 
             // TODO: Implement audio demuxer
-
-            // If no demuxer could be found, just write the file to storage and use it
         });
     }
 

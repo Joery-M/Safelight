@@ -3,10 +3,31 @@
         {{ $t('panels.item-properties.none-selected') }}
     </p>
     <div v-else>
-        <ol v-for="source in item.sources" :key="source.id">
-            {{
-                source.effect.name
-            }}
+        <ol>
+            <li v-for="source in item.sources" :key="source.id">
+                <button
+                    :aria-controls="source.id"
+                    :aria-expanded="collapsedEffects.has(source)"
+                    @click="
+                        collapsedEffects.has(source)
+                            ? collapsedEffects.delete(source)
+                            : collapsedEffects.add(source)
+                    "
+                >
+                    <span
+                        :class="[
+                            collapsedEffects.has(source) ? 'i-ph-caret-right' : 'i-ph-caret-down',
+                            'size-5',
+                            'inline-block'
+                        ]"
+                    />
+
+                    {{ $t('effect.builtin.' + source.source.name) }}
+                </button>
+                <table v-if="!collapsedEffects.has(source)" :id="source.id">
+                    <Properties :props="source.source.properties ?? {}" :effect="source" />
+                </table>
+            </li>
         </ol>
         <ol>
             <li v-for="effect in item.effects" :key="effect.id">
@@ -34,62 +55,11 @@
                                 'inline-block'
                             ]"
                         />
-                        {{ effect.effect.name }}
+
+                        {{ $t('effect.builtin.' + effect.effect.name) }}
                     </button>
-                    <table :id="effect.id">
-                        <tr v-for="(prop, key) in effect.effect.properties" :key="key">
-                            <td>
-                                {{ key }}
-                            </td>
-                            <!-- TODO: try to separate these out -->
-                            <td v-if="prop.type === 'number'">
-                                <InputNumber
-                                    v-if="!prop.meta?.slider"
-                                    :model-value="
-                                        prop.displayValue ? prop.displayValue() : prop.value()
-                                    "
-                                    :max-fraction-digits="prop.meta?.integerOnly ? 0 : 10"
-                                    :min="prop.meta?.min"
-                                    :max="prop.meta?.max"
-                                    :step="prop.meta?.step"
-                                    @value-change="prop.setValue($event)"
-                                />
-                                <Slider
-                                    v-else
-                                    :model-value="
-                                        prop.displayValue ? prop.displayValue() : prop.value()
-                                    "
-                                    :min="prop.meta?.min"
-                                    :max="prop.meta?.max"
-                                    :step="prop.meta?.step"
-                                    @value-change="prop.setValue($event)"
-                                />
-                            </td>
-                            <td v-else-if="prop.type === 'boolean'">
-                                <Checkbox
-                                    :model-value="
-                                        prop.displayValue ? prop.displayValue() : prop.value()
-                                    "
-                                    @value-change="prop.setValue($event)"
-                                />
-                            </td>
-                            <td v-else-if="prop.type === 'string'">
-                                <InputText
-                                    v-if="!prop.meta?.textArea"
-                                    :model-value="
-                                        prop.displayValue ? prop.displayValue() : prop.value()
-                                    "
-                                    @value-change="prop.setValue($event)"
-                                />
-                                <Textarea
-                                    v-else
-                                    :model-value="
-                                        prop.displayValue ? prop.displayValue() : prop.value()
-                                    "
-                                    @value-change="prop.setValue($event)"
-                                />
-                            </td>
-                        </tr>
+                    <table v-if="!collapsedEffects.has(effect)" :id="effect.id">
+                        <Properties :props="effect.effect.properties ?? {}" :effect />
                     </table>
                 </template>
                 <template v-else>
@@ -124,26 +94,18 @@ import { useEditor } from '@/stores/useEditor';
 import { EffectInstance } from '@safelight/shared/Effects/effectInstance';
 import { EffectManager } from '@safelight/shared/Effects/EffectManager';
 import { SourceEffectInstance } from '@safelight/shared/Effects/SourceEffectInstance';
-import {
-    Button,
-    Checkbox,
-    InputNumber,
-    InputText,
-    Popover,
-    Slider,
-    Textarea,
-    Tree
-} from 'primevue';
+import { Button, Popover, Tree } from 'primevue';
 import type { TreeNode } from 'primevue/treenode';
 import { computed, shallowReactive, useTemplateRef } from 'vue';
 import { useI18n } from 'vue-i18n';
+import Properties from './propertyUI/properties.vue';
 
 const editor = useEditor();
 
 const effectPopover = useTemplateRef('add-effect-popover');
 
 const item = computed(() => editor.selectedTimelineItem);
-const collapsedEffects = shallowReactive(new WeakSet<EffectInstance>());
+const collapsedEffects = shallowReactive(new WeakSet<EffectInstance | SourceEffectInstance>());
 
 const i18n = useI18n();
 
@@ -173,9 +135,9 @@ async function addEffect(name: string) {
     const eff = await EffectManager.getEffect(name);
     if (eff) {
         if ('transform' in eff) {
-            item.value.effects.push(new EffectInstance(eff));
+            item.value.effects.push(new EffectInstance(item.value, eff));
         } else {
-            item.value.sources.push(new SourceEffectInstance(eff));
+            item.value.sources.push(new SourceEffectInstance(item.value, eff));
         }
     }
 }
