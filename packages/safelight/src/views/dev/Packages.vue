@@ -52,7 +52,10 @@
                                     <div
                                         v-for="item in slotProps.items"
                                         :key="item.name"
-                                        class="m-2 h-55 flex flex-col border-white/10 border-rounded rounded-md border-solid p-4"
+                                        class="
+                                                m-2 h-55 flex flex-col border-white/10
+                                                border-rounded rounded-md border-solid p-4
+                                            "
                                         style="border-width: 1px"
                                     >
                                         <a
