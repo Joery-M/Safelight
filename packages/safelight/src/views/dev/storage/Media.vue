@@ -105,51 +105,57 @@ async function deleteMedia(id: string) {
 
 function loadMedia() {
     storage.getAllMedia().then((m) => {
-        while (treeItems.length > 0) {
-            treeItems.shift();
-        }
+        while (treeItems.shift());
+
         m.forEach((media) => {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //@ts-expect-error
-            const tracks = (Object.values(media.getMetadata('source.tracks')) ?? []) as (
-                | MediaFileAudioTrack
-                | MediaFileVideoTrack
-            )[];
-            const chunksPerTrack: { [key: number]: number } = {};
+            if (media.isChunkedMediaFile()) {
+                const tracks = (Object.values(media.getMetadata('source.tracks')) ?? []) as (
+                    | MediaFileAudioTrack
+                    | MediaFileVideoTrack
+                )[];
+                const chunksPerTrack: { [key: number]: number } = {};
 
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //@ts-expect-error
-            const chunks = (media.getMetadata('source.chunkOffsets') ?? []) as ChunkOffset[];
-            chunks.forEach((c) => {
-                chunksPerTrack[c.trackIndex] ||= 0;
-                chunksPerTrack[c.trackIndex]++;
-            });
+                const chunks = (media.getMetadata('source.chunkOffsets') ?? []) as ChunkOffset[];
+                chunks.forEach((c) => {
+                    chunksPerTrack[c.trackIndex] ||= 0;
+                    chunksPerTrack[c.trackIndex]++;
+                });
 
-            treeItems.push({
-                key: media.id,
-                data: {
-                    isMedia: true,
-                    id: media.id,
-                    name: media.name.value,
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    //@ts-expect-error
-                    size: formatByteValue(Number(media.getMetadata('file.size'))),
-                    media
-                },
-                children: tracks.map((track) => {
-                    return {
-                        key: track.trackIndex.toString(),
-                        data: {
-                            name:
-                                track.type == 'video'
-                                    ? `${track.trackIndex}: ${track.codec} @ ${track.width}x${track.height}` +
-                                      (track.framerate ? `, ${track.framerate}fps` : '')
-                                    : `${track.trackIndex}: ${track.codec} @ ${i18n.n(track.sampleRate)}hz, ${track.channels} channels`,
-                            size: `${i18n.n(chunksPerTrack[track.trackIndex])} chunks`
-                        }
-                    };
-                })
-            });
+                treeItems.push({
+                    key: media.id,
+                    data: {
+                        isMedia: true,
+                        id: media.id,
+                        name: media.name.value,
+                        size: formatByteValue(Number(media.getMetadata('file.size'))),
+                        media
+                    },
+                    children: tracks.map((track) => {
+                        return {
+                            key: track.trackIndex.toString(),
+                            data: {
+                                name:
+                                    track.type == 'video'
+                                        ? `${track.trackIndex}: ${track.codec} @ ${track.width}x${track.height}` +
+                                          (track.framerate ? `, ${track.framerate}fps` : '')
+                                        : `${track.trackIndex}: ${track.codec} @ ${i18n.n(track.sampleRate)}hz, ${track.channels} channels`,
+                                size: `${i18n.n(chunksPerTrack[track.trackIndex])} chunks`
+                            }
+                        };
+                    })
+                });
+            } else if (media.isMediaFile()) {
+                treeItems.push({
+                    key: media.id,
+                    data: {
+                        isMedia: true,
+                        id: media.id,
+                        name: media.name.value,
+                        size: formatByteValue(Number(media.getMetadata('file.size'))),
+                        media
+                    }
+                });
+            }
         });
     });
 }
