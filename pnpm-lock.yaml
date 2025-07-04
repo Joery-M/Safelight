@@ -290,8 +290,8 @@ importers:
         specifier: ^1.0.5
         version: 1.0.5
       mp4box:
-        specifier: ^0.5.4
-        version: 0.5.4
+        specifier: ^1.2.0
+        version: 1.2.0
       opfs-tools:
         specifier: ^0.7.2
         version: 0.7.2
@@ -3138,8 +3138,9 @@ packages:
   mlly@1.7.4:
     resolution: {integrity: sha512-qmdSIPC4bDJXgZTCR7XosJiNKySV7O215tsPtDN9iEO/7q/76b/ijtgRu/+epFXSJhijtTCCGp3DWS549P3xKw==}
 
-  mp4box@0.5.4:
-    resolution: {integrity: sha512-GcCH0fySxBurJtvr0dfhz0IxHZjc1RP+F+I8xw+LIwkU1a+7HJx8NCDiww1I5u4Hz6g4eR1JlGADEGJ9r4lSfA==}
+  mp4box@1.2.0:
+    resolution: {integrity: sha512-E9UIFjvPrUSG7VL+a/xxIcytHRguoZL5FHh6Sj7Wq3ZXZpJXiKvvT2ILdn/iYLqKiIsbIcWPIFHx2CS45Nk8zQ==}
+    engines: {node: '>=20.8.1'}
 
   mrmime@2.0.0:
     resolution: {integrity: sha512-eu38+hdgojoyq63s+yTpN4XMBdt5l8HhMhc4VKLO9KM5caLIBvUm4thi7fFaxyTmCKeNnXZ5pAlBwCUnhA09uw==}
@@ -7278,7 +7279,7 @@ snapshots:
       pkg-types: 1.3.1
       ufo: 1.5.4
 
-  mp4box@0.5.4: {}
+  mp4box@1.2.0: {}
 
   mrmime@2.0.0: {}
 
