@@ -17,7 +17,7 @@
     "dot-path-value": "^0.0.11",
     "luxon": "^3.6.1",
     "mime-matcher": "^1.0.5",
-    "mp4box": "^0.5.4",
+    "mp4box": "^2.1.1",
     "opfs-tools": "^0.7.2",
     "type-fest": "^4.39.1",
     "uuid": "^11.1.0"
