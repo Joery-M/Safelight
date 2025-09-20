@@ -20,7 +20,7 @@
     "mp4box": "^0.5.4",
     "opfs-tools": "^0.7.2",
     "type-fest": "^4.39.1",
-    "uuid": "^11.1.0"
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@types/luxon": "^3.6.2",
