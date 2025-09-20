@@ -32,13 +32,13 @@
   },
   "devDependencies": {
     "@codemirror/lang-javascript": "^6.2.3",
-    "@types/node": "^22.13.14",
-    "@vitest/browser": "^3.0.9",
-    "@vitest/ui": "^3.0.9",
+    "@types/node": "^22.14.0",
+    "@vitest/browser": "^3.2.4",
+    "@vitest/ui": "^3.2.4",
     "premove": "^4.0.0",
-    "rolldown": "1.0.0-beta.7",
-    "typescript": "^5.8.2",
-    "unplugin-isolated-decl": "^0.13.5",
-    "vitest": "^3.0.9"
+    "rolldown": "1.0.0-beta.29",
+    "typescript": "^5.8.3",
+    "unplugin-isolated-decl": "^0.13.6",
+    "vitest": "^3.2.4"
   }
 }
