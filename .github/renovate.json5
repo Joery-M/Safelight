@@ -5,8 +5,6 @@
     extends: ['config:recommended', 'group:allNonMajor'],
     // Make PR on Friday
     schedule: ['* * * * 5'],
-    // Auto-merge on Monday
-    automergeSchedule: ['* * * * 1'],
     rangeStrategy: 'bump',
     postUpdateOptions: ['pnpmDedupe'],
     packageRules: [
