@@ -125,7 +125,7 @@ function demux() {
     startTime.value = Date.now();
     progress.value = 'Start demux';
     const res = demuxer.demux();
-    progress.value = `Demuxed ${res !== undefined}`;
+    progress.value = `Demuxing ${res !== undefined}`;
     res?.subscribe({
         complete() {
             endTime.value = Date.now();
