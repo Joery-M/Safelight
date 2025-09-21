@@ -1,11 +1,11 @@
 import {
     createFile,
     DataStream,
-    type BoxParser,
-    type MP4ArrayBuffer,
-    type MP4File,
-    type MP4Info,
-    type Sample
+    Endianness,
+    ISOFile,
+    MP4BoxBuffer,
+    SampleEntry,
+    type Track
 } from 'mp4box';
 
 import * as Comlink from 'comlink';
@@ -14,152 +14,127 @@ import type { DemuxedChunk } from '../FileDemuxer';
 import type { WorkerOutput } from './Mp4Demuxer';
 
 export function demux(source: File, callback: (event: WorkerOutput) => any) {
-    const file = createFile();
+    const file = createFile(true);
 
-    const reader = source.stream().getReader();
-
-    const result: (MediaFileVideoTrack | MediaFileAudioTrack)[] = [];
-
-    file.onError = (e: string) => {
+    file.onError = (e) => {
         console.error(e);
     };
-    file.onReady = (info: MP4Info) => {
-        result.push(...onReady(info, file));
-
-        for (const track of result) {
-            callback(track as WorkerOutput);
-            file.setExtractionOptions(track.trackIndex, void 0, void 0);
-            file.start();
+    file.onReady = (info) => {
+        for (const track of info.tracks) {
+            if (track.type === 'video') {
+                callback(convertVideoTrack(track, file));
+            } else if (track.type === 'audio') {
+                callback(convertAudioTrack(track));
+            } else {
+                console.error('Could not parse track of type', track.type);
+                continue;
+            }
+            file.setExtractionOptions(track.id);
         }
+        file.start();
+        callback({ type: 'done' });
     };
 
-    readChunk(reader, file, 0).then(() => {
-        file.flush();
-    });
+    file.onSamples = (_id, _user, samples) => {
+        const chunks: DemuxedChunk[] = samples
+            .map((sample) => {
+                if (!sample.data) return null;
+                const type = sample.is_sync ? 'key' : 'delta';
 
-    /**
-     * Its possible for tracks to report the wrong sample count, so this is just a safeguard
-     */
-    let doneTimeout: ReturnType<typeof setTimeout>;
-
-    file.onSamples = (_id: number, _user: any, samples: Sample[]) => {
-        clearTimeout(doneTimeout);
-        doneTimeout = setTimeout(() => {
-            callback({ type: 'done' });
-        }, 500);
-
-        const chunks: DemuxedChunk[] = [];
-
-        for (const sample of samples) {
-            const type = sample.is_sync ? 'key' : 'delta';
-
-            const track = result.find((t) => t.trackIndex == sample.track_id);
-
-            if (track?.type == 'video') {
-                const chunk: EncodedVideoChunkInit = {
+                const chunk: EncodedVideoChunkInit | EncodedAudioChunkInit = {
                     type: type,
                     timestamp: (1e6 * sample.cts) / sample.timescale,
                     duration: (1e6 * sample.duration) / sample.timescale,
                     data: sample.data
                 };
-                chunks.push({
+                return {
                     type: 'chunk',
                     trackIndex: sample.track_id,
                     chunk
-                });
-            } else if (track?.type == 'audio') {
-                const chunk: EncodedAudioChunkInit = {
-                    type: type,
-                    timestamp: (1e6 * sample.cts) / sample.timescale,
-                    duration: (1e6 * sample.duration) / sample.timescale,
-                    data: sample.data
-                };
-                chunks.push({
-                    type: 'chunk',
-                    trackIndex: sample.track_id,
-                    chunk
-                });
-            }
-        }
+                } satisfies DemuxedChunk;
+            })
+            .filter((v) => v !== null);
         callback({ type: 'chunks', chunks });
         return;
     };
+
+    readChunk(source.stream().getReader(), file).then(() => {
+        file.flush();
+        file.getInfo();
+    });
 }
+
+async function readChunk(reader: ReadableStreamDefaultReader<Uint8Array>, file: ISOFile) {
+    let offset = 0;
+    while (true) {
+        const chunk = await reader.read();
+        if (chunk.value) {
+            const buffer = MP4BoxBuffer.fromArrayBuffer(chunk.value.buffer, offset);
+
+            offset += buffer.byteLength;
+
+            file.appendBuffer(buffer, chunk.done);
+        }
+        if (chunk.done) {
+            file.appendBuffer(new MP4BoxBuffer(0), true);
+            file.flush();
+            break;
+        }
+    }
+}
+
 /**
- * Use an existing file reader to read a chunk.
- *
- * Is recursively called to process the whole file
+ * Convert mp4box video track into our `MediaFileVideoTrack`
  */
-async function readChunk(
-    reader: ReadableStreamDefaultReader<Uint8Array>,
-    file: MP4File,
-    offset = 0
-) {
-    const stream = await reader.read();
-    if (stream.value) {
-        const buffer = stream.value.buffer as unknown as MP4ArrayBuffer;
-        buffer.fileStart = offset;
+function convertVideoTrack(track: Track, file: ISOFile): MediaFileVideoTrack {
+    const box = file.getTrackById(track.id).mdia.minf.stbl.stsd.entries;
 
-        offset += buffer.byteLength;
-
-        file.appendBuffer(buffer);
-    }
-    if (!stream.done) {
-        await readChunk(reader, file, offset);
-    }
+    return {
+        type: 'video',
+        trackIndex: track.id,
+        codec: track.codec,
+        height: track.track_height,
+        width: track.track_width,
+        decoderConfig: {
+            codec: track.codec,
+            codedWidth: track.track_width,
+            codedHeight: track.track_height,
+            description: getExtraData(box)
+        }
+    };
 }
 
-function onReady(info: MP4Info, file: MP4File) {
-    const vidTrackInfo: MediaFileVideoTrack[] = [];
-    const audTrackInfo: MediaFileAudioTrack[] = [];
+/**
+ * Convert mp4box audio track into our `MediaFileAudioTrack`
+ */
+function convertAudioTrack(track: Track): MediaFileAudioTrack {
+    if (!track.audio)
+        throw new Error(
+            'Could not convert audio track to MediaFileAudioTrack, missing track.audio'
+        );
 
-    for (const track of info.videoTracks) {
-        if (!track) continue;
-
-        const box = file.getTrackById(track.id).mdia.minf.stbl.stsd.entries;
-
-        // const frameDuration = track.samples_duration / track.nb_samples;
-        // const fps = Math.round(track.timescale / frameDuration);
-
-        vidTrackInfo.push({
-            type: 'video',
-            trackIndex: track.id,
+    return {
+        type: 'audio',
+        trackIndex: track.id,
+        channels: track.audio.channel_count,
+        codec: track.codec,
+        sampleRate: track.audio.sample_rate,
+        decoderConfig: {
             codec: track.codec,
-            height: track.video.height,
-            width: track.video.width,
-            decoderConfig: {
-                codec: track.codec,
-                codedWidth: track.video.width,
-                codedHeight: track.video.height,
-                description: getExtradata(box)
-            }
-        });
-    }
-
-    for (const track of info.audioTracks) {
-        if (!track) continue;
-
-        audTrackInfo.push({
-            type: 'audio',
-            trackIndex: track.id,
-            channels: track.audio.channel_count,
-            codec: track.codec,
-            sampleRate: track.audio.sample_rate,
-            decoderConfig: {
-                codec: track.codec,
-                numberOfChannels: track.audio.channel_count,
-                sampleRate: track.audio.sample_rate
-            }
-        });
-    }
-    return [...vidTrackInfo, ...audTrackInfo];
+            numberOfChannels: track.audio.channel_count,
+            sampleRate: track.audio.sample_rate
+        }
+    };
 }
 
-function getExtradata(entries: any) {
+function getExtraData(entries: SampleEntry[]) {
     for (const entry of entries) {
-        const box: BoxParser.Box = entry.avcC || entry.hvcC || entry.vpcC || entry.av1C;
+        // It just works, deal with it
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        const box = entry.avcC || entry.hvcC || entry.vpcC || entry.av1C;
         if (box) {
-            const stream = new DataStream(undefined, 0, DataStream.BIG_ENDIAN);
+            const stream = new DataStream(undefined, 0, Endianness.BIG_ENDIAN);
             box.write(stream);
             return stream.buffer.slice(8); // Remove the box header.
         }
