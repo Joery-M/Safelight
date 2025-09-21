@@ -65,7 +65,7 @@
     "change-case": "^5.4.4",
     "eventemitter3": "^5.0.1",
     "fast-xml-parser": "^5.2.0",
-    "happy-dom": "^17.4.4",
+    "happy-dom": "^18.0.1",
     "pkgroll": "^2.14.5",
     "prettier": "^3.6.2",
     "tsx": "^4.19.3",
