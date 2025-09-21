@@ -31,7 +31,7 @@ export default class MediaManager {
 
                 let sourceType: MediaSourceType = MediaSourceType.Unknown;
 
-                const stream = new ReadableStream<BufferSource>({
+                const stream = new ReadableStream<AllowSharedBufferSource>({
                     start(controller) {
                         fileDemuxer$ = videoDemuxer.demuxFile(file).subscribe({
                             next: async (output) => {
