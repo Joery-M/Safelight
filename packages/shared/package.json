@@ -27,7 +27,7 @@
     "@types/uuid": "^11.0.0",
     "@vitest/ui": "^3.2.4",
     "fake-indexeddb": "^6.0.0",
-    "happy-dom": "^17.4.4",
+    "happy-dom": "^18.0.1",
     "vitest": "^3.2.4"
   },
   "peerDependencies": {

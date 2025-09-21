@@ -70,7 +70,7 @@ importers:
         version: 1.0.1(vite@7.0.7(@types/node@22.18.1)(jiti@2.4.2)(lightningcss@1.29.1)(sass-embedded@1.89.2)(sass@1.83.0)(terser@5.34.1)(tsx@4.19.3)(yaml@2.8.1))
       vitest:
         specifier: ^3.2.4
-        version: 3.2.4(@types/node@22.18.1)(@vitest/browser@3.2.4)(@vitest/ui@3.2.4)(happy-dom@17.4.4)(jiti@2.4.2)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.29.1)(msw@2.7.3(@types/node@22.18.1)(typescript@5.8.3))(sass-embedded@1.89.2)(sass@1.83.0)(terser@5.34.1)(tsx@4.19.3)(yaml@2.8.1)
+        version: 3.2.4(@types/node@22.18.1)(@vitest/browser@3.2.4)(@vitest/ui@3.2.4)(happy-dom@18.0.1)(jiti@2.4.2)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.29.1)(msw@2.7.3(@types/node@22.18.1)(typescript@5.8.3))(sass-embedded@1.89.2)(sass@1.83.0)(terser@5.34.1)(tsx@4.19.3)(yaml@2.8.1)
       vue:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.8.3)
@@ -95,7 +95,7 @@ importers:
         version: 4.41.0
       vitest:
         specifier: ^3.2.4
-        version: 3.2.4(@types/node@22.18.1)(@vitest/browser@3.2.4)(@vitest/ui@3.2.4)(happy-dom@17.4.4)(jiti@2.4.2)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.29.1)(msw@2.7.3(@types/node@22.18.1)(typescript@5.8.3))(sass-embedded@1.89.2)(sass@1.83.0)(terser@5.34.1)(tsx@4.19.3)(yaml@2.8.1)
+        version: 3.2.4(@types/node@22.18.1)(@vitest/browser@3.2.4)(@vitest/ui@3.2.4)(happy-dom@18.0.1)(jiti@2.4.2)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.29.1)(msw@2.7.3(@types/node@22.18.1)(typescript@5.8.3))(sass-embedded@1.89.2)(sass@1.83.0)(terser@5.34.1)(tsx@4.19.3)(yaml@2.8.1)
 
   packages/darkroom:
     dependencies:
@@ -141,7 +141,7 @@ importers:
         version: 0.13.6(typescript@5.8.3)
       vitest:
         specifier: ^3.2.4
-        version: 3.2.4(@types/node@22.18.1)(@vitest/browser@3.2.4)(@vitest/ui@3.2.4)(happy-dom@17.4.4)(jiti@2.4.2)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.29.1)(msw@2.7.3(@types/node@22.18.1)(typescript@5.8.3))(sass-embedded@1.89.2)(sass@1.83.0)(terser@5.34.1)(tsx@4.19.3)(yaml@2.8.1)
+        version: 3.2.4(@types/node@22.18.1)(@vitest/browser@3.2.4)(@vitest/ui@3.2.4)(happy-dom@18.0.1)(jiti@2.4.2)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.29.1)(msw@2.7.3(@types/node@22.18.1)(typescript@5.8.3))(sass-embedded@1.89.2)(sass@1.83.0)(terser@5.34.1)(tsx@4.19.3)(yaml@2.8.1)
 
   packages/plugin-types: {}
 
@@ -324,11 +324,11 @@ importers:
         specifier: ^6.0.0
         version: 6.0.0
       happy-dom:
-        specifier: ^17.4.4
-        version: 17.4.4
+        specifier: ^18.0.1
+        version: 18.0.1
       vitest:
         specifier: ^3.2.4
-        version: 3.2.4(@types/node@22.18.1)(@vitest/browser@3.2.4)(@vitest/ui@3.2.4)(happy-dom@17.4.4)(jiti@2.4.2)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.29.1)(msw@2.7.3(@types/node@22.18.1)(typescript@5.8.3))(sass-embedded@1.89.2)(sass@1.83.0)(terser@5.34.1)(tsx@4.19.3)(yaml@2.8.1)
+        version: 3.2.4(@types/node@22.18.1)(@vitest/browser@3.2.4)(@vitest/ui@3.2.4)(happy-dom@18.0.1)(jiti@2.4.2)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.29.1)(msw@2.7.3(@types/node@22.18.1)(typescript@5.8.3))(sass-embedded@1.89.2)(sass@1.83.0)(terser@5.34.1)(tsx@4.19.3)(yaml@2.8.1)
 
   packages/timeline:
     dependencies:
@@ -371,7 +371,7 @@ importers:
         version: 5.8.3
       vitest:
         specifier: ^3.2.4
-        version: 3.2.4(@types/node@22.18.1)(@vitest/browser@3.2.4)(@vitest/ui@3.2.4)(happy-dom@17.4.4)(jiti@2.4.2)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.29.1)(msw@2.7.3(@types/node@22.18.1)(typescript@5.8.3))(sass-embedded@1.89.2)(sass@1.83.0)(terser@5.34.1)(tsx@4.19.3)(yaml@2.8.1)
+        version: 3.2.4(@types/node@22.18.1)(@vitest/browser@3.2.4)(@vitest/ui@3.2.4)(happy-dom@18.0.1)(jiti@2.4.2)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.29.1)(msw@2.7.3(@types/node@22.18.1)(typescript@5.8.3))(sass-embedded@1.89.2)(sass@1.83.0)(terser@5.34.1)(tsx@4.19.3)(yaml@2.8.1)
       vue-tsc:
         specifier: 3.0.4
         version: 3.0.4(typescript@5.8.3)
@@ -394,8 +394,8 @@ importers:
         specifier: ^5.2.0
         version: 5.2.5
       happy-dom:
-        specifier: ^17.4.4
-        version: 17.4.4
+        specifier: ^18.0.1
+        version: 18.0.1
       pkgroll:
         specifier: ^2.14.5
         version: 2.14.5(typescript@5.8.3)
@@ -410,7 +410,7 @@ importers:
         version: 5.8.3
       vitest:
         specifier: ^3.2.4
-        version: 3.2.4(@types/node@22.18.1)(@vitest/browser@3.2.4)(@vitest/ui@3.2.4)(happy-dom@17.4.4)(jiti@2.4.2)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.29.1)(msw@2.7.3(@types/node@22.18.1)(typescript@5.8.3))(sass-embedded@1.89.2)(sass@1.83.0)(terser@5.34.1)(tsx@4.19.3)(yaml@2.8.1)
+        version: 3.2.4(@types/node@22.18.1)(@vitest/browser@3.2.4)(@vitest/ui@3.2.4)(happy-dom@18.0.1)(jiti@2.4.2)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.29.1)(msw@2.7.3(@types/node@22.18.1)(typescript@5.8.3))(sass-embedded@1.89.2)(sass@1.83.0)(terser@5.34.1)(tsx@4.19.3)(yaml@2.8.1)
 
 packages:
 
@@ -1486,6 +1486,9 @@ packages:
 
   '@types/web-bluetooth@0.0.21':
     resolution: {integrity: sha512-oIQLCGWtcFZy2JW77j9k8nHzAOpqMHLQejDA48XXMWH6tjCQHz5RCFz1bzsmROyL6PUm+LLnUiI4BCn221inxA==}
+
+  '@types/whatwg-mimetype@3.0.2':
+    resolution: {integrity: sha512-c2AKvDT8ToxLIOUlN51gTiHXflsfIFisS4pO7pDPoKouJCESkhZnEy623gwP9laCy5lnLDAw1vAzu2vM2YLOrA==}
 
   '@types/which@2.0.2':
     resolution: {integrity: sha512-113D3mDkZDjo+EeUEHCFy0qniNc1ZpecGiAU7WSo7YDoSzolZIQKpYFHrPpjkB2nuyahcKfrmLXeQlh7gqJYdw==}
@@ -2706,9 +2709,9 @@ packages:
     resolution: {integrity: sha512-ax7ZYomf6jqPTQ4+XCpUGyXKHk5WweS+e05MBO4/y3WJ5RkmPXNKvX+bx1behVILVwr6JSQvZAku021CHPXG3Q==}
     engines: {node: '>=10'}
 
-  happy-dom@17.4.4:
-    resolution: {integrity: sha512-/Pb0ctk3HTZ5xEL3BZ0hK1AqDSAUuRQitOmROPHhfUYEWpmTImwfD8vFDGADmMAX0JYgbcgxWoLFKtsWhcpuVA==}
-    engines: {node: '>=18.0.0'}
+  happy-dom@18.0.1:
+    resolution: {integrity: sha512-qn+rKOW7KWpVTtgIUi6RVmTBZJSe2k0Db0vh1f7CWrWclkkc7/Q+FrOfkZIb2eiErLyqu5AXEzE7XthO9JVxRA==}
+    engines: {node: '>=20.0.0'}
 
   has-flag@4.0.0:
     resolution: {integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==}
@@ -5308,7 +5311,6 @@ snapshots:
   '@types/node@20.19.13':
     dependencies:
       undici-types: 6.21.0
-    optional: true
 
   '@types/node@22.18.1':
     dependencies:
@@ -5330,6 +5332,8 @@ snapshots:
       uuid: 13.0.0
 
   '@types/web-bluetooth@0.0.21': {}
+
+  '@types/whatwg-mimetype@3.0.2': {}
 
   '@types/which@2.0.2':
     optional: true
@@ -5635,7 +5639,7 @@ snapshots:
       magic-string: 0.30.17
       sirv: 3.0.1
       tinyrainbow: 2.0.0
-      vitest: 3.2.4(@types/node@22.18.1)(@vitest/browser@3.2.4)(@vitest/ui@3.2.4)(happy-dom@17.4.4)(jiti@2.4.2)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.29.1)(msw@2.7.3(@types/node@22.18.1)(typescript@5.8.3))(sass-embedded@1.89.2)(sass@1.83.0)(terser@5.34.1)(tsx@4.19.3)(yaml@2.8.1)
+      vitest: 3.2.4(@types/node@22.18.1)(@vitest/browser@3.2.4)(@vitest/ui@3.2.4)(happy-dom@18.0.1)(jiti@2.4.2)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.29.1)(msw@2.7.3(@types/node@22.18.1)(typescript@5.8.3))(sass-embedded@1.89.2)(sass@1.83.0)(terser@5.34.1)(tsx@4.19.3)(yaml@2.8.1)
       ws: 8.18.3
     optionalDependencies:
       playwright: 1.55.0
@@ -5692,7 +5696,7 @@ snapshots:
       sirv: 3.0.1
       tinyglobby: 0.2.15
       tinyrainbow: 2.0.0
-      vitest: 3.2.4(@types/node@22.18.1)(@vitest/browser@3.2.4)(@vitest/ui@3.2.4)(happy-dom@17.4.4)(jiti@2.4.2)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.29.1)(msw@2.7.3(@types/node@22.18.1)(typescript@5.8.3))(sass-embedded@1.89.2)(sass@1.83.0)(terser@5.34.1)(tsx@4.19.3)(yaml@2.8.1)
+      vitest: 3.2.4(@types/node@22.18.1)(@vitest/browser@3.2.4)(@vitest/ui@3.2.4)(happy-dom@18.0.1)(jiti@2.4.2)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.29.1)(msw@2.7.3(@types/node@22.18.1)(typescript@5.8.3))(sass-embedded@1.89.2)(sass@1.83.0)(terser@5.34.1)(tsx@4.19.3)(yaml@2.8.1)
 
   '@vitest/utils@3.2.4':
     dependencies:
@@ -6862,9 +6866,10 @@ snapshots:
     dependencies:
       duplexer: 0.1.2
 
-  happy-dom@17.4.4:
+  happy-dom@18.0.1:
     dependencies:
-      webidl-conversions: 7.0.0
+      '@types/node': 20.19.13
+      '@types/whatwg-mimetype': 3.0.2
       whatwg-mimetype: 3.0.0
 
   has-flag@4.0.0: {}
@@ -8396,7 +8401,7 @@ snapshots:
       tsx: 4.19.3
       yaml: 2.8.1
 
-  vitest@3.2.4(@types/node@22.18.1)(@vitest/browser@3.2.4)(@vitest/ui@3.2.4)(happy-dom@17.4.4)(jiti@2.4.2)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.29.1)(msw@2.7.3(@types/node@22.18.1)(typescript@5.8.3))(sass-embedded@1.89.2)(sass@1.83.0)(terser@5.34.1)(tsx@4.19.3)(yaml@2.8.1):
+  vitest@3.2.4(@types/node@22.18.1)(@vitest/browser@3.2.4)(@vitest/ui@3.2.4)(happy-dom@18.0.1)(jiti@2.4.2)(jsdom@25.0.1(canvas@2.11.2))(lightningcss@1.29.1)(msw@2.7.3(@types/node@22.18.1)(typescript@5.8.3))(sass-embedded@1.89.2)(sass@1.83.0)(terser@5.34.1)(tsx@4.19.3)(yaml@2.8.1):
     dependencies:
       '@types/chai': 5.2.2
       '@vitest/expect': 3.2.4
@@ -8425,7 +8430,7 @@ snapshots:
       '@types/node': 22.18.1
       '@vitest/browser': 3.2.4(msw@2.7.3(@types/node@22.18.1)(typescript@5.8.3))(playwright@1.55.0)(vite@7.0.7(@types/node@22.18.1)(jiti@2.4.2)(lightningcss@1.29.1)(sass-embedded@1.89.2)(sass@1.83.0)(terser@5.34.1)(tsx@4.19.3)(yaml@2.8.1))(vitest@3.2.4)(webdriverio@9.4.5)
       '@vitest/ui': 3.2.4(vitest@3.2.4)
-      happy-dom: 17.4.4
+      happy-dom: 18.0.1
       jsdom: 25.0.1(canvas@2.11.2)
     transitivePeerDependencies:
       - jiti
@@ -8572,7 +8577,8 @@ snapshots:
   webidl-conversions@3.0.1:
     optional: true
 
-  webidl-conversions@7.0.0: {}
+  webidl-conversions@7.0.0:
+    optional: true
 
   webpack-virtual-modules@0.6.2: {}
 
