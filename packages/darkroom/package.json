@@ -5,21 +5,28 @@
   "author": "Joery Münninghoff",
   "license": "Apache-2.0",
   "type": "module",
-  "types": "dist/index.d.ts",
-  "main": "dist/index.js",
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "exports": {
     ".": {
       "development": "./src/index.ts",
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "dev": "rolldown -w -c",
-    "build": "rolldown -c",
+    "dev": "tsdown -w",
+    "build": "tsdown",
     "test": "vitest --browser.headless false",
     "test:run": "vitest run"
   },
@@ -32,13 +39,11 @@
   },
   "devDependencies": {
     "@codemirror/lang-javascript": "^6.2.3",
-    "@types/node": "^22.14.0",
     "@vitest/browser": "^3.2.4",
     "@vitest/ui": "^3.2.4",
-    "premove": "^4.0.0",
-    "rolldown": "1.0.0-beta.29",
-    "typescript": "^5.8.3",
-    "unplugin-isolated-decl": "^0.13.6",
+    "rolldown": "1.0.0-beta.38",
+    "tsdown": "^0.15.4",
+    "typescript": "^5.9.2",
     "vitest": "^3.2.4"
   }
 }

@@ -2907,6 +2907,24 @@ export enum MatroskaElements {
      */
     TagAttachmentUID = 0x63c6,
     /**
+     * @interface {@link Elements.TagBlockAddIDValue}
+     * @definition
+     * A `BlockAddIDValue`that identifies the `Block Addition Mapping` that the tags belong to.
+     *
+     * @usage notes
+     * If the value is 0 at this level and if the `TrackUID` value is 0 at this level,
+     * the tags apply to all block addition mappings in this `Segment`.
+     * If the value is 0 at this level and if the `TrackUID` value is not 0 at this level, the tags apply to all block addition mappings in the referenced `Track`.
+     * If the value is not 0 at this level and if the `TrackUID` value is 0 at this level, the tags apply to all block addition mappings with this value in this `Segment`.
+     * If the value is not 0 at this level and if the `TrackUID` value is not 0 at this level, the value **MUST** match the `BlockAddIDValue` value
+     * of a block addition mapping found in the referenced `Track`.
+     *
+     * @default 0
+     * @minver 5
+     * @id 0x63C7
+     */
+    TagBlockAddIDValue = 0x63c7,
+    /**
      * @interface {@link Elements.SimpleTag}
      * @definition
      * Contains general information about the target.
@@ -6775,6 +6793,21 @@ export const ElementInfo: { [key: number]: Element | undefined } = {
             MatroskaElements.TagAttachmentUID
         ]
     },
+    [MatroskaElements.TagBlockAddIDValue]: {
+        name: 'TagBlockAddIDValue',
+        path: '\\Segment\\Tags\\Tag\\Targets\\TagBlockAddIDValue',
+        id: '0x63C7',
+        type: ElementType.Uinteger,
+        default: '0',
+        minver: '5',
+        pathArray: [
+            MatroskaElements.Segment,
+            MatroskaElements.Tags,
+            MatroskaElements.Tag,
+            MatroskaElements.Targets,
+            MatroskaElements.TagBlockAddIDValue
+        ]
+    },
     [MatroskaElements.SimpleTag]: {
         name: 'SimpleTag',
         path: '\\Segment\\Tags\\Tag\\+SimpleTag',
@@ -7173,6 +7206,7 @@ export type ElementEventMap = {
     [MatroskaElements.TagEditionUID]: (data: Elements.TagEditionUID) => void;
     [MatroskaElements.TagChapterUID]: (data: Elements.TagChapterUID) => void;
     [MatroskaElements.TagAttachmentUID]: (data: Elements.TagAttachmentUID) => void;
+    [MatroskaElements.TagBlockAddIDValue]: (data: Elements.TagBlockAddIDValue) => void;
     [MatroskaElements.SimpleTag]: (data: Elements.SimpleTag) => void;
     [MatroskaElements.TagName]: (data: Elements.TagName) => void;
     [MatroskaElements.TagLanguage]: (data: Elements.TagLanguage) => void;
@@ -11021,6 +11055,7 @@ export namespace Elements {
         TagEditionUID?: TagEditionUID[];
         TagChapterUID?: TagChapterUID[];
         TagAttachmentUID?: TagAttachmentUID[];
+        TagBlockAddIDValue?: TagBlockAddIDValue[];
     }
 
     /**
@@ -11207,6 +11242,24 @@ export namespace Elements {
      * @id 0x63C6
      */
     export type TagAttachmentUID = number;
+
+    /**
+     * @definition
+     * A `BlockAddIDValue`that identifies the `Block Addition Mapping` that the tags belong to.
+     *
+     * @usage notes
+     * If the value is 0 at this level and if the `TrackUID` value is 0 at this level,
+     * the tags apply to all block addition mappings in this `Segment`.
+     * If the value is 0 at this level and if the `TrackUID` value is not 0 at this level, the tags apply to all block addition mappings in the referenced `Track`.
+     * If the value is not 0 at this level and if the `TrackUID` value is 0 at this level, the tags apply to all block addition mappings with this value in this `Segment`.
+     * If the value is not 0 at this level and if the `TrackUID` value is not 0 at this level, the value **MUST** match the `BlockAddIDValue` value
+     * of a block addition mapping found in the referenced `Track`.
+     *
+     * @default 0
+     * @minver 5
+     * @id 0x63C7
+     */
+    export type TagBlockAddIDValue = number;
 
     /**
      * @definition

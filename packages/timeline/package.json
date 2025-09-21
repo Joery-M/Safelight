@@ -8,33 +8,65 @@
   "files": [
     "dist"
   ],
+  "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "development": "./src/index.ts",
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    },
-    "./elements/*": {
-      "development": "./src/elements/*.ts",
-      "import": "./dist/elements/*.js",
-      "types": "./dist/elements/*.d.ts"
-    },
-    "./elements": {
-      "development": "./src/elements/index.ts",
-      "import": "./dist/elements/index.js",
-      "types": "./dist/elements/index.d.ts"
+      "default": "./dist/index.js"
     },
     "./devtools": {
       "development": "./src/devtools.ts",
-      "import": "./dist/devtools.js",
-      "types": "./dist/devtools.d.ts"
+      "default": "./dist/devtools.js"
+    },
+    "./elements": {
+      "development": "./src/elements/index.ts",
+      "default": "./dist/elements.js"
+    },
+    "./elements/MoveableTimelineItem": {
+      "development": "./src/elements/MoveableTimelineItem.ts",
+      "default": "./dist/elements/MoveableTimelineItem.js"
+    },
+    "./elements/TimelineCursorElement": {
+      "development": "./src/elements/TimelineCursorElement.ts",
+      "default": "./dist/elements/TimelineCursorElement.js"
+    },
+    "./elements/TimelineGrid": {
+      "development": "./src/elements/TimelineGrid.ts",
+      "default": "./dist/elements/TimelineGrid.js"
+    },
+    "./elements/TimelineLayer": {
+      "development": "./src/elements/TimelineLayer.ts",
+      "default": "./dist/elements/TimelineLayer.js"
+    },
+    "./elements/TimelineScrollbar": {
+      "development": "./src/elements/TimelineScrollbar.ts",
+      "default": "./dist/elements/TimelineScrollbar.js"
+    },
+    "./elements/VideoTimelineElement": {
+      "development": "./src/elements/VideoTimelineElement.ts",
+      "default": "./dist/elements/VideoTimelineElement.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./devtools": "./dist/devtools.js",
+      "./elements": "./dist/elements.js",
+      "./elements/MoveableTimelineItem": "./dist/elements/MoveableTimelineItem.js",
+      "./elements/TimelineCursorElement": "./dist/elements/TimelineCursorElement.js",
+      "./elements/TimelineGrid": "./dist/elements/TimelineGrid.js",
+      "./elements/TimelineLayer": "./dist/elements/TimelineLayer.js",
+      "./elements/TimelineScrollbar": "./dist/elements/TimelineScrollbar.js",
+      "./elements/VideoTimelineElement": "./dist/elements/VideoTimelineElement.js",
+      "./package.json": "./package.json"
     }
   },
   "scripts": {
-    "dev": "rolldown -w -c",
-    "build": "rolldown -c",
+    "dev": "tsdown -w",
+    "build": "tsdown",
     "test": "vitest --browser.headless false",
     "test:run": "vitest run"
   },
@@ -46,14 +78,7 @@
     "vue": "^3.5.13"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^12.1.4",
-    "@types/node": "^22.14.0",
-    "pathe": "^2.0.3",
-    "premove": "^4.0.0",
-    "rolldown": "1.0.0-beta.29",
-    "tinyglobby": "^0.2.12",
-    "typescript": "^5.8.3",
-    "vitest": "^3.2.4",
-    "vue-tsc": "3.0.4"
+    "tsdown": "^0.15.4",
+    "vitest": "^3.2.4"
   }
 }
