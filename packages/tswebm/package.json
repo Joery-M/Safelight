@@ -16,45 +16,46 @@
   "files": [
     "dist"
   ],
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
+    ".": {
+      "development": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
     "./block": {
       "development": "./src/block.ts",
-      "types": "./dist/block.d.ts",
-      "import": "./dist/block.js",
-      "require": "./dist/block.cjs"
-    },
-    "./elements": {
-      "development": "./src/elements.ts",
-      "types": "./dist/elements.d.ts",
-      "import": "./dist/elements.js",
-      "require": "./dist/elements.cjs"
+      "default": "./dist/block.js"
     },
     "./dataReader": {
       "development": "./src/dataReader.ts",
-      "types": "./dist/dataReader.d.ts",
-      "import": "./dist/dataReader.js",
-      "require": "./dist/dataReader.cjs"
+      "default": "./dist/dataReader.js"
+    },
+    "./elements": {
+      "development": "./src/elements.ts",
+      "default": "./dist/elements.js"
     },
     "./WebmReader": {
       "development": "./src/WebmReader.ts",
-      "types": "./dist/WebmReader.d.ts",
-      "import": "./dist/WebmReader.js",
-      "require": "./dist/WebmReader.cjs"
+      "default": "./dist/WebmReader.js"
     },
-    ".": {
-      "development": "./src/index.ts",
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./block": "./dist/block.js",
+      "./dataReader": "./dist/dataReader.js",
+      "./elements": "./dist/elements.js",
+      "./WebmReader": "./dist/WebmReader.js",
+      "./package.json": "./package.json"
     }
   },
   "scripts": {
-    "dev": "pkgroll --clean-dist -m -w",
+    "dev": "tsdown -w",
     "build": "pnpm generate:elements && pnpm build:no-gen",
-    "build:no-gen": "pkgroll --clean-dist -m",
+    "build:no-gen": "tsdown",
     "generate:elements": "tsx ./tools/SchemaParser.ts https://raw.githubusercontent.com/ietf-wg-cellar/matroska-specification/master/ebml_matroska.xml && prettier ./src/elements.ts --write --print-width 110",
     "test": "vitest --ui",
     "test:run": "vitest run --ui false"
@@ -66,8 +67,8 @@
     "eventemitter3": "^5.0.1",
     "fast-xml-parser": "^5.2.0",
     "happy-dom": "^18.0.1",
-    "pkgroll": "^2.15.4",
     "prettier": "^3.6.2",
+    "tsdown": "^0.15.4",
     "tsx": "^4.19.3",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
