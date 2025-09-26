@@ -49,12 +49,12 @@
     "@types/uuid": "^11.0.0",
     "@vitejs/plugin-basic-ssl": "^2.1.0",
     "@vitejs/plugin-vue": "^6.0.1",
-    "sass-embedded": "^1.93.0",
+    "sass-embedded": "^1.93.2",
     "tinyglobby": "^0.2.15",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
-    "unocss": "^66.5.1",
-    "vite": "^7.1.6",
-    "vue-tsc": "3.0.7"
+    "unocss": "^66.5.2",
+    "vite": "^7.1.7",
+    "vue-tsc": "3.0.8"
   }
 }
