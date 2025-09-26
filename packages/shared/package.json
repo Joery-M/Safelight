@@ -19,7 +19,7 @@
     "mime-matcher": "^1.0.5",
     "mp4box": "^2.1.1",
     "opfs-tools": "^0.7.2",
-    "type-fest": "^4.41.0",
+    "type-fest": "^5.0.1",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
