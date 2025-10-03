@@ -52,9 +52,9 @@
     "sass-embedded": "^1.93.2",
     "tinyglobby": "^0.2.15",
     "tsx": "^4.20.5",
-    "typescript": "^5.9.2",
+    "typescript": "^5.9.3",
     "unocss": "^66.5.2",
-    "vite": "^7.1.7",
-    "vue-tsc": "3.0.8"
+    "vite": "^7.1.9",
+    "vue-tsc": "3.1.0"
   }
 }
