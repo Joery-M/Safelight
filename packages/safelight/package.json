@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
-    "@primeuix/themes": "^1.2.3",
+    "@primeuix/themes": "^2.0.2",
     "@safelight/daguerreo": "workspace:^",
     "@safelight/shared": "workspace:*",
     "@safelight/timeline": "workspace:*",
