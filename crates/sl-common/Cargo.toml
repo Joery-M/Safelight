@@ -1,0 +1,11 @@
+[package]
+name = "sl-common"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+arcstr = { version = "1.2.0", features = ["std"] }
+thiserror = "2.0.17"
+tokio = { version = "1.49.0", features = ["macros", "sync", "test-util"] }
+uuid = { version = "1.19.0", features = ["v4"] }
