@@ -1,4 +1,4 @@
-use sl_common::project::project::Project;
+use sl_core::project::project::Project;
 
 use crate::JsMediaBin;
 

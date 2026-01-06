@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["crates/sl-common", "crates/sl-binding"]
+members = ["crates/sl-core", "crates/sl-binding"]
 
 [workspace.package]
 version = "0.1.0"
@@ -8,4 +8,4 @@ edition = "2024"
 license = "MIT"
 
 [workspace.dependencies]
-sl-common = { path = "./crates/sl-common/" }
+sl-core = { path = "./crates/sl-core/" }

@@ -1,5 +1,5 @@
 [package]
-name = "sl-core"
+name = "sl-binding"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -8,7 +8,7 @@ license.workspace = true
 napi = { version = "3.8.1", features = ["async"] }
 napi-derive = "3.5.0"
 
-sl-common = { workspace = true }
+sl-core = { workspace = true }
 
 [build-dependencies]
 napi-build = "2.3.1"

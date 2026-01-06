@@ -1,4 +1,4 @@
-use sl_common::media_bin::{
+use sl_core::media_bin::{
     media_bin::MediaBin,
     media_bin_item::{BinDirectory, BinItem, BinItemType, BinMedia},
 };
