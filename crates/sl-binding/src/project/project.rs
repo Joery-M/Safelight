@@ -1,8 +1,8 @@
 use sl_core::project::project::Project;
 
-use crate::JsMediaBin;
+use crate::media_bin::media_bin::JsMediaBin;
 
-#[napi(js_name = "Project")]
+#[napi]
 pub struct JsProject {
     pub(crate) inner: Project,
 }

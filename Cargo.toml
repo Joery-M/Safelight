@@ -9,3 +9,8 @@ license = "MIT"
 
 [workspace.dependencies]
 sl-core = { path = "./crates/sl-core/" }
+
+[profile.release]
+opt-level = "s"
+debug = "full"
+strip = "none"

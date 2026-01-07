@@ -4,6 +4,9 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 
+[lib]
+crate-type = ["cdylib"]
+
 [dependencies]
 napi = { version = "3.8.1", features = ["async"] }
 napi-derive = "3.5.0"

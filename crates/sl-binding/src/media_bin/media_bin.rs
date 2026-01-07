@@ -3,7 +3,7 @@ use sl_core::media_bin::{
     media_bin_item::{BinDirectory, BinItem, BinItemType, BinMedia},
 };
 
-#[napi(js_name = "MediaBin")]
+#[napi]
 #[derive(Default, Clone)]
 pub struct JsMediaBin {
     pub(crate) inner: MediaBin,

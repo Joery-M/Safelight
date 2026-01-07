@@ -10,6 +10,7 @@
     "build:packages": "pnpm \"/build:(?!(packages)|(safelight))/\"",
     "build:darkroom": "pnpm --filter=@safelight/darkroom run build",
     "build:safelight": "pnpm --filter=@safelight/safelight run build",
+    "build:sl-core": "pnpm --filter=@safelight/sl-core run build:release",
     "build:timeline": "pnpm --filter=@safelight/timeline run build",
     "build:tswebm": "pnpm --filter=@safelight/tswebm run build",
     "test": "vitest run",

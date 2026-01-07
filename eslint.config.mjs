@@ -11,7 +11,13 @@ import { fileURLToPath } from 'url';
 
 export default ts.config(
     {
-        ignores: ['**/dist/**', '**/node_modules/**']
+        ignores: [
+            '**/dist/**',
+            '**/node_modules/**',
+            'packages/sl-core/src/**/binding.d.ts',
+            'packages/sl-core/src/**/*.[cm]js',
+            'packages/sl-core/src/**/*.js'
+        ]
     },
     js.configs.recommended,
     ...ts.configs.recommended,
