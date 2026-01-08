@@ -22,9 +22,10 @@
     "test:tswebm": "pnpm --filter=@safelight/tswebm run test:run",
     "dev": "pnpm --filter=@safelight/safelight run dev",
     "dev:darkroom": "pnpm build:packages && pnpm --filter=@safelight/darkroom run dev:web",
-    "lint": "pnpm lint:prettier && pnpm lint:eslint",
+    "lint": "pnpm lint:prettier && pnpm lint:eslint && pnpm lint:cargo",
     "lint:prettier": "prettier . --write --ignore-path .gitignore --ignore-path ./packages/safelight/.gitignore --ignore-path .prettierignore -u --cache -l",
     "lint:eslint": "eslint **/*{.ts,.js,.vue}",
+    "lint:cargo": "cargo fmt && cargo clippy",
     "postinstall": "playwright install"
   },
   "workspaces": [

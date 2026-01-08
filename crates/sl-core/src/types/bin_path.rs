@@ -13,9 +13,9 @@ impl BinPath {
     }
 }
 
-impl Into<Vec<String>> for BinPath {
-    fn into(self) -> Vec<String> {
-        self.inner
+impl From<BinPath> for Vec<String> {
+    fn from(val: BinPath) -> Self {
+        val.inner
     }
 }
 
@@ -25,8 +25,9 @@ impl From<&str> for BinPath {
     ///
     fn from(s: &str) -> Self {
         let source: Vec<String> = s
-            .split(|c| matches!(c, '\\' | '/'))
-            .filter_map(|v| (!v.is_empty()).then(|| str::to_owned(v)))
+            .split(['\\', '/'])
+            .filter(|v| !v.is_empty())
+            .map(str::to_owned)
             .collect();
 
         let mut result: Vec<String> = Vec::with_capacity(source.len());

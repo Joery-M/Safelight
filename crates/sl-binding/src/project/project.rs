@@ -16,6 +16,11 @@ impl JsProject {
         }
     }
 
+    #[napi(getter)]
+    pub fn get_id(&self) -> String {
+        self.inner.id.to_string()
+    }
+
     #[napi]
     pub fn get_media_bin(&self) -> JsMediaBin {
         JsMediaBin {

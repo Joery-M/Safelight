@@ -39,9 +39,9 @@ impl BinDirectory {
     ) -> Option<BinItemType> {
         let section = path.first()?;
         if path[level..].is_empty() {
-            self.create_by_name(&section, item)
+            self.create_by_name(section, item)
         } else {
-            match self.get_mut(&section)? {
+            match self.get_mut(section)? {
                 BinItemType::Directory(v) => v.create_by_path(path, level + 1, item),
                 _ => None,
             }
@@ -53,15 +53,15 @@ impl BinDirectory {
             return None;
         }
         self.inner.insert(name.to_owned(), item.clone());
-        return Some(item);
+        Some(item)
     }
 
     pub fn get_by_path(&self, path: Vec<String>, level: usize) -> Option<&BinItemType> {
         let section = path.first()?;
         if path[level..].is_empty() {
-            self.get(&section)
+            self.get(section)
         } else {
-            match self.get(&section)? {
+            match self.get(section)? {
                 BinItemType::Directory(v) => v.get_by_path(path, level + 1),
                 _ => None,
             }
@@ -70,9 +70,9 @@ impl BinDirectory {
     pub fn get_by_path_mut(&mut self, path: Vec<String>, level: usize) -> Option<&mut BinItemType> {
         let section = path.first()?;
         if path[level..].is_empty() {
-            self.get_mut(&section)
+            self.get_mut(section)
         } else {
-            match self.get_mut(&section)? {
+            match self.get_mut(section)? {
                 BinItemType::Directory(v) => v.get_by_path_mut(path, level + 1),
                 _ => None,
             }
@@ -93,8 +93,8 @@ impl BinDirectory {
     }
 }
 
-impl Into<BinItemType> for BinDirectory {
-    fn into(self) -> BinItemType {
-        BinItemType::Directory(self)
+impl From<BinDirectory> for BinItemType {
+    fn from(val: BinDirectory) -> Self {
+        BinItemType::Directory(val)
     }
 }

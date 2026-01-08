@@ -3,7 +3,7 @@ use uuid::Uuid;
 use crate::media_bin::media_bin::MediaBin;
 
 pub struct Project {
-    pub(crate) id: Uuid,
+    pub id: Uuid,
     pub(crate) media_bin: MediaBin,
 }
 
