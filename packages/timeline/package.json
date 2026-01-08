@@ -72,8 +72,8 @@
   },
   "dependencies": {
     "@vue/devtools-kit": "^8.0.2",
-    "@vueuse/core": "^13.9.0",
-    "@vueuse/math": "^13.9.0",
+    "@vueuse/core": "^14.1.0",
+    "@vueuse/math": "^14.1.0",
     "eventemitter3": "^5.0.1",
     "vue": "^3.5.21"
   },
