@@ -30,7 +30,7 @@ mod test {
     use tokio::sync::RwLock;
 
     use crate::{
-        media::{MediaRef, media::Media, media_types::MediaType},
+        asset::{AssetRef, asset::Asset, asset_types::AssetType},
         types::asset_path::AssetPath,
     };
 
@@ -39,12 +39,12 @@ mod test {
     struct TestMedia {
         path: AssetPath,
     }
-    impl Media for TestMedia {
+    impl Asset for TestMedia {
         fn get_path(&self) -> AssetPath {
             self.path.clone()
         }
-        fn get_type(&self) -> crate::media::media_types::MediaType {
-            MediaType::Generic
+        fn get_type(&self) -> crate::asset::asset_types::AssetType {
+            AssetType::Generic
         }
     }
 
@@ -56,7 +56,7 @@ mod test {
         let media_item = TestMedia {
             path: AssetPath::new(true, "virtual", "/Test.txt"),
         };
-        let media_item_ref = MediaRef::new(Arc::new(RwLock::new(media_item)));
+        let media_item_ref = AssetRef::new(Arc::new(RwLock::new(media_item)));
 
         let bin = MediaBin::default();
 
@@ -83,7 +83,7 @@ mod test {
 
                 let media = item.borrow().await;
                 assert_eq!(media.get_path().to_string(), "#virtual:/Test.txt");
-                assert_eq!(media.get_type(), MediaType::Generic);
+                assert_eq!(media.get_type(), AssetType::Generic);
             }
             _ => panic!("Item should be a `BinMedia`"),
         }

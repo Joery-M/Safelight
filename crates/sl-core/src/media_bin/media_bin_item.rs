@@ -1,10 +1,10 @@
 use std::collections::HashMap;
 
-use crate::{media::MediaRef, types::bin_path::BinPath};
+use crate::{asset::AssetRef, types::bin_path::BinPath};
 
 #[derive(Debug, Clone)]
 pub enum BinItemType {
-    Media { inner: MediaRef, bin_path: BinPath },
+    Media { inner: AssetRef, bin_path: BinPath },
     Directory(BinDirectory),
 }
 

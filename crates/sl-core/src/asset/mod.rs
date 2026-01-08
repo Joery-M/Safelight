@@ -2,36 +2,36 @@ use std::{fmt::Debug, sync::Arc};
 
 use tokio::sync::{RwLock, RwLockReadGuard, RwLockWriteGuard};
 
-use crate::media::media::Media;
+use crate::asset::asset::Asset;
 
-pub mod media;
-pub mod media_types;
+pub mod asset;
+pub mod asset_types;
 
 #[derive(Clone)]
-pub struct MediaRef {
-    inner: Arc<RwLock<dyn Media>>,
+pub struct AssetRef {
+    inner: Arc<RwLock<dyn Asset>>,
 }
 
-impl MediaRef {
-    pub fn new(value: Arc<RwLock<dyn Media>>) -> Self {
+impl AssetRef {
+    pub fn new(value: Arc<RwLock<dyn Asset>>) -> Self {
         Self { inner: value }
     }
 
-    pub async fn borrow(&self) -> RwLockReadGuard<'_, dyn Media> {
+    pub async fn borrow(&self) -> RwLockReadGuard<'_, dyn Asset> {
         self.inner.read().await
     }
 
-    pub fn borrow_blocking(&self) -> RwLockReadGuard<'_, dyn Media> {
+    pub fn borrow_blocking(&self) -> RwLockReadGuard<'_, dyn Asset> {
         self.inner.blocking_read()
     }
 
-    pub async fn mutate(&self) -> RwLockWriteGuard<'_, dyn Media> {
+    pub async fn mutate(&self) -> RwLockWriteGuard<'_, dyn Asset> {
         self.inner.write().await
     }
 }
 
 // Manual implementation of Debug
-impl Debug for MediaRef {
+impl Debug for AssetRef {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_tuple("MediaRef")
             .field(&self.borrow_blocking().get_path())

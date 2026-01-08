@@ -14,7 +14,7 @@ use std::{
 /// | Media    | HDD:D:\projects\safelight\my-awesome-video.webm  |
 /// | Media    | HDD:/home/user/Documents/my-awesome-video.webm   |
 /// | Timeline | #timeline:7069252d-e784-4555-8b0d-e954d3b1f019   |
-#[derive(Debug, Clone, Hash)]
+#[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub struct AssetPath {
     pub is_virtual: bool,
     pub namespace: String,
