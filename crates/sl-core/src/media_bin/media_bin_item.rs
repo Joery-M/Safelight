@@ -1,74 +1,94 @@
-use arcstr::ArcStr;
+use std::collections::HashMap;
 
-use crate::types::bin_path::BinPath;
+use crate::{media::MediaRef, types::bin_path::BinPath};
 
 #[derive(Debug, Clone)]
 pub enum BinItemType {
-    Media(BinMedia),
+    Media { inner: MediaRef, bin_path: BinPath },
     Directory(BinDirectory),
 }
 
-pub trait BinItem: Into<BinItemType> {
-    fn get_path(&self) -> BinPath;
-    fn get_name(&self) -> String;
-}
-
-#[derive(Debug, Clone)]
-pub struct BinMedia {
-    path: BinPath,
-    display_name: ArcStr,
-}
-
-impl BinMedia {
-    pub fn new(path: BinPath, display_name: impl Into<ArcStr>) -> Self {
-        Self {
-            path,
-            display_name: display_name.into(),
+impl BinItemType {
+    pub fn get_path(&self) -> &BinPath {
+        match self {
+            BinItemType::Media { bin_path, inner: _ } => bin_path,
+            BinItemType::Directory(dir) => &dir.path,
         }
     }
 }
 
-impl BinItem for BinMedia {
-    #[inline]
-    fn get_name(&self) -> String {
-        self.display_name.to_string()
-    }
-
-    #[inline]
-    fn get_path(&self) -> BinPath {
-        self.path.clone()
-    }
-}
-
-impl Into<BinItemType> for BinMedia {
-    fn into(self) -> BinItemType {
-        BinItemType::Media(self)
-    }
-}
-
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct BinDirectory {
+    inner: HashMap<String, BinItemType>,
     path: BinPath,
-    display_name: ArcStr,
 }
 
 impl BinDirectory {
-    pub fn new(path: BinPath, display_name: impl Into<ArcStr>) -> Self {
+    pub fn new(path: BinPath) -> Self {
         Self {
             path,
-            display_name: display_name.into(),
+            ..Default::default()
         }
     }
-}
 
-impl BinItem for BinDirectory {
+    pub fn create_by_path(
+        &mut self,
+        path: Vec<String>,
+        level: usize,
+        item: BinItemType,
+    ) -> Option<BinItemType> {
+        let section = path.first()?;
+        if path[level..].is_empty() {
+            self.create_by_name(&section, item)
+        } else {
+            match self.get_mut(&section)? {
+                BinItemType::Directory(v) => v.create_by_path(path, level + 1, item),
+                _ => None,
+            }
+        }
+    }
+
+    pub fn create_by_name(&mut self, name: &str, item: BinItemType) -> Option<BinItemType> {
+        if self.inner.contains_key(name) {
+            return None;
+        }
+        self.inner.insert(name.to_owned(), item.clone());
+        return Some(item);
+    }
+
+    pub fn get_by_path(&self, path: Vec<String>, level: usize) -> Option<&BinItemType> {
+        let section = path.first()?;
+        if path[level..].is_empty() {
+            self.get(&section)
+        } else {
+            match self.get(&section)? {
+                BinItemType::Directory(v) => v.get_by_path(path, level + 1),
+                _ => None,
+            }
+        }
+    }
+    pub fn get_by_path_mut(&mut self, path: Vec<String>, level: usize) -> Option<&mut BinItemType> {
+        let section = path.first()?;
+        if path[level..].is_empty() {
+            self.get_mut(&section)
+        } else {
+            match self.get_mut(&section)? {
+                BinItemType::Directory(v) => v.get_by_path_mut(path, level + 1),
+                _ => None,
+            }
+        }
+    }
     #[inline]
-    fn get_name(&self) -> String {
-        self.display_name.to_string()
+    pub fn get(&self, name: &str) -> Option<&BinItemType> {
+        self.inner.get(name)
+    }
+    #[inline]
+    pub fn get_mut(&mut self, name: &str) -> Option<&mut BinItemType> {
+        self.inner.get_mut(name)
     }
 
     #[inline]
-    fn get_path(&self) -> BinPath {
+    pub fn get_path(&self) -> BinPath {
         self.path.clone()
     }
 }

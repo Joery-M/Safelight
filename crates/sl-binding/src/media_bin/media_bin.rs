@@ -1,6 +1,6 @@
 use sl_core::media_bin::{
     media_bin::MediaBin,
-    media_bin_item::{BinDirectory, BinItem, BinItemType, BinMedia},
+    media_bin_item::{BinDirectory, BinItemType},
 };
 
 #[napi]
@@ -12,14 +12,14 @@ pub struct JsMediaBin {
 #[napi]
 impl JsMediaBin {
     #[napi]
-    pub async fn create(&self, path: String, item: JsBinItemType) -> bool {
-        self.inner.create(path.into(), item).await
+    pub async fn create(&self, item: JsBinItemType) -> bool {
+        self.inner.create(item.into()).await.is_some()
     }
 
     #[napi]
     pub async fn get_item(&self, path: String) -> Option<JsBinItemType> {
         self.inner
-            .get_item(path.into())
+            .get_item(&path.into())
             .await
             .map(JsBinItemType::from)
     }
@@ -27,16 +27,32 @@ impl JsMediaBin {
 
 #[napi]
 pub enum JsBinItemType {
-    Media { path: String, name: String },
-    Directory { path: String, name: String },
+    Media {
+        media_path: String,
+        bin_path: String,
+    },
+    Directory {
+        bin_path: String,
+    },
 }
 
 impl Into<BinItemType> for JsBinItemType {
     fn into(self) -> BinItemType {
         match self {
-            Self::Media { path, name } => BinItemType::Media(BinMedia::new(path.into(), name)),
-            Self::Directory { path, name } => {
-                BinItemType::Directory(BinDirectory::new(path.into(), name))
+            Self::Media {
+                bin_path,
+                media_path,
+            } => {
+                let media_ref = todo!("Get media from path");
+
+                #[allow(unreachable_code)]
+                BinItemType::Media {
+                    inner: media_ref,
+                    bin_path: bin_path.into(),
+                }
+            }
+            Self::Directory { bin_path } => {
+                BinItemType::Directory(BinDirectory::new(bin_path.into()))
             }
         }
     }
@@ -45,13 +61,15 @@ impl Into<BinItemType> for JsBinItemType {
 impl From<BinItemType> for JsBinItemType {
     fn from(value: BinItemType) -> Self {
         match value {
-            BinItemType::Media(v) => Self::Media {
-                path: v.get_path().to_string(),
-                name: v.get_name(),
+            BinItemType::Media {
+                bin_path: path,
+                inner,
+            } => Self::Media {
+                bin_path: path.to_string(),
+                media_path: inner.borrow_blocking().get_path(),
             },
             BinItemType::Directory(v) => Self::Directory {
-                path: v.get_path().to_string(),
-                name: v.get_name(),
+                bin_path: v.get_path().to_string(),
             },
         }
     }

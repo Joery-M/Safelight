@@ -338,6 +338,7 @@ name = "sl-core"
 version = "0.1.0"
 dependencies = [
  "arcstr",
+ "bitflags",
  "thiserror",
  "tokio",
  "uuid",

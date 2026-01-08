@@ -11,7 +11,7 @@
     "napi": "napi build --manifest-path ../../crates/sl-binding/Cargo.toml --output-dir ./src/ --esm --platform --js binding.js --dts binding.d.ts",
     "postnapi": "rimraf ./src/browser.js",
     "build": "pnpm run napi --target wasm32-wasip1-threads && pnpm run bundle",
-    "build:release": "pnpm run napi --release --target wasm32-wasip1-threads && pnpm run bundle:browser",
+    "build:release": "pnpm run napi --release --target wasm32-wasip1-threads && pnpm run bundle",
     "build:node": "pnpm run napi --target wasm32-wasip1-threads && pnpm run bundle:node",
     "build:node:release": "pnpm run napi --release --target wasm32-wasip1-threads && pnpm run bundle:node",
     "bundle": "tsdown --platform browser",

@@ -13,6 +13,12 @@ impl BinPath {
     }
 }
 
+impl Into<Vec<String>> for BinPath {
+    fn into(self) -> Vec<String> {
+        self.inner
+    }
+}
+
 impl From<&str> for BinPath {
     /// Convert a string to a path and resolve `../`
     ///
