@@ -2,11 +2,18 @@ use bitflags::bitflags;
 
 bitflags! {
     #[derive(Debug, PartialEq, Eq)]
-    pub struct AssetType: u16 {
-        const Video    = 0b00001;
-        const Audio    = 0b00010;
-        const Timeline = 0b00100;
-        const Text     = 0b01000;
-        const Generic  = 0b10000;
+    pub struct AssetType: u8 {
+        /// Asset has video.
+        const Video = 1;
+        /// Asset has audio.
+        const Audio = 1 << 1;
+        /// Asset has text, e.g. subtitles.
+        const Text = 1 << 2;
+        /// Asset is a timeline.
+        const Timeline = 1 << 3;
+        /// Asset should be streamed in.
+        const Streaming = 1 << 4;
+        /// Asset is undefined/unknown.
+        const Generic = 1 << 5;
     }
 }

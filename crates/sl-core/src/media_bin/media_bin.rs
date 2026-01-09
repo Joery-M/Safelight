@@ -31,6 +31,7 @@ mod test {
 
     use crate::{
         asset::{AssetRef, asset::Asset, asset_types::AssetType},
+        project::project::Project,
         types::asset_path::AssetPath,
     };
 
@@ -53,12 +54,15 @@ mod test {
         let folder_path: BinPath = "/folder/".into();
         let file_path: BinPath = "/folder/test.txt".into();
 
-        let media_item = TestMedia {
-            path: AssetPath::new(true, "virtual", "/Test.txt"),
+        let project = Project::new();
+        let asset_path = AssetPath::new(true, "virtual", "/Test.txt");
+        let asset_item = TestMedia {
+            path: asset_path.clone(),
         };
-        let media_item_ref = AssetRef::new(Arc::new(RwLock::new(media_item)));
+        let asset_item_ref = AssetRef::new(Arc::new(RwLock::new(asset_item)));
+        project.create_asset(asset_path.clone(), asset_item_ref.clone());
 
-        let bin = MediaBin::default();
+        let bin = project.get_media_bin();
 
         let dir = BinDirectory::new(folder_path.clone()).into();
         bin.create(dir).await.expect(&format!(
@@ -66,7 +70,10 @@ mod test {
         ));
 
         let media = BinItemType::Media {
-            inner: media_item_ref,
+            inner: project
+                .get_asset(&asset_path)
+                .expect("Get asset reference that was just created")
+                .clone(),
             bin_path: file_path.clone(),
         };
         bin.create(media).await.expect(&format!(

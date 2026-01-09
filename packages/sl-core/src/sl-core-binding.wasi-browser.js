@@ -58,3 +58,5 @@ const {
 export default __napiModule.exports
 export const JsMediaBin = __napiModule.exports.JsMediaBin
 export const JsProject = __napiModule.exports.JsProject
+export const JsTimeline = __napiModule.exports.JsTimeline
+export const JsTimelineItem = __napiModule.exports.JsTimelineItem

@@ -110,3 +110,5 @@ const { instance: __napiInstance, module: __wasiModule, napiModule: __napiModule
 module.exports = __napiModule.exports
 module.exports.JsMediaBin = __napiModule.exports.JsMediaBin
 module.exports.JsProject = __napiModule.exports.JsProject
+module.exports.JsTimeline = __napiModule.exports.JsTimeline
+module.exports.JsTimelineItem = __napiModule.exports.JsTimelineItem

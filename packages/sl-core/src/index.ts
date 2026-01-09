@@ -1,5 +1,8 @@
 export {
-    type JsBinItemType as BinItemType,
     JsMediaBin as MediaBin,
-    JsProject as Project
+    JsProject as Project,
+    JsTimeline as Timeline,
+    JsTimelineItem as TimelineItem,
+    type JsBinItemType as BinItemType,
+    type JsTimelineProperties as TimelineProperties
 } from './binding';

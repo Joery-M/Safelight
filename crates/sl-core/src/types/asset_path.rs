@@ -3,6 +3,8 @@ use std::{
     str::FromStr,
 };
 
+use arcstr::ArcStr;
+
 /// An `AssetPath` defines the location and storage method of an asset
 ///
 /// For media that is stored on-device, this path should eventually resolve to the raw data of that file.
@@ -17,12 +19,14 @@ use std::{
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub struct AssetPath {
     pub is_virtual: bool,
-    pub namespace: String,
-    pub path: String,
+    // In the future, the namespace could be an enum, which would
+    // allow us to hardcode specialized hashmaps for each namespace.
+    pub namespace: ArcStr,
+    pub path: ArcStr,
 }
 
 impl AssetPath {
-    pub fn new(is_virtual: bool, namespace: impl Into<String>, path: impl Into<String>) -> Self {
+    pub fn new(is_virtual: bool, namespace: impl Into<ArcStr>, path: impl Into<ArcStr>) -> Self {
         Self {
             is_virtual,
             namespace: namespace.into(),
@@ -68,8 +72,8 @@ impl FromStr for AssetPath {
 
         Ok(AssetPath {
             is_virtual,
-            path: path.to_owned(),
-            namespace: namespace.to_owned(),
+            path: path.into(),
+            namespace: namespace.into(),
         })
     }
 }

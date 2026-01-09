@@ -1,21 +1,41 @@
-use uuid::Uuid;
+use dashmap::{
+    DashMap,
+    mapref::one::{Ref, RefMut},
+};
+use nanoid::nanoid;
 
-use crate::media_bin::media_bin::MediaBin;
+use crate::{asset::AssetRef, media_bin::media_bin::MediaBin, types::asset_path::AssetPath};
 
 pub struct Project {
-    pub id: Uuid,
+    pub id: String,
     pub(crate) media_bin: MediaBin,
+    pub(crate) asset_map: DashMap<AssetPath, AssetRef>,
 }
 
 impl Project {
     pub fn new() -> Self {
         Project {
-            id: Uuid::new_v4(),
+            id: nanoid!(),
             media_bin: MediaBin::default(),
+            asset_map: DashMap::default(),
         }
     }
 
+    #[inline]
     pub fn get_media_bin(&self) -> MediaBin {
         self.media_bin.clone()
+    }
+
+    #[inline]
+    pub fn get_asset(&self, path: &AssetPath) -> Option<Ref<'_, AssetPath, AssetRef>> {
+        self.asset_map.get(path)
+    }
+    #[inline]
+    pub fn get_asset_mut(&self, path: &AssetPath) -> Option<RefMut<'_, AssetPath, AssetRef>> {
+        self.asset_map.get_mut(path)
+    }
+    #[inline]
+    pub fn create_asset(&self, path: AssetPath, asset: AssetRef) {
+        self.asset_map.insert(path, asset);
     }
 }

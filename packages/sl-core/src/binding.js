@@ -579,6 +579,8 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { JsMediaBin, JsProject } = nativeBinding
+const { JsMediaBin, JsProject, JsTimeline, JsTimelineItem } = nativeBinding
 export { JsMediaBin }
 export { JsProject }
+export { JsTimeline }
+export { JsTimelineItem }

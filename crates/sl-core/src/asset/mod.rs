@@ -33,7 +33,7 @@ impl AssetRef {
 // Manual implementation of Debug
 impl Debug for AssetRef {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_tuple("MediaRef")
+        f.debug_tuple("AssetRef")
             .field(&self.borrow_blocking().get_path())
             .finish()
     }
