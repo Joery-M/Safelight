@@ -37,6 +37,7 @@ mod test {
 
     use super::*;
 
+    #[derive(Debug)]
     struct TestMedia {
         path: AssetPath,
     }

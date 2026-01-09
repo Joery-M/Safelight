@@ -3,6 +3,8 @@ use std::{fmt::Debug, sync::Arc};
 use nanoid::nanoid;
 use tokio::sync::{RwLock, RwLockReadGuard, RwLockWriteGuard};
 
+use crate::timeline::source::image_source::ImageSource;
+
 #[derive(Clone)]
 pub struct TimelineItemRef {
     inner: Arc<RwLock<TimelineItem>>,
@@ -46,6 +48,9 @@ pub struct TimelineItem {
     /// `u32` was chosen since the max timestamp of a `u16` at 60fps is 18 minutes, whilst that of a `u32` is 27 months.
     pub(crate) end: u32,
     pub(crate) layer: u8,
+
+    /// The image data source of this timeline item. This source defines the start of this items' image rendering pipeline.
+    pub(crate) image_source: RwLock<Option<Box<dyn ImageSource>>>,
 }
 
 impl TimelineItem {
@@ -55,7 +60,13 @@ impl TimelineItem {
             start,
             end,
             layer,
+            image_source: Default::default(),
         }
+    }
+
+    pub async fn set_image_source(&self, source: Box<dyn ImageSource>) {
+        let mut cur_src = self.image_source.write().await;
+        *cur_src = Some(source)
     }
 
     pub(super) fn delete(&mut self) {
