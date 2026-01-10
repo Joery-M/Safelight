@@ -8,7 +8,7 @@ license.workspace = true
 arcstr = { version = "1.2.0", features = ["std"] }
 bitflags = { version = "2.10.0", features = ["std"] }
 dashmap = "6.1.0"
-log = "0.4.29"
+log = { version = "0.4.29", features = ["release_max_level_info"] }
 nanoid = "0.4.0"
 thiserror = "2.0.17"
 tokio = { version = "1.49.0", features = ["macros", "sync", "test-util"] }

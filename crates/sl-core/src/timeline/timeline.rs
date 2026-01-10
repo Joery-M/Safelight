@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use dashmap::DashMap;
+use log::debug;
 use nanoid::nanoid;
 use tokio::sync::RwLock;
 
@@ -30,8 +31,10 @@ pub struct Timeline {
 
 impl Timeline {
     pub fn new(properties: TimelineProperties) -> Self {
+        let id = nanoid!();
+        debug!("Created new timeline with ID {id:?}");
         Self {
-            id: nanoid!(),
+            id,
             properties,
             items: DashMap::new(),
         }

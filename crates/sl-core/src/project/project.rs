@@ -2,6 +2,7 @@ use dashmap::{
     DashMap,
     mapref::one::{Ref, RefMut},
 };
+use log::debug;
 use nanoid::nanoid;
 
 use crate::{asset::AssetRef, media_bin::media_bin::MediaBin, utils::asset_path::AssetPath};
@@ -14,8 +15,10 @@ pub struct Project {
 
 impl Project {
     pub fn new() -> Self {
+        let id = nanoid!();
+        debug!("Created new project with ID {id:?}");
         Project {
-            id: nanoid!(),
+            id,
             media_bin: MediaBin::default(),
             asset_map: DashMap::default(),
         }
