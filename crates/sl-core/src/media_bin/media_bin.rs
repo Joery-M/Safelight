@@ -4,7 +4,7 @@ use tokio::sync::Mutex;
 
 use crate::{
     media_bin::media_bin_item::{BinDirectory, BinItemType},
-    types::bin_path::BinPath,
+    utils::bin_path::BinPath,
 };
 
 #[derive(Default, Clone)]
@@ -32,7 +32,7 @@ mod test {
     use crate::{
         asset::{AssetRef, asset::Asset, asset_types::AssetType},
         project::project::Project,
-        types::asset_path::AssetPath,
+        utils::asset_path::AssetPath,
     };
 
     use super::*;

@@ -8,7 +8,7 @@ use crate::{
     asset::{AssetRef, asset::TimelineAsset},
     project::project::Project,
     timeline::timeline_item::{TimelineItem, TimelineItemRef},
-    types::asset_path::AssetPath,
+    utils::asset_path::AssetPath,
 };
 
 pub struct TimelineProperties {

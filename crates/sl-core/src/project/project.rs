@@ -4,7 +4,7 @@ use dashmap::{
 };
 use nanoid::nanoid;
 
-use crate::{asset::AssetRef, media_bin::media_bin::MediaBin, types::asset_path::AssetPath};
+use crate::{asset::AssetRef, media_bin::media_bin::MediaBin, utils::asset_path::AssetPath};
 
 pub struct Project {
     pub id: String,

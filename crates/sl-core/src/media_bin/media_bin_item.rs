@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{asset::AssetRef, types::bin_path::BinPath};
+use crate::{asset::AssetRef, utils::bin_path::BinPath};
 
 #[derive(Debug, Clone)]
 pub enum BinItemType {

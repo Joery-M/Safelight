@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::{asset::asset_types::AssetType, types::asset_path::AssetPath};
+use crate::{asset::asset_types::AssetType, utils::asset_path::AssetPath};
 
 pub trait Asset: Debug + Sync + Send {
     /// Get the asset path of this asset
