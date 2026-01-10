@@ -7,40 +7,26 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "prenapi": "rimraf -g ./src/browser.js ./src/binding*[jt]s ./src/sl-core*js ./src/wasi-worker*js",
-    "napi": "napi build --manifest-path ../../crates/sl-binding/Cargo.toml --output-dir ./src/ --esm --platform --js binding.js --dts binding.d.ts",
-    "postnapi": "rimraf ./src/browser.js",
-    "build": "pnpm run napi --target wasm32-wasip1-threads && pnpm run bundle",
-    "build:release": "pnpm run napi --release --target wasm32-wasip1-threads && pnpm run bundle",
-    "build:node": "pnpm run napi --target wasm32-wasip1-threads && pnpm run bundle:node",
-    "build:node:release": "pnpm run napi --release --target wasm32-wasip1-threads && pnpm run bundle:node",
-    "bundle": "tsdown --platform browser",
-    "bundle:node": "tsdown --platform node"
+    "precompile": "rimraf ./src/binding",
+    "precompile:release": "rimraf ./src/binding",
+    "compile": "cd ../../crates/sl-binding && wasm-pack build -t web --out-dir ../../packages/sl-core/src/binding/  --no-pack --no-opt --dev",
+    "compile:release": "cd ../../crates/sl-binding && wasm-pack build -t web --out-dir ../../packages/sl-core/src/binding/ --no-pack --release",
+    "build": "pnpm run compile && tsdown",
+    "build:release": "pnpm run compile:release && tsdown"
   },
   "exports": {
     ".": {
       "development": "./src/index.ts",
       "default": "./dist/index.js"
     },
+    "./sl_binding.wasm": {
+      "development": "./src/binding/sl_binding_bg.wasm",
+      "default": "./dist/sl_binding_bg.wasm"
+    },
     "./package.json": "./package.json"
   },
-  "dependencies": {
-    "@napi-rs/wasm-runtime": "^1.1.1"
-  },
   "devDependencies": {
-    "@napi-rs/cli": "^3.5.1",
     "rimraf": "^6.1.2",
-    "rolldown": "1.0.0-beta.59",
     "tsdown": "0.19.0-beta.4"
-  },
-  "napi": {
-    "binaryName": "sl-core-binding",
-    "constEnum": true,
-    "targets": [
-      "wasm32-wasip1-threads"
-    ]
-  },
-  "engines": {
-    "node": ">= 12.22.0 < 13 || >= 14.17.0 < 15 || >= 15.12.0 < 16 || >= 16.0.0"
   }
 }

@@ -1,8 +1,9 @@
 use sl_core::timeline::timeline::{Timeline, TimelineProperties};
+use wasm_bindgen::prelude::*;
 
 use crate::{project::project::JsProject, timeline::timeline_item::JsTimelineItem};
 
-#[napi(object)]
+#[wasm_bindgen]
 pub struct JsTimelineProperties {
     /// The width of the timeline's output frame
     pub width: u32,
@@ -14,22 +15,22 @@ pub struct JsTimelineProperties {
     pub frame_duration: u16,
 }
 
-impl Into<TimelineProperties> for JsTimelineProperties {
-    fn into(self) -> TimelineProperties {
+impl From<JsTimelineProperties> for TimelineProperties {
+    fn from(val: JsTimelineProperties) -> Self {
         TimelineProperties {
-            width: self.width,
-            height: self.height,
-            frame_duration: self.frame_duration,
+            width: val.width,
+            height: val.height,
+            frame_duration: val.frame_duration,
         }
     }
 }
 
-#[napi]
+#[wasm_bindgen]
 pub struct JsTimeline {
     pub(crate) inner: Timeline,
 }
 
-#[napi]
+#[wasm_bindgen]
 impl JsTimeline {
     pub fn new(project: &JsProject, properties: JsTimelineProperties) -> Self {
         Self {
@@ -41,14 +42,8 @@ impl JsTimeline {
         self.inner.new_timeline_item(start, end, layer).into()
     }
 
-    #[napi(js_name = "deleteTimelineItem")]
+    #[wasm_bindgen(js_name = "deleteTimelineItem")]
     pub async fn delete_timeline_item(&self, id: String) {
         self.inner.delete_timeline_item(&id).await
-    }
-
-    #[napi(js_name = "deleteTimelineItem")]
-    pub async fn delete_timeline_item_ref(&self, item: &JsTimelineItem) {
-        let id = item.inner.borrow().await.id.clone();
-        self.delete_timeline_item(id).await
     }
 }

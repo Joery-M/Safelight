@@ -1,7 +1,7 @@
 {
     "extends": "./tsconfig.json",
     "include": [
-        "./eslint.config.mjs",
+        "eslint.config.ts",
         "./packages/*/vite.config.ts",
         "./packages/safelight/buildscripts/**/*.ts",
         "./packages/tswebm/tools/"

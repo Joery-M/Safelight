@@ -1,11 +1,12 @@
 use sl_core::timeline::timeline_item::TimelineItemRef;
+use wasm_bindgen::prelude::*;
 
-#[napi]
+#[wasm_bindgen]
 pub struct JsTimelineItem {
     pub(crate) inner: TimelineItemRef,
 }
 
-#[napi]
+#[wasm_bindgen]
 impl JsTimelineItem {}
 
 impl From<TimelineItemRef> for JsTimelineItem {

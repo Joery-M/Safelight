@@ -1,36 +1,64 @@
+use serde::{Deserialize, Serialize};
 use sl_core::media_bin::{
     media_bin::MediaBin,
     media_bin_item::{BinDirectory, BinItemType},
 };
+use wasm_bindgen::prelude::*;
 
-use crate::project::project::JsProject;
+use crate::{project::project::JsProject, utils::Result};
 
-#[napi]
+#[wasm_bindgen]
 #[derive(Default, Clone)]
 pub struct JsMediaBin {
     pub(crate) inner: MediaBin,
 }
 
-#[napi]
+#[wasm_bindgen]
 impl JsMediaBin {
-    #[napi]
-    pub async fn create(&self, project: &JsProject, item: JsBinItemType) -> bool {
-        self.inner
+    #[wasm_bindgen]
+    pub async fn create(
+        &self,
+        project: &JsProject,
+        #[wasm_bindgen(unchecked_param_type = "JsBinItemType")] item: JsValue,
+    ) -> Result<bool> {
+        let item: JsBinItemType = serde_wasm_bindgen::from_value(item)?;
+        let success = self
+            .inner
             .create(item.into_bin_item(project))
             .await
-            .is_some()
+            .is_some();
+        Ok(success)
     }
 
-    #[napi]
-    pub async fn get_item(&self, path: String) -> Option<JsBinItemType> {
-        self.inner
+    #[wasm_bindgen(unchecked_return_type = "JsBinItemType | undefined")]
+    pub async fn get_item(&self, path: String) -> Result<Option<JsValue>> {
+        let res = match self
+            .inner
             .get_item(&path.into())
             .await
             .map(JsBinItemType::from)
+        {
+            Some(v) => {
+                // This match only exists for the `?`
+                let ser = serde_wasm_bindgen::to_value(&v)?;
+                Some(ser)
+            }
+            None => None,
+        };
+
+        Ok(res)
     }
 }
 
-#[napi]
+#[wasm_bindgen(typescript_custom_section)]
+const TS_APPEND_CONTENT: &'static str = r#"
+export type JsBinItemType =
+    | { type: "Media"; mediaPath: string; binPath: string }
+    | { type: "Directory"; binPath: string };
+"#;
+
+#[derive(Serialize, Deserialize)]
+#[serde(tag = "type", rename_all_fields = "camelCase")]
 pub enum JsBinItemType {
     Media {
         media_path: String,
@@ -41,6 +69,7 @@ pub enum JsBinItemType {
     },
 }
 
+#[wasm_bindgen]
 impl JsBinItemType {
     pub(crate) fn into_bin_item(self, project: &JsProject) -> BinItemType {
         match self {

@@ -1,27 +1,20 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-//@ts-check
 
 import js from '@eslint/js';
 import vueI18n from '@intlify/eslint-plugin-vue-i18n';
 import unocss from '@unocss/eslint-plugin';
 import prettierConfig from 'eslint-plugin-prettier/recommended';
 import eslintPluginVue from 'eslint-plugin-vue';
+import { defineConfig } from 'eslint/config';
 import ts from 'typescript-eslint';
 import { fileURLToPath } from 'url';
 
-export default ts.config(
+export default defineConfig(
     {
-        ignores: [
-            '**/dist/**',
-            '**/node_modules/**',
-            'packages/sl-core/src/**/binding.d.ts',
-            'packages/sl-core/src/**/*.[cm]js',
-            'packages/sl-core/src/**/*.js'
-        ]
+        ignores: ['**/dist/**', '**/node_modules/**', 'packages/sl-core/src/binding/**']
     },
     js.configs.recommended,
     ...ts.configs.recommended,
-    // @ts-ignore
     ...eslintPluginVue.configs['flat/recommended'],
     {
         files: ['**/packages/safelight/**/*.vue', '**/packages/shared/**/*.vue'],
@@ -82,7 +75,6 @@ export default ts.config(
         languageOptions: {
             parserOptions: {
                 parser: ts.parser,
-                // extraFileExtensions: ['.vue'],
                 sourceType: 'module',
                 tsconfigRootDir: import.meta.dirname
             }

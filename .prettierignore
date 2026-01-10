@@ -5,9 +5,7 @@ pnpm-workspace.yaml
 packages/tswebm/src/elements.ts
 packages/tswebm/matroska-test-files
 
-# napi generated files
-packages/sl-core/src/**/binding.d.ts
-packages/sl-core/src/**/*.js
-packages/sl-core/src/**/*.[cm]js
+# wasm-pack generated files
+packages/sl-core/src/binding/**
 
 LICENSE.md
