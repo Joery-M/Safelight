@@ -16,10 +16,9 @@ pub struct TimelineProperties {
     pub width: u32,
     /// The height of the timeline's output frame
     pub height: u32,
-    /// The duration of each frame in milliseconds
-    ///
-    /// Representing in ms does mean our FPS is capped at 1000, but that is a problem for future me
-    pub frame_duration: u16,
+    /// The framerate of the timeline
+    // TODO: This currently doesn't support fractional framerates, revisit later
+    pub frame_rate: u16,
 }
 
 pub struct Timeline {

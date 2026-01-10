@@ -11,10 +11,8 @@ pub struct JsTimelineProperties {
     pub width: u32,
     /// The height of the timeline's output frame
     pub height: u32,
-    /// The duration of each frame in milliseconds
-    ///
-    /// Representing in ms does mean our FPS is capped at 1000, but that is a problem for future me
-    pub frame_duration: u16,
+    /// The framerate of the timeline
+    pub frame_rate: u16,
 }
 
 impl From<JsTimelineProperties> for TimelineProperties {
@@ -22,7 +20,7 @@ impl From<JsTimelineProperties> for TimelineProperties {
         TimelineProperties {
             width: val.width,
             height: val.height,
-            frame_duration: val.frame_duration,
+            frame_rate: val.frame_rate,
         }
     }
 }
