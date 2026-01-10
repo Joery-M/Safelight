@@ -6,6 +6,7 @@ use tokio::sync::RwLock;
 
 use crate::{
     asset::{AssetRef, asset::TimelineAsset},
+    media_bin::media_bin_item::BinItemType,
     project::project::Project,
     timeline::timeline_item::{TimelineItem, TimelineItemRef},
     utils::asset_path::AssetPath,
@@ -28,20 +29,28 @@ pub struct Timeline {
 }
 
 impl Timeline {
-    pub fn new(project: &Project, properties: TimelineProperties) -> Self {
-        let id = nanoid!();
-        let asset_path = AssetPath::new(true, "timeline", &id);
-        let timeline_asset = TimelineAsset(asset_path.clone());
-
-        project.create_asset(
-            asset_path.clone(),
-            AssetRef::new(Arc::new(RwLock::new(timeline_asset))),
-        );
+    pub fn new(properties: TimelineProperties) -> Self {
         Self {
-            id,
+            id: nanoid!(),
             properties,
             items: DashMap::new(),
         }
+    }
+
+    pub async fn add_to_project(&self, project: &Project, bin_path: String) {
+        let asset_path = AssetPath::new(true, "timeline", &self.id);
+        let timeline_asset = TimelineAsset(asset_path.clone());
+        let asset = AssetRef::new(Arc::new(RwLock::new(timeline_asset)));
+
+        project.create_asset(asset_path.clone(), asset.clone());
+
+        project
+            .get_media_bin()
+            .create(BinItemType::Media {
+                inner: asset,
+                bin_path: bin_path.into(),
+            })
+            .await;
     }
 
     pub fn new_timeline_item(&self, start: u32, end: u32, layer: u8) -> TimelineItemRef {

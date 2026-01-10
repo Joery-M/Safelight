@@ -1,12 +1,17 @@
+use std::str::FromStr;
+
 use serde::{Deserialize, Serialize};
-use sl_core::media_bin::{
-    media_bin::MediaBin,
-    media_bin_item::{BinDirectory, BinItemType},
+use sl_core::{
+    media_bin::{
+        media_bin::MediaBin,
+        media_bin_item::{BinDirectory, BinItemType},
+    },
+    utils::asset_path::AssetPath,
 };
 use tsify::Tsify;
 use wasm_bindgen::prelude::*;
 
-use crate::project::project::JsProject;
+use crate::{project::project::JsProject, utils::Result};
 
 #[wasm_bindgen]
 #[derive(Default, Clone)]
@@ -17,11 +22,12 @@ pub struct JsMediaBin {
 #[wasm_bindgen]
 impl JsMediaBin {
     #[wasm_bindgen]
-    pub async fn create(&self, project: &JsProject, item: JsBinItemType) -> bool {
-        self.inner
-            .create(item.into_bin_item(project))
+    pub async fn create(&self, project: &JsProject, item: JsBinItemType) -> Result<bool> {
+        Ok(self
+            .inner
+            .create(item.into_bin_item(project)?)
             .await
-            .is_some()
+            .is_some())
     }
 
     pub async fn get_item(&self, path: String) -> Option<JsBinItemType> {
@@ -45,24 +51,30 @@ pub enum JsBinItemType {
     },
 }
 
-#[wasm_bindgen]
 impl JsBinItemType {
-    pub(crate) fn into_bin_item(self, project: &JsProject) -> BinItemType {
+    pub(crate) fn into_bin_item(self, project: &JsProject) -> Result<BinItemType> {
         match self {
             Self::Media {
                 bin_path,
                 media_path,
             } => {
-                let media_ref = todo!("Get media by path from project");
+                let asset_path = AssetPath::from_str(&media_path).map_err(|e| {
+                    JsError::new(&format!(
+                        "Unable to create asset path from media path {media_path:?}: {e:?}"
+                    ))
+                })?;
+                let media_ref = project
+                    .inner
+                    .get_asset(&asset_path)
+                    .ok_or_else(|| JsError::new(&format!("Unable to get asset")))?;
 
-                #[allow(unreachable_code)]
-                BinItemType::Media {
-                    inner: media_ref,
+                Ok(BinItemType::Media {
+                    inner: media_ref.clone(),
                     bin_path: bin_path.into(),
-                }
+                })
             }
             Self::Directory { bin_path } => {
-                BinItemType::Directory(BinDirectory::new(bin_path.into()))
+                Ok(BinItemType::Directory(BinDirectory::new(bin_path.into())))
             }
         }
     }
