@@ -2,19 +2,20 @@ use std::fmt::Debug;
 
 use crate::{asset::asset_types::AssetType, utils::asset_path::AssetPath};
 
+#[derive(Debug, Clone)]
 pub enum Asset {
     Media(MediaAsset),
     Bitmap(MediaAsset),
     Timeline(TimelineAsset),
 }
 
-pub trait AssetImpl: Debug + Sync + Send {
+pub trait AssetImpl: Debug + Clone + Sync + Send {
     /// Get the asset path of this asset
     fn get_path(&self) -> AssetPath;
     fn get_type(&self) -> AssetType;
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct MediaAsset {
     pub(crate) path: AssetPath,
     pub(crate) r#type: AssetType,
@@ -31,7 +32,7 @@ impl AssetImpl for MediaAsset {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TimelineAsset(pub(crate) AssetPath);
 
 impl AssetImpl for TimelineAsset {

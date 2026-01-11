@@ -1,12 +1,9 @@
-use std::sync::Arc;
-
 use dashmap::DashMap;
 use log::debug;
 use nanoid::nanoid;
-use tokio::sync::RwLock;
 
 use crate::{
-    asset::{AssetRef, asset::TimelineAsset},
+    asset::asset::{Asset, TimelineAsset},
     media_bin::media_bin_item::BinItemType,
     project::project::Project,
     timeline::timeline_item::{TimelineItem, TimelineItemRef},
@@ -43,14 +40,14 @@ impl Timeline {
     pub async fn add_to_project(&self, project: &Project, bin_path: String) {
         let asset_path = AssetPath::new(true, AssetPathNamespace::Timeline, &self.id);
         let timeline_asset = TimelineAsset(asset_path.clone());
-        let asset = AssetRef::new(Arc::new(RwLock::new(timeline_asset)));
+        let asset = Asset::Timeline(timeline_asset);
 
-        project.create_asset(asset_path.clone(), asset.clone());
+        project.create_asset(asset_path.clone(), asset);
 
         project
             .get_media_bin()
             .create(BinItemType::Media {
-                inner: asset,
+                asset_path,
                 bin_path: bin_path.into(),
             })
             .await;

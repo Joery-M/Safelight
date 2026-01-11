@@ -27,28 +27,16 @@ impl MediaBin {
 
 #[cfg(test)]
 mod test {
-    use tokio::sync::RwLock;
-
     use crate::{
-        asset::{AssetRef, asset::AssetImpl, asset_types::AssetType},
+        asset::{
+            asset::{Asset, AssetImpl, MediaAsset},
+            asset_types::AssetType,
+        },
         project::project::Project,
         utils::{asset_path::AssetPath, asset_path_namespace::AssetPathNamespace},
     };
 
     use super::*;
-
-    #[derive(Debug)]
-    struct TestMedia {
-        path: AssetPath,
-    }
-    impl AssetImpl for TestMedia {
-        fn get_path(&self) -> AssetPath {
-            self.path.clone()
-        }
-        fn get_type(&self) -> crate::asset::asset_types::AssetType {
-            AssetType::Generic
-        }
-    }
 
     #[tokio::test]
     async fn create_media_bin_item() {
@@ -57,10 +45,11 @@ mod test {
 
         let project = Project::new();
         let asset_path = AssetPath::new(true, AssetPathNamespace::FS, "/Test.txt");
-        let asset_item = TestMedia {
+        let asset_item = MediaAsset {
             path: asset_path.clone(),
+            r#type: AssetType::Audio | AssetType::Video,
         };
-        let asset_item_ref = AssetRef::new(Arc::new(RwLock::new(asset_item)));
+        let asset_item_ref = Asset::Media(asset_item);
         project.create_asset(asset_path.clone(), asset_item_ref.clone());
 
         let bin = project.get_media_bin();
@@ -71,10 +60,7 @@ mod test {
         ));
 
         let media = BinItemType::Media {
-            inner: project
-                .get_asset(&asset_path)
-                .expect("Get asset reference that was just created")
-                .clone(),
+            asset_path: asset_path.clone(),
             bin_path: file_path.clone(),
         };
         bin.create(media).await.expect(&format!(
@@ -84,14 +70,25 @@ mod test {
         let item = bin.get_item(&file_path).await.expect("To find item");
         match item {
             BinItemType::Media {
-                inner: item,
+                asset_path,
                 bin_path,
             } => {
                 assert_eq!(bin_path, file_path);
 
-                let media = item.borrow().await;
-                assert_eq!(media.get_path().to_string(), "#virtual:/Test.txt");
-                assert_eq!(media.get_type(), AssetType::Generic);
+                let item = project
+                    .get_asset(&asset_path)
+                    .expect("Find asset that was just created")
+                    .clone();
+
+                match item {
+                    Asset::Media(media) => {
+                        assert_eq!(media.get_path().to_string(), "#virtual:/Test.txt");
+                        assert_eq!(media.get_type(), AssetType::Generic);
+                    }
+                    _ => {
+                        panic!("Asset should be a `Media`")
+                    }
+                }
             }
             _ => panic!("Item should be a `BinMedia`"),
         }

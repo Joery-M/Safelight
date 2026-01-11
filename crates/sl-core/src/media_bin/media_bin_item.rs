@@ -1,17 +1,23 @@
 use std::collections::HashMap;
 
-use crate::{asset::AssetRef, utils::bin_path::BinPath};
+use crate::utils::{asset_path::AssetPath, bin_path::BinPath};
 
 #[derive(Debug, Clone)]
 pub enum BinItemType {
-    Media { inner: AssetRef, bin_path: BinPath },
+    Media {
+        asset_path: AssetPath,
+        bin_path: BinPath,
+    },
     Directory(BinDirectory),
 }
 
 impl BinItemType {
     pub fn get_path(&self) -> &BinPath {
         match self {
-            BinItemType::Media { bin_path, inner: _ } => bin_path,
+            BinItemType::Media {
+                bin_path,
+                asset_path: _,
+            } => bin_path,
             BinItemType::Directory(dir) => &dir.path,
         }
     }

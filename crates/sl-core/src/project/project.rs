@@ -5,12 +5,12 @@ use dashmap::{
 use log::debug;
 use nanoid::nanoid;
 
-use crate::{asset::AssetRef, media_bin::media_bin::MediaBin, utils::asset_path::AssetPath};
+use crate::{asset::asset::Asset, media_bin::media_bin::MediaBin, utils::asset_path::AssetPath};
 
 pub struct Project {
     pub id: String,
     pub(crate) media_bin: MediaBin,
-    pub(crate) asset_map: DashMap<AssetPath, AssetRef>,
+    pub(crate) asset_map: DashMap<AssetPath, Asset>,
 }
 
 impl Project {
@@ -30,15 +30,15 @@ impl Project {
     }
 
     #[inline]
-    pub fn get_asset(&self, path: &AssetPath) -> Option<Ref<'_, AssetPath, AssetRef>> {
+    pub fn get_asset(&self, path: &AssetPath) -> Option<Ref<'_, AssetPath, Asset>> {
         self.asset_map.get(path)
     }
     #[inline]
-    pub fn get_asset_mut(&self, path: &AssetPath) -> Option<RefMut<'_, AssetPath, AssetRef>> {
+    pub fn get_asset_mut(&self, path: &AssetPath) -> Option<RefMut<'_, AssetPath, Asset>> {
         self.asset_map.get_mut(path)
     }
     #[inline]
-    pub fn create_asset(&self, path: AssetPath, asset: AssetRef) {
+    pub fn create_asset(&self, path: AssetPath, asset: Asset) {
         self.asset_map.insert(path, asset);
     }
 }
