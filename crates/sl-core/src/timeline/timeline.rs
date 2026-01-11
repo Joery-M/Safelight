@@ -10,7 +10,7 @@ use crate::{
     media_bin::media_bin_item::BinItemType,
     project::project::Project,
     timeline::timeline_item::{TimelineItem, TimelineItemRef},
-    utils::asset_path::AssetPath,
+    utils::{asset_path::AssetPath, asset_path_namespace::AssetPathNamespace},
 };
 
 pub struct TimelineProperties {
@@ -41,7 +41,7 @@ impl Timeline {
     }
 
     pub async fn add_to_project(&self, project: &Project, bin_path: String) {
-        let asset_path = AssetPath::new(true, "timeline", &self.id);
+        let asset_path = AssetPath::new(true, AssetPathNamespace::Timeline, &self.id);
         let timeline_asset = TimelineAsset(asset_path.clone());
         let asset = AssetRef::new(Arc::new(RwLock::new(timeline_asset)));
 

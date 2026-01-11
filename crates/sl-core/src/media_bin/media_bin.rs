@@ -30,9 +30,9 @@ mod test {
     use tokio::sync::RwLock;
 
     use crate::{
-        asset::{AssetRef, asset::Asset, asset_types::AssetType},
+        asset::{AssetRef, asset::AssetImpl, asset_types::AssetType},
         project::project::Project,
-        utils::asset_path::AssetPath,
+        utils::{asset_path::AssetPath, asset_path_namespace::AssetPathNamespace},
     };
 
     use super::*;
@@ -41,7 +41,7 @@ mod test {
     struct TestMedia {
         path: AssetPath,
     }
-    impl Asset for TestMedia {
+    impl AssetImpl for TestMedia {
         fn get_path(&self) -> AssetPath {
             self.path.clone()
         }
@@ -56,7 +56,7 @@ mod test {
         let file_path: BinPath = "/folder/test.txt".into();
 
         let project = Project::new();
-        let asset_path = AssetPath::new(true, "virtual", "/Test.txt");
+        let asset_path = AssetPath::new(true, AssetPathNamespace::FS, "/Test.txt");
         let asset_item = TestMedia {
             path: asset_path.clone(),
         };

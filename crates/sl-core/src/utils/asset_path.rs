@@ -5,6 +5,8 @@ use std::{
 
 use arcstr::ArcStr;
 
+use crate::utils::asset_path_namespace::{AssetPathNamespace, UnknownNamespaceError};
+
 /// An `AssetPath` defines the location and storage method of an asset
 ///
 /// For media that is stored on-device, this path should eventually resolve to the raw data of that file.
@@ -12,24 +14,22 @@ use arcstr::ArcStr;
 ///
 /// | Type     | Path                                             |
 /// | -------- | ------------------------------------------------ |
-/// | Media    | OPFS:/media/2b14464b-f3cd-4460-838e-51aed1de4098 |
-/// | Media    | HDD:D:\projects\safelight\my-awesome-video.webm  |
-/// | Media    | HDD:/home/user/Documents/my-awesome-video.webm   |
+/// | Media    | FS:/media/2b14464b-f3cd-4460-838e-51aed1de4098 |
+/// | Media    | FS:D:\projects\safelight\my-awesome-video.webm  |
+/// | Media    | FS:/home/user/Documents/my-awesome-video.webm   |
 /// | Timeline | #timeline:7069252d-e784-4555-8b0d-e954d3b1f019   |
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub struct AssetPath {
     pub is_virtual: bool,
-    // In the future, the namespace could be an enum, which would
-    // allow us to hardcode specialized hashmaps for each namespace.
-    pub namespace: ArcStr,
+    pub namespace: AssetPathNamespace,
     pub path: ArcStr,
 }
 
 impl AssetPath {
-    pub fn new(is_virtual: bool, namespace: impl Into<ArcStr>, path: impl Into<ArcStr>) -> Self {
+    pub fn new(is_virtual: bool, namespace: AssetPathNamespace, path: impl Into<ArcStr>) -> Self {
         Self {
             is_virtual,
-            namespace: namespace.into(),
+            namespace,
             path: path.into(),
         }
     }
@@ -48,6 +48,8 @@ impl Display for AssetPath {
 pub enum ParseAssetPathError {
     #[error("Invalid namespace: {0}")]
     InvalidNamespace(String),
+    #[error(transparent)]
+    UnknownNamespace(#[from] UnknownNamespaceError),
     #[error("Invalid path: {0}")]
     InvalidPath(String),
 }
@@ -73,7 +75,7 @@ impl FromStr for AssetPath {
         Ok(AssetPath {
             is_virtual,
             path: path.into(),
-            namespace: namespace.into(),
+            namespace: AssetPathNamespace::from_str(namespace)?,
         })
     }
 }
@@ -82,17 +84,24 @@ impl FromStr for AssetPath {
 mod test {
     use super::*;
 
-    const TEST_CASES: [(&str, (bool, &str, &str)); 3] = [
-        ("OPFS:/my-asset.mp4", (false, "OPFS", "/my-asset.mp4")),
+    const TEST_CASES: [(&str, (bool, AssetPathNamespace, &str)); 3] = [
         (
-            "#timeline:d09688be-2e07-5da3-b94c-cce4b519c72b",
-            (true, "timeline", "d09688be-2e07-5da3-b94c-cce4b519c72b"),
+            "FS:/my-asset.mp4",
+            (false, AssetPathNamespace::FS, "/my-asset.mp4"),
         ),
         (
-            "HDD:D:/Projects/Safelight/media/my-awesome-video.mp4",
+            "#timeline:d09688be-2e07-5da3-b94c-cce4b519c72b",
+            (
+                true,
+                AssetPathNamespace::Timeline,
+                "d09688be-2e07-5da3-b94c-cce4b519c72b",
+            ),
+        ),
+        (
+            "FS:D:/Projects/Safelight/media/my-awesome-video.mp4",
             (
                 false,
-                "HDD",
+                AssetPathNamespace::FS,
                 "D:/Projects/Safelight/media/my-awesome-video.mp4",
             ),
         ),
