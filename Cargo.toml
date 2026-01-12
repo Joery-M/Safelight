@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["crates/sl-core", "crates/sl-binding"]
+members = ["crates/sl-core", "crates/sl-binding", "crates/sl-macros"]
 
 [workspace.package]
 version = "0.1.0"
@@ -9,9 +9,10 @@ license = "MIT"
 
 [workspace.dependencies]
 sl-core = { path = "./crates/sl-core/" }
+sl-macros = { path = "./crates/sl-macros/" }
 
 [profile.release]
 opt-level = "s"
-# debug = "full"
-# strip = "none"
+debug = "none"
+strip = true
 lto = true

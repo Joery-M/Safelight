@@ -1,5 +1,4 @@
-use std::sync::Arc;
-
+use sl_macros::DebugDrop;
 use tokio::sync::Mutex;
 
 use crate::{
@@ -7,9 +6,9 @@ use crate::{
     utils::bin_path::BinPath,
 };
 
-#[derive(Default, Clone)]
+#[derive(Default, DebugDrop)]
 pub struct MediaBin {
-    inner: Arc<Mutex<BinDirectory>>,
+    inner: Mutex<BinDirectory>,
 }
 
 impl MediaBin {

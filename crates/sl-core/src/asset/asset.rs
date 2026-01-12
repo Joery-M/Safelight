@@ -1,5 +1,7 @@
 use std::fmt::Debug;
 
+use sl_macros::DebugDrop;
+
 use crate::{asset::asset_types::AssetType, utils::asset_path::AssetPath};
 
 #[derive(Debug, Clone)]
@@ -25,7 +27,8 @@ pub trait AssetImpl: Debug + Clone + Sync + Send {
     fn get_type(&self) -> AssetType;
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, DebugDrop)]
+#[debug_drop_id = "path"]
 pub struct MediaAsset {
     pub(crate) path: AssetPath,
     pub(crate) source_type: AssetType,
@@ -42,7 +45,8 @@ impl AssetImpl for MediaAsset {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, DebugDrop)]
+#[debug_drop_id = "0"]
 pub struct TimelineAsset(pub(crate) AssetPath);
 
 impl TimelineAsset {

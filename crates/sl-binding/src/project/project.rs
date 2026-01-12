@@ -1,7 +1,14 @@
-use sl_core::project::project::Project;
+use std::str::FromStr;
+
+use sl_core::{
+    project::project::Project, storage::storage::StorageManager, utils::asset_path::AssetPath,
+};
 use wasm_bindgen::prelude::*;
 
-use crate::{media_bin::media_bin::JsMediaBin, storage::storage::BrowserStorage};
+use crate::{
+    media_bin::media_bin::JsMediaBin, storage::storage::BrowserStorage,
+    timeline::timeline::JsTimeline, utils::Result,
+};
 
 #[wasm_bindgen]
 pub struct JsProject {
@@ -27,5 +34,15 @@ impl JsProject {
         JsMediaBin {
             inner: self.inner.get_media_bin(),
         }
+    }
+
+    #[wasm_bindgen(js_name = getTimeline)]
+    pub fn get_timeline(&self, path: String) -> Result<JsTimeline> {
+        let path = AssetPath::from_str(&path).map_err(JsError::from)?;
+        self.inner
+            .storage
+            .get_timeline(path)
+            .map(|tl| tl.into())
+            .ok_or_else(|| JsError::new("Could not find timeline"))
     }
 }

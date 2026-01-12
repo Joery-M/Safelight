@@ -1,6 +1,7 @@
 use dashmap::DashMap;
 use log::debug;
 use nanoid::nanoid;
+use sl_macros::DebugDrop;
 
 use crate::timeline::timeline_item::{TimelineItem, TimelineItemRef};
 
@@ -15,7 +16,8 @@ pub struct TimelineProperties {
     pub frame_rate: u16,
 }
 
-#[derive(Debug)]
+#[derive(Debug, DebugDrop)]
+#[debug_drop_id = "id"]
 pub struct Timeline {
     pub id: String,
     pub properties: TimelineProperties,

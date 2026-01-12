@@ -43,24 +43,23 @@ impl Log for ConsoleLogger {
             Level::Trace => debug,
         };
         let color = match level {
-            Level::Error => "red",
-            Level::Warn => "orange",
-            Level::Debug => "purple",
-            Level::Info => "white",
-            Level::Trace => "cyan",
+            Level::Error => "color: #ff3333; font-weight: bold;",
+            Level::Warn => "color: #ffbb33; font-weight: bold;",
+            Level::Debug => "color: #cf33ff; font-weight: bold;",
+            Level::Info => "color: #ebff33ff",
+            Level::Trace => "color: #47ebd5; font-weight: bold;",
         };
 
-        let tag = match (record.file(), record.line()) {
-            (Some(file), Some(line)) => format!("%c[SL-CORE %c{}%c {}:{}]", level, file, line),
-            (Some(file), None) => format!("%c[SL-CORE %c{}%c {}]", level, file),
-            (None, _) => format!("%c[SL-CORE %c{}%c]", level),
+        let tag = match (record.target(), record.line()) {
+            (target, Some(line)) => format!("%c[SL-CORE %c{}%c {}:{}]", level, target, line),
+            (target, None) => format!("%c[SL-CORE %c{}%c {}]", level, target),
         };
 
         // This syntax lets us color the text using the %c
         let args: Vec<_> = vec![
             tag,
             format!("color: gray"),
-            format!("color: {color}"),
+            color.to_owned(),
             format!("color: gray"),
             format!("{}", record.args()),
         ];

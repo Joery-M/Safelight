@@ -76,3 +76,9 @@ impl JsTimeline {
         self.inner.delete_timeline_item(&id).await
     }
 }
+
+impl From<Arc<Timeline>> for JsTimeline {
+    fn from(inner: Arc<Timeline>) -> Self {
+        Self { inner }
+    }
+}

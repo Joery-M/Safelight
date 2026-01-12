@@ -7,6 +7,9 @@ license.workspace = true
 [lib]
 crate-type = ["cdylib"]
 
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ['-Os', "-all"]
+
 [features]
 debugging = ["console_error_panic_hook"]
 
@@ -18,7 +21,7 @@ wasm-bindgen-futures = "0.4.56"
 serde = { version = "1.0.228", features = ["derive"] }
 tsify = { version = "0.5.6", features = ["js"] }
 console_error_panic_hook = { version = "0.1.7", optional = true }
-log = { version = "0.4.29", features = ["release_max_level_info"] }
+log = "0.4.29"
 tokio = "1.49.0"
 async-trait = "0.1.89"
 dashmap = "6.1.0"

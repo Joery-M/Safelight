@@ -1,19 +1,24 @@
+use std::sync::Arc;
+
 use dashmap::{
     DashMap,
     mapref::one::{Ref, RefMut},
 };
 use log::debug;
 use nanoid::nanoid;
+use sl_macros::DebugDrop;
 
 use crate::{
     asset::asset::Asset, media_bin::media_bin::MediaBin, storage::storage::StorageManager,
     utils::asset_path::AssetPath,
 };
 
+#[derive(DebugDrop)]
+#[debug_drop_id = "id"]
 pub struct Project<Storage: StorageManager> {
     pub id: String,
     pub storage: Storage,
-    pub(crate) media_bin: MediaBin,
+    pub(crate) media_bin: Arc<MediaBin>,
     pub(crate) asset_map: DashMap<AssetPath, Asset>,
 }
 
@@ -23,14 +28,14 @@ impl<T: StorageManager> Project<T> {
         debug!("Created new project with ID {id:?}");
         Project {
             id,
-            media_bin: MediaBin::default(),
+            media_bin: Arc::default(),
             asset_map: DashMap::default(),
             storage,
         }
     }
 
     #[inline]
-    pub fn get_media_bin(&self) -> MediaBin {
+    pub fn get_media_bin(&self) -> Arc<MediaBin> {
         self.media_bin.clone()
     }
 

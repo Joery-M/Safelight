@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{str::FromStr, sync::Arc};
 
 use serde::{Deserialize, Serialize};
 use sl_core::{
@@ -16,16 +16,16 @@ use crate::utils::Result;
 #[wasm_bindgen]
 #[derive(Default, Clone)]
 pub struct JsMediaBin {
-    pub(crate) inner: MediaBin,
+    pub(crate) inner: Arc<MediaBin>,
 }
 
 #[wasm_bindgen]
 impl JsMediaBin {
-    #[wasm_bindgen]
     pub async fn create(&self, item: JsBinItemType) -> Result<bool> {
         Ok(self.inner.create(item.into_bin_item()?).await.is_some())
     }
 
+    #[wasm_bindgen(js_name = getItem)]
     pub async fn get_item(&self, path: String) -> Option<JsBinItemType> {
         self.inner
             .get_item(&path.into())
