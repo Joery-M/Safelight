@@ -6,7 +6,7 @@ use thiserror::Error;
 pub enum AssetPathNamespace {
     /// Indicates this asset is stored in the implementors' file system
     FS,
-    /// Indicates this asset is a timeline and should be read from the project
+    /// Indicates this asset is a timeline and should be read from the project's storage
     Timeline,
 }
 

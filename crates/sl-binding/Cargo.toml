@@ -19,6 +19,9 @@ serde = { version = "1.0.228", features = ["derive"] }
 tsify = { version = "0.5.6", features = ["js"] }
 console_error_panic_hook = { version = "0.1.7", optional = true }
 log = { version = "0.4.29", features = ["release_max_level_info"] }
+tokio = "1.49.0"
+async-trait = "0.1.89"
+dashmap = "6.1.0"
 
 [dependencies.getrandom]
 version = "*"

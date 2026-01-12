@@ -5,22 +5,27 @@ use dashmap::{
 use log::debug;
 use nanoid::nanoid;
 
-use crate::{asset::asset::Asset, media_bin::media_bin::MediaBin, utils::asset_path::AssetPath};
+use crate::{
+    asset::asset::Asset, media_bin::media_bin::MediaBin, storage::storage::StorageManager,
+    utils::asset_path::AssetPath,
+};
 
-pub struct Project {
+pub struct Project<Storage: StorageManager> {
     pub id: String,
+    pub storage: Storage,
     pub(crate) media_bin: MediaBin,
     pub(crate) asset_map: DashMap<AssetPath, Asset>,
 }
 
-impl Project {
-    pub fn new() -> Self {
+impl<T: StorageManager> Project<T> {
+    pub fn new(storage: T) -> Self {
         let id = nanoid!();
         debug!("Created new project with ID {id:?}");
         Project {
             id,
             media_bin: MediaBin::default(),
             asset_map: DashMap::default(),
+            storage,
         }
     }
 

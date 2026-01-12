@@ -1,11 +1,11 @@
 use sl_core::project::project::Project;
 use wasm_bindgen::prelude::*;
 
-use crate::media_bin::media_bin::JsMediaBin;
+use crate::{media_bin::media_bin::JsMediaBin, storage::storage::BrowserStorage};
 
 #[wasm_bindgen]
 pub struct JsProject {
-    pub(crate) inner: Project,
+    pub(crate) inner: Project<BrowserStorage>,
 }
 
 #[wasm_bindgen]
@@ -13,7 +13,7 @@ impl JsProject {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Self {
         JsProject {
-            inner: Project::new(),
+            inner: Project::new(BrowserStorage::new()),
         }
     }
 

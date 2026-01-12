@@ -2,14 +2,9 @@ use dashmap::DashMap;
 use log::debug;
 use nanoid::nanoid;
 
-use crate::{
-    asset::asset::{Asset, TimelineAsset},
-    media_bin::media_bin_item::BinItemType,
-    project::project::Project,
-    timeline::timeline_item::{TimelineItem, TimelineItemRef},
-    utils::{asset_path::AssetPath, asset_path_namespace::AssetPathNamespace},
-};
+use crate::timeline::timeline_item::{TimelineItem, TimelineItemRef};
 
+#[derive(Debug)]
 pub struct TimelineProperties {
     /// The width of the timeline's output frame
     pub width: u32,
@@ -20,6 +15,7 @@ pub struct TimelineProperties {
     pub frame_rate: u16,
 }
 
+#[derive(Debug)]
 pub struct Timeline {
     pub id: String,
     pub properties: TimelineProperties,
@@ -35,22 +31,6 @@ impl Timeline {
             properties,
             items: DashMap::new(),
         }
-    }
-
-    pub async fn add_to_project(&self, project: &Project, bin_path: String) {
-        let asset_path = AssetPath::new(true, AssetPathNamespace::Timeline, &self.id);
-        let timeline_asset = TimelineAsset(asset_path.clone());
-        let asset = Asset::Timeline(timeline_asset);
-
-        project.create_asset(asset_path.clone(), asset);
-
-        project
-            .get_media_bin()
-            .create(BinItemType::Media {
-                asset_path,
-                bin_path: bin_path.into(),
-            })
-            .await;
     }
 
     pub fn new_timeline_item(&self, start: u32, end: u32, layer: u8) -> TimelineItemRef {

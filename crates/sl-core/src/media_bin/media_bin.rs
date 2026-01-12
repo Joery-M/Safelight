@@ -33,6 +33,7 @@ mod test {
             asset_types::AssetType,
         },
         project::project::Project,
+        storage::storage::testing::DummyStorageManager,
         utils::{asset_path::AssetPath, asset_path_namespace::AssetPathNamespace},
     };
 
@@ -43,11 +44,12 @@ mod test {
         let folder_path: BinPath = "/folder/".into();
         let file_path: BinPath = "/folder/test.txt".into();
 
-        let project = Project::new();
+        let storage_manager = DummyStorageManager {};
+        let project = Project::new(storage_manager);
         let asset_path = AssetPath::new(true, AssetPathNamespace::FS, "/Test.txt");
         let asset_item = MediaAsset {
             path: asset_path.clone(),
-            r#type: AssetType::Audio | AssetType::Video,
+            source_type: AssetType::Audio | AssetType::Video,
         };
         let asset_item_ref = Asset::Media(asset_item);
         project.create_asset(asset_path.clone(), asset_item_ref.clone());

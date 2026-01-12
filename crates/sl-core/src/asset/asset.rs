@@ -9,6 +9,16 @@ pub enum Asset {
     Timeline(TimelineAsset),
 }
 
+impl Asset {
+    pub fn get_inner_path(&self) -> AssetPath {
+        match self {
+            Asset::Media(media_asset) => media_asset.get_path(),
+            Asset::Bitmap(media_asset) => media_asset.get_path(),
+            Asset::Timeline(timeline_asset) => timeline_asset.get_path(),
+        }
+    }
+}
+
 pub trait AssetImpl: Debug + Clone + Sync + Send {
     /// Get the asset path of this asset
     fn get_path(&self) -> AssetPath;
@@ -18,13 +28,13 @@ pub trait AssetImpl: Debug + Clone + Sync + Send {
 #[derive(Debug, Clone)]
 pub struct MediaAsset {
     pub(crate) path: AssetPath,
-    pub(crate) r#type: AssetType,
+    pub(crate) source_type: AssetType,
 }
 
 impl AssetImpl for MediaAsset {
     #[inline]
     fn get_type(&self) -> AssetType {
-        self.r#type
+        self.source_type
     }
     #[inline]
     fn get_path(&self) -> AssetPath {
@@ -34,6 +44,12 @@ impl AssetImpl for MediaAsset {
 
 #[derive(Debug, Clone)]
 pub struct TimelineAsset(pub(crate) AssetPath);
+
+impl TimelineAsset {
+    pub fn new(asset_path: AssetPath) -> Self {
+        Self(asset_path)
+    }
+}
 
 impl AssetImpl for TimelineAsset {
     #[inline]

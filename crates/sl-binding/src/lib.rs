@@ -7,6 +7,8 @@ use crate::utils::logger::ConsoleLogger;
 pub mod media_bin;
 pub mod project;
 pub mod timeline;
+
+mod storage;
 mod utils;
 
 #[wasm_bindgen(start)]
