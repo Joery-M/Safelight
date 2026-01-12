@@ -48,9 +48,6 @@ impl Timeline {
     }
 
     pub async fn delete_timeline_item(&self, id: &str) {
-        if let Some(item) = self.items.get(id) {
-            item.mutate().await.delete();
-            self.items.remove(id);
-        }
+        self.items.remove(id);
     }
 }

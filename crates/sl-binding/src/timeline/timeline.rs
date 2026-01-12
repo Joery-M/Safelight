@@ -25,7 +25,6 @@ impl JsTimeline {
     ///  1. Add the timeline to the storage (consuming Self)
     ///  2. Add the asset to the project's asset map
     ///  3. Create a media bin item
-    #[wasm_bindgen]
     pub async fn create(
         project: &JsProject,
         bin_path: String,

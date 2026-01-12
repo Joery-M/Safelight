@@ -3,8 +3,6 @@ use std::{
     str::FromStr,
 };
 
-use arcstr::ArcStr;
-
 use crate::utils::asset_path_namespace::{AssetPathNamespace, UnknownNamespaceError};
 
 /// An `AssetPath` defines the location and storage method of an asset
@@ -22,11 +20,11 @@ use crate::utils::asset_path_namespace::{AssetPathNamespace, UnknownNamespaceErr
 pub struct AssetPath {
     pub is_virtual: bool,
     pub namespace: AssetPathNamespace,
-    pub path: ArcStr,
+    pub path: String,
 }
 
 impl AssetPath {
-    pub fn new(is_virtual: bool, namespace: AssetPathNamespace, path: impl Into<ArcStr>) -> Self {
+    pub fn new(is_virtual: bool, namespace: AssetPathNamespace, path: impl Into<String>) -> Self {
         Self {
             is_virtual,
             namespace,
