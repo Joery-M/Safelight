@@ -27,7 +27,7 @@ impl BrowserStorage {
         }
     }
 
-    /// Get an OPFS file handle from 
+    /// Get an OPFS file handle from a path
     async fn get_opfs_file(&self, asset: AssetPath) -> Result<FileSystemFileHandle, StorageError> {
         let sections: Vec<String> = BinPath::from(asset.path).into();
 
@@ -57,6 +57,7 @@ impl BrowserStorage {
         )))
     }
 
+    /// Get or create an OPFS file handle from a path
     pub(crate) async fn get_or_create_opfs_file(
         &self,
         asset: AssetPath,
@@ -93,6 +94,7 @@ impl BrowserStorage {
             }
         }
 
+        // TODO: Better document why this could go wrong
         Err(StorageError::IO(std::io::Error::new(
             std::io::ErrorKind::NotFound,
             "File not found (somehow)",

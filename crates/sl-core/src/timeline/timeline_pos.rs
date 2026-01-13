@@ -13,8 +13,8 @@ pub struct TimelineRangePos {
 impl TimelineRangePos {
     pub fn new(start: u32, end: u32, layer: u8) -> Self {
         Self {
-            range: (start.into(), end.into()),
-            layer: layer.into(),
+            range: (start, end),
+            layer: layer,
         }
     }
 
