@@ -9,11 +9,13 @@ bitflags! {
         const Audio = 1 << 1;
         /// Asset has text, e.g. subtitles.
         const Text = 1 << 2;
+        /// Asset is a static bitmap
+        const Bitmap = 1 << 3;
         /// Asset is a timeline.
-        const Timeline = 1 << 3;
+        const Timeline = 1 << 4;
         /// Asset should be streamed in.
-        const Streaming = 1 << 4;
+        const Streaming = 1 << 5;
         /// Asset is undefined/unknown.
-        const Generic = 1 << 5;
+        const Generic = 1 << 6;
     }
 }

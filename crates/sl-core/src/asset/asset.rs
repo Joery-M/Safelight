@@ -7,7 +7,6 @@ use crate::{asset::asset_types::AssetType, utils::asset_path::AssetPath};
 #[derive(Debug, Clone)]
 pub enum Asset {
     Media(MediaAsset),
-    Bitmap(MediaAsset),
     Timeline(TimelineAsset),
 }
 
@@ -15,7 +14,6 @@ impl Asset {
     pub fn get_inner_path(&self) -> AssetPath {
         match self {
             Asset::Media(media_asset) => media_asset.get_path(),
-            Asset::Bitmap(media_asset) => media_asset.get_path(),
             Asset::Timeline(timeline_asset) => timeline_asset.get_path(),
         }
     }
@@ -32,6 +30,12 @@ pub trait AssetImpl: Debug + Clone + Sync + Send {
 pub struct MediaAsset {
     pub(crate) path: AssetPath,
     pub(crate) source_type: AssetType,
+}
+
+impl MediaAsset {
+    pub fn new(path: AssetPath, source_type: AssetType) -> Self {
+        Self { path, source_type }
+    }
 }
 
 impl AssetImpl for MediaAsset {

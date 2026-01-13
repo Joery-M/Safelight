@@ -7,13 +7,21 @@ use sl_core::{
     timeline::timeline::Timeline,
     utils::{asset_path::AssetPath, asset_path_namespace::AssetPathNamespace, bin_path::BinPath},
 };
-use wasm_bindgen_futures::JsFuture;
-use web_sys::{
-    FileSystemDirectoryHandle, FileSystemFileHandle, FileSystemGetDirectoryOptions,
-    FileSystemGetFileOptions,
-};
+use wasm_bindgen::{JsValue, prelude::wasm_bindgen};
 
-use crate::storage::file::BrowserFile;
+use crate::storage::file::{BrowserFile, JsBrowserFile};
+
+#[wasm_bindgen(raw_module = "../browserStorage.ts")]
+extern "C" {
+    #[derive(Debug)]
+    pub type JsBrowserStorage;
+
+    #[wasm_bindgen(static_method_of = JsBrowserStorage, catch, js_name = getOPFSFile)]
+    async fn get_opfs_file(path: Vec<String>) -> Result<JsBrowserFile, JsValue>;
+
+    #[wasm_bindgen(static_method_of = JsBrowserStorage, catch, js_name = getOrCreateOPFSFile)]
+    async fn get_or_create_opfs_file(path: Vec<String>) -> Result<JsBrowserFile, JsValue>;
+}
 
 #[derive(Debug, Clone)]
 pub struct BrowserStorage {
@@ -28,77 +36,23 @@ impl BrowserStorage {
     }
 
     /// Get an OPFS file handle from a path
-    async fn get_opfs_file(&self, asset: AssetPath) -> Result<FileSystemFileHandle, StorageError> {
-        let sections: Vec<String> = BinPath::from(asset.path).into();
+    async fn get_opfs_file(&self, asset: AssetPath) -> Result<BrowserFile, StorageError> {
+        // TODO: Should change this
+        let path: Vec<String> = BinPath::from(asset.path).into();
 
-        let navigator = web_sys::window().unwrap().navigator();
-        let mut cur_dir = JsFuture::from(navigator.storage().get_directory())
-            .await
-            .map(FileSystemDirectoryHandle::from)?;
-
-        for (i, section) in sections.iter().enumerate() {
-            if i == sections.len() - 1 {
-                // Last one, get file
-                let handle = JsFuture::from(cur_dir.get_file_handle(section))
-                    .await
-                    .map(FileSystemFileHandle::from)?;
-
-                return Ok(handle);
-            } else {
-                // Recursively get directory
-                cur_dir = JsFuture::from(cur_dir.get_directory_handle(section))
-                    .await
-                    .map(FileSystemDirectoryHandle::from)?;
-            }
-        }
-        Err(StorageError::IO(std::io::Error::new(
-            std::io::ErrorKind::NotFound,
-            "File not found",
-        )))
+        let file = JsBrowserStorage::get_opfs_file(path).await?;
+        Ok(BrowserFile::from(file))
     }
 
     /// Get or create an OPFS file handle from a path
     pub(crate) async fn get_or_create_opfs_file(
         &self,
         asset: AssetPath,
-    ) -> Result<FileSystemFileHandle, StorageError> {
-        let sections: Vec<String> = BinPath::from(asset.path).into();
+    ) -> Result<BrowserFile, StorageError> {
+        let path: Vec<String> = BinPath::from(asset.path).into();
 
-        let navigator = web_sys::window().unwrap().navigator();
-        let mut cur_dir = JsFuture::from(navigator.storage().get_directory())
-            .await
-            .map(FileSystemDirectoryHandle::from)?;
-
-        let get_dir_options = FileSystemGetDirectoryOptions::new();
-        get_dir_options.set_create(true);
-        let get_file_options = FileSystemGetFileOptions::new();
-        get_file_options.set_create(true);
-
-        for (i, section) in sections.iter().enumerate() {
-            if i == sections.len() - 1 {
-                // Last one, get file
-                let handle = JsFuture::from(
-                    cur_dir.get_file_handle_with_options(section, &get_file_options),
-                )
-                .await
-                .map(FileSystemFileHandle::from)?;
-
-                return Ok(handle);
-            } else {
-                // Recursively get directory
-                cur_dir = JsFuture::from(
-                    cur_dir.get_directory_handle_with_options(section, &get_dir_options),
-                )
-                .await
-                .map(FileSystemDirectoryHandle::from)?;
-            }
-        }
-
-        // TODO: Better document why this could go wrong
-        Err(StorageError::IO(std::io::Error::new(
-            std::io::ErrorKind::NotFound,
-            "File not found (somehow)",
-        )))
+        let file = JsBrowserStorage::get_or_create_opfs_file(path).await?;
+        Ok(BrowserFile::from(file))
     }
 }
 
@@ -107,7 +61,7 @@ impl StorageManager for BrowserStorage {
     type FileType = BrowserFile;
     async fn get_asset_file(&self, asset: AssetPath) -> Result<Self::FileType, StorageError> {
         match asset.namespace {
-            AssetPathNamespace::FS => self.get_opfs_file(asset).await.map(BrowserFile::from),
+            AssetPathNamespace::FS => self.get_opfs_file(asset).await,
 
             _ => Err(StorageError::UnsupportedNamespace(asset.namespace)),
         }

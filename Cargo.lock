@@ -339,6 +339,7 @@ dependencies = [
  "dashmap",
  "getrandom",
  "log",
+ "nanoid",
  "serde",
  "sl-core",
  "tokio",
