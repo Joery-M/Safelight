@@ -11,6 +11,7 @@ crate-type = ["cdylib"]
 wasm-opt = ['-Os', "-all"]
 
 [features]
+default = ["sl-core/wasm"]
 debugging = ["console_error_panic_hook"]
 
 [dependencies]
@@ -25,6 +26,17 @@ log = "0.4.29"
 tokio = "1.49.0"
 async-trait = "0.1.89"
 dashmap = "6.1.0"
+web-sys = { version = "0.3.83", features = [
+    "StorageManager",
+    "FileSystemDirectoryHandle",
+    "Navigator",
+    "FileSystemFileHandle",
+    "FileSystemGetDirectoryOptions",
+    "FileSystemGetFileOptions",
+    "Blob",
+    "FileSystemWritableFileStream",
+] }
+anyhow = "1.0.100"
 
 [dependencies.getrandom]
 version = "*"

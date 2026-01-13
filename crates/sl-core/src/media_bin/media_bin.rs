@@ -32,7 +32,7 @@ mod test {
             asset_types::AssetType,
         },
         project::project::Project,
-        storage::storage::testing::DummyStorageManager,
+        storage::storage::test::DummyStorageManager,
         utils::{asset_path::AssetPath, asset_path_namespace::AssetPathNamespace},
     };
 
