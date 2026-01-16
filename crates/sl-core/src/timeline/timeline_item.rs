@@ -45,7 +45,7 @@ impl TimelineItem {
         }
     }
 
-    pub async fn set_image_source(&self, source: Box<dyn ImageSource>) {
+    pub fn set_image_source(&self, source: Box<dyn ImageSource>) {
         let mut cur_src = self.image_source.write();
         *cur_src = Some(source)
     }

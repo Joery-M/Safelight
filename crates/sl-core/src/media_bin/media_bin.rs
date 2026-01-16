@@ -1,5 +1,5 @@
+use parking_lot::RwLock;
 use sl_macros::DebugDrop;
-use tokio::sync::Mutex;
 
 use crate::{
     media_bin::media_bin_item::{BinDirectory, BinItemType},
@@ -8,18 +8,18 @@ use crate::{
 
 #[derive(Default, DebugDrop)]
 pub struct MediaBin {
-    inner: Mutex<BinDirectory>,
+    inner: RwLock<BinDirectory>,
 }
 
 impl MediaBin {
-    pub async fn create(&self, item: BinItemType) -> Option<BinItemType> {
+    pub fn create(&self, item: BinItemType) -> Option<BinItemType> {
         let path = item.get_path().clone();
-        let mut map = self.inner.lock().await;
+        let mut map = self.inner.write();
         map.create_by_path(path.into(), 1, item)
     }
 
-    pub async fn get_item(&self, path: &BinPath) -> Option<BinItemType> {
-        let map = self.inner.lock().await;
+    pub fn get_item(&self, path: &BinPath) -> Option<BinItemType> {
+        let map = self.inner.read();
         map.get_by_path(path.clone().into(), 1).cloned()
     }
 }
@@ -38,8 +38,8 @@ mod test {
 
     use super::*;
 
-    #[tokio::test]
-    async fn create_media_bin_item() {
+    #[test]
+    fn create_media_bin_item() {
         let folder_path: BinPath = "/folder/".into();
         let file_path: BinPath = "/folder/test.txt".into();
 
@@ -56,7 +56,7 @@ mod test {
         let bin = project.get_media_bin();
 
         let dir = BinDirectory::new(folder_path.clone()).into();
-        bin.create(dir).await.expect(&format!(
+        bin.create(dir).expect(&format!(
             "Expected to create folder at path {folder_path:?}"
         ));
 
@@ -64,11 +64,11 @@ mod test {
             asset_path: asset_path.clone(),
             bin_path: file_path.clone(),
         };
-        bin.create(media).await.expect(&format!(
+        bin.create(media).expect(&format!(
             "Expected to create media item at path {file_path:?}"
         ));
 
-        let item = bin.get_item(&file_path).await.expect("To find item");
+        let item = bin.get_item(&file_path).expect("To find item");
         match item {
             BinItemType::Media {
                 asset_path,

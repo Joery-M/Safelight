@@ -86,14 +86,10 @@ impl JsProject {
             )),
         );
 
-        let bin_item = self
-            .inner
-            .get_media_bin()
-            .create(BinItemType::Media {
-                asset_path,
-                bin_path: bin_path.into(),
-            })
-            .await;
+        let bin_item = self.inner.get_media_bin().create(BinItemType::Media {
+            asset_path,
+            bin_path: bin_path.into(),
+        });
         info!("Bin item: {:?}", bin_item);
 
         Ok(())

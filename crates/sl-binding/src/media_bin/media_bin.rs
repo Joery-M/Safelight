@@ -21,16 +21,13 @@ pub struct JsMediaBin {
 
 #[wasm_bindgen]
 impl JsMediaBin {
-    pub async fn create(&self, item: JsBinItemType) -> Result<bool> {
-        Ok(self.inner.create(item.into_bin_item()?).await.is_some())
+    pub fn create(&self, item: JsBinItemType) -> Result<bool> {
+        Ok(self.inner.create(item.into_bin_item()?).is_some())
     }
 
     #[wasm_bindgen(js_name = getItem)]
-    pub async fn get_item(&self, path: String) -> Option<JsBinItemType> {
-        self.inner
-            .get_item(&path.into())
-            .await
-            .map(JsBinItemType::from)
+    pub fn get_item(&self, path: String) -> Option<JsBinItemType> {
+        self.inner.get_item(&path.into()).map(JsBinItemType::from)
     }
 }
 

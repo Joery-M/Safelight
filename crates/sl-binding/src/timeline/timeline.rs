@@ -26,11 +26,7 @@ impl JsTimeline {
     ///  1. Add the timeline to the storage (consuming Self)
     ///  2. Add the asset to the project's asset map
     ///  3. Create a media bin item
-    pub async fn create(
-        project: &JsProject,
-        bin_path: String,
-        properties: JsTimelineProperties,
-    ) -> Self {
+    pub fn create(project: &JsProject, bin_path: String, properties: JsTimelineProperties) -> Self {
         let timeline = Timeline::new(properties.into());
         let asset_path = AssetPath::new(true, AssetPathNamespace::Timeline, &timeline.id);
 
@@ -44,14 +40,10 @@ impl JsTimeline {
 
         project.inner.create_asset(asset_path.clone(), asset);
 
-        project
-            .inner
-            .get_media_bin()
-            .create(BinItemType::Media {
-                asset_path: asset_path.clone(),
-                bin_path: bin_path.into(),
-            })
-            .await;
+        project.inner.get_media_bin().create(BinItemType::Media {
+            asset_path: asset_path.clone(),
+            bin_path: bin_path.into(),
+        });
 
         let tl = project
             .inner
@@ -93,8 +85,8 @@ impl JsTimeline {
     }
 
     #[wasm_bindgen(js_name = deleteTimelineItem)]
-    pub async fn delete_timeline_item(&self, id: String) {
-        self.inner.delete_timeline_item(&id).await
+    pub fn delete_timeline_item(&self, id: String) {
+        self.inner.delete_timeline_item(&id)
     }
 }
 

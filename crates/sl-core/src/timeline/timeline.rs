@@ -52,7 +52,7 @@ impl Timeline {
         self.items.get(id).map(|v| v.clone())
     }
 
-    pub async fn delete_timeline_item(&self, id: &str) {
+    pub fn delete_timeline_item(&self, id: &str) {
         self.items.remove(id);
     }
 }

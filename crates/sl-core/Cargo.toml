@@ -11,6 +11,8 @@ wasm = ["wasm-bindgen"]
 [dependencies]
 sl-macros = { workspace = true }
 
+wasm-bindgen = { version = "0.2.106", optional = true }
+
 anyhow = "1.0.100"
 async-trait = "0.1.89"
 bitflags = { version = "2.10.0", features = ["std"] }
@@ -19,5 +21,3 @@ log = "0.4.29"
 nanoid = "0.4.0"
 parking_lot = "0.12.5"
 thiserror = "2.0.17"
-tokio = { version = "1.49.0", features = ["macros", "sync", "test-util"] }
-wasm-bindgen = { version = "0.2.106", optional = true }
