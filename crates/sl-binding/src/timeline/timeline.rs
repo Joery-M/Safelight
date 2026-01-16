@@ -12,6 +12,7 @@ use wasm_bindgen::prelude::*;
 use crate::{
     project::project::JsProject,
     timeline::{timeline_item::JsTimelineItem, timeline_properties::JsTimelineProperties},
+    utils::Result,
 };
 
 #[wasm_bindgen]
@@ -65,9 +66,30 @@ impl JsTimeline {
         self.inner.id.clone()
     }
 
-    #[wasm_bindgen(js_name = newTimelineItem)]
-    pub fn new_timeline_item(&self, start: u32, end: u32, layer: u8) -> JsTimelineItem {
-        self.inner.new_timeline_item(start, end, layer).into()
+    #[wasm_bindgen(js_name = getTimelineItems)]
+    pub fn get_timeline_items(&self) -> Vec<JsTimelineItem> {
+        self.inner
+            .get_timeline_items()
+            .into_iter()
+            .map(JsTimelineItem::from)
+            .collect()
+    }
+
+    #[wasm_bindgen(js_name = addTimelineItem)]
+    pub fn add_timeline_item(&self, item: JsTimelineItem) -> Result<()> {
+        // Check if the new items' position intersects with any others
+        let pos = item.get_pos().into();
+        let intersects = self
+            .inner
+            .items
+            .iter()
+            .any(|v| v.pos.read().intersects(&pos));
+        if intersects {
+            return Err(JsError::new("Timeline item overlaps with another"));
+        }
+
+        self.inner.add_timeline_item(&item.0);
+        Ok(())
     }
 
     #[wasm_bindgen(js_name = deleteTimelineItem)]

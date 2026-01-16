@@ -340,6 +340,7 @@ dependencies = [
  "getrandom",
  "log",
  "nanoid",
+ "parking_lot",
  "serde",
  "sl-core",
  "tokio",

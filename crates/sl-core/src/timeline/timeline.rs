@@ -3,7 +3,7 @@ use log::debug;
 use nanoid::nanoid;
 use sl_macros::DebugDrop;
 
-use crate::timeline::timeline_item::{TimelineItem, TimelineItemRef};
+use crate::timeline::timeline_item::TimelineItemRef;
 
 #[derive(Debug)]
 pub struct TimelineProperties {
@@ -35,12 +35,17 @@ impl Timeline {
         }
     }
 
-    pub fn new_timeline_item(&self, start: u32, end: u32, layer: u8) -> TimelineItemRef {
-        let item = TimelineItem::new(start, end, layer);
-        let item_id = item.id.clone();
-        let item_ref = TimelineItemRef::new(item);
+    pub fn get_timeline_items(&self) -> Vec<TimelineItemRef> {
+        self.items.iter().map(|v| v.clone()).collect()
+    }
+
+    /// Add a timeline item at a position.
+    ///
+    /// It is expected that the position has already been checked to not
+    /// intersect with any other timeline items.
+    pub fn add_timeline_item(&self, item_ref: &TimelineItemRef) {
+        let item_id = item_ref.id.clone();
         self.items.insert(item_id, item_ref.clone());
-        item_ref
     }
 
     pub fn get_timeline_item(&self, id: &str) -> Option<TimelineItemRef> {

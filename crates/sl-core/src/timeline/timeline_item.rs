@@ -37,10 +37,10 @@ pub struct TimelineItem {
 }
 
 impl TimelineItem {
-    pub fn new(start: u32, end: u32, layer: u8) -> Self {
+    pub fn new(pos: TimelineRangePos) -> Self {
         Self {
             id: nanoid!(),
-            pos: RwLock::new(TimelineRangePos::new(start, end, layer)),
+            pos: RwLock::new(pos),
             image_source: Default::default(),
         }
     }
