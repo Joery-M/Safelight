@@ -46,9 +46,10 @@ mod test {
         let storage_manager = DummyStorageManager {};
         let project = Project::new(storage_manager);
         let asset_path = AssetPath::new(true, AssetPathNamespace::FS, "/Test.txt");
+        let source_type = AssetType::Audio | AssetType::Video;
         let asset_item = MediaAsset {
             path: asset_path.clone(),
-            source_type: AssetType::Audio | AssetType::Video,
+            source_type,
         };
         let asset_item_ref = Asset::Media(asset_item);
         project.create_asset(asset_path.clone(), asset_item_ref.clone());
@@ -83,8 +84,8 @@ mod test {
 
                 match item {
                     Asset::Media(media) => {
-                        assert_eq!(media.get_path().to_string(), "#virtual:/Test.txt");
-                        assert_eq!(media.get_type(), AssetType::Generic);
+                        assert_eq!(media.get_path(), asset_path);
+                        assert_eq!(media.get_type(), source_type);
                     }
                     _ => {
                         panic!("Asset should be a `Media`")
