@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use log::info;
+use tracing::info;
 use nanoid::nanoid;
 use sl_core::{
     asset::{

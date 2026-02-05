@@ -4,7 +4,7 @@ use dashmap::{
     DashMap,
     mapref::one::{Ref, RefMut},
 };
-use log::debug;
+use tracing::debug;
 use nanoid::nanoid;
 use sl_macros::DebugDrop;
 

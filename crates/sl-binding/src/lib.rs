@@ -2,8 +2,6 @@
 
 use wasm_bindgen::prelude::wasm_bindgen;
 
-use crate::utils::logger::ConsoleLogger;
-
 pub mod media_bin;
 pub mod project;
 pub mod timeline;
@@ -17,5 +15,5 @@ fn start() {
     #[cfg(feature = "debugging")]
     console_error_panic_hook::set_once();
 
-    ConsoleLogger::init();
+    tracing_wasm::set_as_global_default();
 }

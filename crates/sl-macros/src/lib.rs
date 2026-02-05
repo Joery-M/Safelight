@@ -22,7 +22,7 @@ pub fn derive_debug_drop(item: TokenStream) -> TokenStream {
                 impl #impl_generics Drop for #name #type_generics #where_clause {
                     #[automatically_derived]
                     fn drop(&mut self) {
-                        log::debug!("{} [{}] was dropped", #name_str, self.#ident);
+                        tracing::debug!("{} [{}] was dropped", #name_str, self.#ident);
                     }
                 }
             }
@@ -32,7 +32,7 @@ pub fn derive_debug_drop(item: TokenStream) -> TokenStream {
                 impl #impl_generics Drop for #name #type_generics #where_clause {
                     #[automatically_derived]
                     fn drop(&mut self) {
-                        log::debug!("{} was dropped", #name_str);
+                        tracing::debug!("{} was dropped", #name_str);
                     }
                 }
             }

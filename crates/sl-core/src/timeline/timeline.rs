@@ -1,7 +1,7 @@
 use dashmap::DashMap;
-use log::debug;
 use nanoid::nanoid;
 use sl_macros::DebugDrop;
+use tracing::debug;
 
 use crate::timeline::timeline_item::TimelineItemRef;
 
