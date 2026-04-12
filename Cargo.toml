@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["crates/sl-core", "crates/sl-binding", "crates/sl-macros"]
+members = ["crates/sl-core", "crates/sl-binding", "crates/sl-macros", "crates/daguerreo"]
 
 [workspace.package]
 version = "0.1.0"
@@ -8,6 +8,7 @@ edition = "2024"
 license = "MIT"
 
 [workspace.dependencies]
+daguerreo = { path = "./crates/daguerreo/" }
 sl-core = { path = "./crates/sl-core/" }
 sl-macros = { path = "./crates/sl-macros/" }
 

@@ -17,14 +17,23 @@
       "development": "./src/index.ts",
       "default": "./dist/index.js"
     },
-    "./sl_binding.wasm": {
-      "development": "./src/binding/sl_binding_bg.wasm",
-      "default": "./dist/sl_binding_bg.wasm"
+    "./daguerreo": {
+      "development": "./src/daguerreo.ts",
+      "default": "./dist/daguerreo.js"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./sl_binding.wasm": "./src/binding/sl_binding_bg.wasm"
   },
   "devDependencies": {
-    "rimraf": "^6.1.2",
     "tsdown": "^0.20.3"
-  }
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./daguerreo": "./dist/daguerreo.js",
+      "./package.json": "./package.json",
+      "./sl_binding.wasm": "./dist/sl_binding_bg.wasm"
+    }
+  },
+  "types": "./dist/index.d.ts"
 }

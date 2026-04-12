@@ -13,6 +13,7 @@ debugging = ["console_error_panic_hook"]
 
 [dependencies]
 sl-core = { workspace = true }
+daguerreo = { workspace = true }
 
 anyhow = "1.0.100"
 async-trait = "0.1.89"

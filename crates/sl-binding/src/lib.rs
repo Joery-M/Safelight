@@ -9,6 +9,8 @@ pub mod timeline;
 mod storage;
 mod utils;
 
+pub use daguerreo::*;
+
 #[wasm_bindgen(start)]
 fn start() {
     // https://github.com/rustwasm/console_error_panic_hook

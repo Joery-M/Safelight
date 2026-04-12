@@ -1,5 +1,8 @@
 {
     "include": ["src/**/*"],
     "extends": "../../tsconfig.json",
-    "compilerOptions": {}
+    "compilerOptions": {
+        "declarationMap": true,
+        "isolatedDeclarations": true
+    }
 }
