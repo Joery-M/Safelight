@@ -21,8 +21,13 @@ pub struct JsMediaBin {
 
 #[wasm_bindgen]
 impl JsMediaBin {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> Self {
+        Self::default()
+    }
+
     pub fn create(&self, item: JsBinItemType) -> Result<bool> {
-        Ok(self.inner.create(item.into_bin_item()?).is_some())
+        Ok(self.inner.create(item.try_into()?).is_some())
     }
 
     #[wasm_bindgen(js_name = getItem)]
@@ -44,10 +49,11 @@ pub enum JsBinItemType {
     },
 }
 
-impl JsBinItemType {
-    pub(crate) fn into_bin_item(self) -> Result<BinItemType> {
-        match self {
-            Self::Media {
+impl TryFrom<JsBinItemType> for BinItemType {
+    type Error = JsError;
+    fn try_from(value: JsBinItemType) -> Result<Self> {
+        match value {
+            JsBinItemType::Media {
                 bin_path,
                 asset_path: media_path,
             } => {
@@ -62,7 +68,7 @@ impl JsBinItemType {
                     bin_path: bin_path.into(),
                 })
             }
-            Self::Directory { bin_path } => {
+            JsBinItemType::Directory { bin_path } => {
                 Ok(BinItemType::Directory(BinDirectory::new(bin_path.into())))
             }
         }

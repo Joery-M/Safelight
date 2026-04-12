@@ -68,7 +68,7 @@
     "fast-xml-parser": "^5.2.5",
     "happy-dom": "^18.0.1",
     "prettier": "^3.6.2",
-    "tsdown": "^0.20.3",
+    "tsdown": "^0.21.7",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"

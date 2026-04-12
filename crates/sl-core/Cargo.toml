@@ -11,13 +11,13 @@ wasm = ["wasm-bindgen"]
 [dependencies]
 sl-macros = { workspace = true }
 
-wasm-bindgen = { version = "0.2.106", optional = true }
+wasm-bindgen = { workspace = true, optional = true }
 
-anyhow = "1.0.100"
-async-trait = "0.1.89"
-bitflags = { version = "2.10.0", features = ["std"] }
-dashmap = "6.1.0"
-nanoid = "0.4.0"
-parking_lot = "0.12.5"
-thiserror = "2.0.17"
-tracing = "0.1.44"
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+bitflags = { workspace = true, features = ["std"] }
+dashmap = { workspace = true }
+nanoid = { workspace = true }
+parking_lot = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }

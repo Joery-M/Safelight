@@ -32,7 +32,6 @@ mod test {
             asset_types::AssetType,
         },
         project::project::Project,
-        storage::storage::test::DummyStorageManager,
         utils::{asset_path::AssetPath, asset_path_namespace::AssetPathNamespace},
     };
 
@@ -43,8 +42,8 @@ mod test {
         let folder_path: BinPath = "/folder/".into();
         let file_path: BinPath = "/folder/test.txt".into();
 
-        let storage_manager = DummyStorageManager {};
-        let project = Project::new(storage_manager);
+        let project = Project::new();
+        let bin = MediaBin::default();
         let asset_path = AssetPath::new(true, AssetPathNamespace::FS, "/Test.txt");
         let source_type = AssetType::Audio | AssetType::Video;
         let asset_item = MediaAsset {
@@ -53,8 +52,6 @@ mod test {
         };
         let asset_item_ref = Asset::Media(asset_item);
         project.create_asset(asset_path.clone(), asset_item_ref.clone());
-
-        let bin = project.get_media_bin();
 
         let dir = BinDirectory::new(folder_path.clone()).into();
         bin.create(dir).expect(&format!(

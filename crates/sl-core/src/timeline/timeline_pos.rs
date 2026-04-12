@@ -1,4 +1,4 @@
-use std::fmt::Debug;
+use std::{fmt::Debug, ops::RangeInclusive};
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
 pub struct TimelineRangePos {
@@ -24,8 +24,8 @@ impl TimelineRangePos {
     }
 
     #[inline]
-    pub fn get_range(&self) -> (u32, u32) {
-        (self.start, self.end)
+    pub fn get_range(&self) -> RangeInclusive<u32> {
+        self.start..=self.end
     }
 
     #[inline]
@@ -45,9 +45,17 @@ impl TimelineRangePos {
         self.layer = layer;
     }
 
+    /// Check if a pos intersects a different pos
+    ///
+    /// This check ignores layers
     #[inline]
     pub fn intersects(&self, other: &TimelineRangePos) -> bool {
-        other.layer == self.layer
+        (other.start <= self.end && other.end >= self.start)
+            || (other.end >= self.start && other.start <= self.start)
+    }
+    #[inline]
+    pub fn intersects_with_layer(&self, other: &TimelineRangePos) -> bool {
+        self.layer == other.layer
             && ((other.start <= self.end && other.end >= self.start)
                 || (other.end >= self.start && other.start <= self.start))
     }
@@ -59,6 +67,46 @@ mod test {
 
     #[test]
     fn test_overlap() {
+        const CASES: [(bool, TimelineRangePos, TimelineRangePos); 4] = [
+            (
+                // [----]
+                // [----]
+                true,
+                TimelineRangePos::new_const(100, 200, 0),
+                TimelineRangePos::new_const(100, 200, 0),
+            ),
+            (
+                // [----]
+                //       [----]
+                false,
+                TimelineRangePos::new_const(0, 99, 0),
+                TimelineRangePos::new_const(100, 200, 0),
+            ),
+            (
+                // [-------]
+                // --layer--
+                // [-------]
+                true,
+                TimelineRangePos::new_const(0, 100, 0),
+                TimelineRangePos::new_const(0, 100, 1),
+            ),
+            (
+                // [----]
+                //    [----]
+                true,
+                TimelineRangePos::new_const(50, 100, 0),
+                TimelineRangePos::new_const(0, 150, 0),
+            ),
+        ];
+
+        for (expected, one, two) in CASES.iter() {
+            assert_eq!(one.intersects(two), *expected, "{one:?} intersects {two:?}");
+            assert_eq!(two.intersects(one), *expected, "{two:?} intersects {one:?}");
+        }
+    }
+
+    #[test]
+    fn test_overlap_with_layer() {
         const CASES: [(bool, TimelineRangePos, TimelineRangePos); 4] = [
             (
                 // [----]
@@ -92,8 +140,16 @@ mod test {
         ];
 
         for (expected, one, two) in CASES.iter() {
-            assert_eq!(one.intersects(two), *expected, "{one:?} intersects {two:?}");
-            assert_eq!(two.intersects(one), *expected, "{two:?} intersects {one:?}");
+            assert_eq!(
+                one.intersects_with_layer(two),
+                *expected,
+                "{one:?} intersects {two:?}"
+            );
+            assert_eq!(
+                two.intersects_with_layer(one),
+                *expected,
+                "{two:?} intersects {one:?}"
+            );
         }
     }
 }

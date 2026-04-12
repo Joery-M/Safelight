@@ -4,6 +4,12 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 
+[package.metadata.wasm-pack.profile.dev.wasm-bindgen]
+dwarf-debug-info = true
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ['-Os', "-all"]
+
 [lib]
 crate-type = ["cdylib"]
 
@@ -12,29 +18,21 @@ default = ["sl-core/wasm"]
 debugging = ["console_error_panic_hook"]
 
 [dependencies]
-sl-core = { workspace = true }
 daguerreo = { workspace = true }
+sl-core = { workspace = true }
 
-anyhow = "1.0.100"
-async-trait = "0.1.89"
-console_error_panic_hook = { version = "0.1.7", optional = true }
-dashmap = "6.1.0"
-nanoid = "0.4.0"
-serde = { version = "1.0.228", features = ["derive"] }
-tsify = { version = "0.5.6", features = ["js"] }
-wasm-bindgen = "0.2.106"
-web-sys = { version = "0.3.83", features = ["Blob"] }
-parking_lot = "0.12.5"
-wasm-bindgen-futures = "0.4.58"
-tracing = "0.1.44"
-tracing-wasm = "0.2.1"
+console_error_panic_hook = { workspace = true, optional = true }
 
-[dependencies.getrandom]
-version = "*"
-features = ["js"]
-
-[package.metadata.wasm-pack.profile.dev.wasm-bindgen]
-dwarf-debug-info = true
-
-[package.metadata.wasm-pack.profile.release]
-wasm-opt = ['-Os', "-all"]
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+dashmap = { workspace = true }
+getrandom = { workspace = true, features = ["js"] }
+nanoid = { workspace = true }
+parking_lot = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+tracing = { workspace = true }
+tracing-wasm = { workspace = true }
+tsify = { workspace = true, features = ["js"] }
+wasm-bindgen = { workspace = true }
+wasm-bindgen-futures = { workspace = true }
+web-sys = { workspace = true, features = ["Blob"] }

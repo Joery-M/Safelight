@@ -30,17 +30,17 @@ impl From<&str> for BinPath {
             .map(str::to_owned)
             .collect();
 
-        let mut result: Vec<String> = Vec::with_capacity(source.len());
+        let mut inner: Vec<String> = Vec::with_capacity(source.len());
 
         for section in source.into_iter() {
             if section == ".." {
-                result.pop();
+                inner.pop();
             } else {
-                result.push(section);
+                inner.push(section);
             }
         }
 
-        BinPath { inner: result }
+        BinPath { inner }
     }
 }
 
@@ -82,6 +82,7 @@ mod test {
                 (vec!["folder", "test.txt"], "/folder/test.txt"),
             ),
             ("/folder/../test.txt", (vec!["test.txt"], "/test.txt")),
+            ("/folder/../../test.txt", (vec!["test.txt"], "/test.txt")),
         ]);
 
         for (source, (result_1, result_2)) in test_cases {

@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{str::FromStr, sync::Arc};
 
 use async_trait::async_trait;
 use dashmap::DashMap;
@@ -7,57 +7,95 @@ use sl_core::{
     timeline::timeline::Timeline,
     utils::{asset_path::AssetPath, asset_path_namespace::AssetPathNamespace, bin_path::BinPath},
 };
-use wasm_bindgen::{JsValue, prelude::wasm_bindgen};
+use wasm_bindgen::{JsError, JsValue, prelude::wasm_bindgen};
 
 use crate::storage::file::{BrowserFile, JsBrowserFile};
 
-#[wasm_bindgen(raw_module = "../browserStorage.ts")]
-extern "C" {
-    #[derive(Debug)]
-    pub type JsBrowserStorage;
+mod js {
+    use super::{JsBrowserFile, JsValue, wasm_bindgen};
 
-    #[wasm_bindgen(static_method_of = JsBrowserStorage, catch, js_name = getOPFSFile)]
-    async fn get_opfs_file(path: Vec<String>) -> Result<JsBrowserFile, JsValue>;
+    #[wasm_bindgen(raw_module = "../browserStorage.ts")]
+    extern "C" {
+        #[wasm_bindgen(catch, js_name = getOPFSFile)]
+        pub async fn get_opfs_file(path: Vec<String>) -> Result<JsBrowserFile, JsValue>;
 
-    #[wasm_bindgen(static_method_of = JsBrowserStorage, catch, js_name = getOrCreateOPFSFile)]
-    async fn get_or_create_opfs_file(path: Vec<String>) -> Result<JsBrowserFile, JsValue>;
+        #[wasm_bindgen(catch, js_name = getOrCreateOPFSFile)]
+        pub async fn get_or_create_opfs_file(path: Vec<String>) -> Result<JsBrowserFile, JsValue>;
+    }
 }
 
 #[derive(Debug, Clone)]
-pub struct BrowserStorage {
+#[wasm_bindgen]
+pub struct JsBrowserStorage {
     timelines: DashMap<String, Arc<Timeline>>,
 }
 
-impl BrowserStorage {
+#[wasm_bindgen]
+impl JsBrowserStorage {
+    #[wasm_bindgen(constructor)]
     pub fn new() -> Self {
-        BrowserStorage {
+        JsBrowserStorage {
             timelines: DashMap::new(),
         }
     }
 
     /// Get an OPFS file handle from a path
-    async fn get_opfs_file(&self, asset: AssetPath) -> Result<BrowserFile, StorageError> {
+    pub async fn get_opfs_file_js(&self, path: &str) -> Result<JsBrowserFile, JsError> {
+        let path = AssetPath::from_str(path.into()).map_err(StorageError::from)?;
+        self.get_opfs_file_inner(path)
+            .await
+            .map_err(StorageError::from)
+            .map_err(JsError::from)
+    }
+
+    #[inline]
+    pub(crate) async fn get_opfs_file(
+        &self,
+        asset: AssetPath,
+    ) -> Result<BrowserFile, StorageError> {
+        self.get_opfs_file_inner(asset).await.map(BrowserFile::from)
+    }
+
+    async fn get_opfs_file_inner(&self, asset: AssetPath) -> Result<JsBrowserFile, StorageError> {
         // TODO: Should change this
         let path: Vec<String> = BinPath::from(asset.path).into();
 
-        let file = JsBrowserStorage::get_opfs_file(path).await?;
-        Ok(BrowserFile::from(file))
+        js::get_opfs_file(path).await.map_err(StorageError::from)
     }
 
     /// Get or create an OPFS file handle from a path
+    pub async fn get_or_create_opfs_file_js(&self, path: &str) -> Result<JsBrowserFile, JsError> {
+        let path = AssetPath::from_str(path.into()).map_err(StorageError::from)?;
+        self.get_or_create_opfs_file_inner(path)
+            .await
+            .map_err(StorageError::from)
+            .map_err(JsError::from)
+    }
+
+    #[inline]
     pub(crate) async fn get_or_create_opfs_file(
         &self,
         asset: AssetPath,
     ) -> Result<BrowserFile, StorageError> {
+        self.get_or_create_opfs_file_inner(asset)
+            .await
+            .map(BrowserFile::from)
+    }
+
+    async fn get_or_create_opfs_file_inner(
+        &self,
+        asset: AssetPath,
+    ) -> Result<JsBrowserFile, StorageError> {
         let path: Vec<String> = BinPath::from(asset.path).into();
 
-        let file = JsBrowserStorage::get_or_create_opfs_file(path).await?;
-        Ok(BrowserFile::from(file))
+        js::get_or_create_opfs_file(path)
+            .await
+            .map_err(StorageError::from)
     }
 }
 
 #[async_trait(?Send)]
-impl StorageManager for BrowserStorage {
+impl StorageManager for JsBrowserStorage {
     type FileType = BrowserFile;
     async fn get_asset_file(&self, asset: AssetPath) -> Result<Self::FileType, StorageError> {
         match asset.namespace {

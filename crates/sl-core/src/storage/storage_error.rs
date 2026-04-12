@@ -1,6 +1,6 @@
 use thiserror::Error;
 
-use crate::utils::asset_path_namespace::AssetPathNamespace;
+use crate::utils::{asset_path::ParseAssetPathError, asset_path_namespace::AssetPathNamespace};
 
 #[derive(Error, Debug)]
 pub enum StorageError {
@@ -8,6 +8,8 @@ pub enum StorageError {
     Unsupported,
     #[error("Namespace {0} is not supported")]
     UnsupportedNamespace(AssetPathNamespace),
+    #[error("Error parsing asset path")]
+    AssetPathError(#[from] ParseAssetPathError),
     #[error(transparent)]
     IO(#[from] std::io::Error),
     #[error(transparent)]

@@ -2,42 +2,6 @@
  * To minimize jumps between Rust and JavaScript, implementing basic OPFS
  * handling in JS leads to better code readability and probably performance.
  */
-export class JsBrowserStorage {
-    static async getOPFSFile(path: string[]): Promise<JsBrowserFile> {
-        let cur_dir = await navigator.storage.getDirectory();
-
-        for (let i = 0; i < path.length; i++) {
-            const section = path[i];
-            if (i == path.length - 1) {
-                // Last one, get file
-                const handle = await cur_dir.getFileHandle(section);
-                return new JsBrowserFile(handle);
-            } else {
-                // Get recursive directory
-                cur_dir = await cur_dir.getDirectoryHandle(section);
-            }
-        }
-        throw new Error('File not found');
-    }
-
-    static async getOrCreateOPFSFile(path: string[]): Promise<JsBrowserFile> {
-        let cur_dir = await navigator.storage.getDirectory();
-
-        for (let i = 0; i < path.length; i++) {
-            const section = path[i];
-            if (i == path.length - 1) {
-                // Last one, get file
-                const handle = await cur_dir.getFileHandle(section, { create: true });
-                return new JsBrowserFile(handle);
-            } else {
-                // Get recursive directory
-                cur_dir = await cur_dir.getDirectoryHandle(section, { create: true });
-            }
-        }
-        // TODO: Better document why this could go wrong
-        throw new Error('File not found');
-    }
-}
 
 export class JsBrowserFile {
     constructor(private handle: FileSystemFileHandle) {}
@@ -70,4 +34,39 @@ export class JsBrowserFile {
         await writable.write(data);
         await writable.close();
     }
+}
+
+export async function getOPFSFile(path: string[]): Promise<JsBrowserFile> {
+    let cur_dir = await navigator.storage.getDirectory();
+
+    for (let i = 0; i < path.length; i++) {
+        const section = path[i];
+        if (i == path.length - 1) {
+            // Last one, get file
+            const handle = await cur_dir.getFileHandle(section);
+            return new JsBrowserFile(handle);
+        } else {
+            // Get recursive directory
+            cur_dir = await cur_dir.getDirectoryHandle(section);
+        }
+    }
+    throw new Error('File not found');
+}
+
+export async function getOrCreateOPFSFile(path: string[]): Promise<JsBrowserFile> {
+    let cur_dir = await navigator.storage.getDirectory();
+
+    for (let i = 0; i < path.length; i++) {
+        const section = path[i];
+        if (i == path.length - 1) {
+            // Last one, get file
+            const handle = await cur_dir.getFileHandle(section, { create: true });
+            return new JsBrowserFile(handle);
+        } else {
+            // Get recursive directory
+            cur_dir = await cur_dir.getDirectoryHandle(section, { create: true });
+        }
+    }
+    // TODO: Better document why this could go wrong
+    throw new Error('File not found');
 }
