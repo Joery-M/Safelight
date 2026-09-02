@@ -145,8 +145,8 @@ importers:
         specifier: ^5.2.8
         version: 5.2.8
       '@primeuix/themes':
-        specifier: ^1.2.3
-        version: 1.2.3
+        specifier: ^3.0.0
+        version: 3.0.0
       '@safelight/daguerreo':
         specifier: workspace:^
         version: link:../daguerreo
@@ -187,8 +187,8 @@ importers:
         specifier: ^3.0.3
         version: 3.0.3(typescript@5.9.3)(vue@3.5.21(typescript@5.9.3))
       primevue:
-        specifier: ^4.3.9
-        version: 4.3.9(vue@3.5.21(typescript@5.9.3))
+        specifier: ^5.0.1
+        version: 5.0.1(vue@3.5.21(typescript@5.9.3))
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
@@ -875,6 +875,9 @@ packages:
   '@open-draft/until@2.1.0':
     resolution: {integrity: sha512-U69T3ItWHvLwGg5eJ0n3I62nWuE6ilHlmz7zM0npLBRvPRd7e6NYmg54vvRtP5mZG7kZqZCFVdsTWo7BPtBujg==}
 
+  '@oxc-project/types@0.148.0':
+    resolution: {integrity: sha512-Nm4s/jB+4FpFsPhWGEC4h7rzksesmtnMXomo6rCMcg/b8zLQuOziRgkCS1fxDCXOlJB/6Q8oABOZ/OP6RIPj9A==}
+
   '@oxc-project/types@0.97.0':
     resolution: {integrity: sha512-lxmZK4xFrdvU0yZiDwgVQTCvh2gHWBJCBk5ALsrtsBWhs0uDIi+FTOnXRQeQfs304imdvTdaakT/lqwQ8hkOXQ==}
 
@@ -971,29 +974,42 @@ packages:
   '@polka/url@1.0.0-next.28':
     resolution: {integrity: sha512-8LduaNlMZGwdZ6qWrKlfa+2M4gahzFkprZiAt2TF8uS0qQgBizKXpXURqvTJ4WtmupWxaLqjRb2UCTe72mu+Aw==}
 
-  '@primeuix/styled@0.7.2':
-    resolution: {integrity: sha512-tIJ6byZezTYZ9YUICNSidQHOIQOQL3zeUgjwiX0JnBTK3+WCvy4DyCBcrJ94RtiX0WGFZSYNvaGaFkTo4jU8FQ==}
+  '@primeicons/core@8.0.0':
+    resolution: {integrity: sha512-vPif+sXxajXCSL2bmNBP0QYliJONVRgFVpCg9e7hGn7IG18JkMAm4fF5HVld1N4sDATkZQM7jKVxdZ8EK09Giw==}
+
+  '@primeicons/vue@8.0.0':
+    resolution: {integrity: sha512-sIqk+kZB9Bn0FqODjDAnNvRXY4Ypky2TInY/oIC3aAJOud1A3FoKruMC8IwiRDz1uHzxYnQqWwtFsfZAgC7qXQ==}
+    peerDependencies:
+      vue: ^3
+
+  '@primeui/license-manager@1.1.0':
+    resolution: {integrity: sha512-irjhOGs6Xjwh1JhMyXtdUsYCsve6kBySZzDUhS/mWxsjwQm/wSN7oulyP/f5huJKdhZSzaN6rVApwpp4nDWE1g==}
+
+  '@primeuix/motion@1.0.0':
+    resolution: {integrity: sha512-rqpFRKmUVp9BI3YQKdok0rLUwzYShXzuuxy72Kq74xYRV14eR+4+XrIXOdyVs7j7CYV0ajYowiRpJCrVgdrq6A==}
     engines: {node: '>=12.11.0'}
 
-  '@primeuix/styles@1.2.3':
-    resolution: {integrity: sha512-+KwmQsLTYgVAqFADmO252btz40lstPML6r4QMNjxz4gLNCKVW3kPR0/aCouQx6/21+boXG1P68tu8Zk3FAKr2w==}
-
-  '@primeuix/themes@1.2.3':
-    resolution: {integrity: sha512-GLAU2h6lhgln2w10EQalUQlgwbgQ0xZoIOLMNGfIvqU4O09L282P7rwKCKQksvAGAFt1GoO/Q1NgBSxnttr7iA==}
-
-  '@primeuix/utils@0.6.1':
-    resolution: {integrity: sha512-tQL/ZOPgCdD+NTimlUmhyD0ey8J1XmpZE4hDHM+/fnuBicVVmlKOd5HpS748LcOVRUKbWjmEPdHX4hi5XZoC1Q==}
+  '@primeuix/styled@1.0.0':
+    resolution: {integrity: sha512-6SXoeQWwKswSqTv1ygaXNfY7otHo6Rb9mxbKJK5WF8adWlZ6CtwmlNfIP+p8cH/zGccsei/5Bu7IetXlMoZGjQ==}
     engines: {node: '>=12.11.0'}
 
-  '@primevue/core@4.3.9':
-    resolution: {integrity: sha512-P08MhVD8WrldbropVuiG25ku6il+v+cKKrspES6RijDc4NE/CrGMAwOlrdpOkpy7pcfTzqC9eIGBx5ifS28S5g==}
+  '@primeuix/styles@3.0.0':
+    resolution: {integrity: sha512-nFsG2V0kbn3Q/fr0EV0Lxy2cKeW1F+WFXyxWI1CxWAAXW34mTCLkDd6OFbN5dP9hrSJOVaeXWzTdoonh1sdklQ==}
+
+  '@primeuix/themes@3.0.0':
+    resolution: {integrity: sha512-lNMOhorzu4vHRKbTDIU2/raS7/Z6Oyq2WXGfFDVhOwAIVDF4e7hCX75jlgfC7bo4D0Bl5f+oW5HPGZpG52r6lw==}
+
+  '@primeuix/utils@0.8.1':
+    resolution: {integrity: sha512-tMtdkSUEl8/6Lc5iNOp7zXMFKJGLyf7mxvS/Hf5GzHVfa2dvsnVmEn0I/i3+80oEmnsVlHhr9+8aM5cKw7vbHA==}
     engines: {node: '>=12.11.0'}
+
+  '@primevue/core@5.0.1':
+    resolution: {integrity: sha512-RrH5Hs4pnpvTiqwYT1PI1xWj3ARcMjVEd8fJlwHyr0HBZlB1stneCphx697uJZwZQ3LCE56HO+YKsNIWlTtA4w==}
     peerDependencies:
       vue: ^3.5.0
 
-  '@primevue/icons@4.3.9':
-    resolution: {integrity: sha512-7EaVz7yS4KlAWppPsFEl9r2ia94LZStNjO2qiXolz0lvRYjZu6W66Or96sTr7GJhIIoE+qRnn3T9A/LeUmke6Q==}
-    engines: {node: '>=12.11.0'}
+  '@primevue/icons@5.0.1':
+    resolution: {integrity: sha512-Vh/GmBGwTlhfey0NUXb89h7VvT4kh7QQIyOdPsii44VJOhFw5HnF3gDw58I7WEvkvHWNVinicMbCb7btLhaqEw==}
 
   '@promptbook/utils@0.69.5':
     resolution: {integrity: sha512-xm5Ti/Hp3o4xHrsK9Yy3MS6KbDxYbq485hDsFvxqaNA7equHLPdo8H8faTitTeb14QCDfLW4iwCxdVYu5sn6YQ==}
@@ -1010,8 +1026,20 @@ packages:
     resolution: {integrity: sha512-3keyT27jJRjzCdLRjsVFMKOnF2WKj9nyUwl7agwka1YTKbRYBlTc/E6KlzAqPCFmLe77yPBGmsv4Htkyk7NYqw==}
     hasBin: true
 
+  '@rolldown/binding-android-arm-eabi@1.2.7':
+    resolution: {integrity: sha512-EypzgnYCwyVY4NDHKzGmNJT5b+XaQEBniHxsMdeIQLB/tcCzZnhqrzHpZFbX9iaxx+5RiB8caATBtfvZP7zVxQ==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm]
+    os: [android]
+
   '@rolldown/binding-android-arm64@1.0.0-beta.50':
     resolution: {integrity: sha512-XlEkrOIHLyGT3avOgzfTFSjG+f+dZMw+/qd+Y3HLN86wlndrB/gSimrJCk4gOhr1XtRtEKfszpadI3Md4Z4/Ag==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
+    os: [android]
+
+  '@rolldown/binding-android-arm64@1.2.7':
+    resolution: {integrity: sha512-l17HE9EweWaqJZhuUuNBN/FzM62xw+DECVnJyvMsxn8vJFAGLy5QfLDoYAcronkAN8VxKZHezDpulHDPx95vFw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [android]
@@ -1022,8 +1050,20 @@ packages:
     cpu: [arm64]
     os: [darwin]
 
+  '@rolldown/binding-darwin-arm64@1.2.7':
+    resolution: {integrity: sha512-8ED8ELFvHXc6OCETIn4gXObPiaR6bckM/ipXtbzlPVDRMBfEGjCKgO90F9YtfdpDatVx/ZQw7aZ1vUMf/+T3Mw==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
+    os: [darwin]
+
   '@rolldown/binding-darwin-x64@1.0.0-beta.50':
     resolution: {integrity: sha512-fFXDjXnuX7/gQZQm/1FoivVtRcyAzdjSik7Eo+9iwPQ9EgtA5/nB2+jmbzaKtMGG3q+BnZbdKHCtOacmNrkIDA==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [x64]
+    os: [darwin]
+
+  '@rolldown/binding-darwin-x64@1.2.7':
+    resolution: {integrity: sha512-/WPripjtiAIZ2tWY7ddijORT0Ujg87wxWW/qcoFVCKAWVDPhtY0xr7Dj0M3GyNGz60jGwTElhro/mkF9dT7dDQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [darwin]
@@ -1034,8 +1074,20 @@ packages:
     cpu: [x64]
     os: [freebsd]
 
+  '@rolldown/binding-freebsd-x64@1.2.7':
+    resolution: {integrity: sha512-14DI4NcqpvbICxSnGLx3PmtDaWqRP/KGSGb6C+JLLVPeZRl6dKdHba3pGsqT3vpdTqhEYIPG0MMQ8c0xYqoJxA==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [x64]
+    os: [freebsd]
+
   '@rolldown/binding-linux-arm-gnueabihf@1.0.0-beta.50':
     resolution: {integrity: sha512-U6cR76N8T8M6lHj7EZrQ3xunLPxSvYYxA8vJsBKZiFZkT8YV4kjgCO3KwMJL0NOjQCPGKyiXO07U+KmJzdPGRw==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm]
+    os: [linux]
+
+  '@rolldown/binding-linux-arm-gnueabihf@1.2.7':
+    resolution: {integrity: sha512-bxrWIRvHWQvbJwi+VIie/kDJmQxcNE6xxWwZdqF/ExVAigtHkv54WTLQPb+QsZdnFy18fg7JPfWGL0RH6vwIlQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm]
     os: [linux]
@@ -1046,14 +1098,44 @@ packages:
     cpu: [arm64]
     os: [linux]
 
+  '@rolldown/binding-linux-arm64-gnu@1.2.7':
+    resolution: {integrity: sha512-toOY2BChBZyuxU7OYX6Tn389di4IzAqPTycVcci0O7FSfBqzRB3RZn+K5Is6ANf4tmgRd/K1yZTsNTXbkXsnLg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
+    os: [linux]
+
   '@rolldown/binding-linux-arm64-musl@1.0.0-beta.50':
     resolution: {integrity: sha512-L0zRdH2oDPkmB+wvuTl+dJbXCsx62SkqcEqdM+79LOcB+PxbAxxjzHU14BuZIQdXcAVDzfpMfaHWzZuwhhBTcw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [linux]
 
+  '@rolldown/binding-linux-arm64-musl@1.2.7':
+    resolution: {integrity: sha512-lAIXTH/aiLRLxsTgQvfhjo4K1ydWIp00+V0voOr9beb/9ZmkUFrSIb03dXNFRgMNvkE6oGsF10ioQ6UsI+vS5Q==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
+    os: [linux]
+
+  '@rolldown/binding-linux-ppc64-gnu@1.2.7':
+    resolution: {integrity: sha512-kdnwS28Pkenp/mZMRwjXXXwxQ7pIsm+bF919LUK93BOyhcLsrVKdP2p9fxpiPNPAbNuch8ypQt0pm2P2LYCAGg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [ppc64]
+    os: [linux]
+
+  '@rolldown/binding-linux-s390x-gnu@1.2.7':
+    resolution: {integrity: sha512-516OdsyLdr5E65paF3yBF55t8mfm9+gmtCsK3xI7XKXIT7EfRlHhxL8K/NR6Hu8BWSgF5+1w74lTL0+nxcc8Qw==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [s390x]
+    os: [linux]
+
   '@rolldown/binding-linux-x64-gnu@1.0.0-beta.50':
     resolution: {integrity: sha512-gyoI8o/TGpQd3OzkJnh1M2kxy1Bisg8qJ5Gci0sXm9yLFzEXIFdtc4EAzepxGvrT2ri99ar5rdsmNG0zP0SbIg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [x64]
+    os: [linux]
+
+  '@rolldown/binding-linux-x64-gnu@1.2.7':
+    resolution: {integrity: sha512-r8/z8n7GFaYRln3xmP1Cxy0HH/HLM0uBUPkEuSVEfKGDA89M0FsZRZJRSwe/tJjRx+fpH/gjorfhB8tmEbSFLA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [linux]
@@ -1064,8 +1146,20 @@ packages:
     cpu: [x64]
     os: [linux]
 
+  '@rolldown/binding-linux-x64-musl@1.2.7':
+    resolution: {integrity: sha512-pAsE8iiDxUg1xBqdhrTfg45AVDVpirjz00sblEYClGNNcMnDb+e8beQgqIAw6LvauX/APvgxUnwrgun/YYGBhw==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [x64]
+    os: [linux]
+
   '@rolldown/binding-openharmony-arm64@1.0.0-beta.50':
     resolution: {integrity: sha512-eZUssog7qljrrRU9Mi0eqYEPm3Ch0UwB+qlWPMKSUXHNqhm3TvDZarJQdTevGEfu3EHAXJvBIe0YFYr0TPVaMA==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
+    os: [openharmony]
+
+  '@rolldown/binding-openharmony-arm64@1.2.7':
+    resolution: {integrity: sha512-lTcIYmmnQQA8Or/2DatS6oSqcdLHvendjS+zLu+FwgToynWMRSmQdpM65fTANJgIS4mjbMOo5KT2lnT9SAb96w==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [openharmony]
@@ -1077,6 +1171,12 @@ packages:
 
   '@rolldown/binding-win32-arm64-msvc@1.0.0-beta.50':
     resolution: {integrity: sha512-7kcNLi7Ua59JTTLvbe1dYb028QEPaJPJQHqkmSZ5q3tJueUeb6yjRtx8mw4uIqgWZcnQHAR3PrLN4XRJxvgIkA==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
+    os: [win32]
+
+  '@rolldown/binding-win32-arm64-msvc@1.2.7':
+    resolution: {integrity: sha512-e3Gu3WxbNk/UqQhxqU7YIYO+9ZBvWNz3U+h/qRFosscMFzdRPbXYSaSWgSnklv2fz1TgzBTcti2z35c/7irsHw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [win32]
@@ -1093,11 +1193,20 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@rolldown/binding-win32-x64-msvc@1.2.7':
+    resolution: {integrity: sha512-W/jg5qoRSqjsEv0+dZi4e687mcHqmVuU0P4fK6qS/xjetW2Gmc1W8j//z5nAeNcC8Ttm0hV46IjcYeuVwYhuiw==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [x64]
+    os: [win32]
+
   '@rolldown/pluginutils@1.0.0-beta.29':
     resolution: {integrity: sha512-NIJgOsMjbxAXvoGq/X0gD7VPMQ8j9g0BiDaNjVNVjvl+iKXxL3Jre0v31RmBYeLEmkbj2s02v8vFTbUXi5XS2Q==}
 
   '@rolldown/pluginutils@1.0.0-beta.50':
     resolution: {integrity: sha512-5e76wQiQVeL1ICOZVUg4LSOVYg9jyhGCin+icYozhsUzM+fHE7kddi1bdiE0jwVqTfkjba3jUFbEkoC9WkdvyA==}
+
+  '@rolldown/pluginutils@1.0.1':
+    resolution: {integrity: sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==}
 
   '@rollup/rollup-android-arm-eabi@4.52.5':
     resolution: {integrity: sha512-8c1vW4ocv3UOMp9K+gToY5zL2XiiVw3k7f1ksf4yO1FlDFQ1C2u72iACFnSOceJFsWskc2WZNqeRhFRPzv+wtQ==}
@@ -1825,6 +1934,7 @@ packages:
   basic-ftp@5.0.5:
     resolution: {integrity: sha512-4Bcg1P8xhUuqcii/S0Z9wiHIrQVPMermM1any+MX5GeGD7faD3/msQUDGLol9wOcz4/jbg/WJnGqoJF6LiBdtg==}
     engines: {node: '>=10.0.0'}
+    deprecated: Security vulnerability fixed in 5.2.1, please upgrade
 
   binary-extensions@2.3.0:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
@@ -2285,6 +2395,7 @@ packages:
   eslint@9.39.1:
     resolution: {integrity: sha512-BhHmn2yNOFA9H9JmmIVKJmd288g9hrVRDkdoIgRCRuSySRUHH7r/DI6aAXW9T1WwUuY3DFgrcaqB+deURBLR5g==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -2509,11 +2620,12 @@ packages:
 
   glob@10.4.5:
     resolution: {integrity: sha512-7Bv8RF0k6xjo7d4A/PxYLbUCfb6c+Vpd2/mB2yRDlew7Jb5hEXiCD9ibfO7wpk8i4sevK6DFny9h7EYbM3/sHg==}
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
     hasBin: true
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
-    deprecated: Glob versions prior to v9 are no longer supported
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   globals@11.12.0:
     resolution: {integrity: sha512-WOBp/EEGUiIsJSp7wcv/y6MO+lV9UoncWqxuFfm8eBwzWNgyfBd6Gz+IeKQ9jCmyhoH99g15M3T+QaVHFjizVA==}
@@ -3242,9 +3354,8 @@ packages:
     resolution: {integrity: sha512-Qb1gy5OrP5+zDf2Bvnzdl3jsTf1qXVMazbvCoKhtKqVs4/YK4ozX4gKQJJVyNe+cajNPn0KoC0MC3FUmaHWEmQ==}
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
 
-  primevue@4.3.9:
-    resolution: {integrity: sha512-qEAm/ZwtfBJAxHBhmXxsZ4NM6StRDeMVg8146HBn1xZ+0wiYhhJXH4uEttBTBhUgRhmZ00n6bANiL+ib9ylNjg==}
-    engines: {node: '>=12.11.0'}
+  primevue@5.0.1:
+    resolution: {integrity: sha512-nnQmoerXzrDDIeVXw8Ve1JnIaDPapwN51tOf5s4saih69ocZNVs2U1nXmEdc0ajJwpTzh/Wr3lLbub5cyItQ2Q==}
 
   process-nextick-args@2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
@@ -3374,6 +3485,11 @@ packages:
 
   rolldown@1.0.0-beta.50:
     resolution: {integrity: sha512-JFULvCNl/anKn99eKjOSEubi0lLmNqQDAjyEMME2T4CwezUDL0i6t1O9xZsu2OMehPnV2caNefWpGF+8TnzB6A==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    hasBin: true
+
+  rolldown@1.2.7:
+    resolution: {integrity: sha512-g0EtLvBjTUB7jhyV0S/TCup3v/XSVl45vUIGbOGU4QPiyjTenCe4mKuFvW9fEgYmS2Fo42AUssRmNuMziXdrig==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
 
@@ -3719,6 +3835,7 @@ packages:
   tar@6.2.1:
     resolution: {integrity: sha512-DZ4yORTwrbTj/7MZYq2w+/ZFdI6OZ/f9SFHR+71gIVUZhOQPHzVCLpvRnPgyaMpfWxxk/4ONva3GQSyNIKRv6A==}
     engines: {node: '>=10'}
+    deprecated: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   terser@5.34.1:
     resolution: {integrity: sha512-FsJZ7iZLd/BXkz+4xrRTGJ26o/6VTjQytUk8b8OxkwcD2I+79VPJlz7qss1+zE7h8GNIScFqXcDyJ/KqBYZFVA==}
@@ -4014,6 +4131,7 @@ packages:
   vue-i18n@11.1.12:
     resolution: {integrity: sha512-BnstPj3KLHLrsqbVU2UOrPmr0+Mv11bsUZG0PyCOzsawCivk8W00GMXHeVUWIDOgNaScCuZah47CZFE+Wnl8mw==}
     engines: {node: '>= 16'}
+    deprecated: This version is NOT deprecated. Previous deprecation was a mistake.
     peerDependencies:
       vue: ^3.0.0
 
@@ -4086,6 +4204,7 @@ packages:
   whatwg-encoding@3.1.1:
     resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
     engines: {node: '>=18'}
+    deprecated: Use @exodus/bytes instead for a more spec-conformant and faster implementation
 
   whatwg-mimetype@3.0.0:
     resolution: {integrity: sha512-nt+N2dzIutVRxARx1nghPKGv1xHikU7HKdfafKkLNLindmPU/ch3U31NOCGGA/dmPcmb1VlofO0vnKAcsm0o/Q==}
@@ -4731,6 +4850,8 @@ snapshots:
   '@open-draft/until@2.1.0':
     optional: true
 
+  '@oxc-project/types@0.148.0': {}
+
   '@oxc-project/types@0.97.0': {}
 
   '@parcel/watcher-android-arm64@2.5.1':
@@ -4801,30 +4922,48 @@ snapshots:
 
   '@polka/url@1.0.0-next.28': {}
 
-  '@primeuix/styled@0.7.2':
+  '@primeicons/core@8.0.0':
     dependencies:
-      '@primeuix/utils': 0.6.1
+      '@primeuix/utils': 0.8.1
 
-  '@primeuix/styles@1.2.3':
+  '@primeicons/vue@8.0.0(vue@3.5.21(typescript@5.9.3))':
     dependencies:
-      '@primeuix/styled': 0.7.2
-
-  '@primeuix/themes@1.2.3':
-    dependencies:
-      '@primeuix/styled': 0.7.2
-
-  '@primeuix/utils@0.6.1': {}
-
-  '@primevue/core@4.3.9(vue@3.5.21(typescript@5.9.3))':
-    dependencies:
-      '@primeuix/styled': 0.7.2
-      '@primeuix/utils': 0.6.1
+      '@primeicons/core': 8.0.0
+      '@primeuix/utils': 0.8.1
       vue: 3.5.21(typescript@5.9.3)
 
-  '@primevue/icons@4.3.9(vue@3.5.21(typescript@5.9.3))':
+  '@primeui/license-manager@1.1.0': {}
+
+  '@primeuix/motion@1.0.0':
     dependencies:
-      '@primeuix/utils': 0.6.1
-      '@primevue/core': 4.3.9(vue@3.5.21(typescript@5.9.3))
+      '@primeuix/utils': 0.8.1
+
+  '@primeuix/styled@1.0.0':
+    dependencies:
+      '@primeui/license-manager': 1.1.0
+      '@primeuix/utils': 0.8.1
+
+  '@primeuix/styles@3.0.0':
+    dependencies:
+      '@primeuix/styled': 1.0.0
+
+  '@primeuix/themes@3.0.0':
+    dependencies:
+      '@primeuix/styled': 1.0.0
+
+  '@primeuix/utils@0.8.1': {}
+
+  '@primevue/core@5.0.1(vue@3.5.21(typescript@5.9.3))':
+    dependencies:
+      '@primeui/license-manager': 1.1.0
+      '@primeuix/styled': 1.0.0
+      '@primeuix/utils': 0.8.1
+      vue: 3.5.21(typescript@5.9.3)
+
+  '@primevue/icons@5.0.1(vue@3.5.21(typescript@5.9.3))':
+    dependencies:
+      '@primeuix/utils': 0.8.1
+      '@primevue/core': 5.0.1(vue@3.5.21(typescript@5.9.3))
     transitivePeerDependencies:
       - vue
 
@@ -4864,34 +5003,73 @@ snapshots:
       strip-indent: 4.0.0
       zod: 3.24.2
 
+  '@rolldown/binding-android-arm-eabi@1.2.7':
+    optional: true
+
   '@rolldown/binding-android-arm64@1.0.0-beta.50':
+    optional: true
+
+  '@rolldown/binding-android-arm64@1.2.7':
     optional: true
 
   '@rolldown/binding-darwin-arm64@1.0.0-beta.50':
     optional: true
 
+  '@rolldown/binding-darwin-arm64@1.2.7':
+    optional: true
+
   '@rolldown/binding-darwin-x64@1.0.0-beta.50':
+    optional: true
+
+  '@rolldown/binding-darwin-x64@1.2.7':
     optional: true
 
   '@rolldown/binding-freebsd-x64@1.0.0-beta.50':
     optional: true
 
+  '@rolldown/binding-freebsd-x64@1.2.7':
+    optional: true
+
   '@rolldown/binding-linux-arm-gnueabihf@1.0.0-beta.50':
+    optional: true
+
+  '@rolldown/binding-linux-arm-gnueabihf@1.2.7':
     optional: true
 
   '@rolldown/binding-linux-arm64-gnu@1.0.0-beta.50':
     optional: true
 
+  '@rolldown/binding-linux-arm64-gnu@1.2.7':
+    optional: true
+
   '@rolldown/binding-linux-arm64-musl@1.0.0-beta.50':
+    optional: true
+
+  '@rolldown/binding-linux-arm64-musl@1.2.7':
+    optional: true
+
+  '@rolldown/binding-linux-ppc64-gnu@1.2.7':
+    optional: true
+
+  '@rolldown/binding-linux-s390x-gnu@1.2.7':
     optional: true
 
   '@rolldown/binding-linux-x64-gnu@1.0.0-beta.50':
     optional: true
 
+  '@rolldown/binding-linux-x64-gnu@1.2.7':
+    optional: true
+
   '@rolldown/binding-linux-x64-musl@1.0.0-beta.50':
     optional: true
 
+  '@rolldown/binding-linux-x64-musl@1.2.7':
+    optional: true
+
   '@rolldown/binding-openharmony-arm64@1.0.0-beta.50':
+    optional: true
+
+  '@rolldown/binding-openharmony-arm64@1.2.7':
     optional: true
 
   '@rolldown/binding-wasm32-wasi@1.0.0-beta.50':
@@ -4902,15 +5080,23 @@ snapshots:
   '@rolldown/binding-win32-arm64-msvc@1.0.0-beta.50':
     optional: true
 
+  '@rolldown/binding-win32-arm64-msvc@1.2.7':
+    optional: true
+
   '@rolldown/binding-win32-ia32-msvc@1.0.0-beta.50':
     optional: true
 
   '@rolldown/binding-win32-x64-msvc@1.0.0-beta.50':
     optional: true
 
+  '@rolldown/binding-win32-x64-msvc@1.2.7':
+    optional: true
+
   '@rolldown/pluginutils@1.0.0-beta.29': {}
 
   '@rolldown/pluginutils@1.0.0-beta.50': {}
+
+  '@rolldown/pluginutils@1.0.1': {}
 
   '@rollup/rollup-android-arm-eabi@4.52.5':
     optional: true
@@ -7365,13 +7551,16 @@ snapshots:
       ansi-styles: 5.2.0
       react-is: 17.0.2
 
-  primevue@4.3.9(vue@3.5.21(typescript@5.9.3)):
+  primevue@5.0.1(vue@3.5.21(typescript@5.9.3)):
     dependencies:
-      '@primeuix/styled': 0.7.2
-      '@primeuix/styles': 1.2.3
-      '@primeuix/utils': 0.6.1
-      '@primevue/core': 4.3.9(vue@3.5.21(typescript@5.9.3))
-      '@primevue/icons': 4.3.9(vue@3.5.21(typescript@5.9.3))
+      '@primeicons/vue': 8.0.0(vue@3.5.21(typescript@5.9.3))
+      '@primeui/license-manager': 1.1.0
+      '@primeuix/motion': 1.0.0
+      '@primeuix/styled': 1.0.0
+      '@primeuix/styles': 3.0.0
+      '@primeuix/utils': 0.8.1
+      '@primevue/core': 5.0.1(vue@3.5.21(typescript@5.9.3))
+      '@primevue/icons': 5.0.1(vue@3.5.21(typescript@5.9.3))
     transitivePeerDependencies:
       - vue
 
@@ -7497,7 +7686,7 @@ snapshots:
       glob: 7.2.3
     optional: true
 
-  rolldown-plugin-dts@0.16.7(rolldown@1.0.0-beta.50)(typescript@5.9.3)(vue-tsc@3.0.8(typescript@5.9.3)):
+  rolldown-plugin-dts@0.16.7(rolldown@1.2.7)(typescript@5.9.3)(vue-tsc@3.0.8(typescript@5.9.3)):
     dependencies:
       '@babel/generator': 7.28.3
       '@babel/parser': 7.28.4
@@ -7508,7 +7697,7 @@ snapshots:
       dts-resolver: 2.1.2
       get-tsconfig: 4.10.1
       magic-string: 0.30.21
-      rolldown: 1.0.0-beta.50
+      rolldown: 1.2.7
     optionalDependencies:
       typescript: 5.9.3
       vue-tsc: 3.0.8(typescript@5.9.3)
@@ -7535,6 +7724,27 @@ snapshots:
       '@rolldown/binding-win32-arm64-msvc': 1.0.0-beta.50
       '@rolldown/binding-win32-ia32-msvc': 1.0.0-beta.50
       '@rolldown/binding-win32-x64-msvc': 1.0.0-beta.50
+
+  rolldown@1.2.7:
+    dependencies:
+      '@oxc-project/types': 0.148.0
+      '@rolldown/pluginutils': 1.0.1
+    optionalDependencies:
+      '@rolldown/binding-android-arm-eabi': 1.2.7
+      '@rolldown/binding-android-arm64': 1.2.7
+      '@rolldown/binding-darwin-arm64': 1.2.7
+      '@rolldown/binding-darwin-x64': 1.2.7
+      '@rolldown/binding-freebsd-x64': 1.2.7
+      '@rolldown/binding-linux-arm-gnueabihf': 1.2.7
+      '@rolldown/binding-linux-arm64-gnu': 1.2.7
+      '@rolldown/binding-linux-arm64-musl': 1.2.7
+      '@rolldown/binding-linux-ppc64-gnu': 1.2.7
+      '@rolldown/binding-linux-s390x-gnu': 1.2.7
+      '@rolldown/binding-linux-x64-gnu': 1.2.7
+      '@rolldown/binding-linux-x64-musl': 1.2.7
+      '@rolldown/binding-openharmony-arm64': 1.2.7
+      '@rolldown/binding-win32-arm64-msvc': 1.2.7
+      '@rolldown/binding-win32-x64-msvc': 1.2.7
 
   rollup@4.52.5:
     dependencies:
@@ -7999,8 +8209,8 @@ snapshots:
       diff: 8.0.2
       empathic: 2.0.0
       hookable: 5.5.3
-      rolldown: 1.0.0-beta.50
-      rolldown-plugin-dts: 0.16.7(rolldown@1.0.0-beta.50)(typescript@5.9.3)(vue-tsc@3.0.8(typescript@5.9.3))
+      rolldown: 1.2.7
+      rolldown-plugin-dts: 0.16.7(rolldown@1.2.7)(typescript@5.9.3)(vue-tsc@3.0.8(typescript@5.9.3))
       semver: 7.7.3
       tinyexec: 1.0.1
       tinyglobby: 0.2.15
