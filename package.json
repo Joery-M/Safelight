@@ -44,7 +44,7 @@
     "@unocss/eslint-plugin": "^66.5.1",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vitest/browser": "^3.2.4",
-    "@vitest/ui": "^3.2.4",
+    "@vitest/ui": "^5.0.0",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
